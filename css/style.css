@@ -1,0 +1,524 @@
+/* PALETA DE COLORES */
+:root {
+  --azul-logo-fondo: #1A94C4;
+  --azul-banner: #0078A0;
+  --naranja-logo: #F7931E;
+  --blanco: #ffffff;
+  --negro: #000000;
+}
+
+/* GENERAL */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--blanco);
+  color: var(--negro);
+  margin: 0;
+  padding: 0;
+}
+
+/* NAVBAR */
+.logo-navbar {
+  background-color: white;
+  border-radius: 50%;
+  padding: 4px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+.navbar {
+  background-color: var(--azul-logo-fondo);
+}
+
+.navbar-brand {
+  color: var(--naranja-logo) !important;
+  font-weight: bold;
+}
+
+
+.navbar-nav .nav-link {
+  color: var(--negro) !important;
+  text-decoration: none !important;
+  transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  color: var(--naranja-logo) !important;
+  text-decoration: none !important;
+}
+
+
+/* BOTONES */
+.btn-dark {
+  background-color: var(--azul-banner);
+  border: none;
+}
+
+.btn-dark:hover {
+  background-color: var(--naranja-logo);
+  color: var(--blanco);
+}
+
+/* CARRUSEL */
+.hero {
+  position: relative;
+}
+.hero .carousel-inner img {
+  height: 400px;
+  object-fit: cover;
+}
+.hero .overlay-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+}
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-image: none; /* Quitamos el ícono blanco por defecto */
+  width: 2rem;
+  height: 2rem;
+  background-color: rgba(0, 0, 0, 0.7); /* fondo negro semitransparente */
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 16 16'%3E%3Cpath d='M11.354 1.646a.5.5 0 0 0-.708 0L4.793 7.5l5.853 5.854a.5.5 0 0 0 .708-.708L6.207 7.5l5.147-5.146a.5.5 0 0 0 0-.708z'/%3E%3C/svg%3E");
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 16 16'%3E%3Cpath d='M11.354 1.646a.5.5 0 0 0-.708 0L4.793 7.5l5.853 5.854a.5.5 0 0 0 .708-.708L6.207 7.5l5.147-5.146a.5.5 0 0 0 0-.708z'/%3E%3C/svg%3E");
+  background-color: black;
+}
+.carousel-control-next-icon {
+  transform: rotate(180deg);
+}
+
+.hero h1 {
+  font-size: 4rem;
+  color:black;
+}
+
+.hero p {
+  font-size: 2rem;
+  color: black;
+}
+
+
+.info-section .row > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding-bottom: 1.5rem;
+}
+
+.info-section img {
+  transition: transform 0.3s ease;
+}
+
+.info-section img:hover {
+  transform: scale(1.15);
+}
+
+.info-section .btn {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.info-section .btn:hover {
+  background-color: var(--naranja-logo);
+  color: white;
+  text-decoration: none;
+}
+.btn-borde-negro {
+  border: 2px solid black;
+  color: black;
+  background-color: transparent;
+  transition: all 0.3s ease;
+}
+
+.btn-borde-negro:hover {
+  background-color: black;
+  color: white;
+}
+
+
+
+/* SECCIÓN CENTRAL */
+section h1 {
+  font-size: 2.8rem;
+  color: var(--naranja-logo);
+}
+
+section p {
+  font-size: 1.2rem;
+  max-width: 700px;
+  margin: auto;
+}
+
+/* FOOTER */
+footer.bg-footer {
+  background-color:#1A94C4 !important;
+  color: #212529 !important;
+}
+
+/* Efectos enlaces*/
+/* --- ENLACES DEL FOOTER --- */
+footer a {
+  color: var(--negro); /* o var(--blanco) si fondo oscuro */
+  text-decoration: none;
+  display: inline-block;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+footer .container a:hover,
+footer .list-unstyled a:hover,
+footer .text-center a:hover {
+  color: var(--naranja-logo) !important;
+  transform: translateX(3px);
+  text-decoration: none;
+}
+
+
+/* --- ENLACES DE LISTAS (como navegación) --- */
+footer .list-unstyled a {
+  color: var(--negro); /* se puede sacar si ya está arriba */
+}
+
+/* --- ICONOS SOCIALES EN EL FOOTER --- */
+footer i {
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+footer i:hover {
+  transform: scale(1.2);
+  color: var(--naranja-logo);
+}
+
+
+/*Pagina Ingresar*/
+:root {
+  --azul-logo-fondo: #1A94C4;
+  --azul-banner: #0078A0;
+  --naranja-logo: #F7931E;
+  --blanco: #ffffff;
+  --negro: #000000;
+}
+
+/* Fondo general */
+body {
+  background-color: var(--blanco);
+  color: var(--negro);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Tarjeta del formulario */
+.card {
+  border-radius: 1rem;
+  border: none;
+}
+
+/* Título */
+h2 {
+  font-weight: bold;
+}
+
+/* Inputs */
+.form-control:focus {
+  border-color: var(--naranja-logo);
+  box-shadow: 0 0 0 0.2rem rgba(247, 147, 30, 0.25);
+}
+
+/* Botón Ingresar */
+.btn-dark {
+  background-color: var(--azul-banner);
+  border: none;
+}
+
+.btn-dark:hover {
+  background-color: var(--naranja-logo);
+  color: var(--blanco);
+}
+
+/* Enlaces */
+a {
+  color: var(--azul-logo-fondo);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Texto de ayuda */
+.small {
+  font-size: 0.875rem;
+  color:black;
+}
+
+/*Pagina de registro*/
+/* PALETA DE COLORES */
+:root {
+  --azul-logo-fondo: #1A94C4;
+  --azul-banner: #0078A0;
+  --naranja-logo: #F7931E;
+  --blanco: #ffffff;
+  --negro: #000000;
+}
+
+/* GENERAL */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--blanco);
+  color: var(--negro);
+}
+
+/* TARJETAS DEL FORMULARIO */
+.card {
+  border-radius: 1rem;
+  border: none;
+}
+
+/* TÍTULOS */
+h2 {
+  font-weight: bold;
+}
+
+/* INPUTS */
+.form-control:focus {
+  border-color: var(--naranja-logo);
+  box-shadow: 0 0 0 0.2rem rgba(247, 147, 30, 0.25);
+}
+
+/* BOTONES */
+.btn-dark {
+  background-color: var(--azul-banner);
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.btn-dark:hover {
+  background-color: var(--naranja-logo);
+  color: var(--blanco);
+}
+
+/* LINKS */
+a {
+  color: var(--azul-logo-fondo);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--naranja-logo);
+  text-decoration: none;
+}
+/* Modal-recupera tu contraseña */
+.modal-header {
+  border-bottom: none;
+}
+
+.modal-content {
+  border-radius: 1rem;
+}
+
+
+/* Página de usuario */
+section h2 {
+  font-size: 1.8rem;
+  color: var(--naranja-logo);
+  font-weight: bold;
+}
+#crear-perfil form {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+
+.card-img-top {
+  height: 200px;
+  object-fit: contain;
+  background-color: #f8f9fa; /* opcional, para que no quede vacío si sobra espacio */
+  padding: 0.5rem;
+}
+
+
+
+.btn-dark:hover {
+  background-color: var(--naranja-logo);
+  color: var(--blanco);
+}
+
+/* Badges */
+.badge.bg-warning {
+  font-size: 0.9rem;
+  padding: 0.4em 0.8em;
+}
+
+.badge.bg-success {
+  font-size: 0.9rem;
+  padding: 0.4em 0.8em;
+}
+
+/* Links del menú superior */
+a.btn {
+  transition: all 0.3s ease;
+}
+
+a.btn:hover {
+  background-color: var(--naranja-logo);
+  border-color: var(--naranja-logo);
+  color: var(--blanco);
+}
+#crear-perfil form {
+  background-color: #fffaf5; /* fondo muy suave, tipo cremita */
+  border: 2px solid var(--naranja-logo);
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 600px;
+  margin: auto;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+/* Catalogo */
+
+.encabezado-azul {
+  background-color: var(--azul-logo-fondo);
+}
+
+
+.titulo-catalogo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: black;
+  text-align: center;
+  margin: 0;
+}
+
+
+
+.btn-outline-dark {
+  border-color: black !important;
+  color: black !important;
+}
+
+.btn-outline-dark:hover {
+  background-color: var(--naranja-logo);
+  color:black;
+  border-color: black;
+}
+
+.card-img-top {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.card {
+  border: none;
+  border-radius: 1rem;
+  background: #fffaf6;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  background: #fff3e6;
+}
+
+/*Usuario */
+/* Imagen de perfil */
+img.rounded-circle {
+  border: 3px solid var(--naranja-logo);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Card de perfil */
+.card {
+  border-radius: 1rem;
+  background-color: #fffaf6;
+}
+
+/* Lista de personalidad */
+.list-group-item {
+  background-color: transparent;
+  border: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Título personalidad */
+h5.text-warning {
+  font-weight: bold;
+}
+
+/* Botón editar */
+.btn-dark {
+  background-color: var(--azul-banner);
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.btn-dark:hover {
+  background-color: var(--naranja-logo);
+  color: var(--blanco);
+}
+/* Error 404 */
+/* ----- ERROR 404 STYLES ----- */
+/* ===== ESTILOS PARA PÁGINA 404 ===== */
+
+.error-body {
+  background-color: #fffaf6;
+  background-image: url('../img/patitas.png'); /* asegurate del nombre exacto */
+  background-repeat: repeat;
+  background-size: 120px auto;
+  background-position: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.error-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  color: var(--negro);
+  padding: 2rem;
+}
+
+.error-icon {
+  font-size: 5rem;
+  color: var(--naranja-logo);
+  margin-bottom: 1rem;
+}
+
+.error-container h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--azul-banner);
+}
+
+.error-container p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.btn-volver {
+  background-color: var(--azul-banner);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-volver:hover {
+  background-color: var(--naranja-logo);
+  color: white;
+}
+
+.emoji-grande {
+  font-size: 2rem;
+  vertical-align: middle;
+}

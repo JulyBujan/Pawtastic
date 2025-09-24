@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cargar Mascota | Pawtastic</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="icon" href="../img/favicon.ico" type="image/png">
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body>
+  <!-- NAVBAR ONG -->
+  <nav class="navbar navbar-expand-lg navbar-dark encabezado-azul">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="../index.html">
+        <img src="../img/logo.png" alt="Logo Pawtastic" width="50" height="50" class="me-2 logo-navbar">
+        <span class="text-warning fw-bold">Pawtastic</span>
+      </a>
+      <div class="collapse navbar-collapse justify-content-end">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="perfil-ong.html">TuONG</a></li>
+          <li class="nav-item"><a class="nav-link active" href="mis-mascotas.html">Mis Mascotas</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" onclick="confirmarSalida()">Salir</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- FORMULARIO -->
+  <main class="container py-5">
+    <h2 class="text-center mb-4 text-warning"><i class="bi bi-plus-circle"></i> Cargar Nueva Mascota</h2>
+    <form id="formMascota" class="shadow p-4 bg-light rounded">
+      <div class="mb-3">
+        <label for="nombre" class="form-label">Nombre</label>
+        <input type="text" class="form-control" id="nombre" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="descripcion" class="form-label">Descripción</label>
+        <textarea class="form-control" id="descripcion" rows="3" required></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="foto" class="form-label">Foto</label>
+        <input type="file" class="form-control" id="foto">
+      </div>
+
+      <hr class="my-4">
+
+      <!-- PERSONALIDAD -->
+      <h5 class="text-warning"><i class="bi bi-stars"></i> Personalidad</h5>
+      <div class="mb-3">
+        <label for="energia" class="form-label">Nivel de energía</label>
+        <select id="energia" class="form-select" required>
+          <option value="">Seleccionar</option>
+          <option value="Alto">Alto</option>
+          <option value="Medio">Medio</option>
+          <option value="Bajo">Bajo</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="sociabilidad" class="form-label">Sociabilidad</label>
+        <select id="sociabilidad" class="form-select" required>
+          <option value="">Seleccionar</option>
+          <option value="Muy sociable">Muy sociable</option>
+          <option value="Sociable pero selectivo">Sociable pero selectivo</option>
+          <option value="Reservado">Reservado</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="presencia" class="form-label">Presencia</label>
+        <select id="presencia" class="form-select" required>
+          <option value="">Seleccionar</option>
+          <option value="Necesita compañía constante">Necesita compañía constante</option>
+          <option value="Tolera estar solo">Tolera estar solo</option>
+          <option value="Independiente">Independiente</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="estilo" class="form-label">Estilo de vida</label>
+        <select id="estilo" class="form-select" required>
+          <option value="">Seleccionar</option>
+          <option value="Indoor">Indoor</option>
+          <option value="Outdoor">Outdoor</option>
+          <option value="Flexible">Flexible</option>
+        </select>
+      </div>
+
+      <div class="d-grid mt-4">
+        <button type="submit" class="btn btn-dark">Guardar Mascota</button>
+      </div>
+    </form>
+  </main>
+
+  <!-- Script para simular envío -->
+  <script>
+    document.getElementById("formMascota").addEventListener("submit", function (e) {
+      e.preventDefault();
+      alert("¡Mascota guardada! (Simulado)");
+      // Aquí más adelante: fetch() para enviar al backend
+    });
+
+    function confirmarSalida() {
+      if (confirm("¿Estás segura que querés salir?")) {
+        window.location.href = "../index.html";
+      }
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

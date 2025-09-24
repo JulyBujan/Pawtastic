@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Catálogo | Pawtastic</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="icon" href="../img/favicon.ico" type="image/png">
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body class="bg-light">
+
+  <!-- ENCABEZADO -->
+  <header class="encabezado-azul shadow-sm py-3 sticky-top">
+    <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between">
+      <div class="d-flex align-items-center mb-2 mb-md-0">
+        <img src="../img/logo.png" alt="Logo Pawtastic" width="50" class="me-2 rounded-circle" />
+        <h1 class="h4 text-warning m-0">Pawtastic</h1>
+      </div>
+      <h2 class="titulo-catalogo mb-2 mb-md-0">¡ENCONTRÁ A TU MATCH! 🐾</h2>
+      <div class="d-flex gap-2">
+        <a href="./usuario.html" class="btn btn-outline-dark">Mi perfil</a>
+        <a href="./postulaciones.html" class="btn btn-outline-dark">Mis postulaciones</a>
+      </div>
+    </div>
+  </header>
+  
+
+  <!-- SECCIÓN DE MASCOTAS -->
+  <main class="container py-5">
+    <!-- FILTROS Y BUSCADOR -->
+    <div class="mb-4 bg-white p-4 rounded shadow-sm">
+      <form class="row g-3 align-items-end">
+        <!-- Buscar por nombre -->
+        <div class="col-md-4">
+          <label for="buscarNombre" class="form-label">Buscar por nombre</label>
+          <input type="text" class="form-control" id="buscarNombre" placeholder="Ej. Milo">
+        </div>
+    
+        <!-- Especie -->
+        <div class="col-md-2">
+          <label for="filtroEspecie" class="form-label">Especie</label>
+          <select class="form-select" id="filtroEspecie">
+            <option value="">Todas</option>
+            <option value="perro">Perro</option>
+            <option value="gato">Gato</option>
+          </select>
+        </div>
+    
+        <!-- Edad -->
+        <div class="col-md-2">
+          <label for="filtroEdad" class="form-label">Edad</label>
+          <select class="form-select" id="filtroEdad">
+            <option value="">Todas</option>
+            <option value="cachorro">Cachorro</option>
+            <option value="adulto">Adulto</option>
+            <option value="senior">Senior</option>
+          </select>
+        </div>
+    
+        <!-- Tamaño -->
+        <div class="col-md-2">
+          <label for="filtroTamano" class="form-label">Tamaño</label>
+          <select class="form-select" id="filtroTamano">
+            <option value="">Todos</option>
+            <option value="pequeno">Pequeño</option>
+            <option value="mediano">Mediano</option>
+            <option value="grande">Grande</option>
+          </select>
+        </div>
+    
+        <!-- Botón buscar -->
+        <div class="col-md-2 d-grid">
+          <button type="submit" class="btn btn-dark">Aplicar</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <!-- Ejemplo de mascota -->
+      <div class="col">
+        <div class="card h-100 shadow-sm overflow-hidden">
+          <img src="../img/Geo2.jpeg" class="card-img-top img-fluid rounded-top" alt="Geovanni" />
+          <div class="card-body d-flex flex-column justify-content-between text-center">
+            <h5 class="card-title">
+              Geovanni🐾 <i class="bi bi-paw-fill text-warning"></i><i class="bi bi-paw-fill text-warning"></i>
+            </h5>
+            <p class="card-text">Gatito de 2 años. Le encanta dormir en el sol y recibir mimos.</p>
+            <a href="../pages/detalle-mascota.html" class="btn btn-dark w-100 mt-auto">Postularme</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col">
+        <div class="card h-100 shadow-sm overflow-hidden">
+          <img src="../img/Amorina2.jpeg" class="card-img-top img-fluid rounded-top" alt="Geovanni" />
+          <div class="card-body d-flex flex-column justify-content-between text-center">
+            <h5 class="card-title">
+              Amorina🐾 <i class="bi bi-paw-fill text-warning"></i><i class="bi bi-paw-fill text-warning"></i>
+            </h5>
+            <p class="card-text">Hembrita de 4 años.Tranquila y obediente. Ideal para familias con niños pequeños.</p>
+            <a href="../pages/detalle-mascota.html" class="btn btn-dark w-100 mt-auto">Postularme</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col">
+        <div class="card h-100 shadow-sm overflow-hidden">
+          <img src="../img/Tere4.jpeg" class="card-img-top img-fluid rounded-top" alt="Geovanni" />
+          <div class="card-body d-flex flex-column justify-content-between text-center">
+            <h5 class="card-title">
+              Teresa 🐾 <i class="bi bi-paw-fill text-warning"></i><i class="bi bi-paw-fill text-warning"></i>
+            </h5>
+            <p class="card-text">Hembrita de 2 años. Ideal para departamentos. Muy limpia y le encanta dormir en
+            sillones.</p>
+            <a href="../pages/detalle-mascota.html" class="btn btn-dark w-100 mt-auto">Postularme</a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Agregá más cards aquí -->
+    </div>
+  </main>
+  <footer class="bg-footer text-dark pt-4 pb-3 mt-3">
+    <div class="container text-center text-md-start">
+      <div class="row">
+        <div class="col-md-4 mb-3 text-center">
+  
+  
+          <h5 class="fw-bold mt-2">Pawtastic</h5>
+          <p class="small">Conectamos corazones con patas. Gracias por elegir adoptar.</p>
+          <a href="./index.html">
+            <img src="../img/logo.png" alt="Logo Pawtastic" style="max-width: 100px; border-radius: 40%;">
+          </a>
+        </div>
+        <div class="col-md-4 mb-3 d-flex flex-column align-items-center">
+          <h5 class="fw-bold text-center">Navegación</h5>
+          <ul class="list-unstyled text-center">
+            <li><a href="./pages/sobreNosotros.html" class="text-dark text-decoration-none">Inicio</a></li>
+            <li><a href="./pages/adopciones.html" class="text-dark text-decoration-none">Ingresar</a></li>
+            <li><a href="./pages/login.html" class="text-dark text-decoration-none">Nosotros</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4 mb-3 fs-5">
+          <h5 class="fw-bold">Seguinos</h5>
+          <a href="./pages/error404.html" class="text-dark me-3"><i class="bi bi-facebook"
+              style="font-size: 2.5rem;"></i></a>
+          <a href="./pages/error404.html" class="text-dark me-3"><i class="bi bi-instagram"
+              style="font-size: 2.5rem;"></i></a>
+          <a href="./pages/error404.html" class="text-dark"><i class="bi bi-x-circle-fill"
+              style="font-size: 2.5rem;"></i></a>
+        </div>
+      </div>
+      <hr class="border-dark">
+      <div class="text-center">
+        <small>&copy; 2025 Pawtastic. Todos los derechos reservados.</small>
+        <br>
+        <a href="./pages/terminosYcondiciones.html" class="text-dark text-decoration-underline small">Términos y
+          Condiciones</a> |
+        <a href="./pages/politicaDeCookies.html" class="text-dark text-decoration-underline small">Política de Cookies</a>
+      </div>
+    </div>
+  </footer> 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
