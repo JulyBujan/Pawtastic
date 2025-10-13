@@ -22,9 +22,7 @@ $user = $query->fetch(PDO::FETCH_ASSOC);
 
 
 
-if ($user && hash('sha256', $password) === $user['password']) {
- 
- 
+if ($user && $password === $user['password']) { // Compara el hash SHA256 del cliente con el de la BD
     // JWT
     $secret_key = "CLAVE_SUPER_SECRETA"; // ⚠️ Cambiala por algo propio
     $payload = [
