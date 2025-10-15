@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de edad - Pawtastic</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="icon" href="../img/favicon.ico" type="image/png">
+  <link rel="stylesheet" href="../css/style.css">
+  
+</head>
+
+<body class="bg-light">
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="../index.html">
+        <img src="../img/logo.png" alt="Logo Pawtastic" width="50" height="50" class="me-2 logo-navbar">
+        <span class="text-warning fw-bold">Pawtastic</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="../index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="./login.html">Ingresar</a></li>
+          <li class="nav-item"><a class="nav-link" href="./error404.html">Nosotros</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- CONTENIDO -->
+  <section class="py-5 text-center">
+    <div class="container">
+      <h2 class="mb-4 text-warning fw-bold">¿Qué edad tiene mi mascota? 🐾</h2>
+      <p class="text-muted mb-5">
+        Convertí la edad de tu peludo en años humanos de forma divertida y educativa.
+        Ingresá la edad y seleccioná si es perro o gato para descubrirlo.
+      </p>
+
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="calc-card">
+            <div class="d-flex justify-content-center mb-4">
+              <i class="bi bi-dog icono me-4"></i>
+              <i class="bi bi-cat icono"></i>
+            </div>
+
+            <!-- FORMULARIO -->
+            <form id="formCalculadora">
+              <div class="mb-3 text-start">
+                <label for="edadMascota" class="form-label fw-bold">Edad de la mascota (en años):</label>
+                <input type="number" class="form-control" id="edadMascota" min="0" required>
+              </div>
+
+              <div class="mb-3 text-start">
+                <label class="fw-bold">Tipo de mascota:</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="tipo" id="perro" value="perro" required>
+                  <label class="form-check-label" for="perro">
+                    🐶 Perro
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="tipo" id="gato" value="gato">
+                  <label class="form-check-label" for="gato">
+                    🐱 Gato
+                  </label>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-borde-negro rounded-pill px-4 mt-3">Calcular</button>
+              <div id="resultado"></div>
+            </form>
+
+            <!-- EXPLICACIÓN -->
+            <div class="explicacion text-start">
+              <p><strong>Cómo se calcula:</strong></p>
+              <ul>
+                <li>Los primeros 2 años equivalen a 24 años humanos.</li>
+                <li>Después del segundo año, cada año adicional equivale a 4 años humanos para perros y 4.5 años para
+                  gatos.</li>
+                <li>Esta fórmula representa una estimación general del desarrollo físico y madurez de las mascotas.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-footer text-dark pt-4 pb-3 mt-3">
+    <div class="container text-center text-md-start">
+      <div class="row">
+        <div class="col-md-4 mb-3 text-center">
+          <h5 class="fw-bold mt-2">Pawtastic</h5>
+          <p class="small">Conectamos corazones con patas. Gracias por elegir adoptar.</p>
+          <a href="../index.html">
+            <img src="../img/logo.png" alt="Logo Pawtastic" style="max-width: 100px; border-radius: 40%;">
+          </a>
+        </div>
+        <div class="col-md-4 mb-3 d-flex flex-column align-items-center">
+          <h5 class="fw-bold text-center">Navegación</h5>
+          <ul class="list-unstyled text-center">
+            <li><a href="../index.html" class="text-dark text-decoration-none">Inicio</a></li>
+            <li><a href="./login.html" class="text-dark text-decoration-none">Ingresar</a></li>
+            <li><a href="./error404.html" class="text-dark text-decoration-none">Nosotros</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4 mb-3 fs-5">
+          <h5 class="fw-bold">Seguinos</h5>
+          <a href="./error404.html" class="text-dark me-3"><i class="bi bi-facebook" style="font-size: 2.5rem;"></i></a>
+          <a href="./error404.html" class="text-dark me-3"><i class="bi bi-instagram"
+              style="font-size: 2.5rem;"></i></a>
+          <a href="./error404.html" class="text-dark"><i class="bi bi-x-circle-fill" style="font-size: 2.5rem;"></i></a>
+        </div>
+      </div>
+      <hr class="border-dark">
+      <div class="text-center">
+        <small>&copy; 2025 Pawtastic. Todos los derechos reservados.</small><br>
+        <a href="./terminosYcondiciones.html" class="text-dark text-decoration-underline small">Términos y
+          Condiciones</a> |
+        <a href="./politicaDeCookies.html" class="text-dark text-decoration-underline small">Política de Cookies</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Script con fórmula realista
+    document.getElementById("formCalculadora").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const edad = parseFloat(document.getElementById("edadMascota").value);
+      const tipo = document.querySelector('input[name="tipo"]:checked').value;
+      let resultado = "";
+
+      if (isNaN(edad) || edad <= 0) {
+        resultado = "Por favor, ingresá una edad válida 🐾";
+      } else {
+        let edadHumana = 0;
+        if (edad <= 2) {
+          edadHumana = edad * 12; // 2 años = 24 humanos
+        } else {
+          if (tipo === "perro") {
+            edadHumana = 24 + (edad - 2) * 4;
+          } else if (tipo === "gato") {
+            edadHumana = 24 + (edad - 2) * 4.5;
+          }
+        }
+        resultado = `Tu ${tipo} tiene aproximadamente <span class="text-warning">${edadHumana.toFixed(1)}</span> años humanos 🧡`;
+      }
+      document.getElementById("resultado").innerHTML = resultado;
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -522,3 +522,99 @@ h5.text-warning {
   font-size: 2rem;
   vertical-align: middle;
 }
+
+/* Consejos */
+/* ======== CONSEJOS ======== */
+
+/* Checkboxes en color naranja */
+input[type="checkbox"] {
+  accent-color: #F7931E;
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+/* Cards suaves */
+.advice-card {
+  border-radius: 1rem;
+  border: none;
+  background-color: #fffaf6;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  padding: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.advice-card:hover {
+  transform: translateY(-5px);
+  background-color: #fff3e6;
+}
+
+.advice-card h4 {
+  color: #1A94C4;
+}
+
+.advice-card ul {
+  margin-top: 1rem;
+}
+/*Preguntas frecuentes*/
+    .calc-card {
+      background-color: #fffaf6;
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      padding: 2rem;
+      transition: transform 0.3s ease;
+    }
+
+    .calc-card:hover {
+      transform: translateY(-5px);
+      background-color: #fff3e6;
+    }
+
+    .icono {
+      font-size: 4rem;
+      color: #F7931E;
+    }
+
+    #resultado {
+      font-weight: bold;
+      color: #1A94C4;
+      font-size: 1.3rem;
+      margin-top: 1rem;
+    }
+
+    .explicacion {
+      font-size: 0.9rem;
+      color: #6c757d;
+      margin-top: 1.5rem;
+      background-color: #fdf7f0;
+      border-left: 4px solid #F7931E;
+      padding: 1rem;
+      border-radius: 0.5rem;
+    }
+  
+    .faq-card {
+      background-color: #fffaf6;
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      padding: 2rem;
+      transition: transform 0.3s ease;
+    }
+
+    .faq-card:hover {
+      transform: translateY(-5px);
+      background-color: #fff3e6;
+    }
+
+    .faq-section h4 {
+      color: #1A94C4;
+      margin-bottom: 1rem;
+    }
+
+    .accordion-button:not(.collapsed) {
+      background-color: #fdf4e9;
+      color: #1A94C4;
+      font-weight: bold;
+    }
+
+    .accordion-button:focus {
+      box-shadow: 0 0 0 0.15rem rgba(247, 147, 30, 0.4);
+    }
