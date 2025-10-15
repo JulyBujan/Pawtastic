@@ -14,20 +14,29 @@
 <body class="bg-light">
 
   <!-- ENCABEZADO -->
+  <!-- ENCABEZADO -->
   <header class="encabezado-azul shadow-sm py-3 sticky-top">
     <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between">
       <div class="d-flex align-items-center mb-2 mb-md-0">
         <img src="../img/logo.png" alt="Logo Pawtastic" width="50" class="me-2 rounded-circle" />
         <h1 class="h4 text-warning m-0">Pawtastic</h1>
       </div>
-      <h2 class="titulo-catalogo mb-2 mb-md-0">¡ENCONTRÁ A TU MATCH! 🐾</h2>
-      <div class="d-flex gap-2">
-        <a href="./usuario.html" class="btn btn-outline-dark">Mi perfil</a>
-        <a href="./postulaciones.html" class="btn btn-outline-dark">Mis postulaciones</a>
-      </div>
+
+      <h2 class="titulo-catalogo mb-2 mb-md-0 text-white">¡ENCONTRÁ A TU MATCH! 🐾</h2>
+
+      <ul class="navbar-nav flex-row gap-3">
+        <li class="nav-item"><a class="nav-link text-white" href="./usuario.html">Perfil</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="./postulaciones.html">Postulaciones</a></li>
+        <li class="nav-item">
+          <a href="#" class="nav-link text-danger fw-bold" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion">
+            <i class="bi bi-box-arrow-right me-1"></i>Salir
+          </a>
+        </li>
+      </ul>
     </div>
   </header>
-  
+
+
 
   <!-- SECCIÓN DE MASCOTAS -->
   <main class="container py-5">
@@ -39,7 +48,7 @@
           <label for="buscarNombre" class="form-label">Buscar por nombre</label>
           <input type="text" class="form-control" id="buscarNombre" placeholder="Ej. Milo">
         </div>
-    
+
         <!-- Especie -->
         <div class="col-md-2">
           <label for="filtroEspecie" class="form-label">Especie</label>
@@ -49,7 +58,7 @@
             <option value="gato">Gato</option>
           </select>
         </div>
-    
+
         <!-- Edad -->
         <div class="col-md-2">
           <label for="filtroEdad" class="form-label">Edad</label>
@@ -60,7 +69,7 @@
             <option value="senior">Senior</option>
           </select>
         </div>
-    
+
         <!-- Tamaño -->
         <div class="col-md-2">
           <label for="filtroTamano" class="form-label">Tamaño</label>
@@ -71,7 +80,7 @@
             <option value="grande">Grande</option>
           </select>
         </div>
-    
+
         <!-- Botón buscar -->
         <div class="col-md-2 d-grid">
           <button type="submit" class="btn btn-dark">Aplicar</button>
@@ -79,57 +88,20 @@
       </form>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-      <!-- Ejemplo de mascota -->
-      <div class="col">
-        <div class="card h-100 shadow-sm overflow-hidden">
-          <img src="../img/Geo2.jpeg" class="card-img-top img-fluid rounded-top" alt="Geovanni" />
-          <div class="card-body d-flex flex-column justify-content-between text-center">
-            <h5 class="card-title">
-              Geovanni🐾 <i class="bi bi-paw-fill text-warning"></i><i class="bi bi-paw-fill text-warning"></i>
-            </h5>
-            <p class="card-text">Gatito de 2 años. Le encanta dormir en el sol y recibir mimos.</p>
-            <a href="../pages/detalle-mascota.html" class="btn btn-dark w-100 mt-auto">Postularme</a>
-          </div>
-        </div>
-      </div>
-      
-      <div class="col">
-        <div class="card h-100 shadow-sm overflow-hidden">
-          <img src="../img/Amorina2.jpeg" class="card-img-top img-fluid rounded-top" alt="Geovanni" />
-          <div class="card-body d-flex flex-column justify-content-between text-center">
-            <h5 class="card-title">
-              Amorina🐾 <i class="bi bi-paw-fill text-warning"></i><i class="bi bi-paw-fill text-warning"></i>
-            </h5>
-            <p class="card-text">Hembrita de 4 años.Tranquila y obediente. Ideal para familias con niños pequeños.</p>
-            <a href="../pages/detalle-mascota.html" class="btn btn-dark w-100 mt-auto">Postularme</a>
-          </div>
-        </div>
-      </div>
-      
-      <div class="col">
-        <div class="card h-100 shadow-sm overflow-hidden">
-          <img src="../img/Tere4.jpeg" class="card-img-top img-fluid rounded-top" alt="Geovanni" />
-          <div class="card-body d-flex flex-column justify-content-between text-center">
-            <h5 class="card-title">
-              Teresa 🐾 <i class="bi bi-paw-fill text-warning"></i><i class="bi bi-paw-fill text-warning"></i>
-            </h5>
-            <p class="card-text">Hembrita de 2 años. Ideal para departamentos. Muy limpia y le encanta dormir en
-            sillones.</p>
-            <a href="../pages/detalle-mascota.html" class="btn btn-dark w-100 mt-auto">Postularme</a>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Agregá más cards aquí -->
+    <div class="row row-cols-1 row-cols-md-3 g-4" id="contenedor-mascotas">
+      <!-- Aquí se insertarán las mascotas dinámicamente -->
+    </div>
+
+
+    <!-- Agregá más cards aquí -->
     </div>
   </main>
   <footer class="bg-footer text-dark pt-4 pb-3 mt-3">
     <div class="container text-center text-md-start">
       <div class="row">
         <div class="col-md-4 mb-3 text-center">
-  
-  
+
+
           <h5 class="fw-bold mt-2">Pawtastic</h5>
           <p class="small">Conectamos corazones con patas. Gracias por elegir adoptar.</p>
           <a href="./index.html">
@@ -160,11 +132,86 @@
         <br>
         <a href="./pages/terminosYcondiciones.html" class="text-dark text-decoration-underline small">Términos y
           Condiciones</a> |
-        <a href="./pages/politicaDeCookies.html" class="text-dark text-decoration-underline small">Política de Cookies</a>
+        <a href="./pages/politicaDeCookies.html" class="text-dark text-decoration-underline small">Política de
+          Cookies</a>
       </div>
     </div>
-  </footer> 
+  </footer>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- MODAL SALIR -->
+  <div class="modal fade" id="modalCerrarSesion" tabindex="-1" aria-labelledby="modalCerrarSesionLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-warning-subtle">
+          <h5 class="modal-title" id="modalCerrarSesionLabel">¿Cerrar sesión?</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          ¿Estás segura de que querés salir del sitio?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button id="confirmarSalir" class="btn btn-danger">Sí, salir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("confirmarSalir").addEventListener("click", function () {
+      localStorage.removeItem("token");
+      localStorage.removeItem("tipo");
+      window.location.href = "../index.html"; // O "./index.html" según la ruta
+    });
+  </script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const contenedor = document.getElementById("contenedor-mascotas");
+
+      fetch("http://localhost/Pawtastic-ultima-version/api/get_mascotas.php")
+        .then(res => res.json())
+        .then(data => {
+          if (data.length === 0) {
+            contenedor.innerHTML = "<p class='text-center'>No hay mascotas disponibles 🐶🐱</p>";
+            return;
+          }
+
+          data.forEach(mascota => {
+            const card = document.createElement("div");
+            card.className = "col";
+            card.innerHTML = `
+              <div class="card h-100 shadow-sm overflow-hidden">
+                <img src="../${mascota.imagen}" alt="${mascota.nombre}" class="card-img-top rounded">
+
+
+                <div class="card-body d-flex flex-column justify-content-between text-center">
+                  <h5 class="card-title">
+                    ${mascota.nombre} 🐾 
+                    <i class="bi bi-paw-fill text-warning"></i><i class="bi bi-paw-fill text-warning"></i>
+                  </h5>
+                  <p class="card-text">${mascota.descripcion}</p>
+                  <div class="mb-2">
+                   
+                    <span class="small ms-2 text-muted">${mascota.nombre_ong}</span>
+                  </div>
+                  <a href="../pages/detalle-mascota.html?id=${mascota.id}" class="btn btn-dark w-100 mt-auto">Postularme</a>
+                </div>
+              </div>
+            `;
+            contenedor.appendChild(card);
+          });
+        })
+        .catch(err => {
+          console.error("Error al cargar mascotas:", err);
+          contenedor.innerHTML = "<p class='text-danger text-center'>Error al cargar el catálogo.</p>";
+        });
+    });
+  </script>
+
+
 </body>
 
 </html>
