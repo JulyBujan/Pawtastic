@@ -1,6 +1,10 @@
 <?php
 header("Content-Type: application/json");
-include_once "conexion.php";
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+require_once "conexion.php";
 require __DIR__ . '/vendor/autoload.php';
 use Firebase\JWT\JWT;
 
@@ -12,34 +16,43 @@ if (!isset($data->email) || !isset($data->password)) {
     exit;
 }
 
-$email = $data->email;
+$email = $conn->real_escape_string($data->email);
 $password = $data->password;
 
-// Buscar usuario
-$query = $conn->prepare("SELECT * FROM usuarios WHERE email = ?");
-$query->execute([$email]);
-$user = $query->fetch(PDO::FETCH_ASSOC);
+$sql = "SELECT * FROM usuarios WHERE email = '$email'";
+$result = $conn->query($sql);
 
+if ($result && $result->num_rows > 0) {
+    $user = $result->fetch_assoc();
 
+    if (hash('sha256', $password) === $user['password']) {
 
-if ($user && $password === $user['password']) { // Compara el hash SHA256 del cliente con el de la BD
-    // JWT
-    $secret_key = "CLAVE_SUPER_SECRETA"; // ⚠️ Cambiala por algo propio
-    $payload = [
-        "user_id" => $user['id'],
-        "email" => $user['email'],
-        "tipo" => $user['tipo'],
-        "exp" => time() + 3600
-    ];
-    $jwt = JWT::encode($payload, $secret_key, 'HS256');
+        // Verificar si la cuenta está activa
+        if ($user['estado'] === 'pendiente') {
+            http_response_code(403); // Forbidden
+            echo json_encode(["message" => "Tu cuenta está pendiente de validación. Por favor, revisa tu correo electrónico."]);
+            exit;
+        }
 
-    echo json_encode([
-        "token" => $jwt,
-        "tipo" => $user['tipo'],
-        "message" => "Login exitoso"
-    ]);
-} else {
-    http_response_code(401);
-    echo json_encode(["message" => "Credenciales inválidas"]);
+        $secret_key = $_ENV["JWT_KEY"];
+        $payload = [
+            "user_id" => $user['id'],
+            "email" => $user['email'],
+            "tipo" => $user['tipo'],
+            "exp" => time() + 3600
+        ];
+        $jwt = JWT::encode($payload, $secret_key, 'HS256');
+
+        echo json_encode([
+            "token" => $jwt,
+            "tipo" => $user['tipo'],
+            "message" => "Login exitoso"
+        ]);
+        exit;
+    }
 }
+
+// Si llegó acá, falló el login
+http_response_code(401);
+echo json_encode(["message" => "Credenciales inválidas"]);
 ?>

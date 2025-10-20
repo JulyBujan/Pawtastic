@@ -14,7 +14,7 @@ if (!isset($headers['Authorization'])) {
 }
 
 list(, $jwt) = explode(' ', $headers['Authorization']);
-$key = "CLAVE_SUPER_SECRETA"; // misma clave que login y cargar_mascota
+$key = $_ENV["JWT_KEY"]; // misma clave que login y cargar_mascota
 
 try {
     $decoded = JWT::decode($jwt, new Key($key, 'HS256'));

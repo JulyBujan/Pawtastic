@@ -1,14 +1,14 @@
 <?php
-$host = "localhost";
-$dbname = "dbpawtastic"; // ⚠️ Cambiá el nombre si tu base se llama distinto
-$username = "root"; // o el usuario que uses
-$password = ""; // si tenés contraseña en MySQL, ponela acá
+$host = $_ENV["MYSQL_HOST"];
+$user = $_ENV["MYSQL_USER"];
+$pass = $_ENV["MYSQL_PASSWORD"];
+$db = $_ENV["MYSQL_DB"];
 
-try {
-  $conn = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
-  $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-  echo json_encode(["message" => "Error en la conexión: " . $e->getMessage()]);
-  exit;
+$conn = new mysqli($host, $user, $pass, $db);
+
+// Verificar si hay algún error en la conexión
+if ($conn->connect_error) {
+    http_response_code(500);
+    die("Error de conexión: " . $conn->connect_error);
 }
 ?>

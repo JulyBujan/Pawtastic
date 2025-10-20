@@ -36,8 +36,8 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      const email = document.getElementById("email").value;
-      const plainPassword = document.getElementById("password").value;
+      const email = document.getElementById("email").value.trim();
+      const plainPassword = document.getElementById("password").value.trim();
       const password = await sha256(plainPassword); // Hasheamos la contraseña
 
       try {
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
           showAlert("Inicio de sesión exitoso 🎉", "success");
 
           if (data.tipo === "usuario") {
-            window.location.href = "usuario.html";
+            window.location.href = "catalogo.html";
           } else if (data.tipo === "ong") {
             window.location.href = "perfil-ong.html";
           }

@@ -55,8 +55,8 @@ CREATE TABLE ONGs (
   razon_social VARCHAR(255),
   cuit VARCHAR(13) UNIQUE,
   direccion VARCHAR(255),
-  responsable_id INT,
-  FOREIGN KEY (responsable_id) REFERENCES usuarios(id) ON DELETE SET NULL,
+--  responsable_id INT,
+--  FOREIGN KEY (responsable_id) REFERENCES usuarios(id) ON DELETE SET NULL,
   ultima_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
