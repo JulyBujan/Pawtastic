@@ -23,7 +23,7 @@
         <ul class="navbar-nav">
           <li class="nav-item"><a class="nav-link" href="mis-mascotas.html">Mis Mascotas</a></li>
           <li class="nav-item">
-            <a href="#" class="nav-link text-danger fw-bold" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion">
+            <a href="#" class="nav-link text-danger fw-bold" onclick="confirmarSalida()">
               <i class="bi bi-box-arrow-right me-1"></i>Salir
             </a>
           </li>
@@ -35,10 +35,22 @@
   <!-- CONTENIDO PRINCIPAL -->
   <main class="container py-5">
     <h2 class="mb-4 text-center">Editar Mascota</h2>
-    <form id="formEditarMascota" class="mx-auto" style="max-width: 600px;">
-      <div class="mb-3">
-        <label for="nombre" class="form-label">Nombre</label>
-        <input type="text" class="form-control" id="nombre" required>
+    <form id="formEditarMascota" class="mx-auto shadow p-4 bg-light rounded" style="max-width: 700px;">
+      <input type="hidden" id="id_mascota">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="nombre" class="form-label">Nombre</label>
+          <input type="text" class="form-control" id="nombre" required>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="tipo" class="form-label">Tipo</label>
+          <select id="tipo" class="form-select" required>
+            <option value="">Seleccionar</option>
+            <option value="Perro">Perro</option>
+            <option value="Gato">Gato</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
       </div>
 
       <div class="mb-3">
@@ -46,80 +58,223 @@
         <textarea class="form-control" id="descripcion" rows="3" required></textarea>
       </div>
 
-      <div class="mb-3">
-        <label class="form-label">Nivel de energía</label>
-        <select class="form-select" id="energia">
-          <option value="Alto">Alto</option>
-          <option value="Medio">Medio</option>
-          <option value="Bajo">Bajo</option>
-        </select>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="edad" class="form-label">Edad</label>
+          <input type="text" class="form-control" id="edad" placeholder="Ej: 2 años" required>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="sexo" class="form-label">Sexo</label>
+          <select id="sexo" class="form-select" required>
+            <option value="">Seleccionar</option>
+            <option value="Macho">Macho</option>
+            <option value="Hembra">Hembra</option>
+          </select>
+        </div>
       </div>
 
-      <div class="mb-3">
-        <label class="form-label">Sociabilidad</label>
-        <select class="form-select" id="sociabilidad">
-          <option value="Muy sociable">Muy sociable</option>
-          <option value="Selectivo">Selectivo</option>
-          <option value="Reservado">Reservado</option>
-        </select>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="tamaño" class="form-label">Tamaño</label>
+          <select id="tamaño" class="form-select" required>
+            <option value="">Seleccionar</option>
+            <option value="Pequeño">Pequeño</option>
+            <option value="Mediano">Mediano</option>
+            <option value="Grande">Grande</option>
+          </select>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="foto" class="form-label">Cambiar Foto</label>
+          <input type="file" class="form-control" id="foto">
+          <img id="foto_actual" class="img-fluid mt-2" style="max-height: 100px;"/>
+        </div>
       </div>
 
-      <div class="mb-3">
-        <label class="form-label">Presencia</label>
-        <select class="form-select" id="presencia">
-          <option value="Necesita compañía constante">Necesita compañía constante</option>
-          <option value="Tolera estar solo">Tolera estar solo</option>
-          <option value="Independiente">Independiente</option>
-        </select>
+      <hr class="my-4">
+
+      <!-- SALUD -->
+      <h5 class="text-warning"><i class="bi bi-heart-pulse"></i> Salud</h5>
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label for="vacunado" class="form-label">Vacunado</label>
+          <select id="vacunado" class="form-select" required>
+            <option value="Sí">Sí</option>
+            <option value="No">No</option>
+            <option value="No aplica">No aplica</option>
+          </select>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="esterilizado" class="form-label">Esterilizado</label>
+          <select id="esterilizado" class="form-select" required>
+            <option value="Sí">Sí</option>
+            <option value="No">No</option>
+            <option value="No aplica">No aplica</option>
+          </select>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="chip" class="form-label">Chip</label>
+          <select id="chip" class="form-select" required>
+            <option value="Sí">Sí</option>
+            <option value="No">No</option>
+          </select>
+        </div>
       </div>
 
-      <div class="mb-3">
-        <label class="form-label">Estilo de vida</label>
-        <select class="form-select" id="estilo">
-          <option value="Outdoor">Outdoor</option>
-          <option value="Indoor">Indoor</option>
-          <option value="Flexible">Flexible</option>
-        </select>
+      <hr class="my-4">
+
+      <!-- PERSONALIDAD -->
+      <h5 class="text-warning"><i class="bi bi-stars"></i> Personalidad</h5>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="energia" class="form-label">Nivel de energía</label>
+          <select id="energia" class="form-select" required>
+            <option value="">Seleccionar</option>
+            <option value="Alto">Alto</option>
+            <option value="Medio">Medio</option>
+            <option value="Bajo">Bajo</option>
+          </select>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="sociabilidad" class="form-label">Sociabilidad</label>
+          <select id="sociabilidad" class="form-select" required>
+            <option value="">Seleccionar</option>
+            <option value="Muy sociable">Muy sociable</option>
+            <option value="Selectivo">Selectivo</option>
+            <option value="Reservado">Reservado</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="presencia" class="form-label">Presencia</label>
+          <select id="presencia" class="form-select" required>
+            <option value="">Seleccionar</option>
+            <option value="Necesita compañía constante">Necesita compañía constante</option>
+            <option value="Tolera estar solo">Tolera estar solo</option>
+            <option value="Independiente">Independiente</option>
+          </select>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="estilo" class="form-label">Estilo de vida</label>
+          <select id="estilo" class="form-select" required>
+            <option value="">Seleccionar</option>
+            <option value="Indoor">Indoor</option>
+            <option value="Outdoor">Outdoor</option>
+            <option value="Flexible">Flexible</option>
+          </select>
+        </div>
       </div>
 
-      <div class="d-grid">
+      <div class="d-grid mt-4">
         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
       </div>
     </form>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Simulación: obtener ID desde la URL
-    const params = new URLSearchParams(window.location.search);
-    const idMascota = params.get('id');
+    document.addEventListener('DOMContentLoaded', async () => {
+      const params = new URLSearchParams(window.location.search);
+      const idMascota = params.get('id');
+      document.getElementById('id_mascota').value = idMascota;
 
-    // Simular datos existentes
-    const datosSimulados = {
-      nombre: "Amorina",
-      descripcion: "Una perrita dulce y juguetona",
-      energia: "Alto",
-      sociabilidad: "Muy sociable",
-      presencia: "Necesita compañía constante",
-      estilo: "Outdoor"
-    };
+      if (!idMascota) {
+        alert('ID de mascota no encontrado.');
+        window.location.href = 'mis-mascotas.html';
+        return;
+      }
 
-    // Precargar datos
-    window.onload = () => {
-      document.getElementById('nombre').value = datosSimulados.nombre;
-      document.getElementById('descripcion').value = datosSimulados.descripcion;
-      document.getElementById('energia').value = datosSimulados.energia;
-      document.getElementById('sociabilidad').value = datosSimulados.sociabilidad;
-      document.getElementById('presencia').value = datosSimulados.presencia;
-      document.getElementById('estilo').value = datosSimulados.estilo;
-    };
+      try {
+        const response = await fetch(`../api/get_mascota.php?id=${idMascota}`);
+        if (!response.ok) throw new Error('No se pudo cargar la información de la mascota.');
+        
+        const mascota = await response.json();
 
-    // Captura de envío (todavía no conecta con backend)
-    document.getElementById('formEditarMascota').addEventListener('submit', function (e) {
-      e.preventDefault();
-      alert("¡Cambios guardados exitosamente! (Simulado)");
+        document.getElementById('nombre').value = mascota.nombre;
+        document.getElementById('tipo').value = mascota.tipo;
+        document.getElementById('edad').value = mascota.edad;
+        document.getElementById('sexo').value = mascota.sexo;
+        document.getElementById('tamaño').value = mascota.tamaño;
+        document.getElementById('descripcion').value = mascota.descripcion;
+        document.getElementById('vacunado').value = mascota.vacunado;
+        document.getElementById('esterilizado').value = mascota.esterilizado;
+        document.getElementById('chip').value = mascota.chip;
+        document.getElementById('energia').value = mascota.energia;
+        document.getElementById('sociabilidad').value = mascota.sociabilidad;
+        document.getElementById('presencia').value = mascota.presencia;
+        document.getElementById('estilo').value = mascota.estilo;
+        if(mascota.imagen) {
+            document.getElementById('foto_actual').src = `../${mascota.imagen}`;
+        }
+
+      } catch (error) {
+        console.error('Error:', error);
+        alert(error.message);
+      }
     });
+
+    document.getElementById('formEditarMascota').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData();
+      formData.append('id', document.getElementById('id_mascota').value);
+      formData.append('nombre', document.getElementById('nombre').value);
+      formData.append('tipo', document.getElementById('tipo').value);
+      formData.append('edad', document.getElementById('edad').value);
+      formData.append('sexo', document.getElementById('sexo').value);
+      formData.append('tamaño', document.getElementById('tamaño').value);
+      formData.append('descripcion', document.getElementById('descripcion').value);
+      formData.append('vacunado', document.getElementById('vacunado').value);
+      formData.append('esterilizado', document.getElementById('esterilizado').value);
+      formData.append('chip', document.getElementById('chip').value);
+      formData.append('energia', document.getElementById('energia').value);
+      formData.append('sociabilidad', document.getElementById('sociabilidad').value);
+      formData.append('presencia', document.getElementById('presencia').value);
+      formData.append('estilo', document.getElementById('estilo').value);
+
+      const fotoInput = document.getElementById('foto');
+      if (fotoInput.files[0]) {
+        formData.append('imagen', fotoInput.files[0]);
+      }
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert("Error: No estás autenticado.");
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        const response = await fetch('../api/editar_mascota.php', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          alert(result.message);
+          window.location.href = 'mis-mascotas.html';
+        } else {
+          throw new Error(result.message || 'Error al editar la mascota');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert(`Error: ${error.message}`);
+      }
+    });
+
+    function confirmarSalida() {
+      if (confirm("¿Estás segura que querés salir?")) {
+        localStorage.removeItem('token');
+        window.location.href = "../index.html";
+      }
+    }
   </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

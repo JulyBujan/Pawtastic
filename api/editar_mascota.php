@@ -28,7 +28,7 @@ try {
 
 // Verificar si llegaron los campos obligatorios
 if (
-    empty($_POST['nombre']) || empty($_POST['tipo']) || empty($_POST['edad']) ||
+    empty($_POST['id']) || empty($_POST['nombre']) || empty($_POST['tipo']) || empty($_POST['edad']) ||
     empty($_POST['sexo']) || empty($_POST['tamaño']) || empty($_POST['descripcion']) ||
     empty($_POST['vacunado']) || empty($_POST['esterilizado']) || empty($_POST['chip']) ||
     empty($_POST['energia']) || empty($_POST['sociabilidad']) || empty($_POST['presencia']) ||
@@ -39,6 +39,7 @@ if (
     exit;
 }
 
+$id = $_POST['id'];
 $nombre = $_POST['nombre'];
 $tipo = $_POST['tipo'];
 $edad = $_POST['edad'];
@@ -79,14 +80,31 @@ try {
         exit;
     }
 
-    // Insertar mascota con el ID real de la ONG
-    $query = $conn->prepare("
-        INSERT INTO mascotas (nombre, tipo, edad, sexo, tamaño, descripcion, imagen, id_ong, vacunado, esterilizado, chip, energia, sociabilidad, presencia, estilo)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ");
-    $query->execute([$nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $imagen, $idOng, $vacunado, $esterilizado, $chip, $energia, $sociabilidad, $presencia, $estilo]);
+    // Verificar que la mascota pertenezca a la ONG
+    $stmt = $conn->prepare("SELECT id FROM mascotas WHERE id = ? AND id_ong = ?");
+    $stmt->execute([$id, $idOng]);
+    if ($stmt->rowCount() == 0) {
+        http_response_code(403);
+        echo json_encode(["message" => "No tienes permiso para editar esta mascota"]);
+        exit;
+    }
 
-    echo json_encode(["message" => "Mascota cargada con éxito 💚"]);
+    // Actualizar mascota
+    $sql = "UPDATE mascotas SET nombre = ?, tipo = ?, edad = ?, sexo = ?, tamaño = ?, descripcion = ?, vacunado = ?, esterilizado = ?, chip = ?, energia = ?, sociabilidad = ?, presencia = ?, estilo = ?";
+    $params = [$nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $vacunado, $esterilizado, $chip, $energia, $sociabilidad, $presencia, $estilo];
+
+    if ($imagen) {
+        $sql .= ", imagen = ?";
+        $params[] = $imagen;
+    }
+
+    $sql .= " WHERE id = ?";
+    $params[] = $id;
+
+    $query = $conn->prepare($sql);
+    $query->execute($params);
+
+    echo json_encode(["message" => "Mascota actualizada con éxito 💚"]);
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(["message" => "Error en el servidor: " . $e->getMessage()]);

@@ -33,9 +33,20 @@
   <main class="container py-5">
     <h2 class="text-center mb-4 text-warning"><i class="bi bi-plus-circle"></i> Cargar Nueva Mascota</h2>
     <form id="formMascota" class="shadow p-4 bg-light rounded">
-      <div class="mb-3">
-        <label for="nombre" class="form-label">Nombre</label>
-        <input type="text" class="form-control" id="nombre" required>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="nombre" class="form-label">Nombre</label>
+          <input type="text" class="form-control" id="nombre" required>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="tipo" class="form-label">Tipo</label>
+          <select id="tipo" class="form-select" required>
+            <option value="">Seleccionar</option>
+            <option value="Perro">Perro</option>
+            <option value="Gato">Gato</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
       </div>
 
       <div class="mb-3">
@@ -43,54 +54,113 @@
         <textarea class="form-control" id="descripcion" rows="3" required></textarea>
       </div>
 
-      <div class="mb-3">
-        <label for="foto" class="form-label">Foto</label>
-        <input type="file" class="form-control" id="foto">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="edad" class="form-label">Edad</label>
+          <input type="text" class="form-control" id="edad" placeholder="Ej: 2 años" required>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="sexo" class="form-label">Sexo</label>
+          <select id="sexo" class="form-select" required>
+            <option value="">Seleccionar</option>
+            <option value="Macho">Macho</option>
+            <option value="Hembra">Hembra</option>
+          </select>
+        </div>
       </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="tamaño" class="form-label">Tamaño</label>
+          <select id="tamaño" class="form-select" required>
+            <option value="">Seleccionar</option>
+            <option value="Pequeño">Pequeño</option>
+            <option value="Mediano">Mediano</option>
+            <option value="Grande">Grande</option>
+          </select>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="foto" class="form-label">Foto</label>
+          <input type="file" class="form-control" id="foto">
+        </div>
+      </div>
+
+      <hr class="my-4">
+
+      <!-- SALUD -->
+      <h5 class="text-warning"><i class="bi bi-heart-pulse"></i> Salud</h5>
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label for="vacunado" class="form-label">Vacunado</label>
+          <select id="vacunado" class="form-select" required>
+            <option value="Sí">Sí</option>
+            <option value="No">No</option>
+            <option value="No aplica">No aplica</option>
+          </select>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="esterilizado" class="form-label">Esterilizado</label>
+          <select id="esterilizado" class="form-select" required>
+            <option value="Sí">Sí</option>
+            <option value="No">No</option>
+            <option value="No aplica">No aplica</option>
+          </select>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="chip" class="form-label">Chip</label>
+          <select id="chip" class="form-select" required>
+            <option value="Sí">Sí</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+      </div>
+
 
       <hr class="my-4">
 
       <!-- PERSONALIDAD -->
       <h5 class="text-warning"><i class="bi bi-stars"></i> Personalidad</h5>
-      <div class="mb-3">
-        <label for="energia" class="form-label">Nivel de energía</label>
-        <select id="energia" class="form-select" required>
-          <option value="">Seleccionar</option>
-          <option value="Alto">Alto</option>
-          <option value="Medio">Medio</option>
-          <option value="Bajo">Bajo</option>
-        </select>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="energia" class="form-label">Nivel de energía</label>
+          <select id="energia" class="form-select" required>
+            <option value="">Seleccionar</option>
+            <option value="Alto">Alto</option>
+            <option value="Medio">Medio</option>
+            <option value="Bajo">Bajo</option>
+          </select>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="sociabilidad" class="form-label">Sociabilidad</label>
+          <select id="sociabilidad" class="form-select" required>
+            <option value="">Seleccionar</option>
+            <option value="Muy sociable">Muy sociable</option>
+            <option value="Selectivo">Selectivo</option>
+            <option value="Reservado">Reservado</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="presencia" class="form-label">Presencia</label>
+          <select id="presencia" class="form-select" required>
+            <option value="">Seleccionar</option>
+            <option value="Necesita compañía constante">Necesita compañía constante</option>
+            <option value="Tolera estar solo">Tolera estar solo</option>
+            <option value="Independiente">Independiente</option>
+          </select>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="estilo" class="form-label">Estilo de vida</label>
+          <select id="estilo" class="form-select" required>
+            <option value="">Seleccionar</option>
+            <option value="Indoor">Indoor</option>
+            <option value="Outdoor">Outdoor</option>
+            <option value="Flexible">Flexible</option>
+          </select>
+        </div>
       </div>
 
-      <div class="mb-3">
-        <label for="sociabilidad" class="form-label">Sociabilidad</label>
-        <select id="sociabilidad" class="form-select" required>
-          <option value="">Seleccionar</option>
-          <option value="Muy sociable">Muy sociable</option>
-          <option value="Sociable pero selectivo">Sociable pero selectivo</option>
-          <option value="Reservado">Reservado</option>
-        </select>
-      </div>
-
-      <div class="mb-3">
-        <label for="presencia" class="form-label">Presencia</label>
-        <select id="presencia" class="form-select" required>
-          <option value="">Seleccionar</option>
-          <option value="Necesita compañía constante">Necesita compañía constante</option>
-          <option value="Tolera estar solo">Tolera estar solo</option>
-          <option value="Independiente">Independiente</option>
-        </select>
-      </div>
-
-      <div class="mb-3">
-        <label for="estilo" class="form-label">Estilo de vida</label>
-        <select id="estilo" class="form-select" required>
-          <option value="">Seleccionar</option>
-          <option value="Indoor">Indoor</option>
-          <option value="Outdoor">Outdoor</option>
-          <option value="Flexible">Flexible</option>
-        </select>
-      </div>
 
       <div class="d-grid mt-4">
         <button type="submit" class="btn btn-dark">Guardar Mascota</button>
@@ -98,16 +168,63 @@
     </form>
   </main>
 
-  <!-- Script para simular envío -->
   <script>
-    document.getElementById("formMascota").addEventListener("submit", function (e) {
+    document.getElementById("formMascota").addEventListener("submit", async function (e) {
       e.preventDefault();
-      alert("¡Mascota guardada! (Simulado)");
-      // Aquí más adelante: fetch() para enviar al backend
+
+      const formData = new FormData();
+      formData.append('nombre', document.getElementById('nombre').value);
+      formData.append('tipo', document.getElementById('tipo').value);
+      formData.append('edad', document.getElementById('edad').value);
+      formData.append('sexo', document.getElementById('sexo').value);
+      formData.append('tamaño', document.getElementById('tamaño').value);
+      formData.append('descripcion', document.getElementById('descripcion').value);
+      formData.append('vacunado', document.getElementById('vacunado').value);
+      formData.append('esterilizado', document.getElementById('esterilizado').value);
+      formData.append('chip', document.getElementById('chip').value);
+      formData.append('energia', document.getElementById('energia').value);
+      formData.append('sociabilidad', document.getElementById('sociabilidad').value);
+      formData.append('presencia', document.getElementById('presencia').value);
+      formData.append('estilo', document.getElementById('estilo').value);
+
+      const fotoInput = document.getElementById('foto');
+      if (fotoInput.files[0]) {
+        formData.append('imagen', fotoInput.files[0]);
+      }
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert("Error: No estás autenticado.");
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        const response = await fetch('../api/cargar_mascota.php', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          alert(result.message);
+          window.location.href = 'mis-mascotas.html';
+        } else {
+          throw new Error(result.message || 'Error al cargar la mascota');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert(`Error: ${error.message}`);
+      }
     });
 
     function confirmarSalida() {
       if (confirm("¿Estás segura que querés salir?")) {
+        localStorage.removeItem('token');
         window.location.href = "../index.html";
       }
     }
