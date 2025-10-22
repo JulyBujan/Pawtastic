@@ -35,8 +35,8 @@ $token = bin2hex(random_bytes(32));
 // 3. Insertar usuario como 'pendiente'
 try {
     $query = $conn->prepare(
-        "INSERT INTO usuarios (nombre, apellido, email, password, tipo, estado, token_validacion) 
-         VALUES (?, ?, ?, ?, 'usuario', 'pendiente', ?)"
+        "INSERT INTO usuarios (nombre, apellido, email, password, tipo, estado, tokenv) 
+         VALUES (?, ?, ?, ?, 'usuario', 1, ?)"
     );
     $query->execute([$nombre, $apellido, $email, $password_hash, $token]);
 } catch (PDOException $e) {
