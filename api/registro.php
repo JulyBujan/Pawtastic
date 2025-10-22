@@ -45,17 +45,16 @@ try {
     exit;
 }
 
-// 4. Enviar correo de validación
+/*/ 4. Enviar correo de validación
 $mail = new PHPMailer(true);
 
 try {
     // Configuración del servidor de correo (usando Gmail como ejemplo)
-    // ⚠️ Para producción, usa variables de entorno para estos datos sensibles.
     $mail->isSMTP();
     $mail->Host       = 'smtp.gmail.com';
     $mail->SMTPAuth   = true;
-    $mail->Username   = 'tu_correo@gmail.com'; // 🚨 TU CORREO DE GMAIL
-    $mail->Password   = 'tu_contraseña_de_aplicacion'; // 🚨 TU CONTRASEÑA DE APLICACIÓN DE GMAIL
+    $mail->Username   = 'tu_correo@gmail.com'; // TU CORREO DE GMAIL
+    $mail->Password   = $_ENV["MAIL_KEY"]; // TU CONTRASEÑA DE APLICACIÓN DE GMAIL
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
     $mail->Port       = 465;
 
@@ -87,5 +86,5 @@ try {
     http_response_code(500);
     // En un entorno real, podrías querer eliminar el usuario recién creado o marcarlo para reintentar el envío.
     echo json_encode(["message" => "El usuario fue registrado, pero hubo un error al enviar el correo de validación. Mailer Error: {$mail->ErrorInfo}"]);
-}
+}*/
 ?>
