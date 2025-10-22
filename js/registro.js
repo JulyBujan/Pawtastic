@@ -46,10 +46,10 @@ document.addEventListener('DOMContentLoaded', function () {
       const password = await sha256(plainPassword);
 
       try {
-        const res = await fetch('../api/registro.php', {
+        const res = await fetch('/api/registro.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre, apellido, email, password }),
+          body: JSON.stringify({ nombre, apellido, email, password })
         });
 
         const data = await res.json();

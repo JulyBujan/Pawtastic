@@ -25,7 +25,7 @@ $result = $conn->query($sql);
 if ($result && $result->num_rows > 0) {
     $user = $result->fetch_assoc();
 
-    if (hash('sha256', $password) === $user['password']) {
+    if ($password === $user['password']) {
 
         // Verificar si la cuenta está activa
         if ($user['estado'] === 'pendiente') {
