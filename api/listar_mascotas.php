@@ -26,7 +26,7 @@ try {
 }
 
 // Obtener el id_ong según el email
-$stmt = $conn->prepare("SELECT id FROM usuarios WHERE email = ?");
+$stmt = $conn->prepare("SELECT ong_id FROM usuarios WHERE email = ?");
 $stmt->execute([$email]);
 $idOng = $stmt->fetchColumn();
 

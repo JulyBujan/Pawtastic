@@ -45,65 +45,10 @@
       </a>
     </div>
 
-    <div id="contenedorMascotas" class="row g-4 justify-content-center">
-      <p class="text-center text-muted">Cargando mascotas...</p>
+    <div id="contenedorMascotas" class="row row-cols-1 row-cols-md-3 g-4">
+      <!-- Las mascotas se cargarán aquí dinámicamente -->
     </div>
   </main>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", async () => {
-      const token = localStorage.getItem("token");
-      const contenedor = document.getElementById("contenedorMascotas");
-
-      if (!token) {
-        contenedor.innerHTML = "<p class='text-danger'>⚠️ Debes iniciar sesión.</p>";
-        return;
-      }
-
-      try {
-        const res = await fetch("../api/listar_mascotas.php", {
-          headers: { "Authorization": "Bearer " + token }
-        });
-        const data = await res.json();
-
-        if (data.mascotas && data.mascotas.length > 0) {
-          contenedor.innerHTML = "";
-          data.mascotas.forEach(m => {
-            contenedor.innerHTML += `
-              <div class="col-md-4">
-                <div class="card shadow-sm h-100" style="max-width: 320px; margin: 0 auto;">
-                  <div style="height: 200px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
-                    <img src="../img/mascotas/${m.imagen}" alt="${m.nombre}" class="rounded" 
-                         style="max-height: 100%; max-width: 100%; object-fit: contain;">
-                  </div>
-                  <div class="card-body bg-light-subtle">
-                    <h5 class="card-title">${m.nombre}</h5>
-                    <p class="text-muted">${m.descripcion}</p>
-                    <ul class="list-unstyled small">
-                      <li><strong>Tipo:</strong> ${m.tipo}</li>
-                      <li><strong>Edad:</strong> ${m.edad}</li>
-                      <li><strong>Sexo:</strong> ${m.sexo}</li>
-                      <li><strong>Tamaño:</strong> ${m.tamaño}</li>
-                    </ul>
-                    <div class="d-flex justify-content-between mt-3">
-                      <button class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil"></i> Editar</button>
-                      <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> Eliminar</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            `;
-          });
-        } else {
-          contenedor.innerHTML = "<p class='text-center text-muted'>No hay mascotas cargadas aún.</p>";
-        }
-      } catch (error) {
-        console.error(error);
-        contenedor.innerHTML = "<p class='text-danger'>Error al cargar mascotas.</p>";
-      }
-    });
-  </script>
-
 
   <!-- MODAL SALIR -->
   <div class="modal fade" id="modalCerrarSesion" tabindex="-1" aria-labelledby="modalCerrarSesionLabel"
@@ -127,56 +72,11 @@
 
   <!-- JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/mis-mascotas.js"></script>
   <script>
     document.getElementById("confirmarSalir").addEventListener("click", function () {
+      localStorage.removeItem('token');
       window.location.href = "../index.html";
-    });
-  </script>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("Debes iniciar sesión");
-        window.location.href = "login.html";
-        return;
-      }
-
-      try {
-        const res = await fetch("../api/listar_mascotas.php", {
-          headers: { "Authorization": "Bearer " + token }
-        });
-        const data = await res.json();
-
-        const contenedor = document.querySelector(".row.g-4");
-        contenedor.innerHTML = ""; // limpiar
-
-        data.forEach(m => {
-          const card = `
-        <div class="col-md-4">
-          <div class="card shadow-sm h-100" style="max-width: 320px; margin: 0 auto;">
-            <img src="../${m.imagen}" class="card-img-top" alt="${m.nombre}">
-            <div class="card-body bg-light-subtle">
-              <h5 class="card-title">${m.nombre}</h5>
-              <p class="text-muted">${m.descripcion}</p>
-              <p><strong>Tipo:</strong> ${m.tipo}</p>
-              <p><strong>Edad:</strong> ${m.edad}</p>
-              <p><strong>Sexo:</strong> ${m.sexo}</p>
-              <p><strong>Tamaño:</strong> ${m.tamaño}</p>
-              <div class="d-flex justify-content-between">
-                <button class="btn btn-outline-primary btn-sm">Editar</button>
-                <button class="btn btn-outline-danger btn-sm">Eliminar</button>
-              </div>
-            </div>
-          </div>
-        </div>`;
-          contenedor.innerHTML += card;
-        });
-
-      } catch (error) {
-        console.error(error);
-        alert("Error al cargar las mascotas");
-      }
     });
   </script>
 
