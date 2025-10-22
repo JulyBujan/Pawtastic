@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const mascotasGrid = document.querySelector('.row-cols-1.row-cols-md-3');
-    const filtroForm = document.querySelector('.mb-4.bg-white.p-4.rounded.shadow-sm form');
+    const filtroForm = document.getElementById('filtro-form');
 
     const fetchMascotas = async (params = '') => {
         try {
