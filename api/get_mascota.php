@@ -2,7 +2,6 @@
 header("Content-Type: application/json");
 include_once "conexion.php";
 
-// Verificar si se recibió el ID de la mascota
 if (!isset($_GET['id'])) {
     http_response_code(400);
     echo json_encode(["message" => "Falta el ID de la mascota"]);
@@ -11,10 +10,19 @@ if (!isset($_GET['id'])) {
 
 $idMascota = $_GET['id'];
 
-try {
-    $query = $conn->prepare("SELECT * FROM mascotas WHERE id = ?");
-    $query->execute([$idMascota]);
-    $mascota = $query->fetch(PDO::FETCH_ASSOC);
+// Use mysqli prepared statements
+$stmt = $conn->prepare("SELECT * FROM mascotas WHERE id = ?");
+if ($stmt === false) {
+    http_response_code(500);
+    echo json_encode(["message" => "Error al preparar la consulta: " . $conn->error]);
+    exit;
+}
+
+$stmt->bind_param("i", $idMascota);
+
+if ($stmt->execute()) {
+    $result = $stmt->get_result();
+    $mascota = $result->fetch_assoc();
 
     if ($mascota) {
         echo json_encode($mascota);
@@ -22,8 +30,11 @@ try {
         http_response_code(404);
         echo json_encode(["message" => "Mascota no encontrada"]);
     }
-} catch (Exception $e) {
+} else {
     http_response_code(500);
-    echo json_encode(["message" => "Error en el servidor: " . $e->getMessage()]);
+    echo json_encode(["message" => "Error al ejecutar la consulta: " . $stmt->error]);
 }
+
+$stmt->close();
+$conn->close();
 ?>
