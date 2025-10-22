@@ -53,46 +53,106 @@
   <!-- CONTENIDO PRINCIPAL -->
   <main class="container py-5">
     <div class="card mx-auto shadow-lg" style="max-width: 600px;">
-      <div class="card-body text-center">
-        <!-- FOTO PERFIL -->
-        <img src="../img/fotoJW.jpg" alt="Foto de perfil" class="rounded-circle mb-3"
-          style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #f7931e;">
+      <div class="card-body">
+        <form id="perfil-form">
+          <!-- FOTO PERFIL -->
+          <div class="text-center mb-4">
+            <img src="../img/fotoJW.jpg" alt="Foto de perfil" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #f7931e;">
+          </div>
 
-        <h3 class="card-title">Julieta Wunsche</h3>
-        <p class="text-muted">julieta@mail.com</p>
+          <!-- INFO DEL PERFIL -->
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="nombre" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="nombre" name="nombre">
+            </div>
+            <div class="col-md-6">
+              <label for="apellido" class="form-label">Apellido</label>
+              <input type="text" class="form-control" id="apellido" name="apellido">
+            </div>
+            <div class="col-12">
+              <label for="telefono" class="form-label">Teléfono</label>
+              <input type="text" class="form-control" id="telefono" name="telefono">
+            </div>
+            <div class="col-12">
+              <label for="direccion" class="form-label">Dirección</label>
+              <input type="text" class="form-control" id="direccion" name="direccion">
+            </div>
+            <div class="col-md-6">
+              <label for="fecha_nacimiento" class="form-label">Nacimiento</label>
+              <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento">
+            </div>
+            <div class="col-md-6">
+              <label for="sexo" class="form-label">Sexo</label>
+              <input type="text" class="form-control" id="sexo" name="sexo">
+            </div>
+            <div class="col-md-6">
+              <label for="tipo_casa" class="form-label">Tipo de casa</label>
+              <input type="text" class="form-control" id="tipo_casa" name="tipo_casa">
+            </div>
+            <div class="col-md-6">
+              <label for="tipo_familia" class="form-label">Tipo de familia</label>
+              <input type="text" class="form-control" id="tipo_familia" name="tipo_familia">
+            </div>
+            <div class="col-12">
+              <label for="otras_mascotas" class="form-label">Otras mascotas</label>
+              <textarea class="form-control" id="otras_mascotas" name="otras_mascotas" rows="2"></textarea>
+            </div>
+            <div class="col-12">
+              <label for="experiencia" class="form-label">Experiencia</label>
+              <textarea class="form-control" id="experiencia" name="experiencia" rows="2"></textarea>
+            </div>
+          </div>
 
-        <!-- INFO DEL PERFIL -->
-        <div class="text-start mt-4">
-          <p><strong>Dirección:</strong> Estrada 2876</p>
-          <p><strong>Nacimiento:</strong> 12/12/1990</p>
-          <p><strong>Sexo:</strong> Femenino</p>
-          <p><strong>Última actualización:</strong> 29/05/2025</p>
-          <p><strong>Tipo de casa:</strong> Departamento</p>
-          <p><strong>Tipo de familia:</strong> Pareja sin hijos</p>
-          <p><strong>Otras mascotas:</strong> 3 gatos, 3 perros</p>
-          <p><strong>Experiencia:</strong> Voluntaria en refugio por 5 años</p>
-        </div>
+          <!-- PERSONALIDAD -->
+          <hr class="my-4"><hr>
+          <h5 class="text-center text-warning mb-3"><i class="bi bi-stars"></i> Personalidad</h5>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="energia" class="form-label">Nivel de energía</label>
+              <select id="energia" name="energia" class="form-select">
+                <option value="0" disabled>Seleccionar...</option>
+                <option value="1">Bajo</option>
+                <option value="2">Medio</option>
+                <option value="3">Alto</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="sociabilidad" class="form-label">Sociabilidad</label>
+              <select id="sociabilidad" name="sociabilidad" class="form-select">
+                <option value="0" disabled>Seleccionar...</option>
+                <option value="1">Bajo</option>
+                <option value="2">Medio</option>
+                <option value="3">Alto</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="presencia" class="form-label">Presencia</label>
+              <select id="presencia" name="presencia" class="form-select">
+                <option value="0" disabled>Seleccionar...</option>
+                <option value="1">Bajo</option>
+                <option value="2">Medio</option>
+                <option value="3">Alto</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="estilov" class="form-label">Estilo de vida</label>
+              <select id="estilov" name="estilov" class="form-select">
+                <option value="0" disabled>Seleccionar...</option>
+                <option value="1">Bajo</option>
+                <option value="2">Medio</option>
+                <option value="3">Alto</option>
+              </select>
+            </div>
+          </div>
 
-        <!-- PERSONALIDAD -->
-        <hr><hr>
-        <h5 class="text-center text-warning"><i class="bi bi-stars"></i> Personalidad</h5>
-        <ul class="list-group list-group-flush text-start">
-          <li class="list-group-item"><strong>Nivel de energía:</strong> Alto</li>
-          <li class="list-group-item"><strong>Sociabilidad:</strong> Muy sociable</li>
-          <li class="list-group-item"><strong>Presencia:</strong> Disponible tiempo completo</li>
-          <li class="list-group-item"><strong>Estilo de vida:</strong> Outdoor</li>
-        </ul>
-
-        
-        <!-- BOTÓN EDITAR -->
-        <div class="mt-4">
-          <a href="../pages/error404.html" class="btn btn-dark w-100 mb-3">Editar</a>
-        
-          <!-- NUEVOS BOTONES DE NAVEGACIÓN -->
-          <a href="catalogo.html" class="btn btn-outline-dark w-100 mb-2">Ver mascotas en adopción</a>
-          <a href="postulaciones.html" class="btn btn-outline-dark w-100">Mis postulaciones</a>
-        </div>
-
+          <!-- BOTONES -->
+          <div class="mt-4">
+            <button type="submit" class="btn btn-dark w-100 mb-3">Actualizar</button>
+            <a href="catalogo.html" class="btn btn-outline-dark w-100 mb-2">Ver mascotas en adopción</a>
+            <a href="postulaciones.html" class="btn btn-outline-dark w-100">Mis postulaciones</a>
+          </div>
+        </form>
       </div>
     </div>
   </main>
