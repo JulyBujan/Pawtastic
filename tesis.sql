@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Oct 21, 2025 at 02:31 AM
+-- Generation Time: Oct 22, 2025 at 08:02 PM
 -- Server version: 9.4.0
 -- PHP Version: 8.3.26
 
@@ -45,7 +45,7 @@ CREATE TABLE `mascotas` (
   `id_ong` int NOT NULL,
   `nombre` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tipo` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `edad` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `edad` int DEFAULT NULL,
   `sexo` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tamaño` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `vacunado` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -53,29 +53,31 @@ CREATE TABLE `mascotas` (
   `chip` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `descripcion` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `imagen` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `energia` enum('Alto','Medio','Bajo') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `sociabilidad` enum('Muy sociable','Selectivo','Reservado') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `presencia` enum('Necesita compañía constante','Tolera estar solo','Independiente') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `estilo` enum('Outdoor','Indoor','Flexible') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `fecha_publicacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `energia` tinyint DEFAULT NULL,
+  `sociabilidad` tinyint DEFAULT NULL,
+  `presencia` tinyint DEFAULT NULL,
+  `estilov` tinyint DEFAULT NULL,
+  `estado` tinyint NOT NULL DEFAULT '1',
+  `date_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date_publicacion` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `mascotas`
 --
 
-INSERT INTO `mascotas` (`id`, `id_ong`, `nombre`, `tipo`, `edad`, `sexo`, `tamaño`, `vacunado`, `esterilizado`, `chip`, `descripcion`, `imagen`, `energia`, `sociabilidad`, `presencia`, `estilo`, `fecha_publicacion`) VALUES
-(1, 1, 'Snoopy', 'Perro', '5 años', 'Macho', 'Mediano', 'Sí', 'Sí', 'No', 'Beagle famoso por ser el perro de Charlie Brown.', NULL, 'Medio', 'Muy sociable', 'Independiente', 'Flexible', '2025-10-20 02:17:34'),
-(2, 1, 'Scooby-Doo', 'Perro', '7 años', 'Macho', 'Grande', 'Sí', 'No', 'No', 'Gran Danés miedoso y glotón, resuelve misterios con sus amigos.', NULL, 'Bajo', 'Muy sociable', 'Necesita compañía constante', 'Indoor', '2025-10-20 02:17:34'),
-(3, 1, 'Pluto', 'Perro', '8 años', 'Macho', 'Mediano', 'Sí', 'Sí', 'No', 'El leal perro de Mickey Mouse, es juguetón y curioso.', NULL, 'Alto', 'Muy sociable', 'Tolera estar solo', 'Flexible', '2025-10-20 02:17:34'),
-(4, 2, 'Beethoven', 'Perro', '4 años', 'Macho', 'Grande', 'Sí', 'No', 'Sí', 'Un San Bernardo gigante y travieso pero de buen corazón.', NULL, 'Medio', 'Selectivo', 'Necesita compañía constante', 'Flexible', '2025-10-20 02:17:34'),
-(5, 2, 'Toto', 'Perro', '3 años', 'Macho', 'Pequeño', 'Sí', 'Sí', 'No', 'Pequeño Cairn terrier que acompañó a Dorothy en la tierra de Oz.', NULL, 'Alto', 'Reservado', 'Tolera estar solo', 'Indoor', '2025-10-20 02:17:34'),
-(6, 2, 'Balto', 'Perro', '6 años', 'Macho', 'Grande', 'Sí', 'Sí', 'Sí', 'Valiente perro de trineo que lideró una expedición para salvar a su pueblo en Alaska.', NULL, 'Alto', 'Muy sociable', 'Independiente', 'Outdoor', '2025-10-20 02:17:34'),
-(7, 3, 'Lassie', 'Perro', '5 años', 'Hembra', 'Grande', 'Sí', 'Sí', 'No', 'Una Collie hermosa e inteligente, famosa por rescatar gente.', NULL, 'Medio', 'Muy sociable', 'Tolera estar solo', 'Flexible', '2025-10-20 02:17:34'),
-(8, 3, 'Marley', 'Perro', '2 años', 'Macho', 'Grande', 'Sí', 'No', 'Sí', 'Un Labrador retriever adorable pero muy destructivo, protagonista de \"Marley y yo\".', NULL, 'Alto', 'Muy sociable', 'Necesita compañía constante', 'Outdoor', '2025-10-20 02:17:34'),
-(9, 3, 'Milú', 'Perro', '4 años', 'Macho', 'Pequeño', 'Sí', 'Sí', 'No', 'El inseparable Fox terrier blanco de Tintín, aventurero y leal.', NULL, 'Medio', 'Selectivo', 'Independiente', 'Flexible', '2025-10-20 02:17:34'),
-(10, 1, 'Golfo', 'Perro', '6 años', 'Macho', 'Mediano', 'No', 'No', 'No', 'Perro callejero, encantador y astuto de \"La Dama y el Vagabundo\".', NULL, 'Medio', 'Muy sociable', 'Independiente', 'Outdoor', '2025-10-20 02:17:34'),
-(11, 2, 'Benji', 'Perro', '5 años', 'Macho', 'Pequeño', 'Sí', 'Sí', 'No', 'Un perro mestizo muy inteligente y heroico que siempre está en el lugar correcto para ayudar.', NULL, 'Medio', 'Selectivo', 'Independiente', 'Flexible', '2025-10-20 02:17:34');
+INSERT INTO `mascotas` (`id`, `id_ong`, `nombre`, `tipo`, `edad`, `sexo`, `tamaño`, `vacunado`, `esterilizado`, `chip`, `descripcion`, `imagen`, `energia`, `sociabilidad`, `presencia`, `estilov`, `estado`, `date_update`, `date_publicacion`) VALUES
+(1, 1, 'Snoopy', 'perro', 5, 'Macho', 'Mediano', 'Sí', 'Sí', 'No', 'Beagle famoso por ser el perro de Charlie Brown.', NULL, 2, 3, 1, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(2, 1, 'Scooby-Doo', 'perro', 7, 'Macho', 'Grande', 'Sí', 'No', 'No', 'Gran Danés miedoso y glotón, resuelve misterios con sus amigos.', NULL, 1, 3, 3, 1, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(3, 1, 'Pluto', 'perro', 8, 'Macho', 'Mediano', 'Sí', 'Sí', 'No', 'El leal perro de Mickey Mouse, es juguetón y curioso.', NULL, 3, 3, 2, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(4, 2, 'Beethoven', 'perro', 4, 'Macho', 'Grande', 'Sí', 'No', 'Sí', 'Un San Bernardo gigante y travieso pero de buen corazón.', NULL, 2, 2, 3, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(5, 2, 'Toto', 'perro', 3, 'Macho', 'Pequeño', 'Sí', 'Sí', 'No', 'Pequeño Cairn terrier que acompañó a Dorothy en la tierra de Oz.', NULL, 3, 1, 2, 1, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(6, 2, 'Balto', 'perro', 6, 'Macho', 'Grande', 'Sí', 'Sí', 'Sí', 'Valiente perro de trineo que lideró una expedición para salvar a su pueblo en Alaska.', NULL, 3, 3, 1, 3, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(7, 3, 'Lassie', 'perro', 5, 'Hembra', 'Grande', 'Sí', 'Sí', 'No', 'Una Collie hermosa e inteligente, famosa por rescatar gente.', NULL, 2, 3, 3, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(8, 3, 'Marley', 'perro', 2, 'Macho', 'Grande', 'Sí', 'No', 'Sí', 'Un Labrador retriever adorable pero muy destructivo, protagonista de \"Marley y yo\".', NULL, 3, 3, 3, 3, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(9, 3, 'Milú', 'perro', 4, 'Macho', 'Pequeño', 'Sí', 'Sí', 'No', 'El inseparable Fox terrier blanco de Tintín, aventurero y leal.', NULL, 2, 2, 1, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(10, 1, 'Golfo', 'perro', 6, 'Macho', 'Mediano', 'No', 'No', 'No', 'Perro callejero, encantador y astuto de \"La Dama y el Vagabundo\".', NULL, 2, 3, 1, 3, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(11, 2, 'Benji', 'perro', 5, 'Macho', 'Pequeño', 'Sí', 'Sí', 'No', 'Un perro mestizo muy inteligente y heroico que siempre está en el lugar correcto para ayudar.', NULL, 2, 2, 1, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34');
 
 -- --------------------------------------------------------
 
@@ -130,24 +132,26 @@ CREATE TABLE `usuarios` (
   `estilov` tinyint DEFAULT NULL,
   `ultima_actualizacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `fecha_registro` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `estado` tinyint NOT NULL DEFAULT '0'
+  `estado` tinyint NOT NULL DEFAULT '0',
+  `tokenv` varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `email`, `password`, `tipo`, `ong_id`, `nombre`, `apellido`, `telefono`, `foto_perfil_url`, `direccion`, `fecha_nacimiento`, `sexo`, `tipo_casa`, `tipo_familia`, `otras_mascotas`, `experiencia`, `energia`, `sociabilidad`, `presencia`, `estilov`, `ultima_actualizacion`, `fecha_registro`, `estado`) VALUES
-(1, 'ana.garcia0@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Ana', 'García', '1122334400', NULL, 'Calle Falsa 123, Ciudad0', '1990-01-15', 'Femenino', 'Casa con patio', 'Soltero/a', 'No', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:51', '2025-10-20 02:10:51', 0),
-(2, 'juan.rodriguez1@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Juan', 'Rodriguez', '1122334401', NULL, 'Calle Falsa 123, Ciudad1', '1991-01-15', 'Masculino', 'Departamento', 'Pareja sin hijos', 'Sí, un perro', 'Intermedia', NULL, NULL, NULL, NULL, '2025-10-20 02:10:51', '2025-10-20 02:10:51', 0),
-(3, 'maria.martinez2@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Maria', 'Martinez', '1122334402', NULL, 'Calle Falsa 123, Ciudad2', '1992-01-15', 'Femenino', 'Casa con patio', 'Familia con niños', 'Sí, un gato', 'Avanzada', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0),
-(4, 'carlos.lopez3@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Carlos', 'Lopez', '1122334403', NULL, 'Calle Falsa 123, Ciudad3', '1993-01-15', 'Masculino', 'Departamento', 'Soltero/a', 'No', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0),
-(5, 'laura.gonzalez4@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Laura', 'Gonzalez', '1122334404', NULL, 'Calle Falsa 123, Ciudad4', '1994-01-15', 'Femenino', 'Casa con patio', 'Pareja sin hijos', 'Sí, un perro', 'Intermedia', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0),
-(6, 'pedro.perez5@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Pedro', 'Perez', '1122334405', NULL, 'Calle Falsa 123, Ciudad5', '1995-01-15', 'Masculino', 'Departamento', 'Familia con niños', 'Sí, un gato', 'Avanzada', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0),
-(7, 'sofia.sanchez6@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Sofia', 'Sanchez', '1122334406', NULL, 'Calle Falsa 123, Ciudad6', '1996-01-15', 'Femenino', 'Casa con patio', 'Soltero/a', 'No', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0),
-(8, 'luis.romero7@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Luis', 'Romero', '1122334407', NULL, 'Calle Falsa 123, Ciudad7', '1997-01-15', 'Masculino', 'Departamento', 'Pareja sin hijos', 'Sí, un perro', 'Intermedia', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0),
-(9, 'elena.suarez8@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Elena', 'Suarez', '1122334408', NULL, 'Calle Falsa 123, Ciudad8', '1998-01-15', 'Femenino', 'Casa con patio', 'Familia con niños', 'Sí, un gato', 'Avanzada', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0),
-(10, 'javier.diaz9@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Javier', 'Diaz', '1122334409', NULL, 'Calle Falsa 123, Ciudad9', '1999-01-15', 'Masculino', 'Departamento', 'Soltero/a', 'No', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0);
+INSERT INTO `usuarios` (`id`, `email`, `password`, `tipo`, `ong_id`, `nombre`, `apellido`, `telefono`, `foto_perfil_url`, `direccion`, `fecha_nacimiento`, `sexo`, `tipo_casa`, `tipo_familia`, `otras_mascotas`, `experiencia`, `energia`, `sociabilidad`, `presencia`, `estilov`, `ultima_actualizacion`, `fecha_registro`, `estado`, `tokenv`) VALUES
+(1, 'ana.garcia0@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Ana', 'García', '1122334400', NULL, 'Calle Falsa 123, Ciudad0', '1990-01-15', 'Femenino', 'Casa con patio', 'Soltero/a', 'No', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:51', '2025-10-20 02:10:51', 0, NULL),
+(2, 'juan.rodriguez1@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Juan', 'Rodriguez', '1122334401', NULL, 'Calle Falsa 123, Ciudad1', '1991-01-15', 'Masculino', 'Departamento', 'Pareja sin hijos', 'Sí, un perro', 'Intermedia', NULL, NULL, NULL, NULL, '2025-10-20 02:10:51', '2025-10-20 02:10:51', 0, NULL),
+(3, 'maria.martinez2@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Maria', 'Martinez', '1122334402', NULL, 'Calle Falsa 123, Ciudad2', '1992-01-15', 'Femenino', 'Casa con patio', 'Familia con niños', 'Sí, un gato', 'Avanzada', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
+(4, 'carlos.lopez3@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Carlos', 'Lopez', '1122334403', NULL, 'Calle Falsa 123, Ciudad3', '1993-01-15', 'Masculino', 'Departamento', 'Soltero/a', 'No', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
+(5, 'laura.gonzalez4@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Laura', 'Gonzalez', '1122334404', NULL, 'Calle Falsa 123, Ciudad4', '1994-01-15', 'Femenino', 'Casa con patio', 'Pareja sin hijos', 'Sí, un perro', 'Intermedia', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
+(6, 'pedro.perez5@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Pedro', 'Perez', '1122334405', NULL, 'Calle Falsa 123, Ciudad5', '1995-01-15', 'Masculino', 'Departamento', 'Familia con niños', 'Sí, un gato', 'Avanzada', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
+(7, 'sofia.sanchez6@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Sofia', 'Sanchez', '1122334406', NULL, 'Calle Falsa 123, Ciudad6', '1996-01-15', 'Femenino', 'Casa con patio', 'Soltero/a', 'No', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
+(8, 'luis.romero7@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Luis', 'Romero', '1122334407', NULL, 'Calle Falsa 123, Ciudad7', '1997-01-15', 'Masculino', 'Departamento', 'Pareja sin hijos', 'Sí, un perro', 'Intermedia', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
+(9, 'elena.suarez8@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Elena', 'Suarez', '1122334408', NULL, 'Calle Falsa 123, Ciudad8', '1998-01-15', 'Femenino', 'Casa con patio', 'Familia con niños', 'Sí, un gato', 'Avanzada', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
+(10, 'javier.diaz9@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Javier', 'Diaz', '1122334409', NULL, 'Calle Falsa 123, Ciudad9', '1999-01-15', 'Masculino', 'Departamento', 'Soltero/a', 'No', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
+(11, 'sbujan@gmail.com', '8146cedca9d6bfb47b77f581973da5a0bee365aa9ec9ebb5b12d142fca2c3cc1', 'usuario', NULL, 'Sergio Ezequiel', 'Bujan', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-22 02:46:37', '2025-10-22 02:46:37', 1, 'acaf70a72c681740b95b0196debb72a0ee9de3e75f42a4f954bfb3b645419392');
 
 --
 -- Indexes for dumped tables
@@ -208,7 +212,7 @@ ALTER TABLE `ONGs`
 -- AUTO_INCREMENT for table `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- Constraints for dumped tables

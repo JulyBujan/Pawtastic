@@ -14,7 +14,13 @@ if (!empty($especie)) {
     $query .= " AND tipo = '" . $conn->real_escape_string($especie) . "'";
 }
 if (!empty($edad)) {
-    $query .= " AND edad LIKE '%" . $conn->real_escape_string($edad) . "%'";
+    if ($edad === 'cachorro') {
+        $query .= " AND edad BETWEEN 0 AND 3";
+    } elseif ($edad === 'adulto') {
+        $query .= " AND edad BETWEEN 4 AND 8";
+    } elseif ($edad === 'senior') {
+        $query .= " AND edad >= 9";
+    }
 }
 if (!empty($tamano)) {
     $query .= " AND tamaño = '" . $conn->real_escape_string($tamano) . "'";
