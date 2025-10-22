@@ -43,13 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     filtroForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const formData = new FormData(filtroForm);
-        const params = new URLSearchParams();
-        for (let [key, value] of formData.entries()) {
-            // Map form names to API parameters
-            if (key === 'filtroEspecie') params.append('especie', value);
-            if (key === 'filtroEdad') params.append('edad', value);
-            if (key === 'filtroTamano') params.append('tamano', value);
-        }
+        const params = new URLSearchParams(formData);
         fetchMascotas(params.toString());
     });
 
