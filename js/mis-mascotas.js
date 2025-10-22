@@ -13,14 +13,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { "Authorization": "Bearer " + token }
             });
 
+            const data = await response.json();
+
             if (!response.ok) {
-                throw new Error('Error al cargar las mascotas');
+                throw new Error(data.message || 'Error al cargar las mascotas');
             }
-            const mascotas = await response.json();
-            renderMascotas(mascotas);
+            
+            renderMascotas(data);
         } catch (error) {
             console.error(error);
-            mascotasGrid.innerHTML = '<p class="text-center text-danger">No se pudieron cargar las mascotas. Intente más tarde.</p>';
+            mascotasGrid.innerHTML = `<p class="text-center text-danger">${error.message}</p>`;
         }
     };
 
