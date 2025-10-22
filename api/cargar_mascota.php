@@ -15,7 +15,7 @@ if (!isset($headers['Authorization'])) {
 
 // Extraer token del encabezado
 list(, $jwt) = explode(' ', $headers['Authorization']);
-$key = $_ENV["JWT_KEY"]; // 🔥 MISMA clave que en login.php
+$key = $_ENV["JWT_KEY"];
 
 try {
     $decoded = JWT::decode($jwt, new Key($key, 'HS256'));
@@ -30,9 +30,9 @@ try {
 if (
     empty($_POST['nombre']) || empty($_POST['tipo']) || empty($_POST['edad']) ||
     empty($_POST['sexo']) || empty($_POST['tamaño']) || empty($_POST['descripcion']) ||
-    empty($_POST['vacunado']) || empty($_POST['esterilizado']) || empty($_POST['chip']) ||
+    !isset($_POST['vacunado']) || !isset($_POST['esterilizado']) || !isset($_POST['chip']) ||
     empty($_POST['energia']) || empty($_POST['sociabilidad']) || empty($_POST['presencia']) ||
-    empty($_POST['estilo'])
+    empty($_POST['estilov'])
 ) {
     http_response_code(400);
     echo json_encode(["message" => "Faltan datos obligatorios"]);
@@ -51,27 +51,32 @@ $chip = $_POST['chip'];
 $energia = $_POST['energia'];
 $sociabilidad = $_POST['sociabilidad'];
 $presencia = $_POST['presencia'];
-$estilo = $_POST['estilo'];
+$estilov = $_POST['estilov'];
 
 // Manejo de imagen
-$imagen = null;
+$imagen_path = null;
 if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] == 0) {
     $directorio = "../img/mascotas/";
-    if (!is_dir($directorio)) mkdir($directorio, 0777, true);
+    if (!is_dir($directorio)) {
+        mkdir($directorio, 0777, true);
+    }
     
-    $nombreArchivo = uniqid() . "_" . basename($_FILES["imagen"]["name"]);
+    $nombreArchivo = uniqid('mascota_') . "_" . basename($_FILES["imagen"]["name"]);
     $rutaDestino = $directorio . $nombreArchivo;
     
     if (move_uploaded_file($_FILES["imagen"]["tmp_name"], $rutaDestino)) {
-        $imagen = "img/mascotas/" . $nombreArchivo;
+        $imagen_path = $nombreArchivo; // Solo guardar el nombre del archivo
     }
 }
 
 try {
     // Buscar el ID de la ONG según su email (del token)
-    $stmt = $conn->prepare("SELECT id FROM usuarios WHERE email = ? AND tipo = 'ong' LIMIT 1");
-    $stmt->execute([$ong_email]);
-    $idOng = $stmt->fetchColumn();
+    $stmt = $conn->prepare("SELECT ong_id FROM usuarios WHERE email = ? AND tipo = 'ong' LIMIT 1");
+    $stmt->bind_param("s", $ong_email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+    $idOng = $user['ong_id'] ?? null;
 
     if (!$idOng) {
         http_response_code(403);
@@ -81,12 +86,14 @@ try {
 
     // Insertar mascota con el ID real de la ONG
     $query = $conn->prepare("
-        INSERT INTO mascotas (nombre, tipo, edad, sexo, tamaño, descripcion, imagen, id_ong, vacunado, esterilizado, chip, energia, sociabilidad, presencia, estilo)
+        INSERT INTO mascotas (nombre, tipo, edad, sexo, tamaño, descripcion, imagen, id_ong, vacunado, esterilizado, chip, energia, sociabilidad, presencia, estilov)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
-    $query->execute([$nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $imagen, $idOng, $vacunado, $esterilizado, $chip, $energia, $sociabilidad, $presencia, $estilo]);
+    $query->bind_param("ssisssssisiiiii", $nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $imagen_path, $idOng, $vacunado, $esterilizado, $chip, $energia, $sociabilidad, $presencia, $estilov);
+    $query->execute();
 
     echo json_encode(["message" => "Mascota cargada con éxito 💚"]);
+
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(["message" => "Error en el servidor: " . $e->getMessage()]);
