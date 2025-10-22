@@ -36,54 +36,59 @@ if (!$user_id) {
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $stmt = $conn->prepare("SELECT nombre, apellido, telefono, foto_perfil_url, direccion, fecha_nacimiento, sexo, tipo_casa, tipo_familia, otras_mascotas, experiencia, energia, sociabilidad, presencia, estilov FROM usuarios WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
+try {
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        $stmt = $conn->prepare("SELECT nombre, apellido, telefono, foto_perfil_url, direccion, fecha_nacimiento, sexo, tipo_casa, tipo_familia, otras_mascotas, experiencia, energia, sociabilidad, presencia, estilov FROM usuarios WHERE id = ?");
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
 
-    if ($user) {
-        echo json_encode($user);
-    } else {
-        http_response_code(404);
-        echo json_encode(["message" => "Usuario no encontrado"]);
+        if ($user) {
+            echo json_encode($user);
+        } else {
+            http_response_code(404);
+            echo json_encode(["message" => "Usuario no encontrado"]);
+        }
+        $stmt->close();
     }
-    $stmt->close();
-}
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $data = json_decode(file_get_contents("php://input"));
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $data = json_decode(file_get_contents("php://input"));
 
-    $sql = "UPDATE usuarios SET nombre = ?, apellido = ?, telefono = ?, foto_perfil_url = ?, direccion = ?, fecha_nacimiento = ?, sexo = ?, tipo_casa = ?, tipo_familia = ?, otras_mascotas = ?, experiencia = ?, energia = ?, sociabilidad = ?, presencia = ?, estilov = ? WHERE id = ?";
+        $sql = "UPDATE usuarios SET nombre = ?, apellido = ?, telefono = ?, foto_perfil_url = ?, direccion = ?, fecha_nacimiento = ?, sexo = ?, tipo_casa = ?, tipo_familia = ?, otras_mascotas = ?, experiencia = ?, energia = ?, sociabilidad = ?, presencia = ?, estilov = ? WHERE id = ?";
 
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssssssiiiiii", 
-        $data->nombre,
-        $data->apellido,
-        $data->telefono,
-        $data->foto_perfil_url,
-        $data->direccion,
-        $data->fecha_nacimiento,
-        $data->sexo,
-        $data->tipo_casa,
-        $data->tipo_familia,
-        $data->otras_mascotas,
-        $data->experiencia,
-        $data->energia,
-        $data->sociabilidad,
-        $data->presencia,
-        $data->estilov,
-        $user_id
-    );
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssssssssssiiiiii", 
+            $data->nombre,
+            $data->apellido,
+            $data->telefono,
+            $data->foto_perfil_url,
+            $data->direccion,
+            $data->fecha_nacimiento,
+            $data->sexo,
+            $data->tipo_casa,
+            $data->tipo_familia,
+            $data->otras_mascotas,
+            $data->experiencia,
+            $data->energia,
+            $data->sociabilidad,
+            $data->presencia,
+            $data->estilov,
+            $user_id
+        );
 
-    if ($stmt->execute()) {
-        echo json_encode(["message" => "Perfil actualizado correctamente"]);
-    } else {
-        http_response_code(500);
-        echo json_encode(["message" => "Error al actualizar el perfil: " . $stmt->error]);
+        if ($stmt->execute()) {
+            echo json_encode(["message" => "Perfil actualizado correctamente"]);
+        } else {
+            http_response_code(500);
+            echo json_encode(["message" => "Error al actualizar el perfil: " . $stmt->error]);
+        }
+        $stmt->close();
     }
-    $stmt->close();
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(["message" => "Error en el servidor: " . $e->getMessage()]);
 }
 
 $conn->close();
