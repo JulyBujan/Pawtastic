@@ -1,5 +1,5 @@
 <?php
-include_once "../api/conexion.php";
+include_once "conexion.php";
 
 $message = "";
 $message_type = "danger"; // 'danger' o 'success'
@@ -8,25 +8,29 @@ if (isset($_GET['token'])) {
     $token = $_GET['token'];
 
     // Buscar el token en la base de datos
-    $stmt = $conn->prepare("SELECT id, estado FROM usuarios WHERE token_validacion = ?");
-    $stmt->execute([$token]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $conn->prepare("SELECT id, estado FROM usuarios WHERE tokenv = ?");
+    $stmt->bind_param("s", $token);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
 
     if ($user) {
-        if ($user['estado'] === 'activo') {
-            $message = "Tu cuenta ya ha sido activada anteriormente. Ya puedes iniciar sesión.";
+        if ($user['estado'] == 0) { // 0 es validado
+            $message = "Tu cuenta ya ha sido activada anteriormente. Serás redirigido al login.";
             $message_type = "info";
         } else {
-            // Activar la cuenta y limpiar el token
-            $update_stmt = $conn->prepare("UPDATE usuarios SET estado = 'activo', token_validacion = NULL WHERE id = ?");
-            if ($update_stmt->execute([$user['id']])) {
-                $message = "¡Tu cuenta ha sido activada con éxito! 🎉 Ya puedes iniciar sesión.";
+            // Activar la cuenta (estado = 0) y limpiar el token
+            $update_stmt = $conn->prepare("UPDATE usuarios SET estado = 0, tokenv = NULL WHERE id = ?");
+            $update_stmt->bind_param("i", $user['id']);
+            if ($update_stmt->execute()) {
+                $message = "¡Tu cuenta ha sido activada con éxito! 🎉 Serás redirigido para iniciar sesión.";
                 $message_type = "success";
             } else {
                 $message = "Hubo un error al activar tu cuenta. Por favor, intenta de nuevo o contacta a soporte.";
             }
         }
-    } else {
+    }
+ else {
         $message = "El enlace de validación no es válido o ha expirado. Por favor, solicita uno nuevo.";
     }
 } else {
@@ -65,7 +69,7 @@ if (isset($_GET['token'])) {
                 <h4 class="alert-heading"><?php echo $message_type === 'success' ? '¡Felicidades!' : 'Atención'; ?></h4>
                 <p><?php echo $message; ?></p>
               </div>
-              <a href="./login.html" class="btn btn-dark mt-3">Ir a Iniciar Sesión</a>
+              <a href="../pages/login.html" class="btn btn-dark mt-3">Ir a Iniciar Sesión</a>
             </div>
           </div>
         </div>
@@ -74,5 +78,10 @@ if (isset($_GET['token'])) {
   </section>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    setTimeout(function() {
+      window.location.href = '../pages/login.html';
+    }, 3000); // 3000 milisegundos = 3 segundos
+  </script>
 </body>
 </html>

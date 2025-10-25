@@ -16,21 +16,25 @@ if (!isset($data->email) || !isset($data->password)) {
     exit;
 }
 
-$email = $conn->real_escape_string($data->email);
+$email = $data->email;
 $password = $data->password;
 
-$sql = "SELECT * FROM usuarios WHERE email = '$email'";
-$result = $conn->query($sql);
+// Usar consultas preparadas para mayor seguridad
+$stmt = $conn->prepare("SELECT * FROM usuarios WHERE email = ?");
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$result = $stmt->get_result();
 
 if ($result && $result->num_rows > 0) {
     $user = $result->fetch_assoc();
 
+    // La contraseña ya viene hasheada desde el cliente
     if ($password === $user['password']) {
 
-        // Verificar si la cuenta está activa
-        if ($user['estado'] === 'pendiente') {
+        // Verificar si la cuenta está activa (estado = 0)
+        if ($user['estado'] != 0) {
             http_response_code(403); // Forbidden
-            echo json_encode(["message" => "Tu cuenta está pendiente de validación. Por favor, revisa tu correo electrónico."]);
+            echo json_encode(["message" => "Tu cuenta no ha sido validada. Por favor, revisa tu correo para activarla."]);
             exit;
         }
 
@@ -39,7 +43,7 @@ if ($result && $result->num_rows > 0) {
             "user_id" => $user['id'],
             "email" => $user['email'],
             "tipo" => $user['tipo'],
-            "exp" => time() + 3600
+            "exp" => time() + 3600 // Expira en 1 hora
         ];
         $jwt = JWT::encode($payload, $secret_key, 'HS256');
 
@@ -52,7 +56,7 @@ if ($result && $result->num_rows > 0) {
     }
 }
 
-// Si llegó acá, falló el login
+// Si se llega a este punto, las credenciales son inválidas
 http_response_code(401);
 echo json_encode(["message" => "Credenciales inválidas"]);
 ?>
