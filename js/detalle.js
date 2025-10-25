@@ -30,8 +30,14 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('mascota-especie').textContent = mascota.tipo;
         document.getElementById('mascota-tamano').textContent = mascota.tamaño;
         document.getElementById('mascota-vacunas').textContent = mascota.vacunado;
-        document.getElementById('mascota-estado').textContent = 'En adopción'; // Assuming all are for adoption
-        document.getElementById('mascota-ong').textContent = 'ONG Desconocida'; // This would require a join in the backend
+        document.getElementById('mascota-esterilizado').textContent = mascota.esterilizado;
+        document.getElementById('mascota-chip').textContent = mascota.chip;
+        document.getElementById('mascota-energia').textContent = getEnergia(mascota.energia);
+        document.getElementById('mascota-sociabilidad').textContent = getSociabilidad(mascota.sociabilidad);
+        document.getElementById('mascota-presencia').textContent = getPresencia(mascota.presencia);
+        document.getElementById('mascota-estilo-vida').textContent = getEstiloVida(mascota.estilo_vida);
+        document.getElementById('mascota-estado').textContent = mascota.estado == 0 ? 'En adopción' : 'En gestión';
+        document.getElementById('mascota-ong').textContent = mascota.ong_nombre || 'ONG Desconocida';
     };
 
     fetchMascotaDetalle();
