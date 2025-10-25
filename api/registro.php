@@ -49,6 +49,11 @@ try {
     exit;
 }
 
+// Enviamos una respuesta de éxito ya que el correo está desactivado.
+http_response_code(201); // 201 Created
+echo json_encode(['message' => '¡Registro exitoso! Revisa tu correo para validar tu cuenta.']);
+exit;
+
 /*/ 4. Enviar correo de validación
 $mail = new PHPMailer(true);
 

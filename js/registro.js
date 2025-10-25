@@ -57,8 +57,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (res.ok) {
           showAlert(data.message, 'success');
           formRegistro.reset();
-          // Opcional: redirigir al login después de unos segundos
-          setTimeout(() => { window.location.href = 'login.html'; }, 3000);
+          // Opcional: redirigir al index después de unos segundos
+          setTimeout(() => { window.location.href = '../index.html'; }, 3000);
         } else {
           showAlert(data.message || 'Ocurrió un error en el registro.');
         }
