@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const fetchMascotaDetalle = async () => {
         try {
             const response = await fetch(`../api/get_mascota.php?id=${mascotaId}`);
+            console.log(response);
             if (!response.ok) {
                 throw new Error('Error al cargar la mascota');
             }
@@ -32,10 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('mascota-vacunas').textContent = mascota.vacunado;
         document.getElementById('mascota-esterilizado').textContent = mascota.esterilizado;
         document.getElementById('mascota-chip').textContent = mascota.chip;
-        document.getElementById('mascota-energia').textContent = getEnergia(mascota.energia);
-        document.getElementById('mascota-sociabilidad').textContent = getSociabilidad(mascota.sociabilidad);
-        document.getElementById('mascota-presencia').textContent = getPresencia(mascota.presencia);
-        document.getElementById('mascota-estilo-vida').textContent = getEstiloVida(mascota.estilo_vida);
+        document.getElementById('mascota-energia').textContent = getEnergia(parseInt(mascota.energia));
+        document.getElementById('mascota-sociabilidad').textContent = getSociabilidad(parseInt(mascota.sociabilidad));
+        document.getElementById('mascota-presencia').textContent = getPresencia(parseInt(mascota.presencia));
+        document.getElementById('mascota-estilo-vida').textContent = getEstiloVida(parseInt(mascota.estilo_vida));
         document.getElementById('mascota-estado').textContent = mascota.estado == 0 ? 'En adopción' : 'En gestión';
         document.getElementById('mascota-ong').textContent = mascota.ong_nombre || 'ONG Desconocida';
     };
