@@ -22,12 +22,15 @@ $password_hash = $data->password; // La contraseña ya viene hasheada desde JS
 
 // 1. Verificar si el email ya existe
 $stmt = $conn->prepare("SELECT id FROM usuarios WHERE email = ?");
-$stmt->execute([$email]);
-if ($stmt->fetch()) {
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->fetch_assoc()) {
     http_response_code(409); // 409 Conflict
     echo json_encode(["message" => "El correo electrónico ya está registrado."]);
     exit;
 }
+$stmt->close();
 
 // 2. Generar token de validación
 $token = bin2hex(random_bytes(32));
@@ -38,8 +41,9 @@ try {
         "INSERT INTO usuarios (nombre, apellido, email, password, tipo, estado, tokenv) 
          VALUES (?, ?, ?, ?, 'usuario', 1, ?)"
     );
-    $query->execute([$nombre, $apellido, $email, $password_hash, $token]);
-} catch (PDOException $e) {
+    $query->bind_param("sssss", $nombre, $apellido, $email, $password_hash, $token);
+    $query->execute();
+} catch (mysqli_sql_exception $e) {
     http_response_code(500);
     echo json_encode(["message" => "Error al registrar el usuario: " . $e->getMessage()]);
     exit;
