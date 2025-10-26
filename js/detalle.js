@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('mascota-energia').textContent = getEnergia(parseInt(mascota.energia));
         document.getElementById('mascota-sociabilidad').textContent = getSociabilidad(parseInt(mascota.sociabilidad));
         document.getElementById('mascota-presencia').textContent = getPresencia(parseInt(mascota.presencia));
-        document.getElementById('mascota-estilo-vida').textContent = getEstiloVida(parseInt(mascota.estilo_vida));
+        document.getElementById('mascota-estilo-vida').textContent = getEstiloVida(parseInt(mascota.estilov));
         document.getElementById('mascota-estado').textContent = mascota.estado == 0 ? 'En adopción' : 'En gestión';
         document.getElementById('mascota-ong').textContent = mascota.ong_nombre || 'ONG Desconocida';
     };
