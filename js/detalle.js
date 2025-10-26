@@ -7,6 +7,42 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    const getSociabilidad = (level) => {
+        switch (level) {
+            case 1: return 'Reservado';
+            case 2: return 'Selectivo';
+            case 3: return 'Muy Sociable';
+            default: return 'No especificado';
+        }
+    };
+
+    const getEnergia = (level) => {
+        switch (level) {
+            case 1: return 'Bajo';
+            case 2: return 'Medio';
+            case 3: return 'Alto';
+            default: return 'No especificado';
+        }
+    };
+
+    const getPresencia = (level) => {
+        switch (level) {
+            case 1: return 'Compañia constante';
+            case 2: return 'Tolera soledad';
+            case 3: return 'Independiente';
+            default: return 'No especificado';
+        }
+    };
+
+    const getEstiloVida = (level) => {
+        switch (level) {
+            case 1: return 'Indoor';
+            case 2: return 'Flexible';
+            case 3: return 'Outdoor';
+            default: return 'No especificado';
+        }
+    };
+
     const fetchMascotaDetalle = async () => {
         try {
             const response = await fetch(`../api/get_mascota.php?id=${mascotaId}`);
