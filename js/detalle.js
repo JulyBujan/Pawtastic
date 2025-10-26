@@ -77,4 +77,37 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     fetchMascotaDetalle();
+
+    document.getElementById('postular-btn').addEventListener('click', async (e) => {
+        e.preventDefault();
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            window.location.href = './login.html';
+            return;
+        }
+
+        try {
+            const response = await fetch('../api/postular.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ id_mascota: mascotaId })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Error al postularse');
+            }
+
+            alert(data.message);
+
+        } catch (error) {
+            console.error('Error en la postulación:', error);
+            alert(error.message);
+        }
+    });
 });
