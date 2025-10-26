@@ -10,11 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const fetchMascotaDetalle = async () => {
         try {
             const response = await fetch(`../api/get_mascota.php?id=${mascotaId}`);
-            console.log(response);
-            if (!response.ok) {
-                throw new Error('Error al cargar la mascota');
-            }
-            const mascota = await response.json();
+            const text = await response.text();
+            console.log(text);
+            const mascota = JSON.parse(text);
             renderMascotaDetalle(mascota);
         } catch (error) {
             console.error(error);
