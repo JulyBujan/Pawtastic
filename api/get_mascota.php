@@ -1,8 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 header("Content-Type: application/json");
 include_once "conexion.php";
 
@@ -15,7 +11,7 @@ if (!isset($_GET['id'])) {
 $idMascota = $_GET['id'];
 
 // Use mysqli prepared statements
-$stmt = $conn->prepare("SELECT m.*, o.nombre AS ong_nombre FROM mascotas m LEFT JOIN ongs o ON m.id_ong = o.id WHERE m.id = ?");
+$stmt = $conn->prepare("SELECT m.*, o.nombre AS ong_nombre FROM mascotas m LEFT JOIN ONGs o ON m.id_ong = o.id WHERE m.id = ?");
 if ($stmt === false) {
     http_response_code(500);
     echo json_encode(["message" => "Error al preparar la consulta: " . $conn->error]);
