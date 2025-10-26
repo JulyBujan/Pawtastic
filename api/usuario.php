@@ -6,29 +6,11 @@ error_reporting(E_ALL);
 
 require_once "conexion.php";
 require __DIR__ . '/vendor/autoload.php';
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 
-// Función para obtener el ID de usuario del token JWT
-function get_user_id_from_jwt() {
-    $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-    if (empty($authHeader)) {
-        return null;
-    }
-    list($jwt) = sscanf($authHeader, 'Bearer %s');
-    if (!$jwt) {
-        return null;
-    }
-    try {
-        $secret_key = $_ENV["JWT_KEY"];
-        $decoded = JWT::decode($jwt, new Key($secret_key, 'HS256'));
-        return $decoded->user_id;
-    } catch (Exception $e) {
-        return null;
-    }
-}
-
-$user_id = get_user_id_from_jwt();
+// Verificar token y obtener payload en $decoded_token
+include_once "verificar_token.php";
+// El payload del token está ahora en la variable $decoded_token
+$user_id = $decoded_token->user_id;
 
 if (!$user_id) {
     http_response_code(401);

@@ -2,28 +2,11 @@
 header("Content-Type: application/json");
 include_once "conexion.php";
 require __DIR__ . '/vendor/autoload.php';
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 
-// Verificamos token
-$headers = getallheaders();
-if (!isset($headers['Authorization'])) {
-    http_response_code(401);
-    echo json_encode(["message" => "Falta token"]);
-    exit;
-}
-
-list(, $jwt) = explode(' ', $headers['Authorization']);
-$key = $_ENV["JWT_KEY"];
-
-try {
-    $decoded = JWT::decode($jwt, new Key($key, 'HS256'));
-    $email = $decoded->email;
-} catch (Exception $e) {
-    http_response_code(401);
-    echo json_encode(["message" => "Token inválido o expirado: " . $e->getMessage()]);
-    exit;
-}
+// Verificar token y obtener payload en $decoded_token
+include_once "verificar_token.php";
+// El payload del token está ahora en la variable $decoded_token
+$email = $decoded_token->email;
 
 try {
     // Obtener el id_ong según el email

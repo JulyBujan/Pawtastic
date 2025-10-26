@@ -2,29 +2,11 @@
 header("Content-Type: application/json");
 include_once "conexion.php";
 require __DIR__ . '/vendor/autoload.php';
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 
-// Verificar encabezado Authorization
-$headers = getallheaders();
-if (!isset($headers['Authorization'])) {
-    http_response_code(401);
-    echo json_encode(["message" => "Falta token"]);
-    exit;
-}
-
-// Extraer token del encabezado
-list(, $jwt) = explode(' ', $headers['Authorization']);
-$key = $_ENV["JWT_KEY"];
-
-try {
-    $decoded = JWT::decode($jwt, new Key($key, 'HS256'));
-    $ong_email = $decoded->email; // recuperamos el email desde el token
-} catch (Exception $e) {
-    http_response_code(401);
-    echo json_encode(["message" => "Token inválido o expirado"]);
-    exit;
-}
+// Verificar token y obtener payload en $decoded_token
+include_once "verificar_token.php";
+// El payload del token está ahora en la variable $decoded_token
+$ong_email = $decoded_token->email; // recuperamos el email desde el token
 
 // Verificar si llegaron los campos obligatorios
 if (
