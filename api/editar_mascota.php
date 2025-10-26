@@ -4,18 +4,11 @@ include_once "conexion.php";
 require __DIR__ . '/vendor/autoload.php';
 
 // Verificar token y obtener payload en $decoded_token
-include_once "verificar_token.php";
-// El payload del token está ahora en la variable $decoded_token
-$ong_email = $decoded_token->email; // recuperamos el email desde el token
+include_once "verificar_token.php"; // Define $decoded_token
+$ong_email = $decoded_token->email;
 
-// Verificar si llegaron los campos obligatorios
-if (
-    empty($_POST['id']) || empty($_POST['nombre']) || empty($_POST['tipo']) || empty($_POST['edad']) ||
-    empty($_POST['sexo']) || empty($_POST['tamaño']) || empty($_POST['descripcion']) ||
-    empty($_POST['vacunado']) || empty($_POST['esterilizado']) || empty($_POST['chip']) ||
-    empty($_POST['energia']) || empty($_POST['sociabilidad']) || empty($_POST['presencia']) ||
-    empty($_POST['estilo'])
-) {
+// Verificar que el método sea POST para la edición
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(400);
     echo json_encode(["message" => "Faltan datos obligatorios"]);
     exit;
@@ -46,50 +39,62 @@ if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] == 0) {
     $rutaDestino = $directorio . $nombreArchivo;
     
     if (move_uploaded_file($_FILES["imagen"]["tmp_name"], $rutaDestino)) {
-        $imagen = "img/mascotas/" . $nombreArchivo;
+        $imagen = $nombreArchivo; // Guardar solo el nombre del archivo
     }
 }
 
 try {
     // Buscar el ID de la ONG según su email (del token)
-    $stmt = $conn->prepare("SELECT id FROM usuarios WHERE email = ? AND tipo = 'ong' LIMIT 1");
-    $stmt->execute([$ong_email]);
-    $idOng = $stmt->fetchColumn();
+    $stmt = $conn->prepare("SELECT ong_id FROM usuarios WHERE email = ? AND tipo = 'ong' LIMIT 1");
+    $stmt->bind_param("s", $ong_email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+    $idOng = $user['ong_id'] ?? null;
 
     if (!$idOng) {
         http_response_code(403);
         echo json_encode(["message" => "No se encontró una ONG válida para este usuario"]);
         exit;
     }
+    $stmt->close();
 
     // Verificar que la mascota pertenezca a la ONG
     $stmt = $conn->prepare("SELECT id FROM mascotas WHERE id = ? AND id_ong = ?");
-    $stmt->execute([$id, $idOng]);
-    if ($stmt->rowCount() == 0) {
+    $stmt->bind_param("ii", $id, $idOng);
+    $stmt->execute();
+    $stmt->store_result(); // Necesario para poder usar num_rows
+    if ($stmt->num_rows == 0) {
         http_response_code(403);
         echo json_encode(["message" => "No tienes permiso para editar esta mascota"]);
         exit;
     }
+    $stmt->close();
 
     // Actualizar mascota
     $sql = "UPDATE mascotas SET nombre = ?, tipo = ?, edad = ?, sexo = ?, tamaño = ?, descripcion = ?, vacunado = ?, esterilizado = ?, chip = ?, energia = ?, sociabilidad = ?, presencia = ?, estilo = ?";
+    $types = "ssssssssiiiii";
     $params = [$nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $vacunado, $esterilizado, $chip, $energia, $sociabilidad, $presencia, $estilo];
 
     if ($imagen) {
         $sql .= ", imagen = ?";
+        $types .= "s";
         $params[] = $imagen;
     }
 
-    $sql .= " WHERE id = ?";
+    $sql .= " WHERE id = ? AND id_ong = ?";
+    $types .= "ii";
     $params[] = $id;
+    $params[] = $idOng;
 
     $query = $conn->prepare($sql);
-    $query->execute($params);
+    $query->bind_param($types, ...$params);
+    $query->execute();
 
     echo json_encode(["message" => "Mascota actualizada con éxito 💚"]);
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(["message" => "Error en el servidor: " . $e->getMessage()]);
 }
-
+$conn->close();
 ?>
