@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const perfilForm = document.getElementById('perfil-form');
     const perfilFoto = document.getElementById('perfilfoto');
+    const fotoInput = document.getElementById('foto-input');
 
     /**
      * Muestra una alerta simple.
@@ -55,11 +56,11 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('estilov').value = usuario.estilov || 0;
 
             // Actualizar la foto de perfil
-            if (usuario.foto_perfil_url) {
-                perfilFoto.src = usuario.foto_perfil_url;
+            if (usuario.foto_perfil_url && usuario.foto_perfil_url.startsWith('/img/profile/')) {
+                // Añadimos un timestamp para evitar problemas de caché si se sube una foto con el mismo nombre
+                perfilFoto.src = usuario.foto_perfil_url + '?t=' + new Date().getTime();
             } else {
-                // Si no hay foto, usamos la imagen por defecto.
-                // La ruta debe ser relativa a la página HTML.
+                // Si no hay foto, usamos la imagen por defecto. La ruta es relativa a la página.
                 perfilFoto.src = '../img/pdefault.jpg';
             }
 
@@ -68,6 +69,51 @@ document.addEventListener('DOMContentLoaded', () => {
             showAlert(error.message, 'danger');
         }
     };
+
+    /**
+     * Sube la foto de perfil seleccionada por el usuario.
+     * @param {File} file - El archivo de imagen a subir.
+     */
+    const uploadProfilePicture = async (file) => {
+        const token = localStorage.getItem('token');
+        if (!file || !token) return;
+
+        const formData = new FormData();
+        formData.append('foto_perfil', file);
+
+        try {
+            const response = await fetch('/api/usuario.php', {
+                method: 'POST',
+                headers: {
+                    // NO establecer 'Content-Type', el navegador lo hará automáticamente
+                    // con el boundary correcto para multipart/form-data.
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                showAlert('Foto de perfil actualizada.', 'success');
+                // Actualizamos la imagen en la página con la nueva URL devuelta por la API
+                if (result.foto_perfil_url) {
+                    perfilFoto.src = result.foto_perfil_url + '?t=' + new Date().getTime();
+                }
+            } else {
+                throw new Error(result.message || 'No se pudo subir la imagen.');
+            }
+        } catch (error) {
+            console.error('Error al subir la foto:', error);
+            showAlert(error.message, 'danger');
+        }
+    };
+
+    // Event listener para el clic en la foto de perfil
+    perfilFoto.addEventListener('click', () => fotoInput.click());
+
+    // Event listener para cuando se selecciona un archivo
+    fotoInput.addEventListener('change', () => uploadProfilePicture(fotoInput.files[0]));
 
     /**
      * Envía los datos del formulario para actualizar el perfil del usuario.
