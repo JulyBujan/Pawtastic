@@ -2,39 +2,40 @@
 header("Content-Type: application/json");
 include_once "conexion.php";
 
-if (!isset($_GET['id'])) {
+// Verificar que se ha proporcionado un ID
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     http_response_code(400);
-    echo json_encode(["message" => "Falta el ID de la mascota"]);
+    echo json_encode(["message" => "ID de mascota no válido o no proporcionado."]);
     exit;
 }
 
-$idMascota = $_GET['id'];
+$id_mascota = $_GET['id'];
 
-// Use mysqli prepared statements
-$stmt = $conn->prepare("SELECT m.*, o.nombre AS ong_nombre FROM mascotas m LEFT JOIN ONGs o ON m.id_ong = o.id WHERE m.id = ?");
-if ($stmt === false) {
-    http_response_code(500);
-    echo json_encode(["message" => "Error al preparar la consulta: " . $conn->error]);
-    exit;
-}
+try {
+    // Usamos una sentencia preparada para evitar inyección SQL
+    $stmt = $conn->prepare("SELECT * FROM mascotas WHERE id = ?");
+    if (!$stmt) {
+        throw new Exception("Error en la preparación de la consulta: " . $conn->error);
+    }
 
-$stmt->bind_param("i", $idMascota);
-
-if ($stmt->execute()) {
+    $stmt->bind_param("i", $id_mascota);
+    $stmt->execute();
     $result = $stmt->get_result();
-    $mascota = $result->fetch_assoc();
 
-    if ($mascota) {
+    if ($mascota = $result->fetch_assoc()) {
+        // Si se encuentra la mascota, se devuelve como JSON
         echo json_encode($mascota);
     } else {
+        // Si no se encuentra, se devuelve un error 404
         http_response_code(404);
-        echo json_encode(["message" => "Mascota no encontrada"]);
+        echo json_encode(["message" => "Mascota no encontrada."]);
     }
-} else {
+
+    $stmt->close();
+} catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(["message" => "Error al ejecutar la consulta: " . $stmt->error]);
+    echo json_encode(["message" => "Error en el servidor: " . $e->getMessage()]);
 }
 
-$stmt->close();
 $conn->close();
 ?>

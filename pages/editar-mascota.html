@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 
-<body>
+<body class="bg-light d-flex flex-column min-vh-100">
   <!-- NAVBAR ONG -->
   <nav class="navbar navbar-expand-lg navbar-dark encabezado-azul">
     <div class="container">
@@ -33,7 +33,7 @@
   </nav>
 
   <!-- CONTENIDO PRINCIPAL -->
-  <main class="container py-5">
+  <main class="container py-5 flex-grow-1">
     <h2 class="mb-4 text-center">Editar Mascota</h2>
     <form id="formEditarMascota" class="mx-auto shadow p-4 bg-light rounded" style="max-width: 700px;">
       <input type="hidden" id="id_mascota">
@@ -46,9 +46,9 @@
           <label for="tipo" class="form-label">Tipo</label>
           <select id="tipo" class="form-select" required>
             <option value="">Seleccionar</option>
-            <option value="Perro">Perro</option>
-            <option value="Gato">Gato</option>
-            <option value="Otro">Otro</option>
+            <option value="perro">Perro</option>
+            <option value="gato">Gato</option>
+            <option value="otro">Otro</option>
           </select>
         </div>
       </div>
@@ -127,40 +127,40 @@
       <div class="row">
         <div class="col-md-6 mb-3">
           <label for="energia" class="form-label">Nivel de energía</label>
-          <select id="energia" class="form-select" required>
+          <select id="energia" name="energia" class="form-select" required>
             <option value="">Seleccionar</option>
-            <option value="Alto">Alto</option>
-            <option value="Medio">Medio</option>
-            <option value="Bajo">Bajo</option>
+            <option value="3">Alto</option>
+            <option value="2">Medio</option>
+            <option value="1">Bajo</option>
           </select>
         </div>
         <div class="col-md-6 mb-3">
           <label for="sociabilidad" class="form-label">Sociabilidad</label>
-          <select id="sociabilidad" class="form-select" required>
+          <select id="sociabilidad" name="sociabilidad" class="form-select" required>
             <option value="">Seleccionar</option>
-            <option value="Muy sociable">Muy sociable</option>
-            <option value="Selectivo">Selectivo</option>
-            <option value="Reservado">Reservado</option>
+            <option value="3">Muy sociable</option>
+            <option value="2">Selectivo</option>
+            <option value="1">Reservado</option>
           </select>
         </div>
       </div>
       <div class="row">
         <div class="col-md-6 mb-3">
           <label for="presencia" class="form-label">Presencia</label>
-          <select id="presencia" class="form-select" required>
+          <select id="presencia" name="presencia" class="form-select" required>
             <option value="">Seleccionar</option>
-            <option value="Necesita compañía constante">Necesita compañía constante</option>
-            <option value="Tolera estar solo">Tolera estar solo</option>
-            <option value="Independiente">Independiente</option>
+            <option value="3">Necesita compañía constante</option>
+            <option value="2">Tolera estar solo</option>
+            <option value="1">Independiente</option>
           </select>
         </div>
         <div class="col-md-6 mb-3">
-          <label for="estilo" class="form-label">Estilo de vida</label>
-          <select id="estilo" class="form-select" required>
+          <label for="estilov" class="form-label">Estilo de vida</label>
+          <select id="estilov" name="estilov" class="form-select" required>
             <option value="">Seleccionar</option>
-            <option value="Indoor">Indoor</option>
-            <option value="Outdoor">Outdoor</option>
-            <option value="Flexible">Flexible</option>
+            <option value="1">Indoor</option>
+            <option value="2">Outdoor</option>
+            <option value="3">Flexible</option>
           </select>
         </div>
       </div>
@@ -171,110 +171,44 @@
     </form>
   </main>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-      const params = new URLSearchParams(window.location.search);
-      const idMascota = params.get('id');
-      document.getElementById('id_mascota').value = idMascota;
-
-      if (!idMascota) {
-        alert('ID de mascota no encontrado.');
-        window.location.href = 'mis-mascotas.html';
-        return;
-      }
-
-      try {
-        const response = await fetch(`../api/get_mascota.php?id=${idMascota}`);
-        if (!response.ok) throw new Error('No se pudo cargar la información de la mascota.');
-        
-        const mascota = await response.json();
-
-        document.getElementById('nombre').value = mascota.nombre;
-        document.getElementById('tipo').value = mascota.tipo;
-        document.getElementById('edad').value = mascota.edad;
-        document.getElementById('sexo').value = mascota.sexo;
-        document.getElementById('tamaño').value = mascota.tamaño;
-        document.getElementById('descripcion').value = mascota.descripcion;
-        document.getElementById('vacunado').value = mascota.vacunado;
-        document.getElementById('esterilizado').value = mascota.esterilizado;
-        document.getElementById('chip').value = mascota.chip;
-        document.getElementById('energia').value = mascota.energia;
-        document.getElementById('sociabilidad').value = mascota.sociabilidad;
-        document.getElementById('presencia').value = mascota.presencia;
-        document.getElementById('estilo').value = mascota.estilo;
-        if(mascota.imagen) {
-            document.getElementById('foto_actual').src = `../${mascota.imagen}`;
-        }
-
-      } catch (error) {
-        console.error('Error:', error);
-        alert(error.message);
-      }
-    });
-
-    document.getElementById('formEditarMascota').addEventListener('submit', async function (e) {
-      e.preventDefault();
-
-      const formData = new FormData();
-      formData.append('id', document.getElementById('id_mascota').value);
-      formData.append('nombre', document.getElementById('nombre').value);
-      formData.append('tipo', document.getElementById('tipo').value);
-      formData.append('edad', document.getElementById('edad').value);
-      formData.append('sexo', document.getElementById('sexo').value);
-      formData.append('tamaño', document.getElementById('tamaño').value);
-      formData.append('descripcion', document.getElementById('descripcion').value);
-      formData.append('vacunado', document.getElementById('vacunado').value);
-      formData.append('esterilizado', document.getElementById('esterilizado').value);
-      formData.append('chip', document.getElementById('chip').value);
-      formData.append('energia', document.getElementById('energia').value);
-      formData.append('sociabilidad', document.getElementById('sociabilidad').value);
-      formData.append('presencia', document.getElementById('presencia').value);
-      formData.append('estilo', document.getElementById('estilo').value);
-
-      const fotoInput = document.getElementById('foto');
-      if (fotoInput.files[0]) {
-        formData.append('imagen', fotoInput.files[0]);
-      }
-
-      const token = localStorage.getItem('token');
-      if (!token) {
-        alert("Error: No estás autenticado.");
-        window.location.href = 'login.html';
-        return;
-      }
-
-      try {
-        const response = await fetch('../api/editar_mascota.php', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          },
-          body: formData
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-          alert(result.message);
-          window.location.href = 'mis-mascotas.html';
-        } else {
-          throw new Error(result.message || 'Error al editar la mascota');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        alert(`Error: ${error.message}`);
-      }
-    });
-
-    function confirmarSalida() {
-      if (confirm("¿Estás segura que querés salir?")) {
-        localStorage.removeItem('token');
-        window.location.href = "../index.html";
-      }
-    }
-  </script>
+  <!-- FOOTER -->
+  <footer class="bg-footer text-dark pt-4 pb-3 mt-5">
+    <div class="container text-center text-md-start">
+      <div class="row">
+        <div class="col-md-4 mb-3 text-center">
+          <h5 class="fw-bold mt-2">Pawtastic</h5>
+          <p class="small">Conectamos corazones con patas. Gracias por elegir adoptar.</p>
+          <a href="/index.html">
+            <img src="/img/logo.png" alt="Logo Pawtastic" style="max-width: 100px; border-radius: 40%;">
+          </a>
+        </div>
+        <div class="col-md-4 mb-3 d-flex flex-column align-items-center">
+          <h5 class="fw-bold text-center">Navegación</h5>
+          <ul class="list-unstyled text-center">
+            <li><a href="/index.html" class="text-dark text-decoration-none">Inicio</a></li>
+            <li><a href="/pages/login.html" class="text-dark text-decoration-none">Ingresar</a></li>
+            <li><a href="/pages/nosotros.html" class="text-dark text-decoration-none">Nosotros</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4 mb-3 fs-5 text-center text-md-start">
+          <h5 class="fw-bold">Seguinos</h5>
+          <a href="/pages/error404.html" class="text-dark me-3"><i class="bi bi-facebook"
+              style="font-size: 2.5rem;"></i></a>
+          <a href="/pages/error404.html" class="text-dark me-3"><i class="bi bi-instagram"
+              style="font-size: 2.5rem;"></i></a>
+          <a href="/pages/error404.html" class="text-dark"><i class="bi bi-x-circle-fill"
+              style="font-size: 2.5rem;"></i></a>
+        </div>
+      </div>
+      <hr class="border-dark">
+      <div class="text-center">
+        <small>&copy; 2025 Pawtastic. Todos los derechos reservados.</small>
+      </div>
+    </div>
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/set-mascotas.js"></script>
 </body>
 
 </html>
