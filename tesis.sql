@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Oct 22, 2025 at 08:02 PM
+-- Generation Time: Oct 26, 2025 at 02:09 PM
 -- Server version: 9.4.0
 -- PHP Version: 8.3.26
 
@@ -20,6 +20,23 @@ SET time_zone = "+00:00";
 --
 -- Database: `tesis`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `adopciones`
+--
+
+CREATE TABLE `adopciones` (
+  `id` int NOT NULL,
+  `id_usuario` int NOT NULL,
+  `id_mascota` int NOT NULL,
+  `id_ong` int NOT NULL,
+  `comentarios` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `estado` int NOT NULL DEFAULT '0',
+  `fecha_inicio` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `fecha_actualizacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -117,6 +134,8 @@ CREATE TABLE `usuarios` (
   `ong_id` int DEFAULT NULL,
   `nombre` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `apellido` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tipo_documento` tinyint DEFAULT NULL,
+  `documento` varchar(16) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `telefono` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `foto_perfil_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `direccion` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -140,22 +159,32 @@ CREATE TABLE `usuarios` (
 -- Dumping data for table `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `email`, `password`, `tipo`, `ong_id`, `nombre`, `apellido`, `telefono`, `foto_perfil_url`, `direccion`, `fecha_nacimiento`, `sexo`, `tipo_casa`, `tipo_familia`, `otras_mascotas`, `experiencia`, `energia`, `sociabilidad`, `presencia`, `estilov`, `ultima_actualizacion`, `fecha_registro`, `estado`, `tokenv`) VALUES
-(1, 'ana.garcia0@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Ana', 'García', '1122334400', NULL, 'Calle Falsa 123, Ciudad0', '1990-01-15', 'Femenino', 'Casa con patio', 'Soltero/a', 'No', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:51', '2025-10-20 02:10:51', 0, NULL),
-(2, 'juan.rodriguez1@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Juan', 'Rodriguez', '1122334401', NULL, 'Calle Falsa 123, Ciudad1', '1991-01-15', 'Masculino', 'Departamento', 'Pareja sin hijos', 'Sí, un perro', 'Intermedia', NULL, NULL, NULL, NULL, '2025-10-20 02:10:51', '2025-10-20 02:10:51', 0, NULL),
-(3, 'maria.martinez2@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Maria', 'Martinez', '1122334402', NULL, 'Calle Falsa 123, Ciudad2', '1992-01-15', 'Femenino', 'Casa con patio', 'Familia con niños', 'Sí, un gato', 'Avanzada', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
-(4, 'carlos.lopez3@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Carlos', 'Lopez', '1122334403', NULL, 'Calle Falsa 123, Ciudad3', '1993-01-15', 'Masculino', 'Departamento', 'Soltero/a', 'No', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
-(5, 'laura.gonzalez4@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Laura', 'Gonzalez', '1122334404', NULL, 'Calle Falsa 123, Ciudad4', '1994-01-15', 'Femenino', 'Casa con patio', 'Pareja sin hijos', 'Sí, un perro', 'Intermedia', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
-(6, 'pedro.perez5@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Pedro', 'Perez', '1122334405', NULL, 'Calle Falsa 123, Ciudad5', '1995-01-15', 'Masculino', 'Departamento', 'Familia con niños', 'Sí, un gato', 'Avanzada', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
-(7, 'sofia.sanchez6@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Sofia', 'Sanchez', '1122334406', NULL, 'Calle Falsa 123, Ciudad6', '1996-01-15', 'Femenino', 'Casa con patio', 'Soltero/a', 'No', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
-(8, 'luis.romero7@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Luis', 'Romero', '1122334407', NULL, 'Calle Falsa 123, Ciudad7', '1997-01-15', 'Masculino', 'Departamento', 'Pareja sin hijos', 'Sí, un perro', 'Intermedia', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
-(9, 'elena.suarez8@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Elena', 'Suarez', '1122334408', NULL, 'Calle Falsa 123, Ciudad8', '1998-01-15', 'Femenino', 'Casa con patio', 'Familia con niños', 'Sí, un gato', 'Avanzada', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
-(10, 'javier.diaz9@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Javier', 'Diaz', '1122334409', NULL, 'Calle Falsa 123, Ciudad9', '1999-01-15', 'Masculino', 'Departamento', 'Soltero/a', 'No', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
-(11, 'sbujan@gmail.com', '8146cedca9d6bfb47b77f581973da5a0bee365aa9ec9ebb5b12d142fca2c3cc1', 'usuario', NULL, 'Sergio Ezequiel', 'Bujan', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-22 02:46:37', '2025-10-22 02:46:37', 1, 'acaf70a72c681740b95b0196debb72a0ee9de3e75f42a4f954bfb3b645419392');
+INSERT INTO `usuarios` (`id`, `email`, `password`, `tipo`, `ong_id`, `nombre`, `apellido`, `tipo_documento`, `documento`, `telefono`, `foto_perfil_url`, `direccion`, `fecha_nacimiento`, `sexo`, `tipo_casa`, `tipo_familia`, `otras_mascotas`, `experiencia`, `energia`, `sociabilidad`, `presencia`, `estilov`, `ultima_actualizacion`, `fecha_registro`, `estado`, `tokenv`) VALUES
+(1, 'ana.garcia0@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Ana', 'García', NULL, NULL, '1122334400', NULL, 'Calle Falsa 123, Ciudad0', '1990-01-15', 'Femenino', 'Casa con patio', 'Soltero/a', 'No', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:51', '2025-10-20 02:10:51', 0, NULL),
+(2, 'juan.rodriguez1@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Juan', 'Rodriguez', NULL, NULL, '1122334401', NULL, 'Calle Falsa 123, Ciudad1', '1991-01-15', 'Masculino', 'Departamento', 'Pareja sin hijos', 'Sí, un perro', 'Intermedia', NULL, NULL, NULL, NULL, '2025-10-20 02:10:51', '2025-10-20 02:10:51', 0, NULL),
+(3, 'maria.martinez2@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Maria', 'Martinez', NULL, NULL, '1122334402', NULL, 'Calle Falsa 123, Ciudad2', '1992-01-15', 'Femenino', 'Casa con patio', 'Familia con niños', 'Sí, un gato', 'Avanzada', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
+(4, 'carlos.lopez3@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Carlos', 'Lopez', NULL, NULL, '1122334403', NULL, 'Calle Falsa 123, Ciudad3', '1993-01-15', 'Masculino', 'Departamento', 'Soltero/a', 'No', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
+(5, 'laura.gonzalez4@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Laura', 'Gonzalez', NULL, NULL, '1122334404', NULL, 'Calle Falsa 123, Ciudad4', '1994-01-15', 'Femenino', 'Casa con patio', 'Pareja sin hijos', 'Sí, un perro', 'Intermedia', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
+(6, 'pedro.perez5@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Pedro', 'Perez', NULL, NULL, '1122334405', NULL, 'Calle Falsa 123, Ciudad5', '1995-01-15', 'Masculino', 'Departamento', 'Familia con niños', 'Sí, un gato', 'Avanzada', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
+(7, 'sofia.sanchez6@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Sofia', 'Sanchez', NULL, NULL, '1122334406', NULL, 'Calle Falsa 123, Ciudad6', '1996-01-15', 'Femenino', 'Casa con patio', 'Soltero/a', 'No', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
+(8, 'luis.romero7@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Luis', 'Romero', NULL, NULL, '1122334407', NULL, 'Calle Falsa 123, Ciudad7', '1997-01-15', 'Masculino', 'Departamento', 'Pareja sin hijos', 'Sí, un perro', 'Intermedia', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
+(9, 'marco@ong2.org', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', 2, 'Marco', 'Polo', NULL, NULL, '1122334408', NULL, 'Calle Falsa 123, Ciudad8', '1998-01-15', 'Masculino', 'Casa con patio', 'Familia con niños', 'Sí, un gato', 'Avanzada', NULL, NULL, NULL, NULL, '2025-10-25 17:41:38', '2025-10-20 02:10:52', 0, NULL),
+(10, 'javier@ong1.org', '9b8769a4a742959a2d0298c36fb70623f2dfacda8436237df08d8dfd5b37374c', 'ong', 1, 'Javier', 'Diaz', NULL, NULL, '1122334409', NULL, 'Calle Falsa 123, Ciudad9', '1999-01-15', 'Masculino', 'Departamento', 'Soltero/a', 'No', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-22 22:30:02', '2025-10-20 02:10:52', 0, NULL),
+(11, 'sbujan@gmail.com', '8146cedca9d6bfb47b77f581973da5a0bee365aa9ec9ebb5b12d142fca2c3cc1', 'usuario', NULL, 'Sergio Ezequiel', 'Bujan', 0, '29364773', '1136250164', NULL, 'Juan Cruz Varela y Cordillera', '1982-03-20', 'Masculino', 'con patio', 'casado', 'si, tres y tres', 'amplia', 2, 2, 3, 3, '2025-10-25 21:09:45', '2025-10-22 02:46:37', 0, NULL),
+(12, 'jhon@house.com', 'b391fa64cb3fcb7c64b02a528c2d0514ba9c93fc1611b557ede0b91ef88ec9ae', 'usuario', NULL, 'Jhonny', 'Dubai', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-25 18:53:08', '2025-10-25 18:53:08', 1, 'a90979d90f1d313e400fe05315d520fac72e007bd70454a2d83599a8a9373a99');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `adopciones`
+--
+ALTER TABLE `adopciones`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_usuario` (`id_usuario`),
+  ADD KEY `id_mascota` (`id_mascota`),
+  ADD KEY `id_ong` (`id_ong`);
 
 --
 -- Indexes for table `ImagenesMascota`
@@ -191,6 +220,12 @@ ALTER TABLE `usuarios`
 --
 
 --
+-- AUTO_INCREMENT for table `adopciones`
+--
+ALTER TABLE `adopciones`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `ImagenesMascota`
 --
 ALTER TABLE `ImagenesMascota`
@@ -212,11 +247,19 @@ ALTER TABLE `ONGs`
 -- AUTO_INCREMENT for table `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `adopciones`
+--
+ALTER TABLE `adopciones`
+  ADD CONSTRAINT `adopciones_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `adopciones_ibfk_2` FOREIGN KEY (`id_mascota`) REFERENCES `mascotas` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `adopciones_ibfk_3` FOREIGN KEY (`id_ong`) REFERENCES `ONGs` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `ImagenesMascota`
@@ -235,37 +278,58 @@ ALTER TABLE `mascotas`
 --
 ALTER TABLE `usuarios`
   ADD CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`ong_id`) REFERENCES `ONGs` (`id`) ON DELETE SET NULL;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `adopciones`
---
-
-CREATE TABLE `adopciones` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `id_usuario` int NOT NULL,
-  `id_mascota` int NOT NULL,
-  `id_ong` int NOT NULL,
-  `comentarios` text COLLATE utf8mb4_unicode_ci,
-  `estado` int NOT NULL DEFAULT '0',
-  `fecha_inicio` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `fecha_actualizacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `id_usuario` (`id_usuario`),
-  KEY `id_mascota` (`id_mascota`),
-  KEY `id_ong` (`id_ong`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Constraints for table `adopciones`
---
-ALTER TABLE `adopciones`
-  ADD CONSTRAINT `adopciones_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `adopciones_ibfk_2` FOREIGN KEY (`id_mascota`) REFERENCES `mascotas` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `adopciones_ibfk_3` FOREIGN KEY (`id_ong`) REFERENCES `ONGs` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+DELIMITER $$
+
+CREATE PROCEDURE `calcular_compatibilidad_mascotas`(IN `id_usuario_in` INT)
+BEGIN
+    -- Declarar variables para almacenar las preferencias del usuario
+    DECLARE user_energia TINYINT;
+    DECLARE user_sociabilidad TINYINT;
+    DECLARE user_presencia TINYINT;
+    DECLARE user_estilov TINYINT;
+    
+    -- 1. Obtener las preferencias del usuario y verificar que no sean NULL
+    SELECT 
+        energia, sociabilidad, presencia, estilov
+    INTO 
+        user_energia, user_sociabilidad, user_presencia, user_estilov
+    FROM 
+        usuarios 
+    WHERE 
+        id = id_usuario_in;
+        
+    -- 2. Si alguna preferencia es NULL, no se puede calcular. Devolvemos un conjunto vacío.
+    IF user_energia IS NULL OR user_sociabilidad IS NULL OR user_presencia IS NULL OR user_estilov IS NULL THEN
+        -- Devuelve la estructura de la tabla esperada pero sin filas, para que el frontend no falle.
+        SELECT 
+            m.*,
+            'El perfil del usuario está incompleto para calcular la compatibilidad.' AS compatibilidad
+        FROM mascotas m WHERE 1=0;
+    ELSE
+        -- 3. Si las preferencias son válidas, calcular la compatibilidad
+        SELECT 
+            m.*,
+            -- Calcular el porcentaje de compatibilidad
+            -- La diferencia máxima es 8 ((3-1)*4). Una diferencia de 0 es 100%, una de 8 es 0%.
+            -- Fórmula: 100 - (diferencia_total / diferencia_maxima) * 100
+            ROUND(100 - ((ABS(m.energia - user_energia) + ABS(m.sociabilidad - user_sociabilidad) + ABS(m.presencia - user_presencia) + ABS(m.estilov - user_estilov)) / 8) * 100) AS compatibilidad
+        FROM 
+            mascotas m
+        WHERE
+            -- Solo incluir mascotas activas/disponibles para adopción
+            m.estado = 0
+        -- 4. Ordenar por compatibilidad de mayor a menor
+        ORDER BY 
+            compatibilidad DESC;
+    END IF;
+
+END$$
+
+DELIMITER ;
