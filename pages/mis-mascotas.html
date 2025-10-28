@@ -75,8 +75,9 @@
   <script src="../js/mis-mascotas.js"></script>
   <script>
     document.getElementById("confirmarSalir").addEventListener("click", function () {
-      localStorage.removeItem('token');
-      window.location.href = "../index.html";
+      localStorage.removeItem("token");
+      localStorage.removeItem("tipo");
+      window.location.href = "/index.html";
     });
   </script>
 
