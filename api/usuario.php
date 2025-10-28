@@ -1,53 +1,88 @@
 <?php
 header("Content-Type: application/json");
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+include_once "conexion.php";
 
-require_once "conexion.php";
+// Incluir el verificador de token para proteger el endpoint
 require __DIR__ . '/vendor/autoload.php';
+include_once "verificar_token.php"; // Este script ya nos da el payload en $decoded_token
 
-// Verificar token y obtener payload en $decoded_token
-include_once "verificar_token.php";
-// El payload del token está ahora en la variable $decoded_token
-$user_id = $decoded_token->user_id;
+// El email del usuario se obtiene del token decodificado
+$email = $decoded_token->email;
 
-if (!$user_id) {
-    http_response_code(401);
-    echo json_encode(["message" => "Acceso no autorizado"]);
-    exit;
-}
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    // --- OBTENER DATOS DEL USUARIO ---
+    try {
+        $stmt = $conn->prepare("SELECT id, nombre, apellido, telefono, direccion, fecha_nacimiento, sexo, tipo_casa, tipo_familia, otras_mascotas, experiencia, energia, sociabilidad, presencia, estilov FROM usuarios WHERE email = ?");
+        if (!$stmt) {
+            throw new Exception("Error en la preparación de la consulta: " . $conn->error);
+        }
 
-try {
-    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-        $stmt = $conn->prepare("SELECT nombre, apellido, telefono, foto_perfil_url, direccion, fecha_nacimiento, sexo, tipo_casa, tipo_familia, otras_mascotas, experiencia, energia, sociabilidad, presencia, estilov FROM usuarios WHERE id = ?");
-        $stmt->bind_param("i", $user_id);
+        $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
-        $user = $result->fetch_assoc();
 
-        if ($user) {
+        if ($user = $result->fetch_assoc()) {
+            // Convertir valores numéricos de preferencias a enteros
+            $user['energia'] = !is_null($user['energia']) ? (int)$user['energia'] : null;
+            $user['sociabilidad'] = !is_null($user['sociabilidad']) ? (int)$user['sociabilidad'] : null;
+            $user['presencia'] = !is_null($user['presencia']) ? (int)$user['presencia'] : null;
+            $user['estilov'] = !is_null($user['estilov']) ? (int)$user['estilov'] : null;
+
             echo json_encode($user);
         } else {
             http_response_code(404);
-            echo json_encode(["message" => "Usuario no encontrado"]);
+            echo json_encode(["message" => "Usuario no encontrado."]);
         }
+
         $stmt->close();
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(["message" => "Error en el servidor: " . $e->getMessage()]);
+    }
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // --- ACTUALIZAR DATOS DEL USUARIO ---
+    $data = json_decode(file_get_contents("php://input"));
+
+    // Validación básica de datos
+    if (empty($data->nombre) || empty($data->apellido)) {
+        http_response_code(400);
+        echo json_encode(["message" => "Nombre y apellido son obligatorios."]);
+        exit;
     }
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $data = json_decode(file_get_contents("php://input"));
+    try {
+        $query = "UPDATE usuarios SET 
+                    nombre = ?, 
+                    apellido = ?, 
+                    telefono = ?, 
+                    direccion = ?, 
+                    fecha_nacimiento = ?, 
+                    sexo = ?, 
+                    tipo_casa = ?, 
+                    tipo_familia = ?, 
+                    otras_mascotas = ?, 
+                    experiencia = ?, 
+                    energia = ?, 
+                    sociabilidad = ?, 
+                    presencia = ?, 
+                    estilov = ?
+                  WHERE email = ?";
 
-        $sql = "UPDATE usuarios SET nombre = ?, apellido = ?, telefono = ?, foto_perfil_url = ?, direccion = ?, fecha_nacimiento = ?, sexo = ?, tipo_casa = ?, tipo_familia = ?, otras_mascotas = ?, experiencia = ?, energia = ?, sociabilidad = ?, presencia = ?, estilov = ? WHERE id = ?";
+        $stmt = $conn->prepare($query);
+        if (!$stmt) {
+            throw new Exception("Error en la preparación de la consulta de actualización: " . $conn->error);
+        }
 
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssssssssiiiiii", 
+        // Asignar null si la fecha está vacía
+        $fecha_nacimiento = !empty($data->fecha_nacimiento) ? $data->fecha_nacimiento : null;
+
+        $stmt->bind_param(
+            "ssssssssssiiiis",
             $data->nombre,
             $data->apellido,
             $data->telefono,
-            $data->foto_perfil_url,
             $data->direccion,
-            $data->fecha_nacimiento,
+            $fecha_nacimiento,
             $data->sexo,
             $data->tipo_casa,
             $data->tipo_familia,
@@ -57,20 +92,23 @@ try {
             $data->sociabilidad,
             $data->presencia,
             $data->estilov,
-            $user_id
+            $email
         );
 
         if ($stmt->execute()) {
-            echo json_encode(["message" => "Perfil actualizado correctamente"]);
+            echo json_encode(["message" => "Perfil actualizado con éxito."]);
         } else {
-            http_response_code(500);
-            echo json_encode(["message" => "Error al actualizar el perfil: " . $stmt->error]);
+            throw new Exception("Error al actualizar el perfil.");
         }
+
         $stmt->close();
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(["message" => "Error en el servidor al actualizar: " . $e->getMessage()]);
     }
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(["message" => "Error en el servidor: " . $e->getMessage()]);
+} else {
+    http_response_code(405); // Method Not Allowed
+    echo json_encode(["message" => "Método no permitido."]);
 }
 
 $conn->close();

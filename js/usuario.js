@@ -1,71 +1,91 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('perfil-form');
-    const INCOMPLETO = 'Incompleto';
+    const perfilForm = document.getElementById('perfil-form');
+    const perfilFoto = document.getElementById('perfilfoto');
 
+    /**
+     * Muestra una alerta simple.
+     * @param {string} message - El mensaje a mostrar.
+     * @param {string} type - El tipo de alerta ('success', 'danger', 'info').
+     */
+    const showAlert = (message, type = 'info') => {
+        // Idealmente, esto sería un componente de UI más sofisticado.
+        alert(message);
+    };
+
+    /**
+     * Carga los datos del usuario desde la API y los muestra en el formulario.
+     */
     const fetchUsuario = async () => {
         const token = localStorage.getItem('token');
+
         if (!token) {
-            window.location.href = './login.html';
+            showAlert('Debes iniciar sesión para ver tu perfil.', 'danger');
+            window.location.href = 'login.html';
             return;
         }
 
         try {
-            const response = await fetch('../api/usuario.php', {
+            const response = await fetch('/api/usuario.php', {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
 
             if (!response.ok) {
-                if (response.status === 401) {
-                    localStorage.removeItem('token');
-                    window.location.href = './login.html';
-                }
-                throw new Error('Error al cargar los datos del usuario');
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'No se pudieron cargar los datos del perfil.');
             }
 
-            const user = await response.json();
-            populateForm(user);
+            const usuario = await response.json();
+
+            // Rellenar el formulario con los datos del usuario
+            document.getElementById('nombre').value = usuario.nombre || '';
+            document.getElementById('apellido').value = usuario.apellido || '';
+            document.getElementById('telefono').value = usuario.telefono || '';
+            document.getElementById('direccion').value = usuario.direccion || '';
+            document.getElementById('fecha_nacimiento').value = usuario.fecha_nacimiento || '';
+            document.getElementById('sexo').value = usuario.sexo || '';
+            document.getElementById('tipo_casa').value = usuario.tipo_casa || '';
+            document.getElementById('tipo_familia').value = usuario.tipo_familia || '';
+            document.getElementById('otras_mascotas').value = usuario.otras_mascotas || '';
+            document.getElementById('experiencia').value = usuario.experiencia || '';
+            document.getElementById('energia').value = usuario.energia || 0;
+            document.getElementById('sociabilidad').value = usuario.sociabilidad || 0;
+            document.getElementById('presencia').value = usuario.presencia || 0;
+            document.getElementById('estilov').value = usuario.estilov || 0;
+
+            // Actualizar la foto de perfil
+            if (usuario.foto_perfil_url) {
+                perfilFoto.src = usuario.foto_perfil_url;
+            } else {
+                // Si no hay foto, usamos la imagen por defecto.
+                // La ruta debe ser relativa a la página HTML.
+                perfilFoto.src = '../img/pdefault.jpg';
+            }
 
         } catch (error) {
-            console.error(error);
-            alert('No se pudieron cargar los datos del perfil.');
+            console.error('Error al cargar el perfil:', error);
+            showAlert(error.message, 'danger');
         }
     };
 
-    const populateForm = (user) => {
-        document.getElementById('nombre').value = user.nombre || INCOMPLETO;
-        document.getElementById('apellido').value = user.apellido || INCOMPLETO;
-        document.getElementById('telefono').value = user.telefono || INCOMPLETO;
-        document.getElementById('direccion').value = user.direccion || INCOMPLETO;
-        document.getElementById('fecha_nacimiento').value = user.fecha_nacimiento || '';
-        document.getElementById('sexo').value = user.sexo || INCOMPLETO;
-        document.getElementById('tipo_casa').value = user.tipo_casa || INCOMPLETO;
-        document.getElementById('tipo_familia').value = user.tipo_familia || INCOMPLETO;
-        document.getElementById('otras_mascotas').value = user.otras_mascotas || INCOMPLETO;
-        document.getElementById('experiencia').value = user.experiencia || INCOMPLETO;
-
-        // Dropdowns
-        document.getElementById('energia').value = user.energia || 0;
-        document.getElementById('sociabilidad').value = user.sociabilidad || 0;
-        document.getElementById('presencia').value = user.presencia || 0;
-        document.getElementById('estilov').value = user.estilov || 0;
-    };
-
-    form.addEventListener('submit', async (e) => {
+    /**
+     * Envía los datos del formulario para actualizar el perfil del usuario.
+     */
+    perfilForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const token = localStorage.getItem('token');
-        const formData = new FormData(form);
+        const formData = new FormData(perfilForm);
         const data = Object.fromEntries(formData.entries());
 
-        // Convert dropdowns to integers
+        // Convertir valores de los select a números
         data.energia = parseInt(data.energia, 10);
         data.sociabilidad = parseInt(data.sociabilidad, 10);
         data.presencia = parseInt(data.presencia, 10);
         data.estilov = parseInt(data.estilov, 10);
 
         try {
-            const response = await fetch('../api/usuario.php', {
+            const response = await fetch('/api/usuario.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -77,17 +97,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (response.ok) {
-                alert(result.message);
-                window.location.reload();
+                showAlert('Perfil actualizado con éxito.', 'success');
             } else {
-                throw new Error(result.message || 'Error al actualizar');
+                throw new Error(result.message || 'No se pudo actualizar el perfil.');
             }
         } catch (error) {
-            console.error(error);
-            alert(error.message);
+            console.error('Error al actualizar el perfil:', error);
+            showAlert(error.message, 'danger');
         }
     });
 
-    // Carga inicial de datos
+    // Carga inicial de los datos del usuario al entrar a la página.
     fetchUsuario();
 });
