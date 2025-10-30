@@ -27,7 +27,7 @@ $chip = $_POST['chip'];
 $energia = $_POST['energia'];
 $sociabilidad = $_POST['sociabilidad'];
 $presencia = $_POST['presencia'];
-$estilo = $_POST['estilo'];
+$estilov = $_POST['estilov'];
 
 // Manejo de imagen
 $imagen = null;
@@ -72,9 +72,9 @@ try {
     $stmt->close();
 
     // Actualizar mascota
-    $sql = "UPDATE mascotas SET nombre = ?, tipo = ?, edad = ?, sexo = ?, tamaño = ?, descripcion = ?, vacunado = ?, esterilizado = ?, chip = ?, energia = ?, sociabilidad = ?, presencia = ?, estilo = ?";
-    $types = "ssssssssiiiii";
-    $params = [$nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $vacunado, $esterilizado, $chip, $energia, $sociabilidad, $presencia, $estilo];
+    $sql = "UPDATE mascotas SET nombre = ?, tipo = ?, edad = ?, sexo = ?, tamaño = ?, descripcion = ?, vacunado = ?, esterilizado = ?, chip = ?, energia = ?, sociabilidad = ?, presencia = ?, estilov = ?";
+    $types = "ssssssisiiiii";
+    $params = [$nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $vacunado, $esterilizado, $chip, $energia, $sociabilidad, $presencia, $estilov];
 
     if ($imagen) {
         $sql .= ", imagen = ?";
