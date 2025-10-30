@@ -21,19 +21,23 @@ if (
     exit;
 }
 
-$nombre = $_POST['nombre'];
-$tipo = $_POST['tipo'];
-$edad = $_POST['edad'];
-$sexo = $_POST['sexo'];
-$tamaño = $_POST['tamaño'];
-$descripcion = $_POST['descripcion'];
-$vacunado = $_POST['vacunado'];
-$esterilizado = $_POST['esterilizado'];
-$chip = $_POST['chip'];
-$energia = $_POST['energia'];
-$sociabilidad = $_POST['sociabilidad'];
-$presencia = $_POST['presencia'];
-$estilov = $_POST['estilov'];
+// --- Validación y Sanitización de Datos ---
+// Convertir a enteros los campos que deben serlo
+$edad = (int)$_POST['edad'];
+$energia = (int)$_POST['energia'];
+$sociabilidad = (int)$_POST['sociabilidad'];
+$presencia = (int)$_POST['presencia'];
+$estilov = (int)$_POST['estilov'];
+
+// Limpiar strings
+$nombre = trim($_POST['nombre']);
+$tipo = trim($_POST['tipo']);
+$sexo = trim($_POST['sexo']);
+$tamaño = trim($_POST['tamaño']);
+$descripcion = trim($_POST['descripcion']);
+$vacunado = trim($_POST['vacunado']);
+$esterilizado = trim($_POST['esterilizado']);
+$chip = trim($_POST['chip']);
 
 // Manejo de imagen
 $imagen_path = null;

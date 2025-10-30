@@ -8,38 +8,51 @@ include_once "verificar_token.php"; // Define $decoded_token
 $ong_email = $decoded_token->email;
 
 // Verificar que el método sea POST para la edición
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+if (
+    $_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_POST['id']) ||
+    empty($_POST['nombre']) || empty($_POST['tipo']) || !isset($_POST['edad']) ||
+    empty($_POST['sexo']) || empty($_POST['tamaño']) || empty($_POST['descripcion']) ||
+    !isset($_POST['vacunado']) || !isset($_POST['esterilizado']) || !isset($_POST['chip']) ||
+    empty($_POST['energia']) || empty($_POST['sociabilidad']) || empty($_POST['presencia']) ||
+    empty($_POST['estilov'])
+) {
     http_response_code(400);
     echo json_encode(["message" => "Faltan datos obligatorios"]);
     exit;
 }
 
-$id = $_POST['id'];
-$nombre = $_POST['nombre'];
-$tipo = $_POST['tipo'];
-$edad = $_POST['edad'];
-$sexo = $_POST['sexo'];
-$tamaño = $_POST['tamaño'];
-$descripcion = $_POST['descripcion'];
-$vacunado = $_POST['vacunado'];
-$esterilizado = $_POST['esterilizado'];
-$chip = $_POST['chip'];
-$energia = $_POST['energia'];
-$sociabilidad = $_POST['sociabilidad'];
-$presencia = $_POST['presencia'];
-$estilov = $_POST['estilov'];
+// --- Validación y Sanitización de Datos ---
+// Convertir a enteros los campos que deben serlo
+$id = (int)$_POST['id'];
+$edad = (int)$_POST['edad'];
+$energia = (int)$_POST['energia'];
+$sociabilidad = (int)$_POST['sociabilidad'];
+$presencia = (int)$_POST['presencia'];
+$estilov = (int)$_POST['estilov'];
 
-// Manejo de imagen
-$imagen = null;
-if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] == 0) {
-    $directorio = "../img/mascotas/";
-    if (!is_dir($directorio)) mkdir($directorio, 0777, true);
-    
-    $nombreArchivo = uniqid() . "_" . basename($_FILES["imagen"]["name"]);
-    $rutaDestino = $directorio . $nombreArchivo;
-    
-    if (move_uploaded_file($_FILES["imagen"]["tmp_name"], $rutaDestino)) {
-        $imagen = $nombreArchivo; // Guardar solo el nombre del archivo
+// Limpiar strings
+$nombre = trim($_POST['nombre']);
+$tipo = trim($_POST['tipo']);
+$sexo = trim($_POST['sexo']);
+$tamaño = trim($_POST['tamaño']);
+$descripcion = trim($_POST['descripcion']);
+$vacunado = trim($_POST['vacunado']);
+$esterilizado = trim($_POST['esterilizado']);
+$chip = trim($_POST['chip']);
+
+// Procesar imagen si se cargó
+$nombre_imagen = "";
+if (isset($_FILES["imagen"]) && $_FILES["imagen"]["error"] == 0) {
+    $tmp_name = $_FILES["imagen"]["tmp_name"];
+    $nombre_original = basename($_FILES["imagen"]["name"]);
+    $ext = pathinfo($nombre_original, PATHINFO_EXTENSION);
+    $nombre_imagen = uniqid("img_") . "." . $ext;
+    $ruta_destino = "../img/mascotas/" . $nombre_imagen;
+
+    if (!move_uploaded_file($tmp_name, $ruta_destino)) {
+        http_response_code(500);
+        echo json_encode(["message" => "Error al subir la imagen. Verifique los permisos de la carpeta 'img/mascotas'."]);
+        exit;
     }
 }
 
@@ -76,10 +89,10 @@ try {
     $types = "ssisssssssiii";
     $params = [$nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $vacunado, $esterilizado, $chip, $energia, $sociabilidad, $presencia, $estilov];
 
-    if ($imagen) {
+    if ($nombre_imagen) {
         $sql .= ", imagen = ?";
         $types .= "s";
-        $params[] = $imagen;
+        $params[] = $nombre_imagen;
     }
 
     $sql .= " WHERE id = ? AND id_ong = ?";

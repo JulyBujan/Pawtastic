@@ -19,10 +19,9 @@
         <img src="../img/logo.png" alt="Logo Pawtastic" width="50" class="me-2 rounded-circle" />
         <h1 class="h4 text-warning m-0">Pawtastic</h1>
       </div>
-      <div class="d-flex gap-2 align-items-center">
-        <a href="./catalogo.html" class="btn btn-outline-dark">← Catálogo</a>
-        <a id="perfil-link" href="#" class="btn btn-outline-dark">Mi Perfil</a>
-        <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion">
+      <div id="nav-links" class="d-flex gap-2 align-items-center">
+        <!-- Los enlaces se cargarán dinámicamente aquí -->
+        <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion" title="Salir">
           <i class="bi bi-box-arrow-right me-1"></i>Salir
         </a>
       </div>
@@ -98,13 +97,24 @@
     // Lógica para el botón de salir y el enlace de perfil dinámico
     document.addEventListener('DOMContentLoaded', () => {
       const tipoUsuario = localStorage.getItem('tipo');
-      const perfilLink = document.getElementById('perfil-link');
+      const navLinksContainer = document.getElementById('nav-links');
+      const salirButton = navLinksContainer.querySelector('.btn-danger');
+
+      let linksHTML = '';
 
       if (tipoUsuario === 'ong') {
-        perfilLink.href = 'perfil-ong.html';
+        linksHTML = `
+          <a href="perfil-ong.html" class="btn btn-outline-dark">Inicio</a>
+          <a href="mis-mascotas.html" class="btn btn-outline-dark">Mis Mascotas</a>
+          <a href="ver-reportes.html" class="btn btn-outline-dark">Estadisticas</a>
+        `;
       } else {
-        perfilLink.href = 'usuario.html';
+        linksHTML = `
+          <a href="catalogo.html" class="btn btn-outline-dark">Catálogo</a>
+          <a href="usuario.html" class="btn btn-outline-dark">Mi Perfil</a>
+        `;
       }
+      salirButton.insertAdjacentHTML('beforebegin', linksHTML);
 
       document.getElementById("confirmarSalir").addEventListener("click", function () {
         localStorage.removeItem("token");
