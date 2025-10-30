@@ -68,13 +68,13 @@ try {
 
     // Insertar mascota con el ID real de la ONG
     $query = $conn->prepare("
-        INSERT INTO mascotas (nombre, tipo, edad, sexo, tamaño, descripcion, imagen, id_ong, vacunado, esterilizado, chip, energia, sociabilidad, presencia, estilov)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO mascotas (nombre, tipo, edad, sexo, tamaño, descripcion, imagen, id_ong, vacunado, esterilizado, chip, energia, sociabilidad, presencia, estilov, date_publicacion)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     ");
-    $query->bind_param("ssisssssisiiiii", $nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $imagen_path, $idOng, $vacunado, $esterilizado, $chip, $energia, $sociabilidad, $presencia, $estilov);
+    $query->bind_param("ssisssssisssiii", $nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $imagen_path, $idOng, $vacunado, $esterilizado, $chip, $energia, $sociabilidad, $presencia, $estilov);
     $query->execute();
 
-    echo json_encode(["message" => "Mascota cargada con éxito 💚"]);
+    echo json_encode(["message" => "Mascota cargada con éxito."]);
 
 } catch (Exception $e) {
     http_response_code(500);

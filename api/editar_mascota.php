@@ -73,7 +73,7 @@ try {
 
     // Actualizar mascota
     $sql = "UPDATE mascotas SET nombre = ?, tipo = ?, edad = ?, sexo = ?, tamaño = ?, descripcion = ?, vacunado = ?, esterilizado = ?, chip = ?, energia = ?, sociabilidad = ?, presencia = ?, estilov = ?";
-    $types = "ssssssisiiiii";
+    $types = "ssisssssssiii";
     $params = [$nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $vacunado, $esterilizado, $chip, $energia, $sociabilidad, $presencia, $estilov];
 
     if ($imagen) {
