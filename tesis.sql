@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Oct 30, 2025 at 11:58 PM
+-- Generation Time: Oct 31, 2025 at 12:16 AM
 -- Server version: 9.4.0
 -- PHP Version: 8.3.26
 
@@ -144,12 +144,12 @@ CREATE TABLE `mascotas` (
 --
 
 INSERT INTO `mascotas` (`id`, `id_ong`, `nombre`, `tipo`, `edad`, `sexo`, `tamaño`, `vacunado`, `esterilizado`, `chip`, `descripcion`, `imagen`, `energia`, `sociabilidad`, `presencia`, `estilov`, `estado`, `date_update`, `date_publicacion`) VALUES
-(20, 1, 'Amorina', 'perro', 3, 'Hembra', 'Pequeño', 'si', 'si', 'no', 'Cariñosa y protectora, ideal para familias con niños. Le encanta salir a pasear y recibir mimos.', 'mascota_690279220251c_bulldog.jpg', 2, 2, 3, 3, 0, '2025-10-29 20:29:20', NULL),
-(21, 1, 'Isabella', 'gato', 14, 'Hembra', 'Pequeño', 'si', 'si', 'si', 'Muy limpia y observadora. Se adapta bien a hogares tranquilos. Ideal para departamentos.', 'mascota_6902836dea528_cat-persa-adulto-negro.jpg', 1, 1, 1, 1, 0, '2025-10-29 21:13:16', NULL),
-(22, 1, 'Ringo', 'perro', 5, 'Macho', 'Grande', 'no', 'no', 'no', 'Juguetón y obediente. Excelente para hogares con patio. Le gusta correr y jugar con pelotas.', 'mascota_6902850151c60_rhodesian-perro-adulto.jpg', 3, 3, 2, 2, 0, '2025-10-29 21:20:00', NULL),
-(23, 2, 'Messi', 'gato', 1, 'Macho', 'Pequeño', 'si', 'no', 'no', 'Es un gatito bicolor, gris y blanco. Está en la etapa de máxima exploración y desarrollo. Todavía es pequeño con 4 meses de edad, pero ya ha mostrando su personalidad. Ya está entrenado para usar el arenero solito, ya come balanceado pequeño y pollo cortado en pequeños trozos. Ya está listo para sumarse a una nueva familia que le brinde un cálido hogar y mucho amor.', NULL, 3, 3, 3, 3, 1, '2025-10-29 21:29:34', NULL),
-(28, 1, 'Pocha', 'gato', 4, 'Hembra', 'Pequeño', 'si', 'si', 'no', 'Gata que exige rascadas de lomo. ', NULL, 2, 2, 1, 3, 0, '2025-10-30 02:49:08', NULL),
-(29, 1, 'Gio', 'gato', 8, 'Macho', 'Grande', 'si', 'si', 'si', 'Ocho kilos de amor demandante', 'img_6903e99c67b97.jpg', 2, 3, 2, 1, 0, '2025-10-30 19:11:09', NULL),
+(20, 1, 'Amorina', 'perro', 3, 'Hembra', 'Pequeño', 'si', 'si', 'no', 'Cariñosa y protectora, ideal para familias con niños. Le encanta salir a pasear y recibir mimos.', 'mascota_690279220251c_bulldog.jpg', 2, 2, 3, 3, 0, '2025-10-29 20:29:20', '2025-10-29 00:06:14'),
+(21, 1, 'Isabella', 'gato', 14, 'Hembra', 'Pequeño', 'si', 'si', 'si', 'Muy limpia y observadora. Se adapta bien a hogares tranquilos. Ideal para departamentos.', 'mascota_6902836dea528_cat-persa-adulto-negro.jpg', 1, 1, 1, 1, 0, '2025-10-29 21:13:16', '2025-10-26 00:06:14'),
+(22, 1, 'Ringo', 'perro', 5, 'Macho', 'Grande', 'no', 'no', 'no', 'Juguetón y obediente. Excelente para hogares con patio. Le gusta correr y jugar con pelotas.', 'mascota_6902850151c60_rhodesian-perro-adulto.jpg', 3, 3, 2, 2, 0, '2025-10-29 21:20:00', '2025-10-23 00:06:14'),
+(23, 2, 'Messi', 'gato', 1, 'Macho', 'Pequeño', 'si', 'no', 'no', 'Es un gatito bicolor, gris y blanco. Está en la etapa de máxima exploración y desarrollo. Todavía es pequeño con 4 meses de edad, pero ya ha mostrando su personalidad. Ya está entrenado para usar el arenero solito, ya come balanceado pequeño y pollo cortado en pequeños trozos. Ya está listo para sumarse a una nueva familia que le brinde un cálido hogar y mucho amor.', NULL, 3, 3, 3, 3, 1, '2025-10-29 21:29:34', '2025-10-19 00:06:14'),
+(28, 1, 'Pocha', 'gato', 4, 'Hembra', 'Pequeño', 'si', 'si', 'no', 'Gata que exige rascadas de lomo. ', NULL, 2, 2, 1, 3, 0, '2025-10-30 02:49:08', '2025-10-09 00:06:14'),
+(29, 1, 'Gio', 'gato', 8, 'Macho', 'Grande', 'si', 'si', 'si', 'Ocho kilos de amor demandante', 'img_6903e99c67b97.jpg', 2, 3, 2, 1, 0, '2025-10-30 19:11:09', '2025-10-03 00:06:14'),
 (30, 1, 'Snoopy', 'perro', 5, 'Macho', 'Mediano', 'si', 'si', 'no', 'Beagle famoso por ser el perro de Charlie Brown.', 'img_6903fb703724a.jpg', 2, 3, 1, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
 (31, 1, 'Scooby-Doo', 'perro', 7, 'Macho', 'Grande', 'si', 'no', 'no', 'Gran Danés miedoso y glotón, resuelve misterios con sus amigos.', NULL, 1, 3, 3, 1, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
 (32, 1, 'Pluto', 'perro', 8, 'Macho', 'Mediano', 'si', 'si', 'no', 'El leal perro de Mickey Mouse, es juguetón y curioso.', NULL, 3, 3, 2, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
