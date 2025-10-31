@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             tablaHTML += `<tr>`;
             if (tipoUsuario === 'ong') {
-                tablaHTML += `<td><a href="detalle-mascota.html?id=${p.mascota_id}">${p.mascota_nombre}</a></td>
+                tablaHTML += `<td><a href="editar-mascota.html?id=${p.mascota_id}">${p.mascota_nombre}</a></td>
                               <td><a href="usuario.html?id=${p.usuario_id}">${p.usuario_nombre} ${p.usuario_apellido}</a></td>
                               <td>${fecha}</td>
                               <td><span class="badge ${estado.clase}">${estado.texto}</span></td>

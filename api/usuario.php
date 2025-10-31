@@ -7,21 +7,41 @@ require __DIR__ . '/vendor/autoload.php';
 require "verificar_token.php"; // Este script ya nos da el payload en $decoded_token
 
 // El email del usuario se obtiene del token decodificado
-$email = $decoded_token->email;
+$user_email = $decoded_token->email;
+$user_tipo = $decoded_token->tipo;
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // --- OBTENER DATOS DEL USUARIO ---
     try {
-        $stmt = $conn->prepare("SELECT id, nombre, apellido, telefono, direccion, fecha_nacimiento, sexo, tipo_casa, tipo_familia, otras_mascotas, experiencia, energia, sociabilidad, presencia, estilov, foto_perfil_url FROM usuarios WHERE email = ?");
-        if (!$stmt) {
-            throw new Exception("Error en la preparación de la consulta: " . $conn->error);
+        // Si se pasa un ID y el usuario es una ONG, se busca por ID.
+        if (isset($_GET['id']) && $user_tipo === 'ong') {
+            $id_a_buscar = (int)$_GET['id'];
+            $stmt = $conn->prepare("SELECT id, nombre, apellido, telefono, direccion, fecha_nacimiento, sexo, tipo_casa, tipo_familia, otras_mascotas, experiencia, energia, sociabilidad, presencia, estilov, foto_perfil_url FROM usuarios WHERE id = ? AND tipo = 'usuario'");
+            if (!$stmt) {
+                throw new Exception("Error en la preparación de la consulta por ID: " . $conn->error);
+            }
+            $stmt->bind_param("i", $id_a_buscar);
+        } elseif (isset($_GET['id'])) {
+            // Si se pasa un ID pero el usuario no es ONG, se deniega el acceso.
+            http_response_code(403); // Forbidden
+            echo json_encode(["message" => "No tienes permiso para ver perfiles de otros usuarios."]);
+            exit;
+        } else {
+            // Si no se pasa ID, se busca el perfil del propio usuario logueado.
+            $stmt = $conn->prepare("SELECT id, nombre, apellido, telefono, direccion, fecha_nacimiento, sexo, tipo_casa, tipo_familia, otras_mascotas, experiencia, energia, sociabilidad, presencia, estilov, foto_perfil_url FROM usuarios WHERE email = ?");
+            if (!$stmt) {
+                throw new Exception("Error en la preparación de la consulta por email: " . $conn->error);
+            }
+            $stmt->bind_param("s", $user_email);
         }
 
-        $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($user = $result->fetch_assoc()) {
+            // Por seguridad, nunca devolvemos la contraseña ni el token de validación
+            unset($user['password']);
+            unset($user['tokenv']);
             // Convertir valores numéricos de preferencias a enteros
             $user['energia'] = !is_null($user['energia']) ? (int)$user['energia'] : null;
             $user['sociabilidad'] = !is_null($user['sociabilidad']) ? (int)$user['sociabilidad'] : null;
@@ -53,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
         if (move_uploaded_file($_FILES["foto_perfil"]["tmp_name"], $rutaDestino)) {
             try {
-                $stmt = $conn->prepare("UPDATE usuarios SET foto_perfil_url = ? WHERE email = ?");
+                $stmt = $conn->prepare("UPDATE usuarios SET foto_perfil_url = ? WHERE email = ?"); // Solo puede actualizar su propia foto
                 $stmt->bind_param("ss", $urlRelativa, $email);
                 if ($stmt->execute()) {
                     echo json_encode(["message" => "Foto actualizada con éxito.", "foto_perfil_url" => $urlRelativa]);
@@ -121,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 $data->sociabilidad,
                 $data->presencia,
                 $data->estilov,
-                $email
+                $user_email // Solo puede actualizar su propio perfil
             );
 
             if ($stmt->execute()) {

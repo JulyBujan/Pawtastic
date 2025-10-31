@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Oct 30, 2025 at 10:26 PM
+-- Generation Time: Oct 30, 2025 at 11:58 PM
 -- Server version: 9.4.0
 -- PHP Version: 8.3.26
 
@@ -88,6 +88,16 @@ CREATE TABLE `adopciones` (
   `fecha_actualizacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `adopciones`
+--
+
+INSERT INTO `adopciones` (`id`, `id_usuario`, `id_mascota`, `id_ong`, `comentarios`, `estado`, `fecha_inicio`, `fecha_actualizacion`) VALUES
+(6, 12, 21, 1, NULL, 0, '2025-10-30 23:01:55', '2025-10-30 23:01:55'),
+(7, 12, 28, 1, '[30/10/2025 23:03 - Usuario]: Esperando instrucciones.', 0, '2025-10-30 23:03:01', '2025-10-30 23:03:35'),
+(8, 11, 20, 1, NULL, 0, '2025-10-30 23:22:34', '2025-10-30 23:22:34'),
+(9, 11, 33, 2, NULL, 0, '2025-10-30 23:24:16', '2025-10-30 23:24:16');
+
 -- --------------------------------------------------------
 
 --
@@ -134,13 +144,23 @@ CREATE TABLE `mascotas` (
 --
 
 INSERT INTO `mascotas` (`id`, `id_ong`, `nombre`, `tipo`, `edad`, `sexo`, `tamaño`, `vacunado`, `esterilizado`, `chip`, `descripcion`, `imagen`, `energia`, `sociabilidad`, `presencia`, `estilov`, `estado`, `date_update`, `date_publicacion`) VALUES
-(20, 1, 'Amorina', 'perro', 3, 'Hembra', 'Pequeño', 'si', 'si', 'no', 'Cariñosa y protectora, ideal para familias con niños. Le encanta salir a pasear y recibir mimos.', 'mascota_690279220251c_bulldog.jpg', 2, 2, 3, 3, 1, '2025-10-29 20:29:20', NULL),
-(21, 1, 'Isabella', 'gato', 14, 'Hembra', 'Pequeño', 'si', 'si', 'si', 'Muy limpia y observadora. Se adapta bien a hogares tranquilos. Ideal para departamentos.', 'mascota_6902836dea528_cat-persa-adulto-negro.jpg', 1, 1, 1, 1, 1, '2025-10-29 21:13:16', NULL),
-(22, 1, 'Ringo', 'perro', 5, 'Macho', 'Grande', 'no', 'no', 'no', 'Juguetón y obediente. Excelente para hogares con patio. Le gusta correr y jugar con pelotas.', 'mascota_6902850151c60_rhodesian-perro-adulto.jpg', 3, 3, 2, 2, 1, '2025-10-29 21:20:00', NULL),
+(20, 1, 'Amorina', 'perro', 3, 'Hembra', 'Pequeño', 'si', 'si', 'no', 'Cariñosa y protectora, ideal para familias con niños. Le encanta salir a pasear y recibir mimos.', 'mascota_690279220251c_bulldog.jpg', 2, 2, 3, 3, 0, '2025-10-29 20:29:20', NULL),
+(21, 1, 'Isabella', 'gato', 14, 'Hembra', 'Pequeño', 'si', 'si', 'si', 'Muy limpia y observadora. Se adapta bien a hogares tranquilos. Ideal para departamentos.', 'mascota_6902836dea528_cat-persa-adulto-negro.jpg', 1, 1, 1, 1, 0, '2025-10-29 21:13:16', NULL),
+(22, 1, 'Ringo', 'perro', 5, 'Macho', 'Grande', 'no', 'no', 'no', 'Juguetón y obediente. Excelente para hogares con patio. Le gusta correr y jugar con pelotas.', 'mascota_6902850151c60_rhodesian-perro-adulto.jpg', 3, 3, 2, 2, 0, '2025-10-29 21:20:00', NULL),
 (23, 2, 'Messi', 'gato', 1, 'Macho', 'Pequeño', 'si', 'no', 'no', 'Es un gatito bicolor, gris y blanco. Está en la etapa de máxima exploración y desarrollo. Todavía es pequeño con 4 meses de edad, pero ya ha mostrando su personalidad. Ya está entrenado para usar el arenero solito, ya come balanceado pequeño y pollo cortado en pequeños trozos. Ya está listo para sumarse a una nueva familia que le brinde un cálido hogar y mucho amor.', NULL, 3, 3, 3, 3, 1, '2025-10-29 21:29:34', NULL),
-(24, 2, 'Messi', 'gato', 1, 'Macho', 'Pequeño', 'no', 'no', 'no', 'Es un gatito bicolor, gris y blanco. Está en la etapa de máxima exploración y desarrollo. Todavía es pequeño con 4 meses de edad, pero ya ha mostrando su personalidad. Ya está entrenado para usar el arenero solito, ya come balanceado pequeño y pollo cortado en pequeños trozos. Ya está listo para sumarse a una nueva familia que le brinde un cálido hogar y mucho amor.', NULL, 3, 3, 3, 3, 1, '2025-10-29 21:29:42', NULL),
-(28, 1, 'Pocha', 'gato', 4, 'Hembra', 'Pequeño', 'si', 'si', 'no', 'Gata que exige rascadas de lomo. ', NULL, 2, 2, 1, 3, 1, '2025-10-30 02:49:08', NULL),
-(29, 1, 'Gio', 'gato', 8, 'Macho', 'Grande', 'si', 'si', 'si', 'Ocho kilos de amor demandante', NULL, 2, 3, 2, 1, 1, '2025-10-30 19:11:09', NULL);
+(28, 1, 'Pocha', 'gato', 4, 'Hembra', 'Pequeño', 'si', 'si', 'no', 'Gata que exige rascadas de lomo. ', NULL, 2, 2, 1, 3, 0, '2025-10-30 02:49:08', NULL),
+(29, 1, 'Gio', 'gato', 8, 'Macho', 'Grande', 'si', 'si', 'si', 'Ocho kilos de amor demandante', 'img_6903e99c67b97.jpg', 2, 3, 2, 1, 0, '2025-10-30 19:11:09', NULL),
+(30, 1, 'Snoopy', 'perro', 5, 'Macho', 'Mediano', 'si', 'si', 'no', 'Beagle famoso por ser el perro de Charlie Brown.', 'img_6903fb703724a.jpg', 2, 3, 1, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(31, 1, 'Scooby-Doo', 'perro', 7, 'Macho', 'Grande', 'si', 'no', 'no', 'Gran Danés miedoso y glotón, resuelve misterios con sus amigos.', NULL, 1, 3, 3, 1, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(32, 1, 'Pluto', 'perro', 8, 'Macho', 'Mediano', 'si', 'si', 'no', 'El leal perro de Mickey Mouse, es juguetón y curioso.', NULL, 3, 3, 2, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(33, 2, 'Beethoven', 'perro', 4, 'Macho', 'Grande', 'si', 'no', 'si', 'Un San Bernardo gigante y travieso pero de buen corazón.', 'img_6903ef44d587b.jpg', 2, 2, 3, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(34, 2, 'Toto', 'perro', 3, 'Macho', 'Pequeño', 'si', 'si', 'no', 'Pequeño Cairn terrier que acompañó a Dorothy en la tierra de Oz.', 'img_6903ef84c5324.jpg', 3, 1, 2, 1, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(35, 2, 'Balto', 'perro', 6, 'Macho', 'Grande', 'si', 'si', 'si', 'Valiente perro de trineo que lideró una expedición para salvar a su pueblo en Alaska.', NULL, 3, 3, 1, 3, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(36, 3, 'Lassie', 'perro', 5, 'Hembra', 'Grande', 'si', 'si', 'no', 'Una Collie hermosa e inteligente, famosa por rescatar gente.', NULL, 2, 3, 3, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(37, 3, 'Marley', 'perro', 2, 'Macho', 'Grande', 'si', 'no', 'si', 'Un Labrador retriever adorable pero muy destructivo, protagonista de \"Marley y yo\".', NULL, 3, 3, 3, 3, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(38, 3, 'Milú', 'perro', 4, 'Macho', 'Pequeño', 'si', 'si', 'no', 'El inseparable Fox terrier blanco de Tintín, aventurero y leal.', NULL, 2, 2, 1, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(39, 1, 'Golfo', 'perro', 6, 'Macho', 'Mediano', 'si', 'no', 'no', 'Perro callejero, encantador y astuto de \"La Dama y el Vagabundo\".', 'img_6903fb85a1cc5.jpg', 2, 3, 1, 3, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(40, 2, 'Benji', 'perro', 5, 'Macho', 'Pequeño', 'si', 'si', 'no', 'Un perro mestizo muy inteligente y heroico que siempre está en el lugar correcto para ayudar.', 'img_6903efbfd18c2.jpg', 2, 2, 1, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34');
 
 -- --------------------------------------------------------
 
@@ -270,7 +290,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT for table `adopciones`
 --
 ALTER TABLE `adopciones`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `ImagenesMascota`
@@ -282,7 +302,7 @@ ALTER TABLE `ImagenesMascota`
 -- AUTO_INCREMENT for table `mascotas`
 --
 ALTER TABLE `mascotas`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `ONGs`

@@ -17,6 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
      * Carga los datos del usuario desde la API y los muestra en el formulario.
      */
     const fetchUsuario = async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('id'); // ID del usuario a visualizar (si existe)
+
         const token = localStorage.getItem('token');
 
         if (!token) {
@@ -25,8 +28,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Construir la URL: si hay un ID, lo añadimos como query param
+        const apiUrl = userId ? `/api/usuario.php?id=${userId}` : '/api/usuario.php';
+
         try {
-            const response = await fetch('/api/usuario.php', {
+            const response = await fetch(apiUrl, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -62,6 +68,20 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 // Si no hay foto, usamos la imagen por defecto. La ruta es relativa a la página.
                 perfilFoto.src = '../img/pdefault.jpg';
+            }
+
+            // Si estamos viendo el perfil de otro usuario (como ONG), deshabilitamos el formulario.
+            if (userId) {
+                Array.from(perfilForm.elements).forEach(element => {
+                    element.disabled = true;
+                });
+                perfilFoto.style.cursor = 'default'; // Quitar el cursor de "clic"
+
+                // Ocultar los botones de acción del usuario
+                const actionButtons = document.getElementById('user-action-buttons');
+                if (actionButtons) {
+                    actionButtons.style.display = 'none';
+                }
             }
 
         } catch (error) {
@@ -110,10 +130,16 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Event listener para el clic en la foto de perfil
-    perfilFoto.addEventListener('click', () => fotoInput.click());
+    perfilFoto.addEventListener('click', () => {
+        // Solo permitir cambiar la foto si no se está viendo el perfil de otro usuario
+        const urlParams = new URLSearchParams(window.location.search);
+        if (!urlParams.has('id')) {
+            fotoInput.click();
+        }
+    });
 
     // Event listener para cuando se selecciona un archivo
-    fotoInput.addEventListener('change', () => uploadProfilePicture(fotoInput.files[0]));
+    fotoInput.addEventListener('change', () => { if (fotoInput.files.length > 0) uploadProfilePicture(fotoInput.files[0]) });
 
     /**
      * Envía los datos del formulario para actualizar el perfil del usuario.
@@ -121,6 +147,12 @@ document.addEventListener('DOMContentLoaded', () => {
     perfilForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const token = localStorage.getItem('token');
+
+        // Prevenir el envío si el formulario está deshabilitado
+        if (new URLSearchParams(window.location.search).has('id')) {
+            return;
+        }
+
         const formData = new FormData(perfilForm);
         const data = Object.fromEntries(formData.entries());
 
