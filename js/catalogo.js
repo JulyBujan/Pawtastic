@@ -6,30 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- FUNCIONES ---
 
     /**
-     * Muestra una alerta o mensaje en la UI.
-     * @param {string} message - El mensaje a mostrar.
-     * @param {string} type - El tipo de alerta (e.g., 'danger', 'warning', 'success').
-     */
-    const showAlert = (message, type = 'warning') => {
-        const alertWrapper = document.createElement('div');
-        alertWrapper.classList.add('col-12');
-        alertWrapper.innerHTML = `
-            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                ${message}
-            </div>
-        `;
-
-        mascotasContainer.prepend(alertWrapper);
-
-        setTimeout(() => {
-            // Usamos una transición suave para remover la alerta
-            const alertElement = alertWrapper.querySelector('.alert');
-            alertElement?.classList.remove('show');
-            alertWrapper.addEventListener('transitionend', () => alertWrapper.remove());
-        }, 3000); // La alerta desaparecerá después de 3 segundos
-    };
-
-    /**
      * Renderiza las tarjetas de mascotas en el contenedor.
      * @param {Array} mascotas - El array de objetos de mascotas.
      * @param {boolean} porCompatibilidad - Flag para saber si se debe mostrar la compatibilidad.
@@ -38,7 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
         mascotasContainer.innerHTML = ''; // Limpiar contenedor
 
         if (mascotas.length === 0) {
-            showAlert('No se encontraron mascotas con los criterios seleccionados.', 'info');
+            mascotasContainer.innerHTML = '<div class="col-12"><p class="text-center text-muted">No se encontraron mascotas con los criterios seleccionados.</p></div>';
+            showToast('No se encontraron mascotas con los criterios seleccionados.', 'info');
             return;
         }
 
@@ -74,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const token = localStorage.getItem('token');
 
         if (!token) {
-            showAlert('Debes <a href="login.html">iniciar sesión</a> para usar esta función.', 'danger');
+            showToast('Debes <a href="login.html" class="text-white text-decoration-underline">iniciar sesión</a> para usar esta función.', 'danger');
             return;
         }
 
@@ -88,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (!response.ok) {
-                showAlert(data.message, 'danger');
+                showToast(data.message, 'danger');
                 return;
             }
 
@@ -96,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Error al buscar por compatibilidad:', error);
-            showAlert('Hubo un error al conectar con el servidor.', 'danger');
+            showToast('Hubo un error al conectar con el servidor.', 'danger');
         }
     };
 
@@ -127,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderizarMascotas(mascotas);
         } catch (error) {
             console.error('Error al cargar mascotas:', error);
-            showAlert('No se pudieron cargar las mascotas. Intente más tarde.', 'danger');
+            showToast('No se pudieron cargar las mascotas. Intente más tarde.', 'danger');
         }
     };
 

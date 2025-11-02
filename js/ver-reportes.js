@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const fetchReporte = async (inicio, fin) => {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("Debes iniciar sesión para ver los reportes.");
+      showToast("Debes iniciar sesión para ver los reportes.", "danger");
       window.location.href = "login.html";
       return;
     }
@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!response.ok) {
         // Si el token expiró, redirigir al login
         if (response.status === 401) {
-          alert("Tu sesión ha expirado. Por favor, inicia sesión de nuevo.");
+          showToast("Tu sesión ha expirado. Por favor, inicia sesión de nuevo.", "warning");
           window.location.href = "login.html";
           return; // Detener la ejecución
         }
@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
       renderizarReporte(data);
     } catch (error) {
       console.error("Error al obtener el reporte:", error);
-      alert(error.message);
+      showToast(error.message, "danger");
     } finally {
       toggleLoading(false);
     }

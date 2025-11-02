@@ -103,11 +103,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(data.message || 'Error al postularse');
             }
 
-            alert(data.message);
+            showToast(data.message, 'success');
 
         } catch (error) {
             console.error('Error en la postulación:', error);
-            alert(error.message);
+            showToast(error.message, 'danger');
         }
     });
 });

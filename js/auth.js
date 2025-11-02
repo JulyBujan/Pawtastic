@@ -15,7 +15,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (perfilLink && tipoUsuario) {
       perfilLink.href =
         tipoUsuario === "ong"
-          ? "/pages/perfil-ong.html"
+          ? "/pages/perfil-ong.html" :
+        tipoUsuario === "admin"
+          ? "/pages/perfil-admin.html"
           : "/pages/usuario.html";
     }
   } else {
@@ -31,7 +33,11 @@ document.addEventListener("DOMContentLoaded", function () {
       event.preventDefault();
       localStorage.removeItem("token");
       localStorage.removeItem("tipo");
-      window.location.href = "../index.html"; // Redirigir a la página principal
+      // Usamos showToast si está disponible
+      if (typeof showToast === 'function') {
+        showToast("Has cerrado sesión.", "info");
+      }
+      setTimeout(() => { window.location.href = "/index.html"; }, 1500); // Redirigir a la página principal
     });
   }
 });

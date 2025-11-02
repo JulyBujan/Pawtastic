@@ -3,15 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const perfilFoto = document.getElementById('perfilfoto');
     const fotoInput = document.getElementById('foto-input');
 
-    /**
-     * Muestra una alerta simple.
-     * @param {string} message - El mensaje a mostrar.
-     * @param {string} type - El tipo de alerta ('success', 'danger', 'info').
-     */
-    const showAlert = (message, type = 'info') => {
-        // Idealmente, esto sería un componente de UI más sofisticado.
-        alert(message);
-    };
 
     /**
      * Carga los datos del usuario desde la API y los muestra en el formulario.
@@ -23,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const token = localStorage.getItem('token');
 
         if (!token) {
-            showAlert('Debes iniciar sesión para ver tu perfil.', 'danger');
+            showToast('Debes iniciar sesión para ver tu perfil.', 'danger');
             window.location.href = 'login.html';
             return;
         }
@@ -86,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Error al cargar el perfil:', error);
-            showAlert(error.message, 'danger');
+            showToast(error.message, 'danger');
         }
     };
 
@@ -115,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (response.ok) {
-                showAlert('Foto de perfil actualizada.', 'success');
+                showToast('Foto de perfil actualizada.', 'success');
                 // Actualizamos la imagen en la página con la nueva URL devuelta por la API
                 if (result.foto_perfil_url) {
                     perfilFoto.src = result.foto_perfil_url + '?t=' + new Date().getTime();
@@ -125,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             console.error('Error al subir la foto:', error);
-            showAlert(error.message, 'danger');
+            showToast(error.message, 'danger');
         }
     };
 
@@ -175,13 +166,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (response.ok) {
-                showAlert('Perfil actualizado con éxito.', 'success');
+                showToast('Perfil actualizado con éxito.', 'success');
             } else {
                 throw new Error(result.message || 'No se pudo actualizar el perfil.');
             }
         } catch (error) {
             console.error('Error al actualizar el perfil:', error);
-            showAlert(error.message, 'danger');
+            showToast(error.message, 'danger');
         }
     });
 

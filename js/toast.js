@@ -16,11 +16,12 @@ function showToast(message, type = 'info', delay = 4000) {
 
     const toastId = 'toast-' + Date.now();
     const toastHTML = `
-        <div id="${toastId}" class="toast align-items-center text-bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="${delay}">
+        <div id="${toastId}" class="toast align-items-center text-bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="${delay}" style="overflow: hidden;">
             <div class="d-flex">
                 <div class="toast-body">${message}</div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
+            <div class="toast-progress" style="animation: toast-progress-animation ${delay}ms linear forwards;"></div>
         </div>`;
 
     toastContainer.insertAdjacentHTML('beforeend', toastHTML);

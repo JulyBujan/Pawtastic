@@ -6,8 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const tipo = localStorage.getItem("tipo");
 
     if (!token || tipo !== 'ong') {
-      // Si no hay token o el tipo no es 'ong', redirige al login
-      alert("⚠️ Debes iniciar sesión como ONG para acceder a esta página.");
+      showToast("⚠️ Debes iniciar sesión como ONG para acceder a esta página.", "danger");
       window.location.href = "login.html";
       return;
     }
@@ -27,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await res.json();
 
             if (res.ok) {
-                alert(data.message);
+                showToast(data.message, "success");
                 formMascota.reset();
                 window.location.href = './mis-mascotas.html'; // Redirigir a la lista de mascotas
             } else {
@@ -36,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         } catch (error) {
             console.error(error);
-            alert(error.message);
+            showToast(error.message, "danger");
         }
     });
 });

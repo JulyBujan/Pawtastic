@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('id_mascota').value = idMascota;
 
     if (!idMascota) {
-      alert('ID de mascota no encontrado.');
+      showToast('ID de mascota no encontrado.', 'danger');
       window.location.href = 'mis-mascotas.html';
       return;
     }
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     } catch (error) {
       console.error('Error:', error);
-      alert(error.message);
+      showToast(error.message, 'danger');
     }
   });
 
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const token = localStorage.getItem('token');
     if (!token) {
-      alert("Error: No estás autenticado.");
+      showToast("Error: No estás autenticado.", "danger");
       window.location.href = 'login.html';
       return;
     }
@@ -81,14 +81,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       const result = await response.json();
 
       if (response.ok) {
-        alert(result.message);
+        showToast(result.message, 'success');
         window.location.href = 'mis-mascotas.html';
       } else {
         throw new Error(result.message || 'Error al editar la mascota');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert(`Error: ${error.message}`);
+      showToast(`Error: ${error.message}`, 'danger');
     }
   });
 

@@ -144,14 +144,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (response.ok) {
-                alert(result.message); // Consider replacing with a more sophisticated alert
+                showToast(result.message, 'success');
                 fetchPostulaciones(); // Re-fetch to update the table
             } else {
                 throw new Error(result.message || 'Error al agregar comentario.');
             }
         } catch (error) {
             console.error('Error al agregar comentario:', error);
-            alert(error.message); // Consider replacing with a more sophisticated alert
+            showToast(error.message, 'danger');
         }
     };
 
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (response.ok) {
-                alert(result.message);
+                showToast(result.message, 'success');
                 fetchPostulaciones(); // Recargar la tabla para mostrar el nuevo estado
             } else {
                 throw new Error(result.message || 'Error al actualizar el estado.');
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Error al actualizar estado:', error);
-            alert(error.message);
+            showToast(error.message, 'danger');
         }
     };
 

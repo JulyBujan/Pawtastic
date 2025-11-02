@@ -2,12 +2,6 @@ document.addEventListener('DOMContentLoaded', function () {
   const formRegistro = document.getElementById('formRegistro');
 
   // Helper para mostrar alertas (puedes mejorarlo con toasts de Bootstrap)
-  function showAlert(message, type = 'danger') {
-    // Por ahora, usamos el alert del navegador.
-    console.log(`Alert (${type}): ${message}`);
-    alert(message);
-  }
-
   // Helper para hashear con SHA-256 (igual que en login.js)
   async function sha256(message) {
     const msgBuffer = new TextEncoder().encode(message);
@@ -55,16 +49,16 @@ document.addEventListener('DOMContentLoaded', function () {
         const data = await res.json();
 
         if (res.ok) {
-          showAlert(data.message, 'success');
+          showToast(data.message, 'success');
           formRegistro.reset();
           // Opcional: redirigir al index después de unos segundos
           setTimeout(() => { window.location.href = '../index.html'; }, 3000);
         } else {
-          showAlert(data.message || 'Ocurrió un error en el registro.');
+          showToast(data.message || 'Ocurrió un error en el registro.', 'danger');
         }
       } catch (error) {
         console.error('Error de conexión:', error);
-        showAlert('No se pudo conectar con el servidor. Inténtalo más tarde.');
+        showToast('No se pudo conectar con el servidor. Inténtalo más tarde.', 'danger');
       }
     });
   }

@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 1. Verificar autenticación y tipo de usuario
     if (!token || tipo !== 'ong') {
-        alert("⚠️ Debes iniciar sesión como ONG para acceder a esta página.");
+        showToast("⚠️ Debes iniciar sesión como ONG para acceder a esta página.", "danger");
         window.location.href = "login.html";
         return;
     }

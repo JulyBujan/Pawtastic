@@ -518,3 +518,24 @@ h5.text-warning {
   border-top-left-radius: 1rem;
   border-top-right-radius: 1rem;
 }
+
+/* --- ESTILOS PARA LA BARRA DE PROGRESO DEL TOAST --- */
+.toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px; /* Altura de la barra */
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.5); /* Color semitransparente */
+  animation-play-state: running;
+}
+
+/* Animación que reduce el ancho de la barra de 100% a 0% */
+@keyframes toast-progress-animation {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}

@@ -84,13 +84,13 @@ async function eliminarMascota(id) {
     });
 
     if (response.ok) {
-      alert("Mascota eliminada con éxito");
+      showToast("Mascota eliminada con éxito", "success");
       location.reload();
     } else {
       const errorData = await response.json();
       throw new Error(errorData.message || "Error al eliminar la mascota");
     }
   } catch (error) {
-    alert(error.message);
+    showToast(error.message, "danger");
   }
 }
