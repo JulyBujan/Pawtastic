@@ -3,14 +3,6 @@ document.addEventListener('DOMContentLoaded', function () {
   const formRecuperar = document.getElementById('formRecuperar');
   const modalRecuperarEl = document.getElementById('modalRecuperar');
 
-  // Helper to show alerts
-  function showAlert(message, type = 'danger') {
-    // In a real app, you would replace this with a more robust toast/alert system.
-    // For now, we'll use the browser's alert.
-    console.log(`Alert (${type}): ${message}`);
-    alert(message);
-  }
-
   // Helper para hashear un string con SHA-256
   async function sha256(message) {
     // codificar como UTF-8
@@ -53,19 +45,23 @@ document.addEventListener('DOMContentLoaded', function () {
           localStorage.setItem("token", data.token);
           localStorage.setItem("tipo", data.tipo);
 
-          showAlert("Inicio de sesión exitoso 🎉", "success");
+          showToast("Inicio de sesión exitoso 🎉", "success");
 
-          if (data.tipo === "usuario") {
-            window.location.href = "catalogo.html";
-          } else if (data.tipo === "ong") {
-            window.location.href = "perfil-ong.html";
-          }
+          // Redirigir según el tipo de usuario
+        if (data.tipo === 'admin') {
+            window.location.href = "perfil-admin.html"; // Redirigir a perfil de admin
+        } else if (data.tipo === 'ong') {
+            window.location.href = "perfil-ong.html"; // Redirigir a perfil de ONG
         } else {
-          showAlert(data.message || "Error en las credenciales.");
+            window.location.href = "catalogo.html"; // Redirigir a perfil de usuario normal
+        }
+        
+        } else {
+          showToast(data.message || "Error en las credenciales.", "danger");
         }
       } catch (error) {
         console.error("Error al conectar con el servidor:", error);
-        showAlert("Error de conexión con el servidor.");
+        showToast("Error de conexión con el servidor.", "danger");
       }
     });
   }
@@ -77,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
       event.stopPropagation();
 
       if (formRecuperar.checkValidity()) {
-        showAlert("📬 Si el correo está registrado, te enviaremos instrucciones para restablecer tu contraseña.", "info");
+        showToast("📬 Si el correo está registrado, te enviaremos instrucciones para restablecer tu contraseña.", "info");
         formRecuperar.reset();
         const modal = bootstrap.Modal.getInstance(modalRecuperarEl);
         modal.hide();
