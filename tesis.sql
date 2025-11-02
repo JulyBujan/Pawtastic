@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Oct 31, 2025 at 12:16 AM
+-- Generation Time: Nov 02, 2025 at 09:35 PM
 -- Server version: 9.4.0
 -- PHP Version: 8.3.26
 
@@ -173,7 +173,13 @@ CREATE TABLE `ONGs` (
   `nombre` varchar(150) NOT NULL,
   `razon_social` varchar(255) DEFAULT NULL,
   `cuit` varchar(13) DEFAULT NULL,
-  `direccion` varchar(255) DEFAULT NULL,
+  `lat` float NOT NULL,
+  `lon` float NOT NULL,
+  `city` varchar(31) NOT NULL,
+  `suburb` varchar(31) NOT NULL,
+  `road` varchar(50) NOT NULL,
+  `house_number` int NOT NULL DEFAULT '0',
+  `departamento` varchar(8) DEFAULT NULL,
   `ultima_actualizacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -181,10 +187,10 @@ CREATE TABLE `ONGs` (
 -- Dumping data for table `ONGs`
 --
 
-INSERT INTO `ONGs` (`id`, `nombre`, `razon_social`, `cuit`, `direccion`, `ultima_actualizacion`) VALUES
-(1, 'Patitas Felices', 'Patitas Felices S.A.', '30-12345678-1', 'Avenida Siempreviva 742', '2025-10-20 02:17:34'),
-(2, 'Amigos de 4 Patas', 'Amigos de 4 Patas SRL', '30-87654321-2', 'Calle Falsa 123', '2025-10-20 02:17:34'),
-(3, 'Rescate Animal', 'Fundación Rescate Animal', '30-11223344-3', 'Elm Street 1428', '2025-10-20 02:17:34');
+INSERT INTO `ONGs` (`id`, `nombre`, `razon_social`, `cuit`, `lat`, `lon`, `city`, `suburb`, `road`, `house_number`, `departamento`, `ultima_actualizacion`) VALUES
+(1, 'Patitas Felices', 'Patitas Felices S.A.', '30-12345678-1', 0, 0, '', '', '', 0, NULL, '2025-10-20 02:17:34'),
+(2, 'Amigos de 4 Patas', 'Amigos de 4 Patas SRL', '30-87654321-2', 0, 0, '', '', '', 0, NULL, '2025-10-20 02:17:34'),
+(3, 'Rescate Animal', 'Fundación Rescate Animal', '30-11223344-3', 0, 0, '', '', '', 0, NULL, '2025-10-20 02:17:34');
 
 -- --------------------------------------------------------
 
@@ -196,7 +202,7 @@ CREATE TABLE `usuarios` (
   `id` int NOT NULL,
   `email` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `password` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Almacena el hash SHA-256 de la contraseña',
-  `tipo` enum('usuario','ong') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tipo` enum('usuario','ong','admin') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'usuario',
   `ong_id` int DEFAULT NULL,
   `nombre` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `apellido` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -204,12 +210,16 @@ CREATE TABLE `usuarios` (
   `documento` varchar(16) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `telefono` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `foto_perfil_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `direccion` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fecha_nacimiento` date DEFAULT NULL,
   `sexo` enum('Masculino','Femenino','Otro') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `lat` float DEFAULT NULL,
+  `lon` float DEFAULT NULL,
+  `city` varchar(31) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `suburb` varchar(31) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `road` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `house_number` int NOT NULL DEFAULT '0',
+  `departamento` varchar(8) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `tipo_casa` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `tipo_familia` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `otras_mascotas` text COLLATE utf8mb4_unicode_ci,
   `experiencia` text COLLATE utf8mb4_unicode_ci,
   `energia` tinyint DEFAULT NULL,
   `sociabilidad` tinyint DEFAULT NULL,
@@ -225,20 +235,20 @@ CREATE TABLE `usuarios` (
 -- Dumping data for table `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `email`, `password`, `tipo`, `ong_id`, `nombre`, `apellido`, `tipo_documento`, `documento`, `telefono`, `foto_perfil_url`, `direccion`, `fecha_nacimiento`, `sexo`, `tipo_casa`, `tipo_familia`, `otras_mascotas`, `experiencia`, `energia`, `sociabilidad`, `presencia`, `estilov`, `ultima_actualizacion`, `fecha_registro`, `estado`, `tokenv`) VALUES
-(1, 'ana.garcia0@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Ana', 'García', NULL, NULL, '1122334400', NULL, 'Calle Falsa 123, Ciudad0', '1990-01-15', 'Femenino', 'Casa con patio', 'Soltero/a', 'No', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:51', '2025-10-20 02:10:51', 0, NULL),
-(2, 'juan.rodriguez1@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Juan', 'Rodriguez', NULL, NULL, '1122334401', NULL, 'Calle Falsa 123, Ciudad1', '1991-01-15', 'Masculino', 'Departamento', 'Pareja sin hijos', 'Sí, un perro', 'Intermedia', NULL, NULL, NULL, NULL, '2025-10-20 02:10:51', '2025-10-20 02:10:51', 0, NULL),
-(3, 'maria.martinez2@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Maria', 'Martinez', NULL, NULL, '1122334402', NULL, 'Calle Falsa 123, Ciudad2', '1992-01-15', 'Femenino', 'Casa con patio', 'Familia con niños', 'Sí, un gato', 'Avanzada', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
-(4, 'carlos.lopez3@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Carlos', 'Lopez', NULL, NULL, '1122334403', NULL, 'Calle Falsa 123, Ciudad3', '1993-01-15', 'Masculino', 'Departamento', 'Soltero/a', 'No', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
-(5, 'laura.gonzalez4@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Laura', 'Gonzalez', NULL, NULL, '1122334404', NULL, 'Calle Falsa 123, Ciudad4', '1994-01-15', 'Femenino', 'Casa con patio', 'Pareja sin hijos', 'Sí, un perro', 'Intermedia', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
-(6, 'pedro.perez5@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Pedro', 'Perez', NULL, NULL, '1122334405', NULL, 'Calle Falsa 123, Ciudad5', '1995-01-15', 'Masculino', 'Departamento', 'Familia con niños', 'Sí, un gato', 'Avanzada', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
-(7, 'sofia.sanchez6@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Sofia', 'Sanchez', NULL, NULL, '1122334406', NULL, 'Calle Falsa 123, Ciudad6', '1996-01-15', 'Femenino', 'Casa con patio', 'Soltero/a', 'No', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
-(8, 'luis.romero7@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Luis', 'Romero', NULL, NULL, '1122334407', NULL, 'Calle Falsa 123, Ciudad7', '1997-01-15', 'Masculino', 'Departamento', 'Pareja sin hijos', 'Sí, un perro', 'Intermedia', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
-(9, 'marco@ong2.org', '9b8769a4a742959a2d0298c36fb70623f2dfacda8436237df08d8dfd5b37374c', 'ong', 2, 'Marco', 'Polo', NULL, NULL, '1122334408', NULL, 'Calle Falsa 123, Ciudad8', '1998-01-15', 'Masculino', 'Casa con patio', 'Familia con niños', 'Sí, un gato', 'Avanzada', NULL, NULL, NULL, NULL, '2025-10-29 02:29:35', '2025-10-20 02:10:52', 0, NULL),
-(10, 'javier@ong1.org', '9b8769a4a742959a2d0298c36fb70623f2dfacda8436237df08d8dfd5b37374c', 'ong', 1, 'Javier', 'Diaz', NULL, NULL, '1122334409', NULL, 'Calle Falsa 123, Ciudad9', '1999-01-15', 'Masculino', 'Departamento', 'Soltero/a', 'No', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-22 22:30:02', '2025-10-20 02:10:52', 0, NULL),
-(11, 'sbujan@gmail.com', '8146cedca9d6bfb47b77f581973da5a0bee365aa9ec9ebb5b12d142fca2c3cc1', 'usuario', NULL, 'Sergio Ezequiel', 'Bujan', 0, '29364773', '1136250164', NULL, 'Juan Cruz Varela y Cordillera', '1982-03-20', 'Masculino', 'con patio', 'casado', 'si, tres y tres', 'amplia', 2, 2, 3, 3, '2025-10-25 21:09:45', '2025-10-22 02:46:37', 0, NULL),
-(12, 'jhon@house.com', 'b391fa64cb3fcb7c64b02a528c2d0514ba9c93fc1611b557ede0b91ef88ec9ae', 'usuario', NULL, 'Jhonny', 'Dubai', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-28 22:59:37', '2025-10-25 18:53:08', 0, 'a90979d90f1d313e400fe05315d520fac72e007bd70454a2d83599a8a9373a99'),
-(13, 'maria@house.com.ar', '626e3c805e77eeb472c42c6be607be2af7ac5c08fd7050f278e0330fe81abf57', 'usuario', NULL, 'mariapepa', 'Sil', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-30 20:03:50', '2025-10-30 20:03:50', 1, '4fb2be2cfa8855179396c22905d370a931627ed1752c5140c814bf9fa3fd24ce');
+INSERT INTO `usuarios` (`id`, `email`, `password`, `tipo`, `ong_id`, `nombre`, `apellido`, `tipo_documento`, `documento`, `telefono`, `foto_perfil_url`, `fecha_nacimiento`, `sexo`, `lat`, `lon`, `city`, `suburb`, `road`, `house_number`, `departamento`, `tipo_casa`, `experiencia`, `energia`, `sociabilidad`, `presencia`, `estilov`, `ultima_actualizacion`, `fecha_registro`, `estado`, `tokenv`) VALUES
+(1, 'ana.garcia0@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Ana', 'García', NULL, NULL, '1122334400', NULL, '1990-01-15', 'Femenino', NULL, NULL, NULL, NULL, NULL, 0, NULL, 'Casa con patio', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:51', '2025-10-20 02:10:51', 0, NULL),
+(2, 'juan.rodriguez1@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Juan', 'Rodriguez', NULL, NULL, '1122334401', NULL, '1991-01-15', 'Masculino', NULL, NULL, NULL, NULL, NULL, 0, NULL, 'Departamento', 'Intermedia', NULL, NULL, NULL, NULL, '2025-10-20 02:10:51', '2025-10-20 02:10:51', 0, NULL),
+(3, 'maria.martinez2@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Maria', 'Martinez', NULL, NULL, '1122334402', NULL, '1992-01-15', 'Femenino', NULL, NULL, NULL, NULL, NULL, 0, NULL, 'Casa con patio', 'Avanzada', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
+(4, 'carlos.lopez3@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Carlos', 'Lopez', NULL, NULL, '1122334403', NULL, '1993-01-15', 'Masculino', NULL, NULL, NULL, NULL, NULL, 0, NULL, 'Departamento', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
+(5, 'laura.gonzalez4@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Laura', 'Gonzalez', NULL, NULL, '1122334404', NULL, '1994-01-15', 'Femenino', NULL, NULL, NULL, NULL, NULL, 0, NULL, 'Casa con patio', 'Intermedia', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
+(6, 'pedro.perez5@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Pedro', 'Perez', NULL, NULL, '1122334405', NULL, '1995-01-15', 'Masculino', NULL, NULL, NULL, NULL, NULL, 0, NULL, 'Departamento', 'Avanzada', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
+(7, 'sofia.sanchez6@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Sofia', 'Sanchez', NULL, NULL, '1122334406', NULL, '1996-01-15', 'Femenino', NULL, NULL, NULL, NULL, NULL, 0, NULL, 'Casa con patio', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
+(8, 'luis.romero7@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Luis', 'Romero', NULL, NULL, '1122334407', NULL, '1997-01-15', 'Masculino', NULL, NULL, NULL, NULL, NULL, 0, NULL, 'Departamento', 'Intermedia', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
+(9, 'marco@ong2.org', '9b8769a4a742959a2d0298c36fb70623f2dfacda8436237df08d8dfd5b37374c', 'ong', 2, 'Marco', 'Polo', NULL, NULL, '1122334408', NULL, '1998-01-15', 'Masculino', NULL, NULL, NULL, NULL, NULL, 0, NULL, 'Casa con patio', 'Avanzada', NULL, NULL, NULL, NULL, '2025-10-29 02:29:35', '2025-10-20 02:10:52', 0, NULL),
+(10, 'javier@ong1.org', '9b8769a4a742959a2d0298c36fb70623f2dfacda8436237df08d8dfd5b37374c', 'ong', 1, 'Javier', 'Diaz', NULL, NULL, '1122334409', NULL, '1999-01-15', 'Masculino', NULL, NULL, NULL, NULL, NULL, 0, NULL, 'Departamento', 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-22 22:30:02', '2025-10-20 02:10:52', 0, NULL),
+(11, 'sbujan@gmail.com', '8146cedca9d6bfb47b77f581973da5a0bee365aa9ec9ebb5b12d142fca2c3cc1', 'usuario', NULL, 'Sergio Ezequiel', 'Bujan', 0, '29364773', '1136250164', NULL, '1982-03-20', 'Masculino', NULL, NULL, NULL, NULL, NULL, 0, NULL, 'con patio', 'amplia', 2, 2, 3, 3, '2025-10-25 21:09:45', '2025-10-22 02:46:37', 0, NULL),
+(12, 'jhon@house.com', 'b391fa64cb3fcb7c64b02a528c2d0514ba9c93fc1611b557ede0b91ef88ec9ae', 'usuario', NULL, 'Jhonny', 'Dubai', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-28 22:59:37', '2025-10-25 18:53:08', 0, 'a90979d90f1d313e400fe05315d520fac72e007bd70454a2d83599a8a9373a99'),
+(13, 'maria@house.com.ar', '626e3c805e77eeb472c42c6be607be2af7ac5c08fd7050f278e0330fe81abf57', 'usuario', NULL, 'mariapepa', 'Sil', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-30 20:03:50', '2025-10-30 20:03:50', 1, '4fb2be2cfa8855179396c22905d370a931627ed1752c5140c814bf9fa3fd24ce');
 
 --
 -- Indexes for dumped tables
