@@ -251,6 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = Object.fromEntries(formData.entries());
 
         // Convertir valores de los select a números
+        data.otras_mascotas = parseInt(data.otras_mascotas, 10);
         data.energia = parseInt(data.energia, 10);
         data.sociabilidad = parseInt(data.sociabilidad, 10);
         data.presencia = parseInt(data.presencia, 10);

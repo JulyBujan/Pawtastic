@@ -44,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             unset($user['tokenv']);
             $user['tipo_documento'] = !is_null($user['tipo_documento']) ? (int)$user['tipo_documento'] : null;
             // Convertir valores numéricos de preferencias a enteros
+            $user['otras_mascotas'] = !is_null($user['otras_mascotas']) ? (int)$user['otras_mascotas'] : null;
             $user['energia'] = !is_null($user['energia']) ? (int)$user['energia'] : null;
             $user['sociabilidad'] = !is_null($user['sociabilidad']) ? (int)$user['sociabilidad'] : null;
             $user['presencia'] = !is_null($user['presencia']) ? (int)$user['presencia'] : null;
@@ -140,25 +141,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $lat = !empty($data->lat) ? (float)$data->lat : null;
             $lon = !empty($data->lon) ? (float)$data->lon : null;
 
+            // Verificar existencia de campos opcionales para evitar warnings
+            $telefono = $data->telefono ?? null;
+            $documento = $data->documento ?? null;
+            $city = $data->city ?? null;
+            $road = $data->road ?? null;
+            $house_number = $data->house_number ?? null;
+            $departamento = $data->departamento ?? null;
+            $suburb = $data->suburb ?? null;
+            $sexo = $data->sexo ?? null;
+            $tipo_casa = $data->tipo_casa ?? null;
+            $otras_mascotas = $data->otras_mascotas ?? null;
+            $experiencia = $data->experiencia ?? null;
+
             $stmt->bind_param(
-                "sssisssisssdssiiiis",
+                "sssisssisssdsisiiiis",
                 $data->nombre,
                 $data->apellido,
                 $data->telefono,
                 $tipo_documento,
                 $data->documento,
-                $data->city,
-                $data->road,
-                $data->house_number,
-                $data->departamento,
-                $data->suburb,
+                $city,
+                $road,
+                $house_number,
+                $departamento,
+                $suburb,
                 $lat,
                 $lon,
                 $fecha_nacimiento,
-                $data->sexo,
-                $data->tipo_casa,
-                $data->otras_mascotas,
-                $data->experiencia,
+                $sexo,
+                $tipo_casa,
+                $otras_mascotas,
+                $experiencia,
                 $data->energia,
                 $data->sociabilidad,
                 $data->presencia,
