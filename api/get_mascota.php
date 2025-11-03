@@ -13,7 +13,12 @@ $id_mascota = $_GET['id'];
 
 try {
     // Usamos una sentencia preparada para evitar inyección SQL
-    $stmt = $conn->prepare("SELECT * FROM mascotas WHERE id = ?");
+    $query = "SELECT m.*, o.nombre AS ong_nombre, o.lat AS ong_lat, o.lon AS ong_lon 
+              FROM mascotas m
+              LEFT JOIN ONGs o ON m.id_ong = o.id
+              WHERE m.id = ?";
+              
+    $stmt = $conn->prepare($query);
     if (!$stmt) {
         throw new Exception("Error en la preparación de la consulta: " . $conn->error);
     }

@@ -46,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('city').value = usuario.city || '';
             document.getElementById('road').value = usuario.road || '';
             document.getElementById('house_number').value = usuario.house_number || '';
-            document.getElementById('suburb').value = usuario.suburb || '';
             document.getElementById('departamento').value = usuario.departamento || '';
             document.getElementById('fecha_nacimiento').value = usuario.fecha_nacimiento || '';
             document.getElementById('sexo').value = usuario.sexo || '';
@@ -209,15 +208,18 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('city').value = data.city || city;
             document.getElementById('road').value = data.road || road;
             document.getElementById('house_number').value = data.house_number || house_number;
-            document.getElementById('suburb').value = data.suburb || '';
             
-            // Añadir lat y lon al formulario para el envío
+            // Añadir o actualizar los campos ocultos de geolocalización
             if (!document.getElementById('lat')) {
+                // Si no existen, los creamos
                 perfilForm.insertAdjacentHTML('beforeend', `<input type="hidden" id="lat" name="lat" value="${data.lat}">`);
                 perfilForm.insertAdjacentHTML('beforeend', `<input type="hidden" id="lon" name="lon" value="${data.lon}">`);
                 perfilForm.insertAdjacentHTML('beforeend', `<input type="hidden" id="suburb" name="suburb" value="${data.suburb}">`);
             } else {
-                showToast('La dirección no pudo ser validada. Revise los datos ingresados.', 'warning');
+                // Si ya existen, actualizamos sus valores
+                document.getElementById('lat').value = data.lat;
+                document.getElementById('lon').value = data.lon;
+                document.getElementById('suburb').value = data.suburb;
             }
 
             showToast('Dirección validada con éxito. Guardando...', 'success');

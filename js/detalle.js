@@ -51,10 +51,117 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const mascota = await response.json();
             renderMascotaDetalle(mascota);
+
+            // Intentar mostrar el mapa si el usuario está logueado
+            if (mascota.ong_lat && mascota.ong_lon) {
+                const token = localStorage.getItem('token');
+                fetchUsuarioYMostrarMapa(token, mascota);
+            } else {
+                // Si no hay token o la ONG no tiene coordenadas, nos aseguramos de que el mapa no se muestre.
+                const mapaContainer = document.getElementById('mapa-container');
+                if (mapaContainer) { // Doble chequeo por si acaso
+                    mapaContainer.style.display = 'none';
+                }
+            }
+
         } catch (error) {
             console.error(error);
             document.querySelector('main.container').innerHTML = '<p class="text-center">No se pudo cargar la información de la mascota. Intente más tarde.</p>';
         }
+    };
+
+    /**
+     * Obtiene los datos del usuario logueado y, si tiene coordenadas, muestra el mapa.
+     * @param {string} token - El token de autenticación del usuario.
+     * @param {object} mascota - El objeto con los datos de la mascota, incluyendo ong_lat y ong_lon.
+     */
+    const fetchUsuarioYMostrarMapa = async (token, mascota) => {
+        const ongCoords = [parseFloat(mascota.ong_lat), parseFloat(mascota.ong_lon)];
+
+        // Si no hay token, mostramos el mapa solo con la ONG.
+        if (!token) {
+            document.getElementById('mapa-container').style.display = 'block';
+            document.getElementById('distancia-info').textContent = `Inicia sesión para ver la distancia desde tu ubicación.`;
+            inicializarMapa(null, ongCoords);
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/usuario.php', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            
+            document.getElementById('mapa-container').style.display = 'block';
+
+            if (response.ok) {
+                const usuario = await response.json();
+                // Si el usuario tiene coordenadas, mostramos ambos puntos y la distancia.
+                const userCoords = [parseFloat(usuario.lat), parseFloat(usuario.lon)];
+                const distancia = calcularDistancia(userCoords[0], userCoords[1], ongCoords[0], ongCoords[1]);
+                document.getElementById('distancia-info').textContent = `La ONG se encuentra a aproximadamente ${distancia.toFixed(1)} km de tu ubicación.`;
+                inicializarMapa(userCoords, ongCoords);
+            } else {
+                // Si la petición al usuario falla o no tiene coords, mostramos solo la ONG.
+                document.getElementById('distancia-info').textContent = `Valida tu dirección en tu perfil para ver la distancia.`;
+                inicializarMapa(null, ongCoords);
+            }
+
+        } catch (error) {
+            console.warn("No se pudo cargar la información del usuario para el mapa:", error);
+        }
+    };
+
+    /**
+     * Inicializa el mapa de Leaflet con marcadores para el usuario y la ONG.
+     * @param {Array<number>|null} userCoords - Coordenadas [lat, lon] del usuario.
+     * @param {Array<number>} ongCoords - Coordenadas [lat, lon] de la ONG.
+     */
+    const inicializarMapa = (userCoords, ongCoords) => {
+        const map = L.map('map').setView(ongCoords, 13); // Centra el mapa en la ONG por defecto
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        const ongMarker = L.marker(ongCoords).addTo(map)
+            .bindPopup('<b>Ubicación de la ONG</b>');
+
+        // Si también tenemos las coordenadas del usuario, añadimos su marcador y la línea.
+        if (userCoords) {
+            const userMarker = L.marker(userCoords).addTo(map)
+                .bindPopup('<b>Tu ubicación</b>')
+                .openPopup();
+
+            // Crear una línea punteada entre los dos puntos
+            const polyline = L.polyline([userCoords, ongCoords], { color: 'red', dashArray: '5, 10' }).addTo(map);
+
+            // Ajustar el zoom del mapa para que ambos puntos sean visibles
+            map.fitBounds(polyline.getBounds().pad(0.2)); // pad añade un poco de margen
+        } else {
+            // Si solo tenemos la ONG, abrimos su popup por defecto.
+            ongMarker.openPopup();
+        }
+    };
+
+    /**
+     * Calcula la distancia en kilómetros entre dos puntos geográficos (fórmula de Haversine).
+     * @param {number} lat1 
+     * @param {number} lon1 
+     * @param {number} lat2 
+     * @param {number} lon2 
+     * @returns {number} - Distancia en km.
+     */
+    const calcularDistancia = (lat1, lon1, lat2, lon2) => {
+        const R = 6371; // Radio de la Tierra en km
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const distancia = R * c;
+        return distancia;
     };
 
     const renderMascotaDetalle = (mascota) => {

@@ -42,6 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             unset($user['tokenv']);
             $user['tipo_documento'] = !is_null($user['tipo_documento']) ? (int)$user['tipo_documento'] : null;
             // Convertir valores numéricos de preferencias a enteros
+            $user['lat'] = !is_null($user['lat']) ? (float)$user['lat'] : null;
+            $user['lon'] = !is_null($user['lon']) ? (float)$user['lon'] : null;
             $user['otras_mascotas'] = !is_null($user['otras_mascotas']) ? (int)$user['otras_mascotas'] : null;
             $user['energia'] = !is_null($user['energia']) ? (int)$user['energia'] : null;
             $user['sociabilidad'] = !is_null($user['sociabilidad']) ? (int)$user['sociabilidad'] : null;
