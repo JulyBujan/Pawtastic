@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mascotasContainer = document.getElementById('mascotas-container');
     const btnCompatibilidad = document.getElementById('btn-compatibilidad');
     const filtrosForm = document.getElementById('filtros-form');
+    const btnCercania = document.getElementById('btn-cercania');
 
     // --- FUNCIONES ---
 
@@ -9,21 +10,25 @@ document.addEventListener('DOMContentLoaded', () => {
      * Renderiza las tarjetas de mascotas en el contenedor.
      * @param {Array} mascotas - El array de objetos de mascotas.
      * @param {boolean} porCompatibilidad - Flag para saber si se debe mostrar la compatibilidad.
+     * @param {boolean} porCercania - Flag para saber si se debe mostrar la distancia.
      */
-    const renderizarMascotas = (mascotas, porCompatibilidad = false) => {
+    const renderizarMascotas = (mascotas, porCompatibilidad = false, porCercania = false) => {
         mascotasContainer.innerHTML = ''; // Limpiar contenedor
 
         if (mascotas.length === 0) {
-            mascotasContainer.innerHTML = '<div class="col-12"><p class="text-center text-muted">No se encontraron mascotas con los criterios seleccionados.</p></div>';
-            showToast('No se encontraron mascotas con los criterios seleccionados.', 'info');
+            mascotasContainer.innerHTML = '<div class="col-12"><p class="text-center text-muted">No se encontraron mascotas que coincidan con tu búsqueda.</p></div>';
             return;
         }
 
         mascotas.forEach(mascota => {
             let descripcionModificada = mascota.descripcion;
-            // Si es por compatibilidad, añadimos el porcentaje al inicio de la descripción
+            
             if (porCompatibilidad && mascota.compatibilidad) {
                 descripcionModificada = `<strong class="text-warning">Compatibilidad: ${mascota.compatibilidad}%</strong><br>${mascota.descripcion}`;
+            }
+
+            if (porCercania && mascota.distancia_km) {
+                descripcionModificada = `<strong class="text-info"><i class="bi bi-geo-alt-fill"></i> A ${mascota.distancia_km} km de ti</strong><br>${mascota.descripcion}`;
             }
 
             const card = `
@@ -78,6 +83,44 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /**
+     * Carga las mascotas ordenadas por cercanía llamando al endpoint protegido.
+     */
+    const cargarMascotasPorCercania = async () => {
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            showToast('Debes <a href="login.html" class="text-white text-decoration-underline">iniciar sesión</a> para buscar por cercanía.', 'danger');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/get_cercania.php', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                // El código 412 indica que el usuario no tiene dirección validada.
+                if (response.status === 412) {
+                    showToast('Para usar esta función, <a href="usuario.html" class="text-white text-decoration-underline">valida tu dirección</a> en tu perfil.', 'warning');
+                } else {
+                    showToast(data.message, 'danger');
+                }
+                return;
+            }
+
+            renderizarMascotas(data, false, true); // true para indicar que es por cercanía
+
+        } catch (error) {
+            console.error('Error al buscar por cercanía:', error);
+            showToast('Hubo un error al conectar con el servidor.', 'danger');
+        }
+    };
+
+    /**
      * Carga las mascotas por defecto (o con filtros) desde el endpoint público.
      * @param {FormData} [formData] - Opcional. Datos del formulario de filtros.
      */
@@ -111,6 +154,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- EVENT LISTENERS ---
 
     btnCompatibilidad?.addEventListener('click', cargarMascotasPorCompatibilidad);
+
+    btnCercania?.addEventListener('click', cargarMascotasPorCercania);
 
     filtrosForm?.addEventListener('submit', (e) => {
         e.preventDefault();

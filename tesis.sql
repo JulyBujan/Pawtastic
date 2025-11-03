@@ -58,13 +58,65 @@ CREATE DEFINER=`root`@`%` PROCEDURE `calcular_compatibilidad_mascotas` (IN `id_u
             -- Fórmula: 100 - (diferencia_total / diferencia_maxima) * 100
             ROUND(100 - ((ABS(m.energia - user_energia) + ABS(m.sociabilidad - user_sociabilidad) + ABS(m.presencia - user_presencia) + ABS(m.estilov - user_estilov)) / 8) * 100) AS compatibilidad
         FROM 
-            mascotas m
+            mascotas m 
         WHERE
             -- Solo incluir mascotas activas/disponibles para adopción
             m.estado = 0
         -- 4. Ordenar por compatibilidad de mayor a menor
         ORDER BY 
             compatibilidad DESC;
+    END IF;
+
+END$$
+
+CREATE DEFINER=`root`@`%` PROCEDURE `calcular_distancia_mascotas` (IN `id_usuario_in` INT)   BEGIN
+    -- Declarar variables para almacenar la ubicación del usuario
+    DECLARE user_lat FLOAT;
+    DECLARE user_lon FLOAT;
+    
+    -- 1. Obtener las coordenadas del usuario y verificar que no sean NULL
+    SELECT 
+        lat, lon
+    INTO 
+        user_lat, user_lon
+    FROM 
+        usuarios 
+    WHERE 
+        id = id_usuario_in;
+        
+    -- 2. Si las coordenadas son NULL, no se puede calcular. Devolvemos un conjunto vacío con un mensaje.
+    IF user_lat IS NULL OR user_lon IS NULL THEN
+        -- Devuelve la estructura de la tabla esperada pero sin filas.
+        SELECT 
+            m.*,
+            'La ubicación del usuario no está definida para calcular la distancia.' AS distancia_km
+        FROM mascotas m WHERE 1=0;
+    ELSE
+        -- 3. Si las coordenadas son válidas, calcular la distancia
+        SELECT 
+            m.*,
+            -- Calcular la distancia en KM usando la fórmula de Haversine (CORREGIDA)
+            -- R = 6371 (radio de la Tierra en km)
+            ROUND(
+                6371 * 2 * ASIN(SQRT(
+                    POWER(SIN((user_lat - o.lat) * pi()/180 / 2), 2) +
+                    COS(user_lat * pi()/180 ) * COS(o.lat * pi()/180) *
+                    POWER(SIN((user_lon - o.lon) * pi()/180 / 2), 2)
+                ))
+            , 2) AS distancia_km
+        FROM 
+            mascotas m
+        -- Unir con la tabla de ONGs para obtener sus coordenadas
+        JOIN 
+            ONGs o ON m.id_ong = o.id
+        WHERE
+            -- Solo incluir mascotas activas/disponibles para adopción
+            m.estado = 0
+            -- Y solo ONGs que tengan coordenadas válidas
+            AND o.lat IS NOT NULL AND o.lon IS NOT NULL
+        -- 4. Ordenar por distancia de menor a mayor (más cercanas primero)
+        ORDER BY 
+            distancia_km ASC;
     END IF;
 
 END$$
