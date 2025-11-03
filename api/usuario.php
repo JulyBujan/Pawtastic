@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         // Si se pasa un ID y el usuario es una ONG, se busca por ID.
         if (isset($_GET['id']) && $user_tipo === 'ong') {
             $id_a_buscar = (int)$_GET['id'];
-            $stmt = $conn->prepare("SELECT id, nombre, apellido, telefono, direccion, fecha_nacimiento, sexo, tipo_casa, tipo_familia, otras_mascotas, experiencia, energia, sociabilidad, presencia, estilov, foto_perfil_url FROM usuarios WHERE id = ? AND tipo = 'usuario'");
+            $stmt = $conn->prepare("SELECT id, nombre, apellido, telefono, tipo_documento, documento, city, road, house_number, departamento, suburb, lat, lon, fecha_nacimiento, sexo, tipo_casa, otras_mascotas, experiencia, energia, sociabilidad, presencia, estilov, foto_perfil_url FROM usuarios WHERE id = ? AND tipo = 'usuario'");
             if (!$stmt) {
                 throw new Exception("Error en la preparación de la consulta por ID: " . $conn->error);
             }
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             exit;
         } else {
             // Si no se pasa ID, se busca el perfil del propio usuario logueado.
-            $stmt = $conn->prepare("SELECT id, nombre, apellido, telefono, direccion, fecha_nacimiento, sexo, tipo_casa, tipo_familia, otras_mascotas, experiencia, energia, sociabilidad, presencia, estilov, foto_perfil_url FROM usuarios WHERE email = ?");
+            $stmt = $conn->prepare("SELECT id, nombre, apellido, telefono, tipo_documento, documento, city, road, house_number, departamento, suburb, lat, lon, fecha_nacimiento, sexo, tipo_casa, otras_mascotas, experiencia, energia, sociabilidad, presencia, estilov, foto_perfil_url FROM usuarios WHERE email = ?");
             if (!$stmt) {
                 throw new Exception("Error en la preparación de la consulta por email: " . $conn->error);
             }
@@ -42,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             // Por seguridad, nunca devolvemos la contraseña ni el token de validación
             unset($user['password']);
             unset($user['tokenv']);
+            $user['tipo_documento'] = !is_null($user['tipo_documento']) ? (int)$user['tipo_documento'] : null;
             // Convertir valores numéricos de preferencias a enteros
             $user['energia'] = !is_null($user['energia']) ? (int)$user['energia'] : null;
             $user['sociabilidad'] = !is_null($user['sociabilidad']) ? (int)$user['sociabilidad'] : null;
@@ -103,12 +104,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $query = "UPDATE usuarios SET 
                         nombre = ?, 
                         apellido = ?, 
-                        telefono = ?, 
-                        direccion = ?, 
+                        telefono = ?,
+                        tipo_documento = ?,
+                        documento = ?,
+                        city = ?,
+                        road = ?,
+                        house_number = ?,
+                        departamento = ?,
+                        suburb = ?,
+                        lat = ?,
+                        lon = ?,
                         fecha_nacimiento = ?, 
                         sexo = ?, 
                         tipo_casa = ?, 
-                        tipo_familia = ?, 
                         otras_mascotas = ?, 
                         experiencia = ?, 
                         energia = ?, 
@@ -125,16 +133,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             // Asignar null si la fecha está vacía
             $fecha_nacimiento = !empty($data->fecha_nacimiento) ? $data->fecha_nacimiento : null;
 
+            // Asignar null si el tipo de documento está vacío, de lo contrario convertir a entero
+            $tipo_documento = !empty($data->tipo_documento) ? (int)$data->tipo_documento : null;
+
+            // Asignar null a lat/lon si no están definidos o están vacíos
+            $lat = !empty($data->lat) ? (float)$data->lat : null;
+            $lon = !empty($data->lon) ? (float)$data->lon : null;
+
             $stmt->bind_param(
-                "ssssssssssiiiis",
+                "sssisssisssdssiiiis",
                 $data->nombre,
                 $data->apellido,
                 $data->telefono,
-                $data->direccion,
+                $tipo_documento,
+                $data->documento,
+                $data->city,
+                $data->road,
+                $data->house_number,
+                $data->departamento,
+                $data->suburb,
+                $lat,
+                $lon,
                 $fecha_nacimiento,
                 $data->sexo,
                 $data->tipo_casa,
-                $data->tipo_familia,
                 $data->otras_mascotas,
                 $data->experiencia,
                 $data->energia,

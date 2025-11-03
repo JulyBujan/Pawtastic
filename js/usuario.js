@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const perfilForm = document.getElementById('perfil-form');
+    const validarDireccionBtn = document.getElementById('validar-direccion-btn');
     const perfilFoto = document.getElementById('perfilfoto');
     const fotoInput = document.getElementById('foto-input');
 
@@ -40,11 +41,16 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('nombre').value = usuario.nombre || '';
             document.getElementById('apellido').value = usuario.apellido || '';
             document.getElementById('telefono').value = usuario.telefono || '';
-            document.getElementById('direccion').value = usuario.direccion || '';
+            document.getElementById('tipo_documento').value = usuario.tipo_documento || '';
+            document.getElementById('documento').value = usuario.documento || '';
+            document.getElementById('city').value = usuario.city || '';
+            document.getElementById('road').value = usuario.road || '';
+            document.getElementById('house_number').value = usuario.house_number || '';
+            document.getElementById('suburb').value = usuario.suburb || '';
+            document.getElementById('departamento').value = usuario.departamento || '';
             document.getElementById('fecha_nacimiento').value = usuario.fecha_nacimiento || '';
             document.getElementById('sexo').value = usuario.sexo || '';
             document.getElementById('tipo_casa').value = usuario.tipo_casa || '';
-            document.getElementById('tipo_familia').value = usuario.tipo_familia || '';
             document.getElementById('otras_mascotas').value = usuario.otras_mascotas || '';
             document.getElementById('experiencia').value = usuario.experiencia || '';
             document.getElementById('energia').value = usuario.energia || 0;
@@ -133,6 +139,106 @@ document.addEventListener('DOMContentLoaded', () => {
     fotoInput.addEventListener('change', () => { if (fotoInput.files.length > 0) uploadProfilePicture(fotoInput.files[0]) });
 
     /**
+     * Valida los campos del formulario de perfil.
+     * @returns {boolean} - Devuelve true si el formulario es válido, false en caso contrario.
+     */
+    const validarFormulario = () => {
+        let esValido = true;
+        const campos = [
+            'tipo_documento', 'documento', 'city', 'road', 'house_number'
+        ];
+
+        // Primero, limpiar validaciones anteriores
+        campos.forEach(id => {
+            const campo = document.getElementById(id);
+            campo.classList.remove('is-invalid');
+        });
+
+        // Validar campos obligatorios
+        campos.forEach(id => {
+            const campo = document.getElementById(id);
+            if (!campo.value.trim()) {
+                campo.classList.add('is-invalid');
+                esValido = false;
+            }
+        });
+
+        // Validaciones específicas
+        const documentoInput = document.getElementById('documento');
+        if (documentoInput.value.trim() && !/^\d+$/.test(documentoInput.value.trim())) {
+            documentoInput.classList.add('is-invalid');
+            esValido = false;
+        }
+
+        const houseNumberInput = document.getElementById('house_number');
+        if (houseNumberInput.value.trim() && !/^\d+$/.test(houseNumberInput.value.trim())) {
+            houseNumberInput.classList.add('is-invalid');
+            esValido = false;
+        }
+
+        if (!esValido) {
+            showToast('Por favor, corrige los campos marcados en rojo.', 'warning');
+        }
+
+        return esValido;
+    };
+
+    /**
+     * Valida y geocodifica la dirección ingresada por el usuario.
+     */
+    const handleValidarDireccion = async () => {
+        const road = document.getElementById('road').value.trim();
+        const house_number = document.getElementById('house_number').value.trim();
+        const city = document.getElementById('city').value.trim();
+
+        if (!road || !house_number || !city) {
+            showToast('Por favor, completa la calle, número y localidad para validar.', 'warning');
+            return;
+        }
+
+        const token = localStorage.getItem('token');
+        const url = `/api/geocodificar.php?road=${encodeURIComponent(road)}&house_number=${encodeURIComponent(house_number)}&city=${encodeURIComponent(city)}`;
+
+        try {
+            validarDireccionBtn.disabled = true;
+            validarDireccionBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Validando...';
+
+            const response = await fetch(url, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Error al validar la dirección.');
+            }
+
+            // Autocompletar campos con los datos de la API
+            document.getElementById('city').value = data.city || city;
+            document.getElementById('road').value = data.road || road;
+            document.getElementById('house_number').value = data.house_number || house_number;
+            document.getElementById('suburb').value = data.suburb || '';
+            
+            // Añadir lat y lon al formulario para el envío
+            if (!document.getElementById('lat')) {
+                perfilForm.insertAdjacentHTML('beforeend', `<input type="hidden" id="lat" name="lat" value="${data.lat}">`);
+                perfilForm.insertAdjacentHTML('beforeend', `<input type="hidden" id="lon" name="lon" value="${data.lon}">`);
+            } else {
+                document.getElementById('lat').value = data.lat;
+                document.getElementById('lon').value = data.lon;
+            }
+
+            showToast('Dirección validada con éxito. Guardando...', 'success');
+            perfilForm.requestSubmit(); // Envía el formulario para guardar los datos actualizados
+        } catch (error) {
+            showToast(error.message, 'danger');
+        } finally {
+            validarDireccionBtn.disabled = false;
+            validarDireccionBtn.innerHTML = 'Validar Dirección';
+        }
+    };
+
+    /**
      * Envía los datos del formulario para actualizar el perfil del usuario.
      */
     perfilForm.addEventListener('submit', async (e) => {
@@ -142,6 +248,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Prevenir el envío si el formulario está deshabilitado
         if (new URLSearchParams(window.location.search).has('id')) {
             return;
+        }
+
+        // Validar el formulario antes de enviar
+        if (!validarFormulario()) {
+            return; // Detiene el envío si la validación falla
         }
 
         const formData = new FormData(perfilForm);
@@ -175,6 +286,9 @@ document.addEventListener('DOMContentLoaded', () => {
             showToast(error.message, 'danger');
         }
     });
+
+    // Event listener para el botón de validar dirección
+    validarDireccionBtn.addEventListener('click', handleValidarDireccion);
 
     // Carga inicial de los datos del usuario al entrar a la página.
     fetchUsuario();
