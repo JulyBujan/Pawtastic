@@ -1,10 +1,8 @@
 <?php
-header("Content-Type: application/json");
-require "conexion.php";
+require_once __DIR__ . '/api_init.php';
 
 // Incluir el verificador de token para proteger el endpoint
-require __DIR__ . '/vendor/autoload.php';
-require "verificar_token.php"; // Este script ya nos da el payload en $decoded_token
+require_once __DIR__ . '/verificar_token.php'; // Este script ya nos da el payload en $decoded_token
 
 // El email del usuario se obtiene del token decodificado
 $user_email = $decoded_token->email;
