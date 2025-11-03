@@ -144,9 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     const validarFormulario = () => {
         let esValido = true;
-        const campos = [
-            'tipo_documento', 'documento', 'city', 'road', 'house_number'
-        ];
+        const campos = ['tipo_documento', 'documento', 'nombre', 'apellido' ];
 
         // Primero, limpiar validaciones anteriores
         campos.forEach(id => {
@@ -167,12 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const documentoInput = document.getElementById('documento');
         if (documentoInput.value.trim() && !/^\d+$/.test(documentoInput.value.trim())) {
             documentoInput.classList.add('is-invalid');
-            esValido = false;
-        }
-
-        const houseNumberInput = document.getElementById('house_number');
-        if (houseNumberInput.value.trim() && !/^\d+$/.test(houseNumberInput.value.trim())) {
-            houseNumberInput.classList.add('is-invalid');
             esValido = false;
         }
 
@@ -223,9 +215,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!document.getElementById('lat')) {
                 perfilForm.insertAdjacentHTML('beforeend', `<input type="hidden" id="lat" name="lat" value="${data.lat}">`);
                 perfilForm.insertAdjacentHTML('beforeend', `<input type="hidden" id="lon" name="lon" value="${data.lon}">`);
+                perfilForm.insertAdjacentHTML('beforeend', `<input type="hidden" id="suburb" name="suburb" value="${data.suburb}">`);
             } else {
-                document.getElementById('lat').value = data.lat;
-                document.getElementById('lon').value = data.lon;
+                showToast('La dirección no pudo ser validada. Revise los datos ingresados.', 'warning');
             }
 
             showToast('Dirección validada con éxito. Guardando...', 'success');
