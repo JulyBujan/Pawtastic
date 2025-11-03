@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         if (move_uploaded_file($_FILES["foto_perfil"]["tmp_name"], $rutaDestino)) {
             try {
                 $stmt = $conn->prepare("UPDATE usuarios SET foto_perfil_url = ? WHERE email = ?"); // Solo puede actualizar su propia foto
-                $stmt->bind_param("ss", $urlRelativa, $email);
+                $stmt->bind_param("ss", $urlRelativa, $user_email);
                 if ($stmt->execute()) {
                     echo json_encode(["message" => "Foto actualizada con éxito.", "foto_perfil_url" => $urlRelativa]);
                 } else {
@@ -132,9 +132,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             // Asignar null si la fecha está vacía
             $fecha_nacimiento = !empty($data->fecha_nacimiento) ? $data->fecha_nacimiento : null;
 
-            // Asignar null si el tipo de documento está vacío, de lo contrario convertir a entero
-            $tipo_documento = !empty($data->tipo_documento) ? (int)$data->tipo_documento : null;
-
             // Asignar null a lat/lon si no están definidos o están vacíos
             $lat = !empty($data->lat) ? (float)$data->lat : null;
             $lon = !empty($data->lon) ? (float)$data->lon : null;
@@ -143,22 +140,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $telefono = $data->telefono ?? null;
             $documento = $data->documento ?? null;
             $city = $data->city ?? null;
-            $road = $data->road ?? null;
+            $road = $data->road ?? null;            
             $house_number = $data->house_number ?? null;
             $departamento = $data->departamento ?? null;
             $suburb = $data->suburb ?? null;
             $sexo = $data->sexo ?? null;
             $tipo_casa = $data->tipo_casa ?? null;
-            $otras_mascotas = $data->otras_mascotas ?? null;
+            $otras_mascotas = $data->otras_mascotas ?? 0;
             $experiencia = $data->experiencia ?? null;
 
             $stmt->bind_param(
-                "sssisssisssdsisiiiis",
+                "sssisssissddsssisiiiis",
                 $data->nombre,
                 $data->apellido,
-                $data->telefono,
-                $tipo_documento,
-                $data->documento,
+                $telefono,
+                $data->tipo_documento,
+                $documento,
                 $city,
                 $road,
                 $house_number,
