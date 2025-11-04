@@ -393,6 +393,9 @@ a.btn:hover {
   aspect-ratio: 3 / 4; /* Relación de aspecto 3:4 (ancho/alto) */
   object-fit: cover;
   width: 100%;
+  /* Esto asegura que las esquinas superiores de la imagen sean redondeadas */
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
 }
 
 .card {
@@ -506,17 +509,6 @@ h5.text-warning {
 .emoji-grande {
   font-size: 2rem;
   vertical-align: middle;
-}
-.card-img-fixed-height {
-  height: 200px; /* Altura fija para la imagen */
-  object-fit: cover; /* La imagen cubre el área sin deformarse */
-  width: 100%;
-}
-
-.card-img-top {
-  /* Esto asegura que las esquinas superiores de la imagen sean redondeadas */
-  border-top-left-radius: 1rem;
-  border-top-right-radius: 1rem;
 }
 
 /* --- ESTILOS PARA LA BARRA DE PROGRESO DEL TOAST --- */
