@@ -390,9 +390,9 @@ a.btn:hover {
 }
 
 .card-img-top {
-  width: 100%;
-  height: auto;
+  aspect-ratio: 3 / 4; /* Relación de aspecto 3:4 (ancho/alto) */
   object-fit: cover;
+  width: 100%;
 }
 
 .card {
