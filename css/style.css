@@ -321,18 +321,6 @@ section h2 {
   margin-right: auto;
 }
 
-.card-img-top {
-  height: 200px;
-  object-fit: contain;
-  background-color: #f8f9fa; /* opcional, para que no quede vacío si sobra espacio */
-  padding: 0.5rem;
-}
-
-.btn-dark:hover {
-  background-color: var(--naranja-logo);
-  color: var(--blanco);
-}
-
 /* Badges */
 .badge.bg-warning {
   font-size: 0.9rem;
@@ -390,8 +378,8 @@ a.btn:hover {
 }
 
 .card-img-top {
-  aspect-ratio: 3 / 4; /* Relación de aspecto 3:4 (ancho/alto) */
-  object-fit: cover;
+  aspect-ratio: 3 / 4;
+  object-fit: cover; /* Cambiado a 'cover' para que la imagen llene el espacio */
   width: 100%;
   /* Esto asegura que las esquinas superiores de la imagen sean redondeadas */
   border-top-left-radius: 1rem;
