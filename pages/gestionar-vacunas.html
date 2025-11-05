@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Gestionar ONGs | Pawtastic</title>
+  <title>Gestionar Vacunas | Pawtastic</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
   <link rel="icon" href="../img/favicon.ico" type="image/png">
@@ -20,7 +20,7 @@
         <span class="text-warning fw-bold">Pawtastic</span>
       </a>
       <div class="position-absolute top-50 start-50 translate-middle">
-        <span class="navbar-text h4 m-0 text-dark fw-bold">GESTIÓN DE ONGs 🏢</span>
+        <span class="navbar-text h4 m-0 text-dark fw-bold">GESTIÓN DE VACUNAS 💉</span>
       </div>
       <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
         <ul class="navbar-nav">
@@ -39,22 +39,24 @@
   <main class="container py-5 flex-grow-1">
     <div class="card shadow-lg">
       <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-        <h5 class="mb-0">Listado de Todas las ONGs y Estado de Registro</h5>
+        <h5 class="mb-0">Listado de Vacunas</h5>
+        <button id="btn-crear-vacuna" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#modalVacuna">
+          <i class="bi bi-plus-circle me-2"></i>Crear Nueva Vacuna
+        </button>
       </div>
       <div class="card-body">
         <div class="table-responsive">
           <table class="table table-striped table-hover align-middle">
             <thead class="table-dark">
               <tr>
+                <th>ID</th>
                 <th>Nombre</th>
-                <th>Razón Social</th>
-                <th>CUIT</th>
-                <th class="text-center">Estado del Trámite</th>
-                <th class="text-center">Documentos</th>
-                <th class="text-center" style="width: 200px;">Acciones</th>
+                <th>Tipo</th>
+                <th>Descripción</th>
+                <th class="text-center">Acciones</th>
               </tr>
             </thead>
-            <tbody id="tabla-ongs-body">
+            <tbody id="tabla-vacunas-body">
               <!-- Las filas se insertarán aquí dinámicamente -->
             </tbody>
           </table>
@@ -62,6 +64,43 @@
       </div>
     </div>
   </main>
+
+  <!-- MODAL CREAR/EDITAR VACUNA -->
+  <div class="modal fade" id="modalVacuna" tabindex="-1" aria-labelledby="modalVacunaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="form-vacuna" novalidate>
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalVacunaLabel">Nueva Vacuna</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="vacuna-id">
+            <div class="mb-3">
+              <label for="vacuna-nombre" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="vacuna-nombre" required>
+            </div>
+            <div class="mb-3">
+              <label for="vacuna-tipo" class="form-label">Tipo de Mascota</label>
+              <select class="form-select" id="vacuna-tipo" required>
+                <option value="" disabled selected>Seleccione...</option>
+                <option value="perro">Perro</option>
+                <option value="gato">Gato</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="vacuna-descripcion" class="form-label">Descripción</label>
+              <textarea class="form-control" id="vacuna-descripcion" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <!-- MODAL SALIR (reutilizado) -->
   <div class="modal fade" id="modalCerrarSesion" tabindex="-1">
@@ -82,16 +121,10 @@
     <div class="container text-center"><hr class="border-dark"><small>&copy; 2025 Pawtastic. Todos los derechos reservados.</small></div>
   </footer>
 
-  <script>
-    document.getElementById("confirmarSalir").addEventListener("click", () => {
-      localStorage.removeItem("token");
-      localStorage.removeItem("tipo");
-      window.location.href = "/index.html";
-    });
-  </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../js/toast.js"></script>
-  <script src="../js/gestionar-ongs.js"></script>
+  <script src="../js/auth-admin.js"></script> <!-- Script para confirmar salida y proteger ruta -->
+  <script src="../js/gestionar-vacunas.js"></script>
 </body>
 
 </html>

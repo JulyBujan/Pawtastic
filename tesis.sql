@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Nov 03, 2025 at 04:41 PM
+-- Generation Time: Nov 04, 2025 at 03:01 PM
 -- Server version: 9.4.0
 -- PHP Version: 8.3.26
 
@@ -58,7 +58,7 @@ CREATE DEFINER=`root`@`%` PROCEDURE `calcular_compatibilidad_mascotas` (IN `id_u
             -- Fórmula: 100 - (diferencia_total / diferencia_maxima) * 100
             ROUND(100 - ((ABS(m.energia - user_energia) + ABS(m.sociabilidad - user_sociabilidad) + ABS(m.presencia - user_presencia) + ABS(m.estilov - user_estilov)) / 8) * 100) AS compatibilidad
         FROM 
-            mascotas m 
+            mascotas m
         WHERE
             -- Solo incluir mascotas activas/disponibles para adopción
             m.estado = 0
@@ -217,6 +217,18 @@ INSERT INTO `mascotas` (`id`, `id_ong`, `nombre`, `tipo`, `edad`, `sexo`, `tama�
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `mascota_vacunas`
+--
+
+CREATE TABLE `mascota_vacunas` (
+  `id_mascota` int NOT NULL,
+  `id_vacuna` int NOT NULL,
+  `fecha_aplicacion` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `ONGs`
 --
 
@@ -300,9 +312,37 @@ INSERT INTO `usuarios` (`id`, `email`, `password`, `tipo`, `ong_id`, `nombre`, `
 (8, 'luis.romero7@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Luis', 'Romero', NULL, NULL, '1122334407', NULL, '1997-01-15', 'Masculino', NULL, NULL, NULL, NULL, NULL, 0, NULL, 'Departamento', 0, 'Intermedia', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
 (9, 'marco@ong2.org', '9b8769a4a742959a2d0298c36fb70623f2dfacda8436237df08d8dfd5b37374c', 'ong', 2, 'Marco', 'Polo', NULL, NULL, '1122334408', NULL, '1998-01-15', 'Masculino', NULL, NULL, NULL, NULL, NULL, 0, NULL, 'Casa con patio', 0, 'Avanzada', NULL, NULL, NULL, NULL, '2025-10-29 02:29:35', '2025-10-20 02:10:52', 0, NULL),
 (10, 'javier@ong1.org', '9b8769a4a742959a2d0298c36fb70623f2dfacda8436237df08d8dfd5b37374c', 'ong', 1, 'Javier', 'Diaz', NULL, NULL, '1122334409', NULL, '1999-01-15', 'Masculino', NULL, NULL, NULL, NULL, NULL, 0, NULL, 'Departamento', 0, 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-22 22:30:02', '2025-10-20 02:10:52', 0, NULL),
-(11, 'sbujan@gmail.com', '8146cedca9d6bfb47b77f581973da5a0bee365aa9ec9ebb5b12d142fca2c3cc1', 'usuario', NULL, 'Sergio Ezequiel', 'Bujan', 0, '29364773', '1136250164', NULL, '1982-03-20', 'Masculino', NULL, NULL, NULL, NULL, NULL, 0, NULL, 'con patio', 0, 'amplia', 2, 2, 3, 3, '2025-10-25 21:09:45', '2025-10-22 02:46:37', 0, NULL),
-(12, 'jhon@house.com', 'b391fa64cb3fcb7c64b02a528c2d0514ba9c93fc1611b557ede0b91ef88ec9ae', 'usuario', NULL, 'Jhonny', 'Dubai', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, '2025-10-28 22:59:37', '2025-10-25 18:53:08', 0, 'a90979d90f1d313e400fe05315d520fac72e007bd70454a2d83599a8a9373a99'),
-(13, 'maria@house.com.ar', '626e3c805e77eeb472c42c6be607be2af7ac5c08fd7050f278e0330fe81abf57', 'usuario', NULL, 'mariapepa', 'Sil', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, '2025-10-30 20:03:50', '2025-10-30 20:03:50', 1, '4fb2be2cfa8855179396c22905d370a931627ed1752c5140c814bf9fa3fd24ce');
+(11, 'sbujan@gmail.com', '8146cedca9d6bfb47b77f581973da5a0bee365aa9ec9ebb5b12d142fca2c3cc1', 'usuario', NULL, 'Sergio Ezequiel', 'Bujan', 0, '29364773', '0111536250164', NULL, '1982-03-20', 'Masculino', -31.365, -64.2245, 'Córdoba', 'Cerro Chico', 'Juan Cruz Varela', 2876, '', NULL, 0, 'amplia', 2, 2, 3, 3, '2025-11-03 22:20:00', '2025-10-22 02:46:37', 0, NULL),
+(12, 'jhon@house.com', 'b391fa64cb3fcb7c64b02a528c2d0514ba9c93fc1611b557ede0b91ef88ec9ae', 'usuario', NULL, 'Jhonny', 'Dubai', 0, NULL, NULL, NULL, NULL, 'Masculino', -31.3798, -64.1971, 'Cordoba', 'Los Paraisos', 'Arquímedes', 2857, NULL, NULL, 2, NULL, 3, 2, 1, 1, '2025-11-03 23:18:25', '2025-10-25 18:53:08', 0, 'a90979d90f1d313e400fe05315d520fac72e007bd70454a2d83599a8a9373a99'),
+(13, 'maria@house.com.ar', '626e3c805e77eeb472c42c6be607be2af7ac5c08fd7050f278e0330fe81abf57', 'usuario', NULL, 'mariapepa', 'Sil', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, '2025-10-30 20:03:50', '2025-10-30 20:03:50', 1, '4fb2be2cfa8855179396c22905d370a931627ed1752c5140c814bf9fa3fd24ce'),
+(14, 'admin@pawtastic.pet', 'd82494f05d6917ba02f7aaa29689ccb444bb73f20380876cb05d1f37537b7892', 'admin', NULL, 'Admin', 'Moderador', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, '2025-11-03 23:21:53', '2025-11-03 23:21:09', 0, 'f7aa521b586295709bcd8722be3eb155869f129ef46f5c7111872057529bb98e');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `vacunas`
+--
+
+CREATE TABLE `vacunas` (
+  `id_vacuna` int NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `tipo` varchar(10) NOT NULL,
+  `descripcion` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `vacunas`
+--
+
+INSERT INTO `vacunas` (`id_vacuna`, `nombre`, `tipo`, `descripcion`) VALUES
+(1, 'Vacuna Polivalente (séxtuple)', 'perro', 'Protege contra moquillo, parvovirus y hepatitis, entre otras enfermedades. A las 6 semanas de vida.'),
+(3, 'Polivalente (Segunda dosis)', 'perro', 'A las 8 semanas de vida que combate el adenovirus, el moquillo, la parainfluenza y el parvovirus.'),
+(5, 'Polivalente Refuerzo', 'perro', 'A las 12 semanas de vida.'),
+(7, 'Rabia (Primera dosis)', 'perro', 'A las 16 semanas de vida.'),
+(8, 'Rabia (Refuerzo)', 'perro', 'Cada año.'),
+(9, 'Trivalente Felina', 'gato', 'Recomendada después del destete.  Inmuniza contra rinotraqueítis, calicivirus y panleucopenia.'),
+(10, 'Antirábica de gatos', 'gato', 'Es obligatoria para gatos y se recomienda su aplicación a partir de los 4 meses de edad, con refuerzos anuales.'),
+(11, 'Leucemia felina', 'gato', 'Es recomendada, sobre todo si el gato sale a la calle (outdoor). ');
 
 --
 -- Indexes for dumped tables
@@ -332,6 +372,13 @@ ALTER TABLE `mascotas`
   ADD KEY `fk_mascota_ong` (`id_ong`);
 
 --
+-- Indexes for table `mascota_vacunas`
+--
+ALTER TABLE `mascota_vacunas`
+  ADD PRIMARY KEY (`id_mascota`,`id_vacuna`,`fecha_aplicacion`),
+  ADD KEY `id_vacuna` (`id_vacuna`);
+
+--
 -- Indexes for table `ONGs`
 --
 ALTER TABLE `ONGs`
@@ -345,6 +392,12 @@ ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email_unico` (`email`),
   ADD KEY `ong_id` (`ong_id`);
+
+--
+-- Indexes for table `vacunas`
+--
+ALTER TABLE `vacunas`
+  ADD PRIMARY KEY (`id_vacuna`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -378,7 +431,13 @@ ALTER TABLE `ONGs`
 -- AUTO_INCREMENT for table `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT for table `vacunas`
+--
+ALTER TABLE `vacunas`
+  MODIFY `id_vacuna` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- Constraints for dumped tables
@@ -403,6 +462,13 @@ ALTER TABLE `ImagenesMascota`
 --
 ALTER TABLE `mascotas`
   ADD CONSTRAINT `fk_mascota_ong` FOREIGN KEY (`id_ong`) REFERENCES `ONGs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `mascota_vacunas`
+--
+ALTER TABLE `mascota_vacunas`
+  ADD CONSTRAINT `mascota_vacunas_ibfk_1` FOREIGN KEY (`id_mascota`) REFERENCES `mascotas` (`id`),
+  ADD CONSTRAINT `mascota_vacunas_ibfk_2` FOREIGN KEY (`id_vacuna`) REFERENCES `vacunas` (`id_vacuna`);
 
 --
 -- Constraints for table `usuarios`

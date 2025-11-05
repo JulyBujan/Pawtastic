@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="card h-100 shadow-sm">
                         <img src="../img/mascotas/${
                           mascota.imagen || "default.jpg"
-                        }" class="card-img-top" alt="${mascota.nombre}" />
+                        }" class="card-img-top"  alt="${mascota.nombre}" />
                         <div class="card-body d-flex flex-column justify-content-between text-center">
                             <h5 class="card-title">${mascota.nombre}</h5>
                             <p class="card-text">${mascota.descripcion.substring(

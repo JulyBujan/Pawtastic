@@ -7,6 +7,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- FUNCIONES ---
 
     /**
+     * Muestra un spinner de carga en el contenedor de mascotas.
+     */
+    const mostrarSpinner = () => {
+        mascotasContainer.innerHTML = `
+            <div class="col-12 d-flex justify-content-center py-5">
+                <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+            </div>`;
+    };
+
+    /**
      * Renderiza las tarjetas de mascotas en el contenedor.
      * @param {Array} mascotas - El array de objetos de mascotas.
      * @param {boolean} porCompatibilidad - Flag para saber si se debe mostrar la compatibilidad.
@@ -60,6 +72,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        mostrarSpinner();
+
         try {
             const response = await fetch('/api/get_compatibilidad.php', {
                 headers: {
@@ -78,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Error al buscar por compatibilidad:', error);
-            showToast('Hubo un error al conectar con el servidor.', 'danger');
+            mascotasContainer.innerHTML = `<div class="col-12"><p class="text-center text-danger">Hubo un error al conectar con el servidor.</p></div>`;
         }
     };
 
@@ -92,6 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
             showToast('Debes <a href="login.html" class="text-white text-decoration-underline">iniciar sesión</a> para buscar por cercanía.', 'danger');
             return;
         }
+
+        mostrarSpinner();
 
         try {
             const response = await fetch('/api/get_cercania.php', {
@@ -116,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Error al buscar por cercanía:', error);
-            showToast('Hubo un error al conectar con el servidor.', 'danger');
+            mascotasContainer.innerHTML = `<div class="col-12"><p class="text-center text-danger">Hubo un error al conectar con el servidor.</p></div>`;
         }
     };
 
@@ -126,6 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     const cargarMascotasDefault = async (formData) => {
         let url = '/api/catalogo.php';
+
+        mostrarSpinner();
 
         if (formData) {
             // Construimos los query params solo con los filtros que tienen valor
@@ -147,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderizarMascotas(mascotas);
         } catch (error) {
             console.error('Error al cargar mascotas:', error);
-            showToast('No se pudieron cargar las mascotas. Intente más tarde.', 'danger');
+            mascotasContainer.innerHTML = `<div class="col-12"><p class="text-center text-danger">No se pudieron cargar las mascotas. Intente más tarde.</p></div>`;
         }
     };
 

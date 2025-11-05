@@ -2,10 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("token");
     const tipoUsuario = localStorage.getItem("tipo");
     const tablaBody = document.getElementById("tabla-ongs-body");
-    const modalOngEl = document.getElementById('modalOng');
-    const modalOng = new bootstrap.Modal(modalOngEl);
-    const formOng = document.getElementById('form-ong');
-    const modalLabel = document.getElementById('modalOngLabel');
 
     // 1. Proteger la ruta
     if (!token || tipoUsuario !== 'admin') {
@@ -14,10 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    let allOngs = [];
-
     /**
-     * Carga todas las ONGs desde la API y las renderiza.
+     * Carga todas las ONGs y su estado desde la API.
      */
     const fetchOngs = async () => {
         try {
@@ -26,10 +20,10 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             if (!response.ok) throw new Error('No se pudieron cargar las ONGs.');
             
-            allOngs = await response.json();
-            renderTabla(allOngs);
+            const ongs = await response.json();
+            renderTabla(ongs);
         } catch (error) {
-            tablaBody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">${error.message}</td></tr>`;
+            tablaBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">${error.message}</td></tr>`;
         }
     };
 
@@ -40,111 +34,99 @@ document.addEventListener("DOMContentLoaded", () => {
     const renderTabla = (ongs) => {
         tablaBody.innerHTML = '';
         if (ongs.length === 0) {
-            tablaBody.innerHTML = `<tr><td colspan="5" class="text-center">No hay ONGs registradas.</td></tr>`;
+            tablaBody.innerHTML = `<tr><td colspan="6" class="text-center">No hay ONGs registradas.</td></tr>`;
             return;
         }
         ongs.forEach(ong => {
+            let estadoHtml = '';
+            let documentosHtml = '<span class="text-muted">N/A</span>';
+            let accionesHtml = '<span class="text-muted">N/A</span>';
+
+            // Determinar el estado y las acciones según el campo 'estado' de la documentación
+            switch (parseInt(ong.estado)) {
+                case 0: // Pendiente
+                    estadoHtml = '<span class="badge bg-warning text-dark">Pendiente</span>';
+                    accionesHtml = `
+                        <button class="btn btn-sm btn-success btn-aprobar" data-id="${ong.id}"><i class="bi bi-check-lg"></i> Aprobar</button>
+                        <button class="btn btn-sm btn-danger btn-rechazar" data-id="${ong.id}"><i class="bi bi-x-lg"></i> Rechazar</button>
+                    `;
+                    break;
+                case 1: // Aprobado
+                    estadoHtml = '<span class="badge bg-success">Aprobado</span>';
+                    break;
+                case 2: // Rechazado
+                    estadoHtml = '<span class="badge bg-danger">Rechazado</span>';
+                    break;
+                default: // Pre-existente (ong.estado es null)
+                    estadoHtml = '<span class="badge bg-secondary">Pre-existente</span>';
+            }
+
+            // Si hay documentos, mostrar los enlaces
+            if (ong.url_estatuto) {
+                documentosHtml = `
+                    <a href="../${ong.url_estatuto}" target="_blank" class="btn btn-sm btn-outline-secondary" title="Estatuto Social"><i class="bi bi-file-earmark-text"></i></a>
+                    <a href="../${ong.url_cuit}" target="_blank" class="btn btn-sm btn-outline-secondary" title="Constancia de CUIT"><i class="bi bi-file-earmark-text"></i></a>
+                    <a href="../${ong.url_acta}" target="_blank" class="btn btn-sm btn-outline-secondary" title="Acta de Autoridades"><i class="bi bi-file-earmark-text"></i></a>
+                `;
+            }
+
             tablaBody.innerHTML += `
                 <tr>
-                    <td>${ong.id}</td>
                     <td>${ong.nombre}</td>
                     <td>${ong.razon_social || 'N/A'}</td>
                     <td>${ong.cuit || 'N/A'}</td>
-                    <td class="text-center">
-                        <button class="btn btn-sm btn-outline-primary btn-editar" data-id="${ong.id}"><i class="bi bi-pencil"></i> Editar</button>
-                        <button class="btn btn-sm btn-outline-danger btn-eliminar" data-id="${ong.id}"><i class="bi bi-trash"></i> Eliminar</button>
-                    </td>
+                    <td class="text-center">${estadoHtml}</td>
+                    <td class="text-center">${documentosHtml}</td>
+                    <td class="text-center">${accionesHtml}</td>
                 </tr>
             `;
         });
     };
 
-    /**
-     * Maneja el envío del formulario para crear o editar una ONG.
-     */
-    formOng.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const ongId = document.getElementById('ong-id').value;
-        const data = {
-            nombre: document.getElementById('ong-nombre').value,
-            razon_social: document.getElementById('ong-razon-social').value,
-            cuit: document.getElementById('ong-cuit').value,
-        };
-        if (ongId) data.id = ongId;
-
-        try {
-            const response = await fetch('../api/gestionar-ongs.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                body: JSON.stringify(data)
-            });
-            const result = await response.json();
-            if (!response.ok) throw new Error(result.message);
-
-            showToast(result.message, 'success');
-            modalOng.hide();
-            fetchOngs();
-        } catch (error) {
-            showToast(error.message, 'danger');
-        }
-    });
 
     /**
      * Maneja los clics en los botones de la tabla.
      */
     tablaBody.addEventListener('click', async (e) => {
-        const target = e.target.closest('button');
-        if (!target) return;
+        const aprobarBtn = e.target.closest('.btn-aprobar');
+        const rechazarBtn = e.target.closest('.btn-rechazar');
 
-        const ongId = target.dataset.id;
-
-        // Botón Editar
-        if (target.classList.contains('btn-editar')) {
-            const ong = allOngs.find(o => o.id == ongId);
-            if (ong) {
-                modalLabel.textContent = 'Editar ONG';
-                document.getElementById('ong-id').value = ong.id;
-                document.getElementById('ong-nombre').value = ong.nombre;
-                document.getElementById('ong-razon-social').value = ong.razon_social || '';
-                document.getElementById('ong-cuit').value = ong.cuit || '';
-                modalOng.show();
+        if (aprobarBtn) {
+            const ongId = aprobarBtn.dataset.id;
+            if (confirm(`¿Estás seguro de que quieres APROBAR la solicitud de la ONG con ID ${ongId}?`)) {
+                handleSolicitudAction(ongId, 'aprobar');
             }
         }
 
-        // Botón Eliminar
-        if (target.classList.contains('btn-eliminar')) {
-            if (confirm(`¿Estás seguro de que quieres eliminar la ONG con ID ${ongId}? Esta acción no se puede deshacer.`)) {
-                try {
-                    const response = await fetch(`../api/gestionar-ongs.php?id=${ongId}`, {
-                        method: 'DELETE',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    const result = await response.json();
-                    if (!response.ok) throw new Error(result.message);
-
-                    showToast(result.message, 'success');
-                    fetchOngs();
-                } catch (error) {
-                    showToast(error.message, 'danger');
-                }
+        if (rechazarBtn) {
+            const ongId = rechazarBtn.dataset.id;
+            if (confirm(`¿Estás seguro de que quieres RECHAZAR la solicitud de la ONG con ID ${ongId}?`)) {
+                handleSolicitudAction(ongId, 'rechazar');
             }
         }
     });
 
     /**
-     * Resetea el modal para la creación de una nueva ONG.
+     * Envía la acción (aprobar/rechazar) a la API.
+     * @param {number} ongId - El ID de la ONG.
+     * @param {string} action - La acción a realizar ('aprobar' o 'rechazar').
      */
-    document.getElementById('btn-crear-ong').addEventListener('click', () => {
-        modalLabel.textContent = 'Crear Nueva ONG';
-        formOng.reset();
-        document.getElementById('ong-id').value = '';
-    });
+    const handleSolicitudAction = async (ongId, action) => {
+        try {
+            const response = await fetch('../api/gestionar-ongs.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ ong_id: ongId, action: action })
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.message);
 
-    // Limpiar el formulario cuando el modal se cierra
-    modalOngEl.addEventListener('hidden.bs.modal', () => {
-        formOng.reset();
-        document.getElementById('ong-id').value = '';
-    });
+            showToast(result.message, 'success');
+            fetchOngs(); // Recargar la lista de ONGs
+        } catch (error) {
+            showToast(error.message, 'danger');
+        }
+    };
 
     // Carga inicial
     fetchOngs();

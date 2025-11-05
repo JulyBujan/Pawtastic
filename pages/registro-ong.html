@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Registro de ONG | Pawtastic</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <link rel="icon" href="../img/favicon.ico" type="image/png">
+    <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark encabezado-azul">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="../index.html">
+                <img src="../img/logo.png" alt="Logo Pawtastic" width="50" height="50" class="me-2 logo-navbar">
+                <span class="text-warning fw-bold">Pawtastic</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="../index.html">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.html">Iniciar Sesión</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="container py-5 flex-grow-1">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-dark text-white">
+                        <h4 class="mb-0 text-center">📝 Formulario de Registro para ONGs</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <form id="form-registro-ong" novalidate>
+                            <!-- Datos de la ONG -->
+                            <h5 class="mb-3 border-bottom pb-2">Datos de la Organización</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="ong-nombre" class="form-label">Nombre de Fantasía</label>
+                                    <input type="text" class="form-control" id="ong-nombre" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="ong-razon-social" class="form-label">Razón Social</label>
+                                    <input type="text" class="form-control" id="ong-razon-social" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="ong-cuit" class="form-label">CUIT</label>
+                                    <input type="text" class="form-control" id="ong-cuit" placeholder="Ej: 30-12345678-9" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="ong-fecha-constitucion" class="form-label">Fecha de Constitución</label>
+                                    <input type="date" class="form-control" id="ong-fecha-constitucion" required>
+                                </div>
+                            </div>
+
+                            <!-- Domicilio Legal -->
+                            <h5 class="mt-4 mb-3 border-bottom pb-2">Domicilio Legal</h5>
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <label for="ong-calle" class="form-label">Calle</label>
+                                    <input type="text" class="form-control" id="ong-calle" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="ong-numero" class="form-label">Número</label>
+                                    <input type="text" class="form-control" id="ong-numero" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="ong-localidad" class="form-label">Localidad / Ciudad</label>
+                                    <input type="text" class="form-control" id="ong-localidad" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="ong-barrio" class="form-label">Barrio</label>
+                                    <input type="text" class="form-control" id="ong-barrio">
+                                </div>
+                            </div>
+
+                            <!-- Documentación -->
+                            <h5 class="mt-4 mb-3 border-bottom pb-2">Documentación Requerida</h5>
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label for="ong-estatuto" class="form-label">Estatuto Social (PDF)</label>
+                                    <input class="form-control" type="file" id="ong-estatuto" accept=".pdf" required>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="ong-constancia-cuit" class="form-label">Constancia de CUIT (PDF)</label>
+                                    <input class="form-control" type="file" id="ong-constancia-cuit" accept=".pdf" required>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="ong-acta-autoridades" class="form-label">Acta de Designación de Autoridades (PDF)</label>
+                                    <input class="form-control" type="file" id="ong-acta-autoridades" accept=".pdf" required>
+                                </div>
+                            </div>
+
+                            <div class="d-grid mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg">Enviar Solicitud de Registro</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Contenedor de Toasts -->
+    <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3"></div>
+
+    <!-- FOOTER -->
+    <footer class="bg-footer text-dark pt-4 pb-3 mt-auto">
+        <div class="container text-center"><hr class="border-dark"><small>&copy; 2025 Pawtastic. Todos los derechos reservados.</small></div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/toast.js"></script>
+    <script src="../js/registro-ong.js"></script>
+</body>
+
+</html>

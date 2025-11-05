@@ -20,56 +20,54 @@ $method = $_SERVER['REQUEST_METHOD'];
 try {
     switch ($method) {
         case 'GET':
-            $stmt = $conn->prepare("SELECT id, nombre, razon_social, cuit FROM ONGs ORDER BY id");
+            // Obtener todas las ONGs con la información de su documentación (si existe)
+            $query = "
+                SELECT 
+                    o.id, o.nombre, o.razon_social, o.cuit,
+                    d.url_estatuto, d.url_cuit, d.url_acta, d.estado
+                FROM ONGs o
+                LEFT JOIN documentacion_ong d ON o.id = d.ong_id
+                ORDER BY o.id ASC
+            ";
+            $stmt = $conn->prepare($query);
             $stmt->execute();
-            $ongs = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+            $solicitudes = $stmt->get_result()->fetch_all(MYSQLI_ASSOC); // El nombre de la variable se mantiene por simplicidad
             $stmt->close();
-            echo json_encode($ongs);
+            echo json_encode($solicitudes);
             break;
 
         case 'POST':
+            // Manejar la aprobación o rechazo de una solicitud
             $data = json_decode(file_get_contents("php://input"));
 
-            if (empty($data->nombre)) {
-                throw new Exception("El nombre de la ONG es obligatorio.");
+            if (!isset($data->ong_id) || !isset($data->action)) {
+                throw new Exception("Faltan datos para procesar la solicitud (ong_id, action).");
             }
 
-            // Si hay un ID, es una actualización (EDITAR)
-            if (isset($data->id) && !empty($data->id)) {
-                $stmt = $conn->prepare("UPDATE ONGs SET nombre = ?, razon_social = ?, cuit = ? WHERE id = ?");
-                $stmt->bind_param("sssi", $data->nombre, $data->razon_social, $data->cuit, $data->id);
-                $message = "ONG actualizada correctamente.";
-            } 
-            // Si no hay ID, es una inserción (CREAR)
-            else {
-                $stmt = $conn->prepare("INSERT INTO ONGs (nombre, razon_social, cuit) VALUES (?, ?, ?)");
-                $stmt->bind_param("sss", $data->nombre, $data->razon_social, $data->cuit);
-                $message = "ONG creada correctamente.";
+            $ong_id = (int)$data->ong_id;
+            $action = $data->action;
+            $nuevo_estado = null;
+            $message = "";
+
+            if ($action === 'aprobar') {
+                $nuevo_estado = 1; // 1: Aprobado
+                $message = "Solicitud de ONG aprobada correctamente.";
+            } elseif ($action === 'rechazar') {
+                $nuevo_estado = 2; // 2: Rechazado
+                $message = "Solicitud de ONG rechazada.";
+            } else {
+                throw new Exception("Acción no válida.");
             }
 
+            // Actualizar el estado en la tabla de documentación
+            $stmt = $conn->prepare("UPDATE documentacion_ong SET estado = ?, fecha_revision = CURRENT_TIMESTAMP WHERE ong_id = ? AND estado = 0");
+            $stmt->bind_param("ii", $nuevo_estado, $ong_id);
             $stmt->execute();
+
             if ($stmt->affected_rows > 0) {
                 echo json_encode(["message" => $message]);
             } else {
-                echo json_encode(["message" => "No se realizaron cambios."]);
-            }
-            $stmt->close();
-            break;
-
-        case 'DELETE':
-            if (!isset($_GET['id'])) {
-                throw new Exception("Falta el ID de la ONG para eliminar.");
-            }
-            $id = (int)$_GET['id'];
-
-            $stmt = $conn->prepare("DELETE FROM ONGs WHERE id = ?");
-            $stmt->bind_param("i", $id);
-            $stmt->execute();
-
-            if ($stmt->affected_rows > 0) {
-                echo json_encode(["message" => "ONG eliminada correctamente."]);
-            } else {
-                throw new Exception("No se encontró la ONG o no se pudo eliminar.");
+                throw new Exception("No se encontró la solicitud o ya fue procesada.");
             }
             $stmt->close();
             break;
