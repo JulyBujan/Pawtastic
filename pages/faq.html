@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preguntas Frecuentes - Pawtastic</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="icon" href="../img/favicon.ico" type="image/png">
+  <link rel="stylesheet" href="../css/style.css">
+  
+</head>
+
+<body class="bg-light">
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="../index.html">
+        <img src="../img/logo.png" alt="Logo Pawtastic" width="50" height="50" class="me-2 logo-navbar">
+        <span class="text-warning fw-bold">Pawtastic</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="../index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="./login.html">Ingresar</a></li>
+          <li class="nav-item"><a class="nav-link" href="./error404.html">Nosotros</a></li>
+          <li class="nav-item">
+            <a href="#" class="nav-link text-danger fw-bold" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion">
+              <i class="bi bi-box-arrow-right me-1"></i>Salir
+            </a>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- CONTENIDO -->
+  <section class="py-5 text-center">
+    <div class="container">
+      <h2 class="mb-4 text-warning fw-bold">Preguntas Frecuentes 🐾</h2>
+      <p class="text-muted mb-5">
+        En esta sección encontrarás las respuestas a las dudas más comunes sobre adopciones, procesos y registros de
+        ONGs.
+      </p>
+
+      <!-- SECCIÓN ADOPCIONES -->
+      <div class="faq-card mb-5 faq-section text-start">
+        <h4><i class="bi bi-question-circle-fill text-warning me-2"></i>Sobre adopciones</h4>
+
+        <div class="accordion" id="faqAdopciones">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faq1">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+                ¿Cómo puedo adoptar una mascota desde Pawtastic?
+              </button>
+            </h2>
+            <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#faqAdopciones">
+              <div class="accordion-body">
+                Primero debés crear tu perfil de usuario. Luego, ingresá a la sección <strong>“Catálogo”</strong>,
+                elegí la que te enamore 🐶💖 y hacé clic en <strong>“Postularme”</strong> para adoptar.
+                Una ONG revisará tu solicitud y te contactará para coordinar el proceso.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faq2">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapse2">
+                ¿Tiene costo adoptar?
+              </button>
+            </h2>
+            <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAdopciones">
+              <div class="accordion-body">
+                No, <strong>la adopción es gratuita</strong>. Sin embargo, algunas ONGs pueden solicitar una
+                contribución voluntaria o cubrir parte del costo de vacunación o castración. Siempre será informado
+                antes de avanzar.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faq3">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapse3">
+                ¿Qué requisitos debo cumplir para adoptar?
+              </button>
+            </h2>
+            <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAdopciones">
+              <div class="accordion-body">
+                Los requisitos pueden variar según la ONG, pero en general se solicita:
+                <ul>
+                  <li>Ser mayor de edad.</li>
+                  <li>Contar con espacio adecuado y condiciones seguras.</li>
+                  <li>Compromiso de cuidado, alimentación y seguimiento veterinario.</li>
+                </ul>
+                Algunas ONGs realizan entrevistas o visitas domiciliarias para asegurar una adopción responsable.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faq4">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapse4">
+                ¿Qué pasa después de adoptar?
+              </button>
+            </h2>
+            <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#faqAdopciones">
+              <div class="accordion-body">
+                Luego de la adopción, la ONG realizará un <strong>seguimiento</strong> para acompañarte en el proceso de
+                adaptación y garantizar el bienestar del animal.
+                Podrás consultar siempre que lo necesites: ¡no estás solo/a! ❤️
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN ONGs -->
+      <div class="faq-card faq-section text-start">
+        <h4><i class="bi bi-people-fill text-warning me-2"></i>Guía para ONGs y refugios</h4>
+
+        <div class="accordion" id="faqOngs">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faq5">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5">
+                ¿Cómo puede registrarse una ONG en Pawtastic?
+              </button>
+            </h2>
+            <div id="collapse5" class="accordion-collapse collapse show" data-bs-parent="#faqOngs">
+              <div class="accordion-body">
+                Las ONGs interesadas en formar parte de Pawtastic deben enviar un correo electrónico a
+                <strong>pawtasticarg@gmail.com</strong> con la siguiente información:
+                <ul>
+                  <li>Nombre de la organización.</li>
+                  <li>Descripción breve de su misión y actividades.</li>
+                  <li>Datos de contacto (correo, teléfono, redes sociales).</li>
+                </ul>
+                Una vez validada la información, <strong>el equipo de Pawtastic verificará los datos y activará la
+                  cuenta</strong> para comenzar a publicar mascotas.
+                <br><br>
+                Cada ONG dispondrá de <strong>tres usuarios habilitados</strong> para administrar la cuenta
+                institucional.
+                Por motivos de seguridad, no se podrán registrar más de tres usuarios por organización.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faq6">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapse6">
+                ¿Qué beneficios tiene usar Pawtastic como ONG?
+              </button>
+            </h2>
+            <div id="collapse6" class="accordion-collapse collapse" data-bs-parent="#faqOngs">
+              <div class="accordion-body">
+                🧡 <strong>Visibilidad:</strong> tus mascotas llegan a más adoptantes potenciales. <br>
+                💬 <strong>Comunicación directa:</strong> contacto rápido y ordenado con postulantes. <br>
+                📋 <strong>Control:</strong> seguimiento del proceso de adopción desde el panel de administración. <br>
+                📊 <strong>Estadísticas:</strong> registro de adopciones, pendientes y seguimientos.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faq7">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapse7">
+                ¿Cómo se cargan las mascotas disponibles?
+              </button>
+            </h2>
+            <div id="collapse7" class="accordion-collapse collapse" data-bs-parent="#faqOngs">
+              <div class="accordion-body">
+                Desde el <strong>panel de administración de la ONG</strong>, se puede agregar cada mascota con su foto,
+                nombre, edad, raza, tamaño y descripción.
+                Una vez guardada, aparecerá automáticamente en la sección <strong>“Mis Mascotas”</strong>.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faq8">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapse8">
+                ¿Cómo se gestionan las solicitudes de adopción?
+              </button>
+            </h2>
+            <div id="collapse8" class="accordion-collapse collapse" data-bs-parent="#faqOngs">
+              <div class="accordion-body">
+                Cada vez que un usuario se postula, la ONG recibirá la solicitud en su panel.
+                Desde allí puede <strong>ver los datos del postulante, aceptar o rechazar la adopción</strong> y
+                mantener el contacto con el adoptante para coordinar los pasos finales.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-footer text-dark pt-4 pb-3 mt-3">
+    <div class="container text-center text-md-start">
+      <div class="row">
+        <div class="col-md-4 mb-3 text-center">
+          <h5 class="fw-bold mt-2">Pawtastic</h5>
+          <p class="small">Conectamos corazones con patas. Gracias por elegir adoptar.</p>
+          <a href="../index.html">
+            <img src="../img/logo.png" alt="Logo Pawtastic" style="max-width: 100px; border-radius: 40%;">
+          </a>
+        </div>
+        <div class="col-md-4 mb-3 d-flex flex-column align-items-center">
+          <h5 class="fw-bold text-center">Navegación</h5>
+          <ul class="list-unstyled text-center">
+            <li><a href="../index.html" class="text-dark text-decoration-none">Inicio</a></li>
+            <li><a href="./login.html" class="text-dark text-decoration-none">Ingresar</a></li>
+            <li><a href="./error404.html" class="text-dark text-decoration-none">Nosotros</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4 mb-3 fs-5">
+          <h5 class="fw-bold">Seguinos</h5>
+          <a href="./error404.html" class="text-dark me-3"><i class="bi bi-facebook" style="font-size: 2.5rem;"></i></a>
+          <a href="./error404.html" class="text-dark me-3"><i class="bi bi-instagram"
+              style="font-size: 2.5rem;"></i></a>
+          <a href="./error404.html" class="text-dark"><i class="bi bi-x-circle-fill" style="font-size: 2.5rem;"></i></a>
+        </div>
+      </div>
+      <hr class="border-dark">
+      <div class="text-center">
+        <small>&copy; 2025 Pawtastic. Todos los derechos reservados.</small><br>
+        <a href="./terminosYcondiciones.html" class="text-dark text-decoration-underline small">Términos y
+          Condiciones</a> |
+        <a href="./politicaDeCookies.html" class="text-dark text-decoration-underline small">Política de Cookies</a>
+      </div>
+    </div>
+  </footer>
+  <!-- MODAL CERRAR SESIÓN -->
+  <div class="modal fade" id="modalCerrarSesion" tabindex="-1" aria-labelledby="modalCerrarSesionLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold text-danger" id="modalCerrarSesionLabel">
+            <i class="bi bi-box-arrow-right me-2"></i>¿Cerrar sesión?
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          ¿Estás segura/o de que querés salir de tu cuenta?
+          Se eliminarán los datos de sesión guardados.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger" id="confirmarSalir">Salir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ <script>
+  document.getElementById("confirmarSalir").addEventListener("click", function () {
+    localStorage.removeItem("token");
+    localStorage.removeItem("tipo");
+    window.location.href = "../index.html";
+  });
+</script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  
+</body>
+
+</html>
