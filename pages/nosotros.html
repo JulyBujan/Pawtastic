@@ -11,9 +11,42 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
+  <style>
+    body {
+      background-color: #e0f7ff;
+      color: black !important;
+      /* Asegura que todo el texto sea negro */
+      /* Fondo celeste pastel */
+    }
+
+    .card {
+      background-color: #ffe5c2;
+      /* Naranja clarito para contraste */
+      border: none;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .card:hover {
+      background-color: #f7931e;
+      /* Naranja más fuerte al pasar el mouse */
+      transform: translateY(-5px);
+    }
+
+    .team-section {
+      background-color: transparent !important;
+    }
+
+    .team-section .card-img-top {
+      width: 180px;
+      height: 180px;
+      object-fit: cover;
+      margin: 0 auto;
+      padding: 1rem !important;
+    }
+  </style>
 </head>
 
-<body class="bg-light">
+<body>
 
   <!-- NAVBAR -->
   <nav class="navbar navbar-expand-lg navbar-dark">
@@ -39,24 +72,24 @@
   <section class="text-center py-5">
     <div class="container">
       <h1 class="fw-bold text-uppercase" style="color: #F7931E;">CONOCÉ AL EQUIPO DETRÁS DE PAWTASTIC 🐾</h1>
-      <p class="lead text-muted">Una comunidad apasionada por conectar corazones con patitas 💖</p>
+      <p class="lead">Una comunidad apasionada por conectar corazones con patitas 💖</p>
     </div>
   </section>
 
   <!-- SECCIÓN: MISIÓN Y VISIÓN -->
-  <section class="bg-light py-5 text-center">
+  <section class="py-5 text-center">
     <div class="container">
       <div class="row">
         <div class="col-md-6 mb-4">
           <h3 class="fw-bold text-warning">Nuestra Misión</h3>
-          <p class="text-muted">
+          <p>
             Promover la adopción responsable conectando personas con refugios y mascotas a través de la tecnología, la
             empatía y el amor animal.
           </p>
         </div>
         <div class="col-md-6 mb-4">
           <h3 class="fw-bold text-warning">Nuestra Visión</h3>
-          <p class="text-muted">
+          <p>
             Imaginar un mundo donde cada mascota encuentre un hogar lleno de cariño, y cada persona, a su compañero de
             vida de cuatro patas.
           </p>
@@ -66,7 +99,7 @@
   </section>
 
   <!-- SECCIÓN: NUESTRO EQUIPO -->
-  <section class="py-5 bg-white">
+  <section class="py-5 team-section">
     <div class="container">
       <h2 class="text-center fw-bold mb-5" style="color: #F7931E;">Nuestro Equipo 🐶🐱</h2>
       <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
@@ -104,7 +137,7 @@
             <div class="card-body">
               <h5 class="card-title">José Romero</h5>
               <p class="card-text">Papá de día, estudiante de noche, y dev cuando le dejan dormir.</p>
-              <p class="text-muted small">jose.romero@gmail.com</p>
+              <p class="small">jose.romero@gmail.com</p>
             </div>
           </div>
         </div>
@@ -116,8 +149,7 @@
             <div class="card-body">
               <h5 class="card-title">Georgina Contreras</h5>
               <p class="card-text">Costurerita es su segundo nombre. Ama los gatos, los colores pastel y detectar
-                errores
-                de diseño a 10 metros.</p>
+                errores de diseño a 10 metros.</p>
               <p class="text-muted small">georgina.contreras@gmail.com</p>
             </div>
           </div>
@@ -131,7 +163,7 @@
               <h5 class="card-title">Jonathan Revelino</h5>
               <p class="card-text">Jony, alias "el devoops papá. Tiene más cafés que horas de sueño, pero siempre llega
                 a las entregas</p>
-              <p class="text-muted small">jonathan.revelino@gmail.com</p>
+              <p class="small">jonathan.revelino@gmail.com</p>
             </div>
           </div>
         </div>
@@ -150,7 +182,7 @@
             <img src="../img/Pichichos.jpg" class="card-img-top" alt="Refugio Patitas Felices">
             <div class="card-body">
               <h5 class="card-title fw-bold">Refugio Patitas Felices</h5>
-              <p class="card-text text-muted">Córdoba Capital</p>
+              <p class="card-text">Córdoba Capital</p>
             </div>
           </div>
         </div>
@@ -159,7 +191,7 @@
             <img src="../img/HuellitasdelSur.png" class="card-img-top" alt="Huellitas del Sur">
             <div class="card-body">
               <h5 class="card-title fw-bold">Huellitas del Sur</h5>
-              <p class="card-text text-muted">Villa Allende</p>
+              <p class="card-text">Villa Allende</p>
             </div>
           </div>
         </div>
@@ -168,7 +200,7 @@
             <img src="../img/Equipo-de-rescate-animalpng.png" class="card-img-top" alt="Amigos de 4 Patas">
             <div class="card-body">
               <h5 class="card-title fw-bold">Amigos de 4 Patas</h5>
-              <p class="card-text text-muted">Alta Gracia</p>
+              <p class="card-text">Alta Gracia</p>
             </div>
           </div>
         </div>
