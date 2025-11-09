@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Política de Cookies - Pawtastic</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="icon" href="../img/favicon.ico" type="image/png">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    body {
+      background-color: #e0f7ff;
+      /* Fondo celeste pastel */
+    }
+
+    .legal-content {
+      background-color: white;
+      padding: 2.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .legal-content h3 {
+      color: var(--azul-banner);
+      margin-top: 1.5rem;
+      border-bottom: 2px solid var(--naranja-logo);
+      padding-bottom: 0.5rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="../index.html">
+        <img src="../img/logo.png" alt="Logo Pawtastic" width="50" height="50" class="me-2 logo-navbar">
+        <span class="text-warning fw-bold">Pawtastic</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav align-items-center">
+          <li class="nav-item">
+            <a class="btn btn-custom-nav me-2" href="./login.html">Ingresá</a>
+          </li>
+          <li class="nav-item"><a class="btn btn-custom-nav" href="./registro.html">Registrate</a></li>
+          <li class="nav-item ms-2">
+            <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion">Salir</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- CONTENIDO -->
+  <main class="container py-5">
+    <div class="legal-content">
+      <h2 class="text-center fw-bold text-warning mb-4">Política de Cookies</h2>
+      <p class="text-muted text-center">Última actualización: 25 de Octubre de 2025</p>
+
+      <p>Este sitio web, Pawtastic, utiliza cookies para mejorar la experiencia del usuario. A continuación, explicamos
+        qué son, qué tipos utilizamos y cómo puede gestionarlas.</p>
+
+      <h3>1. ¿Qué son las cookies?</h3>
+      <p>Una cookie es un pequeño archivo de texto que un sitio web almacena en su navegador cuando lo visita. Permite
+        que el sitio recuerde información sobre su visita, como su idioma de preferencia o los datos de inicio de
+        sesión, lo que puede facilitar su próxima visita y hacer que el sitio le resulte más útil.</p>
+
+      <h3>2. ¿Qué tipos de cookies utilizamos?</h3>
+      <ul>
+        <li><strong>Cookies Esenciales:</strong> Son estrictamente necesarias para el funcionamiento del sitio. Por
+          ejemplo, las que gestionan la sesión de un usuario registrado. Sin ellas, el sitio no funcionaría
+          correctamente.</li>
+        <li><strong>Cookies de Preferencias:</strong> Permiten recordar información que cambia el aspecto o el
+          comportamiento del sitio, como las preferencias de filtros en el catálogo de mascotas.</li>
+        <li><strong>Cookies de Rendimiento y Análisis:</strong> Nos ayudan a entender cómo interactúan los visitantes
+          con el sitio web, recopilando información de forma anónima. Utilizamos estos datos para mejorar la
+          funcionalidad y el rendimiento de Pawtastic.</li>
+      </ul>
+
+      <h3>3. Gestión de Cookies</h3>
+      <p>Usted puede permitir, bloquear o eliminar las cookies instaladas en su equipo mediante la configuración de las
+        opciones del navegador instalado en su ordenador. Sin embargo, si deshabilita las cookies esenciales, es posible
+        que algunas partes del sitio no funcionen correctamente.</p>
+      <ul>
+        <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer">Google
+            Chrome</a></li>
+        <li><a
+            href="https://support.mozilla.org/es/kb/habilitar-y-deshabilitar-cookies-sitios-web-rastrear-preferencias"
+            target="_blank" rel="noopener noreferrer">Mozilla Firefox</a></li>
+        <li><a
+            href="https://support.microsoft.com/es-es/windows/eliminar-y-administrar-cookies-168dab11-0753-043d-7c16-ede5947fc64d"
+            target="_blank" rel="noopener noreferrer">Internet Explorer / Edge</a></li>
+        <li><a href="https://support.apple.com/es-es/guide/safari/sfri11471/mac" target="_blank"
+            rel="noopener noreferrer">Safari</a></li>
+      </ul>
+
+      <h3>4. Cambios en la Política de Cookies</h3>
+      <p>Podemos actualizar la Política de Cookies de nuestro sitio web, por lo que le recomendamos revisar esta
+        política cada vez que acceda a nuestro sitio con el objetivo de estar adecuadamente informado sobre cómo y para
+        qué usamos las cookies.</p>
+
+    </div>
+  </main>
+
+  <!-- MODAL CERRAR SESIÓN -->
+  <div class="modal fade" id="modalCerrarSesion" tabindex="-1" aria-labelledby="modalCerrarSesionLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold text-danger" id="modalCerrarSesionLabel">
+            <i class="bi bi-box-arrow-right me-2"></i>¿Cerrar sesión?
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          ¿Estás seguro de que quieres salir? Se cerrará tu sesión actual.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger" id="confirmarSalir">Salir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-footer text-dark pt-4 pb-3 mt-3">
+    <div class="container text-center text-md-start">
+      <div class="row">
+        <div class="col-md-4 mb-3 text-center">
+          <h5 class="fw-bold mt-2">Pawtastic</h5>
+          <p class="small">Conectamos corazones con patas. Gracias por elegir adoptar.</p>
+          <a href="../index.html">
+            <img src="../img/logo.png" alt="Logo Pawtastic" style="max-width: 100px; border-radius: 40%;">
+          </a>
+        </div>
+        <div class="col-md-4 mb-3 d-flex flex-column align-items-center">
+          <h5 class="fw-bold text-center">Navegación</h5>
+          <ul class="list-unstyled text-center">
+            <li><a href="./login.html" class="text-dark text-decoration-none">Ingresá</a></li>
+            <li><a href="./registro.html" class="text-dark text-decoration-none">Registrate</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4 mb-3 fs-5 text-center">
+          <h5 class="fw-bold">Seguinos</h5>
+          <a href="https://www.facebook.com/profile.php?id=61581919419192" class="text-dark me-3"><i
+              class="bi bi-facebook" style="font-size: 2rem;"></i></a>
+          <a href="https://www.instagram.com/pawtasticarg/" class="text-dark me-3"><i class="bi bi-instagram"
+              style="font-size: 2rem;"></i></a>
+          <a href="https://x.com/PawtasticArg" class="text-dark"><i class="bi bi-x-circle-fill"
+              style="font-size: 2rem;"></i></a>
+        </div>
+      </div>
+      <hr class="border-dark">
+      <div class="text-center">
+        <small>&copy; 2025 Pawtastic. Todos los derechos reservados.</small><br>
+        <a href="./terminosYcondiciones.html" class="text-dark text-decoration-underline small">Términos y
+          Condiciones</a> |
+        <a href="./politicaDeCookies.html" class="text-dark text-decoration-underline small">Política de Cookies</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.getElementById("confirmarSalir").addEventListener("click", function () {
+      localStorage.removeItem("token");
+      localStorage.removeItem("tipo");
+      window.location.href = "../index.html";
+    });
+  </script>
+</body>
+
+</html>

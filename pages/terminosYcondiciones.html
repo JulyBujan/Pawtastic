@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Términos y Condiciones - Pawtastic</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="icon" href="../img/favicon.ico" type="image/png">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    body {
+      background-color: #e0f7ff;
+      /* Fondo celeste pastel */
+    }
+
+    .legal-content {
+      background-color: white;
+      padding: 2.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .legal-content h3 {
+      color: var(--azul-banner);
+      margin-top: 1.5rem;
+      border-bottom: 2px solid var(--naranja-logo);
+      padding-bottom: 0.5rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="../index.html">
+        <img src="../img/logo.png" alt="Logo Pawtastic" width="50" height="50" class="me-2 logo-navbar">
+        <span class="text-warning fw-bold">Pawtastic</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav align-items-center">
+          <li class="nav-item">
+            <a class="btn btn-custom-nav me-2" href="./login.html">Ingresá</a>
+          </li>
+          <li class="nav-item"><a class="btn btn-custom-nav" href="./registro.html">Registrate</a></li>
+          <li class="nav-item ms-2">
+            <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion">Salir</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- CONTENIDO -->
+  <main class="container py-5">
+    <div class="legal-content">
+      <h2 class="text-center fw-bold text-warning mb-4">Términos y Condiciones de Uso</h2>
+      <p class="text-muted text-center">Última actualización: 25 de Octubre de 2025</p>
+
+      <p>Bienvenido a Pawtastic. Al utilizar nuestro sitio web, usted acepta cumplir y estar sujeto a los siguientes
+        términos y condiciones. Por favor, léalos atentamente.</p>
+
+      <h3>1. Aceptación de los Términos</h3>
+      <p>Pawtastic es una plataforma que conecta a organizaciones no gubernamentales (ONGs) y refugios de animales con
+        personas interesadas en adoptar mascotas. Al registrarse y utilizar nuestros servicios, usted confirma que ha
+        leído, entendido y aceptado estos términos.</p>
+
+      <h3>2. Rol de Pawtastic</h3>
+      <p>Pawtastic actúa únicamente como un intermediario. No somos parte del proceso de adopción, el cual es gestionado
+        en su totalidad por la ONG correspondiente. No nos responsabilizamos por el estado de salud, comportamiento o
+        cualquier otra característica de las mascotas publicadas, ni por los acuerdos entre el adoptante y la ONG.</p>
+
+      <h3>3. Obligaciones del Usuario Adoptante</h3>
+      <ul>
+        <li>Proporcionar información veraz y actualizada en su perfil.</li>
+        <li>Comprometerse a un proceso de adopción responsable, cumpliendo con los requisitos de la ONG.</li>
+        <li>Entender que la decisión final de la adopción recae exclusivamente en la ONG.</li>
+      </ul>
+
+      <h3>4. Obligaciones de la ONG</h3>
+      <ul>
+        <li>Proporcionar información precisa sobre las mascotas publicadas.</li>
+        <li>Gestionar las postulaciones de manera ética y transparente.</li>
+        <li>Realizar un seguimiento post-adopción para garantizar el bienestar del animal.</li>
+      </ul>
+
+      <h3>5. Propiedad Intelectual</h3>
+      <p>El contenido de este sitio web, incluyendo logos, textos y diseño, es propiedad de Pawtastic y está protegido
+        por las leyes de propiedad intelectual. No está permitida su reproducción sin nuestro consentimiento explícito.
+      </p>
+
+      <h3>6. Limitación de Responsabilidad</h3>
+      <p>Pawtastic no será responsable por daños directos o indirectos que surjan del uso de esta plataforma,
+        incluyendo, entre otros, disputas entre usuarios y ONGs o problemas relacionados con las mascotas adoptadas.</p>
+
+      <h3>7. Modificaciones</h3>
+      <p>Nos reservamos el derecho de modificar estos términos y condiciones en cualquier momento. Las modificaciones
+        serán efectivas al ser publicadas en el sitio. Se recomienda revisar esta página periódicamente.</p>
+
+    </div>
+  </main>
+
+  <!-- MODAL CERRAR SESIÓN -->
+  <div class="modal fade" id="modalCerrarSesion" tabindex="-1" aria-labelledby="modalCerrarSesionLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold text-danger" id="modalCerrarSesionLabel">
+            <i class="bi bi-box-arrow-right me-2"></i>¿Cerrar sesión?
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          ¿Estás seguro de que quieres salir? Se cerrará tu sesión actual.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger" id="confirmarSalir">Salir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-footer text-dark pt-4 pb-3 mt-3">
+    <div class="container text-center text-md-start">
+      <div class="row">
+        <div class="col-md-4 mb-3 text-center">
+          <h5 class="fw-bold mt-2">Pawtastic</h5>
+          <p class="small">Conectamos corazones con patas. Gracias por elegir adoptar.</p>
+          <a href="../index.html">
+            <img src="../img/logo.png" alt="Logo Pawtastic" style="max-width: 100px; border-radius: 40%;">
+          </a>
+        </div>
+        <div class="col-md-4 mb-3 d-flex flex-column align-items-center">
+          <h5 class="fw-bold text-center">Navegación</h5>
+          <ul class="list-unstyled text-center">
+            <li><a href="./login.html" class="text-dark text-decoration-none">Ingresá</a></li>
+            <li><a href="./registro.html" class="text-dark text-decoration-none">Registrate</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4 mb-3 fs-5 text-center">
+          <h5 class="fw-bold">Seguinos</h5>
+          <a href="https://www.facebook.com/profile.php?id=61581919419192" class="text-dark me-3"><i
+              class="bi bi-facebook" style="font-size: 2rem;"></i></a>
+          <a href="https://www.instagram.com/pawtasticarg/" class="text-dark me-3"><i class="bi bi-instagram"
+              style="font-size: 2rem;"></i></a>
+          <a href="https://x.com/PawtasticArg" class="text-dark"><i class="bi bi-x-circle-fill"
+              style="font-size: 2rem;"></i></a>
+        </div>
+      </div>
+      <hr class="border-dark">
+      <div class="text-center">
+        <small>&copy; 2025 Pawtastic. Todos los derechos reservados.</small><br>
+        <a href="./terminosYcondiciones.html" class="text-dark text-decoration-underline small">Términos y
+          Condiciones</a> |
+        <a href="./politicaDeCookies.html" class="text-dark text-decoration-underline small">Política de Cookies</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.getElementById("confirmarSalir").addEventListener("click", function () {
+      localStorage.removeItem("token");
+      localStorage.removeItem("tipo");
+      window.location.href = "../index.html";
+    });
+  </script>
+</body>
+
+</html>
