@@ -27,9 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const getPresencia = (level) => {
         switch (level) {
-            case 1: return 'Compañia constante';
+            case 1: return 'Independiente';
             case 2: return 'Tolera soledad';
-            case 3: return 'Independiente';
+            case 3: return 'Compañia constante';
             default: return 'No especificado';
         }
     };

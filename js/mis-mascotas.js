@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const fetchMascotas = async () => {
     try {
-      const response = await fetch(`../api/listar_mascotas.php`, {
+      const response = await fetch(`../api/get_mascota.php`, {
         headers: { Authorization: "Bearer " + token },
       });
 
@@ -47,8 +47,8 @@ document.addEventListener("DOMContentLoaded", () => {
                               0,
                               100
                             )}...</p>
-                            <div class="d-flex justify-content-around mt-auto">
-                                <a href="./editar-mascota.html?id=${
+                            <div class="d-flex justify-content-around mt-auto"> 
+                                <a href="./gestionar-mascota.html?id=${
                                   mascota.id
                                 }" class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil"></i> Editar</a>
                                 <button class="btn btn-outline-danger btn-sm" onclick="confirmarEliminacion(${
@@ -76,7 +76,7 @@ function confirmarEliminacion(id) {
 async function eliminarMascota(id) {
   const token = localStorage.getItem("token");
   try {
-    const response = await fetch(`../api/eliminar_mascota.php?id=${id}`, {
+    const response = await fetch(`../api/gestionar_mascota.php?id=${id}`, {
       method: "DELETE",
       headers: { Authorization: "Bearer " + token },
     });

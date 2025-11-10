@@ -1,45 +1,73 @@
 <?php
-header("Content-Type: application/json");
-include_once "conexion.php";
+require_once __DIR__ . '/api_init.php'; // Incluye headers, error handler, y conexión ($conn)
 
-// Verificar que se ha proporcionado un ID
-if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    http_response_code(400);
-    echo json_encode(["message" => "ID de mascota no válido o no proporcionado."]);
-    exit;
-}
+// --- LÓGICA DE ENRUTAMIENTO ---
+// Si se proporciona un ID, se obtiene una sola mascota (endpoint público).
+// Si no, se obtiene una lista de mascotas para la ONG logueada (endpoint privado).
 
-$id_mascota = $_GET['id'];
+if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+    // --- OBTENER UNA SOLA MASCOTA (LÓGICA ORIGINAL) ---
+    $id_mascota = (int)$_GET['id'];
 
-try {
-    // Usamos una sentencia preparada para evitar inyección SQL
-    $query = "SELECT m.*, o.nombre AS ong_nombre, o.lat AS ong_lat, o.lon AS ong_lon 
-              FROM mascotas m
-              LEFT JOIN ONGs o ON m.id_ong = o.id
-              WHERE m.id = ?";
-              
-    $stmt = $conn->prepare($query);
-    if (!$stmt) {
-        throw new Exception("Error en la preparación de la consulta: " . $conn->error);
+    try {
+        $query = "SELECT m.*, o.nombre AS ong_nombre, o.lat AS ong_lat, o.lon AS ong_lon 
+                  FROM mascotas m
+                  LEFT JOIN ONGs o ON m.id_ong = o.id
+                  WHERE m.id = ?";
+                  
+        $stmt = $conn->prepare($query);
+        if (!$stmt) {
+            throw new Exception("Error en la preparación de la consulta: " . $conn->error);
+        }
+
+        $stmt->bind_param("i", $id_mascota);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($mascota = $result->fetch_assoc()) {
+            echo json_encode($mascota);
+        } else {
+            http_response_code(404);
+            echo json_encode(["message" => "Mascota no encontrada."]);
+        }
+        $stmt->close();
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(["message" => "Error en el servidor: " . $e->getMessage()]);
     }
 
-    $stmt->bind_param("i", $id_mascota);
-    $stmt->execute();
-    $result = $stmt->get_result();
+} else {
+    // --- OBTENER LISTA DE MASCOTAS PARA UNA ONG (LÓGICA DE listar_mascotas.php) ---
+    
+    // 1. Verificar token
+    include_once "verificar_token.php";
+    $email = $decoded_token->email;
 
-    if ($mascota = $result->fetch_assoc()) {
-        // Si se encuentra la mascota, se devuelve como JSON
-        echo json_encode($mascota);
-    } else {
-        // Si no se encuentra, se devuelve un error 404
-        http_response_code(404);
-        echo json_encode(["message" => "Mascota no encontrada."]);
+    try {
+        // 2. Obtener el id_ong según el email del token
+        $stmt = $conn->prepare("SELECT ong_id FROM usuarios WHERE email = ? AND tipo = 'ong'");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $idOng = $stmt->get_result()->fetch_assoc()['ong_id'] ?? null;
+
+        if (!$idOng) {
+            http_response_code(403);
+            echo json_encode(["message" => "No se encontró una ONG asociada a este usuario."]);
+            exit;
+        }
+
+        // 3. Traer mascotas de esa ONG que no estén archivadas (estado != 2)
+        $stmt = $conn->prepare("SELECT * FROM mascotas WHERE id_ong = ? AND estado != 2 ORDER BY id DESC");
+        $stmt->bind_param("i", $idOng);
+        $stmt->execute();
+        $mascotas = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        echo json_encode($mascotas);
+
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(["message" => "Error en el servidor al consultar la base de datos: " . $e->getMessage()]);
     }
-
-    $stmt->close();
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(["message" => "Error en el servidor: " . $e->getMessage()]);
 }
 
 $conn->close();
