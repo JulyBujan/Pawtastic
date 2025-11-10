@@ -60,8 +60,10 @@ body {
   position: relative;
 }
 .hero .carousel-inner img {
-  height: 400px;
+  width: 100%;
+  max-height: 600px; /* Límite de altura para que no sea gigante */
   object-fit: cover;
+  object-position: center; /* Asegura que el recorte sea centrado */
 }
 .hero .overlay-text {
   position: absolute;
