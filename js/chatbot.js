@@ -97,6 +97,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const userMessage = chatInput.value.trim();
     if (!userMessage) return;
 
+    // Limpiar el input inmediatamente y añadir el mensaje del usuario al chatbox
+    chatInput.value = "";
     chatbox.appendChild(createChatLi(userMessage, "outgoing"));
     chatbox.scrollTo(0, chatbox.scrollHeight);
 
@@ -105,8 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
       chatbox.appendChild(createChatLi(botResponse, "incoming"));
       chatbox.scrollTo(0, chatbox.scrollHeight);
     }, 600);
-
-    chatInput.value = "";
   };
 
   // Event Listeners
