@@ -1,42 +1,58 @@
 <?php
 header("Content-Type: application/json");
-include_once "conexion.php";
+require_once "conexion.php";
 
 // Obtener parámetros de filtro de la URL
 $especie = isset($_GET['especie']) ? $_GET['especie'] : '';
 $edad = isset($_GET['edad']) ? $_GET['edad'] : '';
 $tamano = isset($_GET['tamano']) ? $_GET['tamano'] : '';
 
-// Construir la consulta SQL con filtros
-$query = "SELECT id, nombre, tipo, edad, sexo, tamaño, descripcion, imagen FROM mascotas WHERE 1=1";
+// Construir la consulta SQL base, incluyendo el filtro por estado
+// Solo se muestran mascotas disponibles para adopción (estado = 0)
+$query = "SELECT id, nombre, tipo, edad, sexo, tamaño, descripcion, imagen FROM mascotas WHERE estado = 0";
+
+$params = [];
+$types = "";
 
 if (!empty($especie)) {
-    $query .= " AND tipo = '" . $conn->real_escape_string($especie) . "'";
+    $query .= " AND tipo = ?";
+    $params[] = $especie;
+    $types .= "s";
 }
+
 if (!empty($edad)) {
     if ($edad === 'cachorro') {
         $query .= " AND edad BETWEEN 0 AND 3";
     } elseif ($edad === 'adulto') {
         $query .= " AND edad BETWEEN 4 AND 8";
     } elseif ($edad === 'senior') {
-        $query .= " AND edad >= 9";
+        $query .= " AND edad > 8";
     }
 }
+
 if (!empty($tamano)) {
-    $query .= " AND tamaño = '" . $conn->real_escape_string($tamano) . "'";
+    $query .= " AND tamaño = ?";
+    $params[] = $tamano;
+    $types .= "s";
 }
 
-$result = $conn->query($query);
+try {
+    $stmt = $conn->prepare($query);
 
-if ($result) {
-    $mascotas = [];
-    while ($row = $result->fetch_assoc()) {
-        $mascotas[] = $row;
+    if (!empty($params)) {
+        $stmt->bind_param($types, ...$params);
     }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $mascotas = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+
     echo json_encode($mascotas);
-} else {
+
+} catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(["message" => "Error al obtener las mascotas: " . $conn->error]);
+    echo json_encode(["message" => "Error al obtener las mascotas: " . $e->getMessage()]);
 }
 
 $conn->close();
