@@ -680,3 +680,36 @@ header h2 {
   border-color: var(--naranja-logo);
   color: var(--blanco) !important;
 }
+
+/* --- ESTILOS PARA LA CARD DE LOGIN --- */
+.login-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  background-color: #ffe5c2; /* Naranja clarito al pasar el mouse */
+}
+
+ /* --- ESTILOS PARA LA CARD DE PERFIL DE ONG --- */
+ .ong-profile-card {
+   background-color: #ffe5c2; /* Mismo color que la card de login */
+ }
+
+/* --- ESTILO PARA LA CARD DE PERFIL DE ONG (SIN MODIFICAR HTML) --- */
+div.card:has(#bienvenidaOng) {
+  transition: background-color 0.3s ease; /* Añade una transición suave */
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Añade transición para color y movimiento */
+}
+
+div.card:has(#bienvenidaOng):hover {
+  background-color: #ffe5c2;
+  /* Aplica el color naranja solo al pasar el cursor */
+  transform: translateY(-5px); /* Mueve la tarjeta hacia arriba en el hover */
+}
+
+/* --- ESTILO PARA LA CARD DEL FORMULARIO DE MASCOTAS (SIN MODIFICAR HTML) --- */
+div.card:has(#form-title) {
+  background-color: #ffe5c2; /* Naranja clarito */
+}

@@ -100,7 +100,7 @@ if (
     empty($_POST['sexo']) || empty($_POST['tamaño']) || empty($_POST['descripcion']) ||
     !isset($_POST['vacunado']) || !isset($_POST['esterilizado']) || !isset($_POST['chip']) ||
     empty($_POST['energia']) || empty($_POST['sociabilidad']) || empty($_POST['presencia']) ||
-    empty($_POST['estilov'])
+    empty($_POST['estilov']) || !isset($_POST['apto_ninos']) || !isset($_POST['apto_mascotas'])
 ) {
     http_response_code(400);
     echo json_encode(["message" => "Faltan datos obligatorios"]);
@@ -123,6 +123,8 @@ $descripcion = trim($_POST['descripcion']);
 $vacunado = trim($_POST['vacunado']);
 $esterilizado = trim($_POST['esterilizado']);
 $chip = trim($_POST['chip']);
+$apto_ninos = (int)$_POST['apto_ninos'];
+$apto_mascotas = (int)$_POST['apto_mascotas'];
 
 try {
     // --- Diferenciar entre CREAR (INSERT) y EDITAR (UPDATE) ---
@@ -147,13 +149,13 @@ try {
         $query = $conn->prepare("
             UPDATE mascotas SET 
             nombre = ?, tipo = ?, edad = ?, sexo = ?, tamaño = ?, descripcion = ?, imagen = ?, 
-            vacunado = ?, esterilizado = ?, chip = ?, energia = ?, sociabilidad = ?, presencia = ?, estilov = ?
+            vacunado = ?, esterilizado = ?, chip = ?, apto_ninos = ?, apto_mascotas = ?, energia = ?, sociabilidad = ?, presencia = ?, estilov = ?
             WHERE id = ? AND id_ong = ?
         ");
         $query->bind_param(
-            "ssisssssisssiiii", 
+            "ssisssssssiiisssiiii", 
             $nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $imagen_path, 
-            $vacunado, $esterilizado, $chip, $energia, $sociabilidad, $presencia, $estilov,
+            $vacunado, $esterilizado, $chip, $apto_ninos, $apto_mascotas, $energia, $sociabilidad, $presencia, $estilov,
             $idMascota, $idOng
         );
         $query->execute();
@@ -177,10 +179,10 @@ try {
             }
         }
         $query = $conn->prepare("
-            INSERT INTO mascotas (nombre, tipo, edad, sexo, tamaño, descripcion, imagen, id_ong, vacunado, esterilizado, chip, energia, sociabilidad, presencia, estilov, date_publicacion)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+            INSERT INTO mascotas (nombre, tipo, edad, sexo, tamaño, descripcion, imagen, id_ong, vacunado, esterilizado, chip, apto_ninos, apto_mascotas, energia, sociabilidad, presencia, estilov, date_publicacion)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
         ");
-        $query->bind_param("ssissssisssiiii", $nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $imagen_path, $idOng, $vacunado, $esterilizado, $chip, $energia, $sociabilidad, $presencia, $estilov);
+        $query->bind_param("ssissssisssiiisssiiii", $nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $imagen_path, $idOng, $vacunado, $esterilizado, $chip, $apto_ninos, $apto_mascotas, $energia, $sociabilidad, $presencia, $estilov);
         $query->execute();
 
         echo json_encode(["message" => "Mascota cargada con éxito."]);

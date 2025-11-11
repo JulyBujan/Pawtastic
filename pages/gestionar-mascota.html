@@ -61,8 +61,19 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Edad (en años)</label>
-            <input type="number" id="edad" name="edad" class="form-control" required>
+            <label class="form-label">Edad</label>
+            <!-- Campo oculto para enviar la edad total en meses al backend -->
+            <input type="hidden" id="edad" name="edad">
+            <div class="row">
+              <div class="col">
+                <label for="edad_anos" class="form-label small">Años</label>
+                <input type="number" class="form-control" id="edad_anos" min="0" value="0" required>
+              </div>
+              <div class="col">
+                <label for="edad_meses" class="form-label small">Meses</label>
+                <input type="number" class="form-control" id="edad_meses" min="0" max="11" value="0" required>
+              </div>
+            </div>
           </div>
 
           <div class="mb-3">
@@ -107,6 +118,7 @@
             <div class="col-md-4 mb-3">
               <label class="form-label">Vacunado</label>
               <select id="vacunado" name="vacunado" class="form-select" required>
+                <option value="" disabled selected>Seleccionar...</option>
                 <option value="si">Sí</option>
                 <option value="no">No</option>
               </select>
@@ -114,6 +126,7 @@
             <div class="col-md-4 mb-3">
               <label class="form-label">Esterilizado</label>
               <select id="esterilizado" name="esterilizado" class="form-select" required>
+                <option value="" disabled selected>Seleccionar...</option>
                 <option value="si">Sí</option>
                 <option value="no">No</option>
               </select>
@@ -121,8 +134,28 @@
             <div class="col-md-4 mb-3">
               <label class="form-label">Chip</label>
               <select id="chip" name="chip" class="form-select" required>
+                <option value="" disabled selected>Seleccionar...</option>
                 <option value="si">Sí</option>
                 <option value="no">No</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Apto Niños</label>
+              <select id="apto_ninos" name="apto_ninos" class="form-select" required>
+                <option value="" disabled selected>Seleccionar...</option>
+                <option value="1">Sí</option>
+                <option value="0">No</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Apto otras mascotas</label>
+              <select id="apto_mascotas" name="apto_mascotas" class="form-select" required>
+                <option value="" disabled selected>Seleccionar...</option>
+                <option value="1">Sí</option>
+                <option value="0">No</option>
               </select>
             </div>
           </div>
@@ -134,7 +167,7 @@
             <div class="col-md-6 mb-3">
               <label class="form-label">Nivel de energía</label>
               <select id="energia" name="energia" class="form-select" required>
-                <option value="0" disabled>Seleccionar...</option>
+                <option value="" disabled selected>Seleccionar...</option>
                 <option value="1">Bajo</option>
                 <option value="2">Medio</option>
                 <option value="3">Alto</option>
@@ -143,7 +176,7 @@
             <div class="col-md-6 mb-3">
               <label class="form-label">Sociabilidad</label>
               <select id="sociabilidad" name="sociabilidad" class="form-select" required>
-                <option value="0" disabled>Seleccionar...</option>
+                <option value="" disabled selected>Seleccionar...</option>
                 <option value="1">Reservado</option>
                 <option value="2">Selectivo</option>
                 <option value="3">Muy sociable</option>
@@ -152,7 +185,7 @@
             <div class="col-md-6 mb-3">
               <label class="form-label">Presencia</label>
               <select id="presencia" name="presencia" class="form-select" required>
-                <option value="0" disabled>Seleccionar...</option>
+                <option value="" disabled selected>Seleccionar...</option>
                 <option value="1">Independiente</option>
                 <option value="2">Tolera soledad</option>
                 <option value="3">Compañia constante</option>
@@ -161,7 +194,7 @@
             <div class="col-md-6 mb-3">
               <label class="form-label">Estilo de vida</label>
               <select id="estilov" name="estilov" class="form-select" required>
-                <option value="0" disabled>Seleccionar...</option>
+                <option value="" disabled selected>Seleccionar...</option>
                 <option value="1">Interior</option>
                 <option value="2">Mixto</option>
                 <option value="3">Exterior</option>
@@ -169,8 +202,9 @@
             </div>
           </div>
 
-          <div class="d-grid mt-4">
+          <div class="d-grid gap-2 mt-4">
             <button id="submit-btn" type="submit" class="btn btn-dark">Guardar Mascota</button>
+            <button id="btn-cancelar" type="button" class="btn btn-outline-secondary">Cancelar carga</button>
           </div>
         </form>
       </div>
