@@ -153,9 +153,9 @@ try {
             WHERE id = ? AND id_ong = ?
         ");
         $query->bind_param(
-            "ssisssssssiiisssiiii", 
+            "ssisssssssiiisssii", 
             $nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $imagen_path, 
-            $vacunado, $esterilizado, $chip, $apto_ninos, $apto_mascotas, $energia, $sociabilidad, $presencia, $estilov,
+            $vacunado, $esterilizado, $chip, $apto_ninos, $apto_mascotas, $energia, $sociabilidad, $presencia, $estilov, 
             $idMascota, $idOng
         );
         $query->execute();
