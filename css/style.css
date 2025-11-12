@@ -472,8 +472,6 @@ h5.text-warning {
 }
 
 /* === CHATBOT STYLES === */
-@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200");
-
 .chatbot-toggler {
   position: fixed;
   bottom: 30px;
@@ -712,4 +710,23 @@ div.card:has(#bienvenidaOng):hover {
 /* --- ESTILO PARA LA CARD DEL FORMULARIO DE MASCOTAS (SIN MODIFICAR HTML) --- */
 div.card:has(#form-title) {
   background-color: #ffe5c2; /* Naranja clarito */
+}
+
+/* --- ESTILOS PARA LA TABLA DE POSTULACIONES --- */
+.table-container {
+  border: 1px solid #dee2e6; /* Borde gris claro estándar de Bootstrap */
+  border-radius: 0.5rem; /* Bordes redondeados */
+  overflow: hidden; /* Esencial para que el redondeo se aplique a la tabla interior */
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); /* Sombra sutil */
+}
+
+.table-container .table {
+  margin-bottom: 0; /* Elimina el margen inferior por defecto de la tabla */
+}
+
+.table-container tbody tr {
+  border-bottom: 1px solid #dee2e6; /* Línea divisoria entre filas */
+}
+.table-container tbody tr:last-child {
+  border-bottom: none; /* Elimina la línea de la última fila para un acabado limpio */
 }

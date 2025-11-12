@@ -21,8 +21,8 @@
       </div>
       <div id="nav-links" class="d-flex gap-2 align-items-center">
         <!-- Los enlaces se cargarán dinámicamente aquí -->
-        <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion" title="Salir">
-          <i class="bi bi-box-arrow-right me-1"></i>Salir
+        <a href="#" class="btn btn-custom-nav" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion" title="Salir">
+          <i class="bi bi-box-arrow-right"></i> Salir
         </a>
       </div>
     </div>
@@ -72,21 +72,31 @@
         <div class="col-md-4 mb-3 d-flex flex-column align-items-center">
           <h5 class="fw-bold text-center">Navegación</h5>
           <ul class="list-unstyled text-center">
-            <li><a href="/index.html" class="text-dark text-decoration-none">Inicio</a></li>
-            <li><a href="/pages/login.html" class="text-dark text-decoration-none">Ingresar</a></li>
-            <li><a href="/pages/nosotros.html" class="text-dark text-decoration-none">Nosotros</a></li>
+            <li><a href="https://interfacessistemas3.my.canva.site/manual-de-usuario-pawtastic"
+                class="text-dark text-decoration-none" target="_blank" rel="noopener noreferrer">Manual de Usuario</a>
+            </li>
+            <li><a href="https://drive.google.com/drive/folders/1UiabMGZbGNRz8LPfdU74eroOOLEoH8Xb?usp=sharing"
+                class="text-dark text-decoration-none" target="_blank" rel="noopener noreferrer">Documentación del
+                Proyecto</a></li>
           </ul>
         </div>
         <div class="col-md-4 mb-3 fs-5 text-center text-md-start">
           <h5 class="fw-bold">Seguinos</h5>
-          <a href="/pages/error404.html" class="text-dark me-3"><i class="bi bi-facebook" style="font-size: 2.5rem;"></i></a>
-          <a href="/pages/error404.html" class="text-dark me-3"><i class="bi bi-instagram" style="font-size: 2.5rem;"></i></a>
-          <a href="/pages/error404.html" class="text-dark"><i class="bi bi-x-circle-fill" style="font-size: 2.5rem;"></i></a>
+          <a href="https://www.facebook.com/profile.php?id=61581919419192" class="text-dark me-3"><i
+              class="bi bi-facebook" style="font-size: 2.5rem;"></i></a>
+          <a href="https://www.instagram.com/pawtasticarg/" class="text-dark me-3"><i class="bi bi-instagram"
+              style="font-size: 2.5rem;"></i></a>
+          <a href="https://x.com/PawtasticArg" class="text-dark"><i class="bi bi-x-circle-fill"
+              style="font-size: 2.5rem;"></i></a>
         </div>
       </div>
       <hr class="border-dark">
       <div class="text-center">
         <small>&copy; 2025 Pawtastic. Todos los derechos reservados.</small>
+        <br>
+        <a href="./terminosYcondiciones.html" class="text-dark text-decoration-underline small">Términos y
+          Condiciones</a> |
+        <a href="./politicaDeCookies.html" class="text-dark text-decoration-underline small">Política de Cookies</a>
       </div>
     </div>
   </footer>
@@ -104,7 +114,8 @@
     document.addEventListener('DOMContentLoaded', () => {
       const tipoUsuario = localStorage.getItem('tipo');
       const navLinksContainer = document.getElementById('nav-links');
-      const salirButton = navLinksContainer.querySelector('.btn-danger');
+      // Se corrige el selector para que encuentre el botón "Salir" por su función, no por su color.
+      const salirButton = navLinksContainer.querySelector('[data-bs-target="#modalCerrarSesion"]');
 
       let linksHTML = '';
 
@@ -120,7 +131,9 @@
           <a href="usuario.html" class="btn btn-outline-dark">Mi Perfil</a>
         `;
       }
-      salirButton.insertAdjacentHTML('beforebegin', linksHTML);
+      if (salirButton) {
+        salirButton.insertAdjacentHTML('beforebegin', linksHTML);
+      }
 
       document.getElementById("confirmarSalir").addEventListener("click", function () {
         localStorage.removeItem("token");

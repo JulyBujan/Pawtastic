@@ -36,9 +36,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        let tablaHTML = `<table class="table table-striped table-hover shadow-sm">
-                            <thead class="table-dark">
-                                <tr>`;
+        let tablaHTML = `
+            <div class="table-container">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>`;
 
         // Cabeceras dinámicas según el tipo de usuario
         if (tipoUsuario === 'ong') {
@@ -94,7 +96,9 @@ document.addEventListener('DOMContentLoaded', () => {
             tablaHTML += `</tr>`;
         });
 
-        tablaHTML += `</tbody></table>`;
+        tablaHTML += `    </tbody>
+                </table>
+            </div>`;
         container.innerHTML = tablaHTML;
 
         // Attach event listeners to the new buttons
