@@ -479,7 +479,7 @@ h5.text-warning {
   outline: none;
   border: none;
   height: 130px; /* Tamaño del botón */
-  width: 130px;  /* Tamaño del botón */
+  width: 130px; /* Tamaño del botón */
   display: flex;
   cursor: pointer;
   align-items: center;
@@ -547,8 +547,8 @@ body.show-chatbot .chatbot-toggler .close-icon {
   pointer-events: none;
   transform: scale(0.5);
   transform-origin: bottom right;
-  box-shadow: 0 0 128px 0 rgba(0,0,0,0.1),
-              0 32px 64px -48px rgba(0,0,0,0.5);
+  box-shadow: 0 0 128px 0 rgba(0, 0, 0, 0.1),
+    0 32px 64px -48px rgba(0, 0, 0, 0.5);
   transition: all 0.1s ease;
 }
 body.show-chatbot .chatbot {
@@ -562,7 +562,7 @@ body.show-chatbot .chatbot {
   text-align: center;
   color: var(--blanco);
   background: var(--azul-logo-fondo);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 .chatbot header span {
   position: absolute;
@@ -670,7 +670,8 @@ header h2 {
   background-color: transparent;
   color: var(--negro) !important;
   border: 2px solid var(--negro);
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .btn-custom-nav:hover {
@@ -690,10 +691,10 @@ header h2 {
   background-color: #ffe5c2; /* Naranja clarito al pasar el mouse */
 }
 
- /* --- ESTILOS PARA LA CARD DE PERFIL DE ONG --- */
- .ong-profile-card {
-   background-color: #ffe5c2; /* Mismo color que la card de login */
- }
+/* --- ESTILOS PARA LA CARD DE PERFIL DE ONG --- */
+.ong-profile-card {
+  background-color: #ffe5c2; /* Mismo color que la card de login */
+}
 
 /* --- ESTILO PARA LA CARD DE PERFIL DE ONG (SIN MODIFICAR HTML) --- */
 div.card:has(#bienvenidaOng) {
@@ -714,19 +715,67 @@ div.card:has(#form-title) {
 
 /* --- ESTILOS PARA LA TABLA DE POSTULACIONES --- */
 .table-container {
-  border: 1px solid #dee2e6; /* Borde gris claro estándar de Bootstrap */
+  border: 2px solid #adb5bd; /* Borde exterior más grueso y oscuro */
   border-radius: 0.5rem; /* Bordes redondeados */
   overflow: hidden; /* Esencial para que el redondeo se aplique a la tabla interior */
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); /* Sombra sutil */
 }
 
 .table-container .table {
-  margin-bottom: 0; /* Elimina el margen inferior por defecto de la tabla */
+  margin-bottom: 0;
+  border-collapse: separate; /* Necesario para que los bordes internos no se fusionen con el contenedor */
+  border-spacing: 0;
 }
 
-.table-container tbody tr {
-  border-bottom: 1px solid #dee2e6; /* Línea divisoria entre filas */
+.table-container th,
+.table-container td {
+  border-top: 1px solid #adb5bd; /* Línea horizontal más oscura */
+  border-right: 1px solid #adb5bd; /* Línea vertical más oscura */
 }
-.table-container tbody tr:last-child {
-  border-bottom: none; /* Elimina la línea de la última fila para un acabado limpio */
+
+.table-container th:last-child,
+.table-container td:last-child {
+  border-right: none; /* Elimina la línea vertical de la última columna para un acabado limpio */
+}
+
+/* --- CORRECCIÓN PARA ENLACES EN CABECERA DE TABLA --- */
+/*
+  Esta regla es más específica que la regla general para 'a',
+  por lo que fuerza a que los enlaces dentro de una cabecera con la clase 'text-white'
+  (como la que usamos con 'bg-primary') sean efectivamente blancos.
+*/
+.text-white a {
+  color: inherit; /* Hereda el color (blanco) de su contenedor padre */
+}
+
+/*
+  --- CORRECCIÓN FINAL PARA CABECERA DE TABLA ---
+  Esta regla es ultra-específica para la cabecera de la tabla de postulaciones.
+  Anula cualquier otro estilo de 'tr' o 'th' que pueda estar causando un conflicto.
+*/
+.table-container .table > thead.bg-primary > tr > th {
+    background-color: var(--azul-logo-fondo);
+    color: var(--blanco);
+}
+
+/*
+  --- BOTÓN COMENTAR PERSONALIZADO PARA LA TABLA ---
+  Esta clase le da al botón el mismo color que la cabecera de la tabla.
+*/
+.btn-comentar-tabla {
+    background-color: var(--azul-logo-fondo);
+    color: var(--blanco) !important; /* !important para asegurar que el texto sea blanco */
+    border-color: var(--azul-logo-fondo);
+}
+.btn-comentar-tabla:hover {
+    background-color: var(--azul-banner); /* Un azul un poco más oscuro al pasar el cursor */
+    border-color: var(--azul-banner);
+}
+
+/*
+  --- ESPACIADO PARA BOTONES DE ACCIÓN EN TABLA ---
+  Clase específica para forzar un margen a la derecha y asegurar el espacio.
+*/
+.btn-accion-espacio {
+    margin-right: 0.5rem !important; /* 0.5rem es el equivalente a me-2 en Bootstrap */
 }
