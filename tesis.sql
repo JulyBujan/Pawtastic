@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Nov 04, 2025 at 03:01 PM
+-- Generation Time: Nov 13, 2025 at 08:23 PM
 -- Server version: 9.4.0
 -- PHP Version: 8.3.26
 
@@ -145,10 +145,29 @@ CREATE TABLE `adopciones` (
 --
 
 INSERT INTO `adopciones` (`id`, `id_usuario`, `id_mascota`, `id_ong`, `comentarios`, `estado`, `fecha_inicio`, `fecha_actualizacion`) VALUES
-(6, 12, 21, 1, NULL, 0, '2025-10-30 23:01:55', '2025-10-30 23:01:55'),
-(7, 12, 28, 1, '[30/10/2025 23:03 - Usuario]: Esperando instrucciones.', 0, '2025-10-30 23:03:01', '2025-10-30 23:03:35'),
+(6, 12, 21, 1, '[13/11/2025 18:08 - ONG]: Hemos aprobado la solicitud de Adopcion de Isabella, estaremos pronto comunicándonos al número de telefono que nos fue brindado. Muchas gracias!', 1, '2025-10-30 23:01:55', '2025-11-13 18:08:33'),
+(7, 12, 28, 1, '[30/10/2025 23:03 - Usuario]: Esperando instrucciones.\n---\n[09/11/2025 22:32 - ONG]: Se estará  informando por este medio como procederemos para gestionar la adopción', 1, '2025-10-30 23:03:01', '2025-11-09 22:32:13'),
 (8, 11, 20, 1, NULL, 0, '2025-10-30 23:22:34', '2025-10-30 23:22:34'),
-(9, 11, 33, 2, NULL, 0, '2025-10-30 23:24:16', '2025-10-30 23:24:16');
+(9, 11, 33, 2, NULL, 0, '2025-10-30 23:24:16', '2025-10-30 23:24:16'),
+(10, 12, 31, 1, '[09/11/2025 22:31 - ONG]: No cumple las condiciones de domicilio con patio para adoptar a este perro por su tamaño', 2, '2025-11-09 19:44:03', '2025-11-09 22:31:41'),
+(11, 12, 20, 1, '[09/11/2025 19:46 - Usuario]: me gustaría conocer el perrito en persona\n---\n[09/11/2025 22:30 - ONG]: Podemos agendarle un turno para la semana del 05/12.¿ Desea confirmar?', 0, '2025-11-09 19:45:58', '2025-11-09 22:30:51');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `documentacion_ong`
+--
+
+CREATE TABLE `documentacion_ong` (
+  `id` int NOT NULL,
+  `ong_id` int NOT NULL,
+  `url_estatuto` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `url_cuit` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `url_acta` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `estado` tinyint NOT NULL DEFAULT '0' COMMENT '0: Pendiente, 1: Aprobado, 2: Rechazado',
+  `fecha_subida` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `fecha_revision` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -180,6 +199,8 @@ CREATE TABLE `mascotas` (
   `vacunado` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `esterilizado` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `chip` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `apto_ninos` int NOT NULL DEFAULT '1',
+  `apto_mascotas` int NOT NULL DEFAULT '1',
   `descripcion` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `imagen` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `energia` tinyint DEFAULT NULL,
@@ -195,24 +216,27 @@ CREATE TABLE `mascotas` (
 -- Dumping data for table `mascotas`
 --
 
-INSERT INTO `mascotas` (`id`, `id_ong`, `nombre`, `tipo`, `edad`, `sexo`, `tamaño`, `vacunado`, `esterilizado`, `chip`, `descripcion`, `imagen`, `energia`, `sociabilidad`, `presencia`, `estilov`, `estado`, `date_update`, `date_publicacion`) VALUES
-(20, 1, 'Amorina', 'perro', 3, 'Hembra', 'Pequeño', 'si', 'si', 'no', 'Cariñosa y protectora, ideal para familias con niños. Le encanta salir a pasear y recibir mimos.', 'mascota_690279220251c_bulldog.jpg', 2, 2, 3, 3, 0, '2025-10-29 20:29:20', '2025-10-29 00:06:14'),
-(21, 1, 'Isabella', 'gato', 14, 'Hembra', 'Pequeño', 'si', 'si', 'si', 'Muy limpia y observadora. Se adapta bien a hogares tranquilos. Ideal para departamentos.', 'mascota_6902836dea528_cat-persa-adulto-negro.jpg', 1, 1, 1, 1, 0, '2025-10-29 21:13:16', '2025-10-26 00:06:14'),
-(22, 1, 'Ringo', 'perro', 5, 'Macho', 'Grande', 'no', 'no', 'no', 'Juguetón y obediente. Excelente para hogares con patio. Le gusta correr y jugar con pelotas.', 'mascota_6902850151c60_rhodesian-perro-adulto.jpg', 3, 3, 2, 2, 0, '2025-10-29 21:20:00', '2025-10-23 00:06:14'),
-(23, 2, 'Messi', 'gato', 1, 'Macho', 'Pequeño', 'si', 'no', 'no', 'Es un gatito bicolor, gris y blanco. Está en la etapa de máxima exploración y desarrollo. Todavía es pequeño con 4 meses de edad, pero ya ha mostrando su personalidad. Ya está entrenado para usar el arenero solito, ya come balanceado pequeño y pollo cortado en pequeños trozos. Ya está listo para sumarse a una nueva familia que le brinde un cálido hogar y mucho amor.', NULL, 3, 3, 3, 3, 1, '2025-10-29 21:29:34', '2025-10-19 00:06:14'),
-(28, 1, 'Pocha', 'gato', 4, 'Hembra', 'Pequeño', 'si', 'si', 'no', 'Gata que exige rascadas de lomo. ', NULL, 2, 2, 1, 3, 0, '2025-10-30 02:49:08', '2025-10-09 00:06:14'),
-(29, 1, 'Gio', 'gato', 8, 'Macho', 'Grande', 'si', 'si', 'si', 'Ocho kilos de amor demandante', 'img_6903e99c67b97.jpg', 2, 3, 2, 1, 0, '2025-10-30 19:11:09', '2025-10-03 00:06:14'),
-(30, 1, 'Snoopy', 'perro', 5, 'Macho', 'Mediano', 'si', 'si', 'no', 'Beagle famoso por ser el perro de Charlie Brown.', 'img_6903fb703724a.jpg', 2, 3, 1, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
-(31, 1, 'Scooby-Doo', 'perro', 7, 'Macho', 'Grande', 'si', 'no', 'no', 'Gran Danés miedoso y glotón, resuelve misterios con sus amigos.', NULL, 1, 3, 3, 1, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
-(32, 1, 'Pluto', 'perro', 8, 'Macho', 'Mediano', 'si', 'si', 'no', 'El leal perro de Mickey Mouse, es juguetón y curioso.', NULL, 3, 3, 2, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
-(33, 2, 'Beethoven', 'perro', 4, 'Macho', 'Grande', 'si', 'no', 'si', 'Un San Bernardo gigante y travieso pero de buen corazón.', 'img_6903ef44d587b.jpg', 2, 2, 3, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
-(34, 2, 'Toto', 'perro', 3, 'Macho', 'Pequeño', 'si', 'si', 'no', 'Pequeño Cairn terrier que acompañó a Dorothy en la tierra de Oz.', 'img_6903ef84c5324.jpg', 3, 1, 2, 1, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
-(35, 2, 'Balto', 'perro', 6, 'Macho', 'Grande', 'si', 'si', 'si', 'Valiente perro de trineo que lideró una expedición para salvar a su pueblo en Alaska.', NULL, 3, 3, 1, 3, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
-(36, 3, 'Lassie', 'perro', 5, 'Hembra', 'Grande', 'si', 'si', 'no', 'Una Collie hermosa e inteligente, famosa por rescatar gente.', NULL, 2, 3, 3, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
-(37, 3, 'Marley', 'perro', 2, 'Macho', 'Grande', 'si', 'no', 'si', 'Un Labrador retriever adorable pero muy destructivo, protagonista de \"Marley y yo\".', NULL, 3, 3, 3, 3, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
-(38, 3, 'Milú', 'perro', 4, 'Macho', 'Pequeño', 'si', 'si', 'no', 'El inseparable Fox terrier blanco de Tintín, aventurero y leal.', NULL, 2, 2, 1, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
-(39, 1, 'Golfo', 'perro', 6, 'Macho', 'Mediano', 'si', 'no', 'no', 'Perro callejero, encantador y astuto de \"La Dama y el Vagabundo\".', 'img_6903fb85a1cc5.jpg', 2, 3, 1, 3, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
-(40, 2, 'Benji', 'perro', 5, 'Macho', 'Pequeño', 'si', 'si', 'no', 'Un perro mestizo muy inteligente y heroico que siempre está en el lugar correcto para ayudar.', 'img_6903efbfd18c2.jpg', 2, 2, 1, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34');
+INSERT INTO `mascotas` (`id`, `id_ong`, `nombre`, `tipo`, `edad`, `sexo`, `tamaño`, `vacunado`, `esterilizado`, `chip`, `apto_ninos`, `apto_mascotas`, `descripcion`, `imagen`, `energia`, `sociabilidad`, `presencia`, `estilov`, `estado`, `date_update`, `date_publicacion`) VALUES
+(20, 1, 'Amorina', 'perro', 64, 'Hembra', 'Mediano', 'si', 'no', 'no', 1, 1, 'Cariñosa y protectora, ideal para familias con niños. Le encanta salir a pasear y recibir mimos.', 'mascota_691375b8b589b_perro4.jpg', 2, 2, 3, 3, 0, '2025-10-29 20:29:20', '2025-10-29 00:06:14'),
+(21, 1, 'Isabella', 'gato', 170, 'Hembra', 'Pequeño', 'si', 'si', 'si', 1, 1, 'Muy limpia y observadora. Se adapta bien a hogares tranquilos. Ideal para departamentos.', 'mascota_6902836dea528_cat-persa-adulto-negro.jpg', 1, 1, 1, 1, 0, '2025-10-29 21:13:16', '2025-10-26 00:06:14'),
+(22, 1, 'Ringo', 'perro', 66, 'Macho', 'Grande', 'no', 'no', 'no', 1, 1, 'Juguetón y obediente. Excelente para hogares con patio. Le gusta correr y jugar con pelotas.', 'mascota_6902850151c60_rhodesian-perro-adulto.jpg', 3, 3, 2, 2, 0, '2025-10-29 21:20:00', '2025-10-23 00:06:14'),
+(23, 2, 'Messi', 'gato', 15, 'Macho', 'Pequeño', 'si', 'no', 'no', 1, 1, 'Es un gatito bicolor, gris y blanco. Está en la etapa de máxima exploración y desarrollo. Todavía es pequeño con 4 meses de edad, pero ya ha mostrando su personalidad. Ya está entrenado para usar el arenero solito, ya come balanceado pequeño y pollo cortado en pequeños trozos. Ya está listo para sumarse a una nueva familia que le brinde un cálido hogar y mucho amor.', 'img_690a81d04dd0d.jpg', 3, 3, 3, 3, 1, '2025-10-29 21:29:34', '2025-10-19 00:06:14'),
+(28, 1, 'Pocha', 'gato', 50, 'Hembra', 'Pequeño', 'si', 'no', 'no', 1, 1, 'Gata que exige rascadas de lomo.', 'mascota_6913759fc8431_gato6.jpg', 2, 2, 1, 3, 0, '2025-10-30 02:49:08', '2025-10-09 00:06:14'),
+(29, 1, 'Gio', 'gato', 101, 'Macho', 'Grande', 'si', 'no', 'si', 1, 1, 'Ocho kilos de amor demandante', 'mascota_6913757bc4b24_gato2.jpg', 2, 2, 2, 1, 0, '2025-10-30 19:11:09', '2025-10-03 00:06:14'),
+(30, 1, 'Snoopy', 'perro', 70, 'Macho', 'Mediano', 'si', 'no', 'no', 1, 1, 'Beagle famoso por ser el perro de Charlie Brown.', 'mascota_69137550caadb_perro8.jpg', 2, 3, 1, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(31, 1, 'Scooby-Doo', 'perro', 43, 'Macho', 'Grande', 'si', 'no', 'no', 1, 1, 'Dálmata miedoso y glotón, resuelve misterios con sus amigos.', 'mascota_69137509c440d_perro1.jpg', 1, 3, 3, 3, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(32, 1, 'Pluto', 'perro', 99, 'Macho', 'Mediano', 'si', 'no', 'no', 1, 1, 'El leal perro de Mickey Mouse, es juguetón y curioso.', 'mascota_691374e478000_perro7.jpg', 3, 3, 2, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(33, 2, 'Beethoven', 'perro', 51, 'Macho', 'Grande', 'si', 'no', 'si', 1, 1, 'Un San Bernardo gigante y travieso pero de buen corazón.', 'img_6903ef44d587b.jpg', 2, 2, 3, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(34, 2, 'Toto', 'perro', 39, 'Macho', 'Pequeño', 'si', 'si', 'no', 1, 1, 'Pequeño Cairn terrier que acompañó a Dorothy en la tierra de Oz.', 'img_6903ef84c5324.jpg', 3, 1, 2, 1, 2, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(35, 2, 'Balto', 'perro', 77, 'Macho', 'Grande', 'si', 'si', 'si', 1, 1, 'Valiente perro de trineo que lideró una expedición para salvar a su pueblo en Alaska.', 'img_690a812f10341.jpg', 3, 3, 1, 3, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(36, 3, 'Lassie', 'perro', 69, 'Hembra', 'Grande', 'si', 'si', 'no', 1, 1, 'Una Collie hermosa e inteligente, famosa por rescatar gente.', NULL, 2, 3, 3, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(37, 3, 'Marley', 'perro', 25, 'Macho', 'Grande', 'si', 'no', 'si', 1, 1, 'Un Labrador retriever adorable pero muy destructivo, protagonista de \"Marley y yo\".', NULL, 3, 3, 3, 3, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(38, 3, 'Milú', 'perro', 49, 'Macho', 'Pequeño', 'si', 'si', 'no', 1, 1, 'El inseparable Fox terrier blanco de Tintín, aventurero y leal.', NULL, 2, 2, 1, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(39, 1, 'Golfo', 'perro', 82, 'Macho', 'Mediano', 'si', 'no', 'no', 1, 1, 'Perro callejero, encantador y muy sociable.', 'mascota_6913748c2ed81_perro6.jpg', 2, 3, 1, 3, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(40, 2, 'Benji', 'perro', 71, 'Macho', 'Pequeño', 'si', 'si', 'no', 1, 1, 'Un perro mestizo muy inteligente y heroico que siempre está en el lugar correcto para ayudar.', 'img_6903efbfd18c2.jpg', 2, 2, 1, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
+(41, 1, 'Mimi', 'perro', 38, 'Hembra', 'Pequeño', 'si', 'no', 'no', 1, 1, 'Perrita amorosa, juguetona. Una exelente compañera de mimos y expediciones.', 'mascota_69137453814e8_perro2.jpg', 3, 3, 2, 3, 1, '2025-11-09 21:02:43', '2025-11-09 21:02:43'),
+(42, 1, 'Carrie', 'perro', 47, 'Hembra', 'Mediano', 'si', 'si', 'no', 1, 1, 'Perra muy sociable, se lleva bien con otros perros y gatos.', 'mascota_691354641c4af_schnauzer-5232202_1280.jpg', 3, 3, 1, 2, 1, '2025-11-10 00:41:33', '2025-11-10 00:41:33'),
+(43, 1, 'Batman', 'gato', 28, 'Macho', 'Mediano', 'si', 'si', 'si', 1, 1, 'Gato con alma de super heroe pero superado por la pereza', 'mascota_6913764462cfc_gato3.jpg', 1, 1, 1, 1, 1, '2025-11-11 17:45:39', '2025-11-11 17:45:39');
 
 -- --------------------------------------------------------
 
@@ -237,13 +261,14 @@ CREATE TABLE `ONGs` (
   `nombre` varchar(150) NOT NULL,
   `razon_social` varchar(255) DEFAULT NULL,
   `cuit` varchar(13) DEFAULT NULL,
-  `lat` float NOT NULL,
-  `lon` float NOT NULL,
+  `lat` float NOT NULL DEFAULT '-31',
+  `lon` float NOT NULL DEFAULT '-64',
   `city` varchar(31) NOT NULL,
-  `suburb` varchar(31) NOT NULL,
+  `suburb` varchar(31) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `road` varchar(50) NOT NULL,
   `house_number` int NOT NULL DEFAULT '0',
   `departamento` varchar(8) DEFAULT NULL,
+  `fecha_constitucion` timestamp NULL DEFAULT NULL,
   `ultima_actualizacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -251,11 +276,11 @@ CREATE TABLE `ONGs` (
 -- Dumping data for table `ONGs`
 --
 
-INSERT INTO `ONGs` (`id`, `nombre`, `razon_social`, `cuit`, `lat`, `lon`, `city`, `suburb`, `road`, `house_number`, `departamento`, `ultima_actualizacion`) VALUES
-(1, 'Patitas de perro', 'Fundación Patita de Perro', '30-12345678-1', -31.3847, -64.227, 'Cordoba', 'Cerro de las rosas', 'Mariano Larra', 3350, NULL, '2025-11-03 09:49:51'),
-(2, 'Huellas', 'Huellas Asociación Civil', '30-87654321-2', -31.4188, -64.1735, 'Cordoba', 'Barrio Gral. Paz', 'Rosario de Sta. Fe', 650, NULL, '2025-11-03 09:59:46'),
-(3, 'Fundación Garra', 'Grupo de asistencia,rescate y readaptación animal', '30-11223344-3', -31.3776, -64.2058, 'Cordoba', 'San Martin Anexo', 'Av. Monseñor Pablo Cabrera', 2926, NULL, '2025-11-03 10:19:11'),
-(6, 'Asociación Protectora de Animales Sarmiento', 'Centro de Castraciones Sarmiento', '30-11223345-7', -31.4201, -64.1501, 'Cordoba', 'Barrio San Vicente', 'Sgto. Cabral', 1031, NULL, '2025-11-03 10:16:02');
+INSERT INTO `ONGs` (`id`, `nombre`, `razon_social`, `cuit`, `lat`, `lon`, `city`, `suburb`, `road`, `house_number`, `departamento`, `fecha_constitucion`, `ultima_actualizacion`) VALUES
+(1, 'Patitas de perro', 'Fundación Patita de Perro', '30-12345678-1', -31.3847, -64.227, 'Cordoba', 'Cerro de las rosas', 'Mariano Larra', 3350, NULL, NULL, '2025-11-03 09:49:51'),
+(2, 'Huellas', 'Huellas Asociación Civil', '30-87654321-2', -31.4188, -64.1735, 'Cordoba', 'Barrio Gral. Paz', 'Rosario de Sta. Fe', 650, NULL, NULL, '2025-11-03 09:59:46'),
+(3, 'Fundación Garra', 'Grupo de asistencia,rescate y readaptación animal', '30-11223344-3', -31.3776, -64.2058, 'Cordoba', 'San Martin Anexo', 'Av. Monseñor Pablo Cabrera', 2926, NULL, NULL, '2025-11-03 10:19:11'),
+(6, 'Asociación Protectora de Animales Sarmiento', 'Centro de Castraciones Sarmiento', '30-11223345-7', -31.4201, -64.1501, 'Cordoba', 'Barrio San Vicente', 'Sgto. Cabral', 1031, NULL, NULL, '2025-11-03 10:16:02');
 
 -- --------------------------------------------------------
 
@@ -302,7 +327,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `email`, `password`, `tipo`, `ong_id`, `nombre`, `apellido`, `tipo_documento`, `documento`, `telefono`, `foto_perfil_url`, `fecha_nacimiento`, `sexo`, `lat`, `lon`, `city`, `suburb`, `road`, `house_number`, `departamento`, `tipo_casa`, `otras_mascotas`, `experiencia`, `energia`, `sociabilidad`, `presencia`, `estilov`, `ultima_actualizacion`, `fecha_registro`, `estado`, `tokenv`) VALUES
-(1, 'ana.garcia0@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Ana', 'García', NULL, NULL, '1122334400', NULL, '1990-01-15', 'Femenino', NULL, NULL, NULL, NULL, NULL, 0, NULL, 'Casa con patio', 0, 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:51', '2025-10-20 02:10:51', 0, NULL),
+(1, 'ana.garcia0@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Ana', 'García', NULL, NULL, '1122334400', NULL, '1990-01-15', 'Femenino', NULL, NULL, NULL, NULL, NULL, 0, NULL, 'Casa con patio', 0, 'Primeriza', NULL, NULL, NULL, NULL, '2025-11-10 18:44:18', '2025-10-20 02:10:51', 1, NULL),
 (2, 'juan.rodriguez1@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Juan', 'Rodriguez', NULL, NULL, '1122334401', NULL, '1991-01-15', 'Masculino', NULL, NULL, NULL, NULL, NULL, 0, NULL, 'Departamento', 0, 'Intermedia', NULL, NULL, NULL, NULL, '2025-10-20 02:10:51', '2025-10-20 02:10:51', 0, NULL),
 (3, 'maria.martinez2@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Maria', 'Martinez', NULL, NULL, '1122334402', NULL, '1992-01-15', 'Femenino', NULL, NULL, NULL, NULL, NULL, 0, NULL, 'Casa con patio', 0, 'Avanzada', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
 (4, 'carlos.lopez3@example.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Carlos', 'Lopez', NULL, NULL, '1122334403', NULL, '1993-01-15', 'Masculino', NULL, NULL, NULL, NULL, NULL, 0, NULL, 'Departamento', 0, 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-20 02:10:52', '2025-10-20 02:10:52', 0, NULL),
@@ -313,9 +338,11 @@ INSERT INTO `usuarios` (`id`, `email`, `password`, `tipo`, `ong_id`, `nombre`, `
 (9, 'marco@ong2.org', '9b8769a4a742959a2d0298c36fb70623f2dfacda8436237df08d8dfd5b37374c', 'ong', 2, 'Marco', 'Polo', NULL, NULL, '1122334408', NULL, '1998-01-15', 'Masculino', NULL, NULL, NULL, NULL, NULL, 0, NULL, 'Casa con patio', 0, 'Avanzada', NULL, NULL, NULL, NULL, '2025-10-29 02:29:35', '2025-10-20 02:10:52', 0, NULL),
 (10, 'javier@ong1.org', '9b8769a4a742959a2d0298c36fb70623f2dfacda8436237df08d8dfd5b37374c', 'ong', 1, 'Javier', 'Diaz', NULL, NULL, '1122334409', NULL, '1999-01-15', 'Masculino', NULL, NULL, NULL, NULL, NULL, 0, NULL, 'Departamento', 0, 'Primeriza', NULL, NULL, NULL, NULL, '2025-10-22 22:30:02', '2025-10-20 02:10:52', 0, NULL),
 (11, 'sbujan@gmail.com', '8146cedca9d6bfb47b77f581973da5a0bee365aa9ec9ebb5b12d142fca2c3cc1', 'usuario', NULL, 'Sergio Ezequiel', 'Bujan', 0, '29364773', '0111536250164', NULL, '1982-03-20', 'Masculino', -31.365, -64.2245, 'Córdoba', 'Cerro Chico', 'Juan Cruz Varela', 2876, '', NULL, 0, 'amplia', 2, 2, 3, 3, '2025-11-03 22:20:00', '2025-10-22 02:46:37', 0, NULL),
-(12, 'jhon@house.com', 'b391fa64cb3fcb7c64b02a528c2d0514ba9c93fc1611b557ede0b91ef88ec9ae', 'usuario', NULL, 'Jhonny', 'Dubai', 0, NULL, NULL, NULL, NULL, 'Masculino', -31.3798, -64.1971, 'Cordoba', 'Los Paraisos', 'Arquímedes', 2857, NULL, NULL, 2, NULL, 3, 2, 1, 1, '2025-11-03 23:18:25', '2025-10-25 18:53:08', 0, 'a90979d90f1d313e400fe05315d520fac72e007bd70454a2d83599a8a9373a99'),
-(13, 'maria@house.com.ar', '626e3c805e77eeb472c42c6be607be2af7ac5c08fd7050f278e0330fe81abf57', 'usuario', NULL, 'mariapepa', 'Sil', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, '2025-10-30 20:03:50', '2025-10-30 20:03:50', 1, '4fb2be2cfa8855179396c22905d370a931627ed1752c5140c814bf9fa3fd24ce'),
-(14, 'admin@pawtastic.pet', 'd82494f05d6917ba02f7aaa29689ccb444bb73f20380876cb05d1f37537b7892', 'admin', NULL, 'Admin', 'Moderador', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, '2025-11-03 23:21:53', '2025-11-03 23:21:09', 0, 'f7aa521b586295709bcd8722be3eb155869f129ef46f5c7111872057529bb98e');
+(12, 'jhon@house.com', 'b391fa64cb3fcb7c64b02a528c2d0514ba9c93fc1611b557ede0b91ef88ec9ae', 'usuario', NULL, 'Maria', 'Flores', 0, '374599623', '351789653', '/img/profile/user_6910c117e34c9_WhatsApp Image 2025-08-23 at 12.43.00 PM.jpeg', '1993-02-01', 'Femenino', -31.3799, -64.197, 'Córdoba', 'Los Paraisos', 'Arquímedes', 2857, '', 'Casa con patio', 2, 'Tengo un gato de 2 años de edad, me gustaría encontrarle un compañero para las horas que estoy fuera de casa por trabajo. ', 2, 2, 2, 2, '2025-11-13 16:44:59', '2025-10-25 18:53:08', 0, 'a90979d90f1d313e400fe05315d520fac72e007bd70454a2d83599a8a9373a99'),
+(13, 'maria@house.com.ar', '626e3c805e77eeb472c42c6be607be2af7ac5c08fd7050f278e0330fe81abf57', 'usuario', NULL, 'mariapepa', 'Sil', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, '2025-11-10 18:44:24', '2025-10-30 20:03:50', 0, '4fb2be2cfa8855179396c22905d370a931627ed1752c5140c814bf9fa3fd24ce'),
+(14, 'admin@pawtastic.pet', 'd82494f05d6917ba02f7aaa29689ccb444bb73f20380876cb05d1f37537b7892', 'admin', NULL, 'Admin', 'Moderador', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, '2025-11-03 23:21:53', '2025-11-03 23:21:09', 0, 'f7aa521b586295709bcd8722be3eb155869f129ef46f5c7111872057529bb98e'),
+(15, 'mariapepa@house.com', '626e3c805e77eeb472c42c6be607be2af7ac5c08fd7050f278e0330fe81abf57', 'usuario', NULL, 'Maria', 'Pepa', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, '2025-11-09 04:25:49', '2025-11-09 04:25:49', 1, '7ec4ed532c058bac82ec3f3dc0eedabaa0841a1f8ecbcde61e9171ad260504cd'),
+(16, 'florpepa@gmail.com', '97f9caecd2834e0baaf7263749ec01f43d2f89161065c3ceba48382b287a9c2c', 'usuario', NULL, 'Florencia', 'pepa', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, '2025-11-13 16:45:21', '2025-11-09 04:28:56', 1, '3f076e6920c88b996c4458267270435bd2a0766c1d850da31e830e5a1758a4c9');
 
 -- --------------------------------------------------------
 
@@ -356,6 +383,13 @@ ALTER TABLE `adopciones`
   ADD KEY `id_usuario` (`id_usuario`),
   ADD KEY `id_mascota` (`id_mascota`),
   ADD KEY `id_ong` (`id_ong`);
+
+--
+-- Indexes for table `documentacion_ong`
+--
+ALTER TABLE `documentacion_ong`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `ong_id_unico` (`ong_id`);
 
 --
 -- Indexes for table `ImagenesMascota`
@@ -407,7 +441,13 @@ ALTER TABLE `vacunas`
 -- AUTO_INCREMENT for table `adopciones`
 --
 ALTER TABLE `adopciones`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `documentacion_ong`
+--
+ALTER TABLE `documentacion_ong`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `ImagenesMascota`
@@ -419,7 +459,7 @@ ALTER TABLE `ImagenesMascota`
 -- AUTO_INCREMENT for table `mascotas`
 --
 ALTER TABLE `mascotas`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT for table `ONGs`
@@ -431,7 +471,7 @@ ALTER TABLE `ONGs`
 -- AUTO_INCREMENT for table `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `vacunas`
@@ -450,6 +490,12 @@ ALTER TABLE `adopciones`
   ADD CONSTRAINT `adopciones_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `adopciones_ibfk_2` FOREIGN KEY (`id_mascota`) REFERENCES `mascotas` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `adopciones_ibfk_3` FOREIGN KEY (`id_ong`) REFERENCES `ONGs` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `documentacion_ong`
+--
+ALTER TABLE `documentacion_ong`
+  ADD CONSTRAINT `fk_documentacion_ong` FOREIGN KEY (`ong_id`) REFERENCES `ONGs` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `ImagenesMascota`

@@ -127,6 +127,7 @@ $apto_ninos = (int)$_POST['apto_ninos'];
 $apto_mascotas = (int)$_POST['apto_mascotas'];
 
 try {
+    $conn->begin_transaction(); // Iniciar transacción
     // --- Diferenciar entre CREAR (INSERT) y EDITAR (UPDATE) ---
     $idMascota = !empty($_POST['id']) ? (int)$_POST['id'] : null;
 
@@ -149,45 +150,57 @@ try {
         $query = $conn->prepare("
             UPDATE mascotas SET 
             nombre = ?, tipo = ?, edad = ?, sexo = ?, tamaño = ?, descripcion = ?, imagen = ?, 
-            vacunado = ?, esterilizado = ?, chip = ?, apto_ninos = ?, apto_mascotas = ?, energia = ?, sociabilidad = ?, presencia = ?, estilov = ?
+            vacunado = ?, esterilizado = ?, chip = ?, apto_ninos = ?, apto_mascotas = ?, 
+            energia = ?, sociabilidad = ?, presencia = ?, estilov = ?
             WHERE id = ? AND id_ong = ?
         ");
         $query->bind_param(
-            "ssisssssssiiisssii", 
+            "ssisssssssiiiiiiii", 
             $nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $imagen_path, 
-            $vacunado, $esterilizado, $chip, $apto_ninos, $apto_mascotas, $energia, $sociabilidad, $presencia, $estilov, 
+            $vacunado, $esterilizado, $chip, $apto_ninos, $apto_mascotas, 
+            $energia, $sociabilidad, $presencia, $estilov, 
             $idMascota, $idOng
         );
         $query->execute();
 
+        if ($query->affected_rows === 0) {
+            throw new Exception("No se realizaron cambios en la base de datos.");
+        }
+
         echo json_encode(["message" => "Mascota actualizada con éxito."]);
+        $conn->commit(); // Confirmar transacción
 
     } else {
         // --- MODO CREACIÓN (INSERT) ---
-        $imagen_path = null;
-        if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] == 0) {
-            $directorio = "../img/mascotas/";
-            if (!is_dir($directorio)) {
-                mkdir($directorio, 0777, true);
-            }
-            
-            $nombreArchivo = uniqid('mascota_') . "_" . basename($_FILES["imagen"]["name"]);
-            $rutaDestino = $directorio . $nombreArchivo;
-            
-            if (move_uploaded_file($_FILES["imagen"]["tmp_name"], $rutaDestino)) {
-                $imagen_path = $nombreArchivo;
-            }
-        }
+        $imagen_path = manejarSubidaImagen(); // Usamos la función para manejar la subida.
         $query = $conn->prepare("
-            INSERT INTO mascotas (nombre, tipo, edad, sexo, tamaño, descripcion, imagen, id_ong, vacunado, esterilizado, chip, apto_ninos, apto_mascotas, energia, sociabilidad, presencia, estilov, date_publicacion)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+            INSERT INTO mascotas 
+            (nombre, tipo, edad, sexo, tamaño, descripcion, imagen, id_ong, vacunado, esterilizado, chip, apto_ninos, apto_mascotas,
+            energia, sociabilidad, presencia, estilov, date_publicacion)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
         ");
-        $query->bind_param("ssissssisssiiisssiiii", $nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $imagen_path, $idOng, $vacunado, $esterilizado, $chip, $apto_ninos, $apto_mascotas, $energia, $sociabilidad, $presencia, $estilov);
+        $query->bind_param("ssissssisssiiiiii", 
+            $nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $imagen_path, $idOng, $vacunado, $esterilizado, $chip, $apto_ninos, $apto_mascotas, 
+            $energia, $sociabilidad, $presencia, $estilov);
         $query->execute();
 
+        if ($query->affected_rows === 0) {
+            throw new Exception("No se pudo crear la mascota en la base de datos.");
+        }
+
         echo json_encode(["message" => "Mascota cargada con éxito."]);
+        $conn->commit(); // Confirmar transacción
     }
 } catch (Exception $e) {
+    $conn->rollback(); // Revertir transacción en caso de error
+
+    // Si se subió una imagen nueva pero la BD falló, la borramos.
+    if (isset($imagen_path) && isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+        $rutaCompleta = "../img/mascotas/" . $imagen_path;
+        if (file_exists($rutaCompleta)) {
+            unlink($rutaCompleta);
+        }
+    }
     http_response_code(500);
     echo json_encode(["message" => "Error en el servidor: " . $e->getMessage()]);
 }
