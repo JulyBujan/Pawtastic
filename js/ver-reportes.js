@@ -4,17 +4,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const formPeriodoPersonalizado = document.getElementById(
     "form-periodo-personalizado"
   );
-  const reporteContainer = document.getElementById("reporte-container");
-  const loadingSpinner = document.getElementById("loading-spinner");
-  const adopcionesStatsContainer = document.getElementById("adopciones-stats");
-  const publicacionesConAdopcionEl = document.getElementById(
-    "publicaciones-con-adopcion"
+  const indicadoresClaveContainer = document.getElementById(
+    "indicadores-clave-container"
   );
+  const reportePersonalizadoContainer = document.getElementById(
+    "reporte-personalizado-container"
+  );
+  const loadingSpinner = document.getElementById("loading-spinner");
 
-  const fechaFinInput = document.getElementById("fecha_fin");
-  const fechaInicioInput = document.getElementById("fecha_inicio");
+  const fechaFinInput = document.getElementById("fecha_fin_manual");
+  const fechaInicioInput = document.getElementById("fecha_inicio_manual");
 
-  let publicacionesChart = null;
+  let publicacionesChartManual = null;
 
   /**
    * Muestra u oculta el spinner de carga.
@@ -22,7 +23,11 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   const toggleLoading = (show) => {
     loadingSpinner.classList.toggle("d-none", !show);
-    reporteContainer.classList.toggle("d-none", show);
+    // Oculta ambos contenedores mientras carga
+    if (show) {
+      indicadoresClaveContainer.classList.add("d-none");
+      reportePersonalizadoContainer.classList.add("d-none");
+    }
   };
 
   /**
@@ -30,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
    * @param {string} inicio - Fecha de inicio (YYYY-MM-DD).
    * @param {string} fin - Fecha de fin (YYYY-MM-DD).
    */
-  const fetchReporte = async (inicio, fin) => {
+  const fetchReporte = async (inicio = null, fin = null) => {
     const token = localStorage.getItem("token");
     if (!token) {
       showToast("Debes iniciar sesión para ver los reportes.", "danger");
@@ -41,29 +46,36 @@ document.addEventListener("DOMContentLoaded", () => {
     toggleLoading(true);
 
     try {
-      const response = await fetch(
-        `/api/reportes.php?fecha_inicio=${inicio}&fecha_fin=${fin}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const url =
+        inicio && fin
+          ? `/api/reportes.php?fecha_inicio=${inicio}&fecha_fin=${fin}`
+          : `/api/reportes.php`;
+
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       const data = await response.json();
-
-      // Si la respuesta no es OK (ej. 401, 403, 500)
       if (!response.ok) {
-        // Si el token expiró, redirigir al login
         if (response.status === 401) {
-          showToast("Tu sesión ha expirado. Por favor, inicia sesión de nuevo.", "warning");
+          showToast(
+            "Tu sesión ha expirado. Por favor, inicia sesión de nuevo.",
+            "warning"
+          );
           window.location.href = "login.html";
           return; // Detener la ejecución
         }
         throw new Error(data.message || "Error al generar el reporte.");
       }
 
-      renderizarReporte(data);
+      // Decide qué renderizar basado en la respuesta
+      if (data.ultimos_30_dias) {
+        renderizarIndicadoresClave(data);
+      } else {
+        renderizarReportePersonalizado(data, inicio, fin);
+      }
     } catch (error) {
       console.error("Error al obtener el reporte:", error);
       showToast(error.message, "danger");
@@ -74,12 +86,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /**
    * Renderiza los datos del reporte en la página.
-   * @param {object} data - Los datos del reporte desde la API.
+   * @param {object} data - Los datos del reporte personalizado desde la API.
+   * @param {string} inicio - Fecha de inicio del reporte.
+   * @param {string} fin - Fecha de fin del reporte.
    */
-  const renderizarReporte = (data) => {
+  const renderizarReportePersonalizado = (data, inicio, fin) => {
+    const tituloEl = document.getElementById("titulo-reporte-personalizado");
+    tituloEl.textContent = `Resultados para el período: ${new Date(
+      inicio + "T00:00:00"
+    ).toLocaleDateString()} - ${new Date(
+      fin + "T00:00:00"
+    ).toLocaleDateString()}`;
+
     // 1. Renderizar estadísticas de adopciones
     const stats = data.adopciones;
-    adopcionesStatsContainer.innerHTML = `
+    const adopcionesStatsContainerManual = document.getElementById(
+      "adopciones-stats-manual"
+    );
+    adopcionesStatsContainerManual.innerHTML = `
             <div class="col-md-3">
                 <div class="card bg-primary text-white h-100">
                     <div class="card-body">
@@ -89,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card bg-info text-white h-100">
+                <div class="card bg-info-subtle text-dark h-100">
                     <div class="card-body">
                         <h5 class="card-title">Actualizadas</h5>
                         <p class="card-text fs-2 fw-bold">${stats.actualizadas}</p>
@@ -115,18 +139,20 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
 
     // 2. Renderizar publicaciones que terminaron en adopción
-    publicacionesConAdopcionEl.textContent =
+    document.getElementById("publicaciones-con-adopcion-manual").textContent =
       data.publicaciones.con_adopcion_aprobada;
 
     // 3. Renderizar gráfico de publicaciones
     const chartData = data.publicaciones.por_dia;
-    const ctx = document.getElementById("publicacionesChart").getContext("2d");
+    const ctx = document
+      .getElementById("publicacionesChart-manual")
+      .getContext("2d");
 
-    if (publicacionesChart) {
-      publicacionesChart.destroy();
+    if (publicacionesChartManual) {
+      publicacionesChartManual.destroy();
     }
 
-    publicacionesChart = new Chart(ctx, {
+    publicacionesChartManual = new Chart(ctx, {
       type: "bar",
       data: {
         labels: chartData.map((d) => d.fecha),
@@ -158,7 +184,29 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     });
 
-    reporteContainer.classList.remove("d-none");
+    reportePersonalizadoContainer.classList.remove("d-none");
+  };
+
+  /**
+   * Renderiza los indicadores clave de 30 y 90 días.
+   * @param {object} data - La respuesta de la API con los bloques de 30 y 90 días.
+   */
+  const renderizarIndicadoresClave = (data) => {
+    const tiempos30 =
+      data.ultimos_30_dias.metricas_clave.tiempo_promedio_adopcion || {};
+    document.getElementById("tiempo-promedio-perros-30").textContent =
+      tiempos30.perro ?? "--";
+    document.getElementById("tiempo-promedio-gatos-30").textContent =
+      tiempos30.gato ?? "--";
+
+    const tiempos90 =
+      data.ultimos_90_dias.metricas_clave.tiempo_promedio_adopcion || {};
+    document.getElementById("tiempo-promedio-perros-90").textContent =
+      tiempos90.perro ?? "--";
+    document.getElementById("tiempo-promedio-gatos-90").textContent =
+      tiempos90.gato ?? "--";
+
+    indicadoresClaveContainer.classList.remove("d-none");
   };
 
   // --- Event Listeners ---
@@ -166,7 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
   btnSemana.addEventListener("click", () => {
     const fin = new Date();
     const inicio = new Date();
-    inicio.setDate(fin.getDate() - 6); // Últimos 7 días incluyendo hoy
+    inicio.setDate(fin.getDate() - 6);
     fetchReporte(
       inicio.toISOString().split("T")[0],
       fin.toISOString().split("T")[0]
@@ -191,4 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
       fetchReporte(inicio, fin);
     }
   });
+
+  // --- Carga Inicial Automática ---
+  fetchReporte(); // Llama sin argumentos para obtener los indicadores clave
 });

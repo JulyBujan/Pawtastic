@@ -43,10 +43,87 @@
   <main class="container py-5 flex-grow-1">
     <h2 class="text-center text-warning mb-4 fw-bold">Reportes de Actividad</h2>
 
-    <!-- Controles de Fecha -->
+    <div id="loading-spinner" class="text-center d-none mt-5">
+      <div class="spinner-border text-warning" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-2">Generando reporte...</p>
+    </div>
+
+    <!-- SECCIÓN DE INDICADORES CLAVE (30 y 90 días) -->
+    <div id="indicadores-clave-container" class="d-none">
+      <div class="row">
+        <!-- Columna 30 días -->
+        <div class="col-lg-6 mb-4">
+          <div class="card h-100 shadow-sm">
+            <div class="card-header bg-dark text-white">
+              <h4 class="mb-0 text-center">Indicadores (Últimos 30 días)</h4>
+            </div>
+            <div class="card-body">
+              <h5 class="text-center text-warning mb-3">Tiempo Promedio de Adopción</h5>
+              <div class="row text-center g-3">
+                <div class="col-6">
+                  <div class="card bg-info-subtle h-100">
+                    <div class="card-body">
+                      <h6 class="card-title"><i class="bi bi-dog"></i> Perros</h6>
+                      <p id="tiempo-promedio-perros-30" class="display-5 fw-bold text-info-emphasis">--</p>
+                      <small class="text-muted">días</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="card bg-info-subtle h-100">
+                    <div class="card-body">
+                      <h6 class="card-title"><i class="bi bi-cat"></i> Gatos</h6>
+                      <p id="tiempo-promedio-gatos-30" class="display-5 fw-bold text-info-emphasis">--</p>
+                      <small class="text-muted">días</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Columna 90 días -->
+        <div class="col-lg-6 mb-4">
+          <div class="card h-100 shadow-sm">
+            <div class="card-header bg-dark text-white">
+              <h4 class="mb-0 text-center">Indicadores (Últimos 90 días)</h4>
+            </div>
+            <div class="card-body">
+              <h5 class="text-center text-warning mb-3">Tiempo Promedio de Adopción</h5>
+              <div class="row text-center g-3">
+                <div class="col-6">
+                  <div class="card bg-info-subtle h-100">
+                    <div class="card-body">
+                      <h6 class="card-title"><i class="bi bi-dog"></i> Perros</h6>
+                      <p id="tiempo-promedio-perros-90" class="display-5 fw-bold text-info-emphasis">--</p>
+                      <small class="text-muted">días</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="card bg-info-subtle h-100">
+                    <div class="card-body">
+                      <h6 class="card-title"><i class="bi bi-cat"></i> Gatos</h6>
+                      <p id="tiempo-promedio-gatos-90" class="display-5 fw-bold text-info-emphasis">--</p>
+                      <small class="text-muted">días</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="my-5">
+
+    <!-- SECCIÓN DE REPORTE PERSONALIZADO -->
     <div class="card shadow-sm mb-4">
       <div class="card-body">
-        <h5 class="card-title">Seleccionar Período</h5>
+        <h5 class="card-title">Generar Reporte Personalizado</h5>
         <div class="row g-3 align-items-end">
           <div class="col-md-auto">
             <button id="btn-semana" class="btn btn-outline-dark">Última Semana</button>
@@ -55,12 +132,12 @@
           <div class="col-md-6">
             <form id="form-periodo-personalizado" class="row g-3">
               <div class="col-md">
-                <label for="fecha_inicio" class="form-label">Desde</label>
-                <input type="date" id="fecha_inicio" class="form-control" required>
+                <label for="fecha_inicio_manual" class="form-label">Desde</label>
+                <input type="date" id="fecha_inicio_manual" class="form-control" required>
               </div>
               <div class="col-md">
-                <label for="fecha_fin" class="form-label">Hasta</label>
-                <input type="date" id="fecha_fin" class="form-control" required>
+                <label for="fecha_fin_manual" class="form-label">Hasta</label>
+                <input type="date" id="fecha_fin_manual" class="form-control" required>
               </div>
               <div class="col-md-auto d-flex align-items-end">
                 <button type="submit" class="btn btn-dark">Generar Reporte</button>
@@ -71,23 +148,23 @@
       </div>
     </div>
 
-    <!-- Contenedor de Reportes -->
-    <div id="reporte-container" class="d-none">
-      <hr class="my-4">
+    <!-- Contenedor para el Reporte Personalizado (oculto por defecto) -->
+    <div id="reporte-personalizado-container" class="d-none mt-4">
+      <h3 class="text-center mb-3" id="titulo-reporte-personalizado"></h3>
       <!-- Estadísticas de Adopciones -->
-      <h3 class="text-center mb-3">Adopciones</h3>
-      <div class="row text-center g-3" id="adopciones-stats">
+      <h4 class="text-center mb-3">Adopciones</h4>
+      <div class="row text-center g-3" id="adopciones-stats-manual">
         <!-- Las tarjetas de estadísticas se insertarán aquí -->
       </div>
 
       <hr class="my-4">
       <!-- Gráfico de Publicaciones -->
-      <h3 class="text-center mb-3">Publicaciones</h3>
+      <h4 class="text-center mb-3">Publicaciones</h4>
       <div class="row">
         <div class="col-md-8 mx-auto">
           <div class="card">
             <div class="card-body">
-              <canvas id="publicacionesChart"></canvas>
+              <canvas id="publicacionesChart-manual"></canvas>
             </div>
           </div>
         </div>
@@ -95,18 +172,12 @@
           <div class="card h-100">
             <div class="card-body text-center d-flex flex-column justify-content-center">
               <h5 class="card-title">Publicaciones que terminaron en Adopción</h5>
-              <p id="publicaciones-con-adopcion" class="display-4 fw-bold text-success">0</p>
+              <p id="publicaciones-con-adopcion-manual" class="display-4 fw-bold text-success">0</p>
               <small class="text-muted">En el período seleccionado</small>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div id="loading-spinner" class="text-center d-none mt-5">
-      <div class="spinner-border text-warning" role="status">
-        <span class="visually-hidden">Cargando...</span>
-      </div>
-      <p class="mt-2">Generando reporte...</p>
     </div>
 
   </main>
