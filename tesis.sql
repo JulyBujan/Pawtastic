@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Nov 13, 2025 at 08:23 PM
+-- Generation Time: Nov 13, 2025 at 11:22 PM
 -- Server version: 9.4.0
 -- PHP Version: 8.3.26
 
@@ -145,12 +145,36 @@ CREATE TABLE `adopciones` (
 --
 
 INSERT INTO `adopciones` (`id`, `id_usuario`, `id_mascota`, `id_ong`, `comentarios`, `estado`, `fecha_inicio`, `fecha_actualizacion`) VALUES
-(6, 12, 21, 1, '[13/11/2025 18:08 - ONG]: Hemos aprobado la solicitud de Adopcion de Isabella, estaremos pronto comunicándonos al número de telefono que nos fue brindado. Muchas gracias!', 1, '2025-10-30 23:01:55', '2025-11-13 18:08:33'),
-(7, 12, 28, 1, '[30/10/2025 23:03 - Usuario]: Esperando instrucciones.\n---\n[09/11/2025 22:32 - ONG]: Se estará  informando por este medio como procederemos para gestionar la adopción', 1, '2025-10-30 23:03:01', '2025-11-09 22:32:13'),
-(8, 11, 20, 1, NULL, 0, '2025-10-30 23:22:34', '2025-10-30 23:22:34'),
 (9, 11, 33, 2, NULL, 0, '2025-10-30 23:24:16', '2025-10-30 23:24:16'),
-(10, 12, 31, 1, '[09/11/2025 22:31 - ONG]: No cumple las condiciones de domicilio con patio para adoptar a este perro por su tamaño', 2, '2025-11-09 19:44:03', '2025-11-09 22:31:41'),
-(11, 12, 20, 1, '[09/11/2025 19:46 - Usuario]: me gustaría conocer el perrito en persona\n---\n[09/11/2025 22:30 - ONG]: Podemos agendarle un turno para la semana del 05/12.¿ Desea confirmar?', 0, '2025-11-09 19:45:58', '2025-11-09 22:30:51');
+(12, 11, 20, 1, NULL, 1, '2025-10-01 10:15:00', '2025-11-13 23:21:23'),
+(13, 12, 21, 1, NULL, 1, '2025-10-02 11:00:00', '2025-11-13 23:21:23'),
+(14, 1, 22, 1, NULL, 1, '2025-10-03 14:00:00', '2025-11-13 23:21:23'),
+(15, 2, 28, 1, NULL, 1, '2025-10-04 09:30:00', '2025-11-13 23:21:23'),
+(16, 3, 29, 1, NULL, 1, '2025-10-05 16:00:00', '2025-11-13 23:21:23'),
+(17, 4, 30, 1, NULL, 1, '2025-10-06 18:20:00', '2025-11-13 23:21:23'),
+(18, 5, 31, 1, NULL, 1, '2025-10-07 12:00:00', '2025-11-13 23:21:23'),
+(19, 6, 32, 1, NULL, 1, '2025-10-08 15:10:00', '2025-11-13 23:21:23'),
+(20, 7, 39, 1, NULL, 1, '2025-10-09 11:45:00', '2025-11-13 23:21:23'),
+(21, 8, 41, 1, NULL, 1, '2025-10-10 10:00:00', '2025-11-13 23:21:23'),
+(22, 9, 42, 1, NULL, 1, '2025-10-11 11:00:00', '2025-11-13 23:21:23'),
+(23, 11, 43, 1, NULL, 1, '2025-10-12 12:00:00', '2025-11-13 23:21:23'),
+(24, 12, 44, 1, NULL, 1, '2025-10-13 13:00:00', '2025-11-13 23:21:23'),
+(25, 1, 45, 1, NULL, 1, '2025-10-14 14:00:00', '2025-11-13 23:21:23'),
+(26, 2, 46, 1, NULL, 1, '2025-10-15 15:00:00', '2025-11-13 23:21:23'),
+(27, 3, 47, 1, NULL, 1, '2025-10-16 16:00:00', '2025-11-13 23:21:23'),
+(28, 4, 48, 1, NULL, 1, '2025-09-25 10:00:00', '2025-11-13 23:21:23'),
+(29, 5, 49, 1, NULL, 1, '2025-09-28 11:00:00', '2025-11-13 23:21:23'),
+(30, 6, 50, 1, NULL, 1, '2025-10-01 12:00:00', '2025-11-13 23:21:23'),
+(31, 7, 51, 1, NULL, 1, '2025-10-02 13:00:00', '2025-11-13 23:21:23'),
+(32, 8, 52, 1, NULL, 1, '2025-10-03 14:00:00', '2025-11-13 23:21:23'),
+(33, 9, 53, 1, NULL, 1, '2025-10-04 15:00:00', '2025-11-13 23:21:23'),
+(34, 11, 54, 1, NULL, 1, '2025-10-05 16:00:00', '2025-11-13 23:21:23'),
+(35, 12, 55, 1, NULL, 1, '2025-08-20 10:00:00', '2025-11-13 23:21:23'),
+(36, 1, 56, 1, NULL, 1, '2025-08-25 11:00:00', '2025-11-13 23:21:23'),
+(37, 2, 57, 1, NULL, 1, '2025-09-05 12:00:00', '2025-11-13 23:21:23'),
+(38, 3, 58, 1, NULL, 1, '2025-09-10 13:00:00', '2025-11-13 23:21:23'),
+(39, 4, 59, 1, NULL, 1, '2025-09-16 14:00:00', '2025-11-13 23:21:23'),
+(40, 5, 60, 1, NULL, 1, '2025-09-20 15:00:00', '2025-11-13 23:21:23');
 
 -- --------------------------------------------------------
 
@@ -217,6 +241,10 @@ CREATE TABLE `mascotas` (
 --
 
 INSERT INTO `mascotas` (`id`, `id_ong`, `nombre`, `tipo`, `edad`, `sexo`, `tamaño`, `vacunado`, `esterilizado`, `chip`, `apto_ninos`, `apto_mascotas`, `descripcion`, `imagen`, `energia`, `sociabilidad`, `presencia`, `estilov`, `estado`, `date_update`, `date_publicacion`) VALUES
+(11, 1, 'Mimi', 'perro', 38, 'Hembra', 'Pequeño', 'si', 'no', 'no', 1, 1, 'Perrita amorosa, juguetona. Una exelente compañera de mimos y expediciones.', 'mascota_69137453814e8_perro2.jpg', 3, 3, 2, 3, 1, '2025-11-09 21:02:43', '2025-11-09 21:02:43'),
+(12, 1, 'Carrie', 'perro', 47, 'Hembra', 'Mediano', 'si', 'si', 'no', 1, 1, 'Perra muy sociable, se lleva bien con otros perros y gatos.', 'mascota_691354641c4af_schnauzer-5232202_1280.jpg', 3, 3, 1, 2, 1, '2025-11-10 00:41:33', '2025-11-10 00:41:33'),
+(13, 1, 'Batman', 'gato', 28, 'Macho', 'Mediano', 'si', 'si', 'si', 1, 1, 'Gato con alma de super heroe pero superado por la pereza', 'mascota_6913764462cfc_gato3.jpg', 1, 1, 1, 1, 1, '2025-11-11 17:45:39', '2025-11-11 17:45:39'),
+(14, 2, 'Ulises', 'gato', 88, 'Macho', 'Grande', 'si', 'si', 'no', 1, 1, 'Escapista y caminante lunar', 'mascota_691648fe7ec85_black-cat-2680541_1280.jpg', 3, 2, 1, 2, 1, '2025-11-13 21:09:18', '2025-11-13 21:09:18'),
 (20, 1, 'Amorina', 'perro', 64, 'Hembra', 'Mediano', 'si', 'no', 'no', 1, 1, 'Cariñosa y protectora, ideal para familias con niños. Le encanta salir a pasear y recibir mimos.', 'mascota_691375b8b589b_perro4.jpg', 2, 2, 3, 3, 0, '2025-10-29 20:29:20', '2025-10-29 00:06:14'),
 (21, 1, 'Isabella', 'gato', 170, 'Hembra', 'Pequeño', 'si', 'si', 'si', 1, 1, 'Muy limpia y observadora. Se adapta bien a hogares tranquilos. Ideal para departamentos.', 'mascota_6902836dea528_cat-persa-adulto-negro.jpg', 1, 1, 1, 1, 0, '2025-10-29 21:13:16', '2025-10-26 00:06:14'),
 (22, 1, 'Ringo', 'perro', 66, 'Macho', 'Grande', 'no', 'no', 'no', 1, 1, 'Juguetón y obediente. Excelente para hogares con patio. Le gusta correr y jugar con pelotas.', 'mascota_6902850151c60_rhodesian-perro-adulto.jpg', 3, 3, 2, 2, 0, '2025-10-29 21:20:00', '2025-10-23 00:06:14'),
@@ -234,9 +262,26 @@ INSERT INTO `mascotas` (`id`, `id_ong`, `nombre`, `tipo`, `edad`, `sexo`, `tama�
 (38, 3, 'Milú', 'perro', 49, 'Macho', 'Pequeño', 'si', 'si', 'no', 1, 1, 'El inseparable Fox terrier blanco de Tintín, aventurero y leal.', NULL, 2, 2, 1, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
 (39, 1, 'Golfo', 'perro', 82, 'Macho', 'Mediano', 'si', 'no', 'no', 1, 1, 'Perro callejero, encantador y muy sociable.', 'mascota_6913748c2ed81_perro6.jpg', 2, 3, 1, 3, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
 (40, 2, 'Benji', 'perro', 71, 'Macho', 'Pequeño', 'si', 'si', 'no', 1, 1, 'Un perro mestizo muy inteligente y heroico que siempre está en el lugar correcto para ayudar.', 'img_6903efbfd18c2.jpg', 2, 2, 1, 2, 0, '2025-10-21 02:45:45', '2025-10-20 02:17:34'),
-(41, 1, 'Mimi', 'perro', 38, 'Hembra', 'Pequeño', 'si', 'no', 'no', 1, 1, 'Perrita amorosa, juguetona. Una exelente compañera de mimos y expediciones.', 'mascota_69137453814e8_perro2.jpg', 3, 3, 2, 3, 1, '2025-11-09 21:02:43', '2025-11-09 21:02:43'),
-(42, 1, 'Carrie', 'perro', 47, 'Hembra', 'Mediano', 'si', 'si', 'no', 1, 1, 'Perra muy sociable, se lleva bien con otros perros y gatos.', 'mascota_691354641c4af_schnauzer-5232202_1280.jpg', 3, 3, 1, 2, 1, '2025-11-10 00:41:33', '2025-11-10 00:41:33'),
-(43, 1, 'Batman', 'gato', 28, 'Macho', 'Mediano', 'si', 'si', 'si', 1, 1, 'Gato con alma de super heroe pero superado por la pereza', 'mascota_6913764462cfc_gato3.jpg', 1, 1, 1, 1, 1, '2025-11-11 17:45:39', '2025-11-11 17:45:39');
+(41, 1, 'Rocky', 'perro', 2, 'Macho', 'Mediano', 'si', 'si', 'no', 1, 1, 'Un perro leal y enérgico, siempre listo para una aventura.', NULL, 3, 3, 2, 3, 0, '2025-11-13 22:23:05', '2025-08-15 10:00:00'),
+(42, 1, 'Mila', 'gato', 1, 'Hembra', 'Pequeño', 'si', 'si', 'no', 1, 1, 'Una gatita curiosa y juguetona que adora las siestas al sol.', NULL, 2, 2, 1, 1, 0, '2025-11-13 22:23:05', '2025-08-20 11:30:00'),
+(43, 1, 'Thor', 'perro', 5, 'Macho', 'Grande', 'si', 'si', 'si', 1, 1, 'Un gigante noble y tranquilo. Perfecto para una familia con espacio.', NULL, 1, 3, 3, 2, 0, '2025-11-13 22:23:05', '2025-09-01 14:00:00'),
+(44, 1, 'Luna', 'gato', 3, 'Hembra', 'Mediano', 'si', 'si', 'no', 1, 1, 'Elegante y un poco tímida al principio, pero muy cariñosa.', NULL, 1, 1, 2, 1, 0, '2025-11-13 22:23:05', '2025-09-05 09:00:00'),
+(45, 1, 'Coco', 'perro', 1, 'Macho', 'Pequeño', 'si', 'no', 'no', 1, 1, 'Cachorro lleno de energía y travesuras. Necesita entrenamiento y paciencia.', NULL, 3, 2, 1, 3, 0, '2025-11-13 22:23:05', '2025-09-10 16:45:00'),
+(46, 1, 'Nina', 'gato', 6, 'Hembra', 'Pequeño', 'si', 'si', 'si', 1, 1, 'Una dama tranquila que solo busca un regazo cálido y mimos.', NULL, 1, 2, 3, 1, 0, '2025-11-13 22:23:05', '2025-09-12 18:00:00'),
+(47, 1, 'Leo', 'perro', 4, 'Macho', 'Mediano', 'si', 'si', 'no', 1, 1, 'Inteligente y obediente, aprende trucos con facilidad.', NULL, 2, 3, 2, 2, 0, '2025-11-13 22:23:05', '2025-09-18 12:00:00'),
+(48, 1, 'Simba', 'gato', 2, 'Macho', 'Grande', 'si', 'si', 'no', 1, 1, 'Un gato majestuoso con espíritu de líder. Le gusta explorar.', NULL, 3, 2, 2, 3, 0, '2025-11-13 22:23:05', '2025-09-20 13:10:00'),
+(49, 1, 'Lola', 'perro', 7, 'Hembra', 'Pequeño', 'si', 'si', 'si', 1, 1, 'Una perrita senior muy dulce, ideal para compañía tranquila.', NULL, 1, 3, 3, 1, 0, '2025-11-13 22:23:05', '2025-09-25 11:00:00'),
+(50, 1, 'Oliver', 'gato', 1, 'Macho', 'Pequeño', 'si', 'no', 'no', 1, 1, 'Un gatito aventurero y muy sociable, se lleva bien con todos.', NULL, 3, 3, 1, 2, 0, '2025-11-13 22:23:05', '2025-09-28 15:00:00'),
+(51, 1, 'Max', 'perro', 3, 'Macho', 'Grande', 'si', 'si', 'no', 1, 1, 'Guardián por naturaleza, pero un osito de peluche con su familia.', NULL, 2, 2, 3, 3, 0, '2025-11-13 22:23:05', '2025-08-16 10:00:00'),
+(52, 1, 'Cleo', 'gato', 5, 'Hembra', 'Mediano', 'si', 'si', 'si', 1, 1, 'Una gata independiente que sabe lo que quiere. Reina de la casa.', NULL, 1, 1, 2, 1, 0, '2025-11-13 22:23:05', '2025-08-17 14:20:00'),
+(53, 1, 'Bruno', 'perro', 6, 'Macho', 'Mediano', 'si', 'si', 'no', 1, 1, 'Compañero fiel para largas caminatas. Se porta excelente con correa.', NULL, 2, 3, 2, 2, 0, '2025-11-13 22:23:05', '2025-08-18 17:00:00'),
+(54, 1, 'Zoe', 'gato', 2, 'Hembra', 'Pequeño', 'si', 'si', 'no', 1, 1, 'Juguetona y muy vocal. Le encanta \"conversar\" con sus humanos.', NULL, 3, 2, 1, 2, 0, '2025-11-13 22:23:05', '2025-08-14 09:30:00'),
+(55, 1, 'Toby', 'perro', 1, 'Macho', 'Pequeño', 'si', 'no', 'no', 1, 1, 'Un torbellino de alegría. Ideal para una persona activa.', NULL, 3, 3, 1, 3, 0, '2025-11-13 22:23:05', '2025-08-19 19:00:00'),
+(56, 1, 'Nala', 'gato', 4, 'Hembra', 'Mediano', 'si', 'si', 'no', 1, 1, 'Cazadora de juguetes y experta en encontrar los lugares más cómodos.', NULL, 2, 2, 2, 2, 0, '2025-11-13 22:23:05', '2025-08-22 16:00:00'),
+(57, 1, 'Jack', 'perro', 8, 'Macho', 'Grande', 'si', 'si', 'si', 1, 1, 'Un abuelo sabio y paciente. Solo quiere paz y amor.', NULL, 1, 3, 3, 1, 0, '2025-11-13 22:23:05', '2025-09-03 11:45:00'),
+(58, 1, 'Mochi', 'gato', 1, 'Hembra', 'Pequeño', 'si', 'no', 'no', 1, 1, 'Una bolita de pelo dulce y tímida. Necesita un hogar paciente.', NULL, 1, 1, 1, 1, 0, '2025-11-13 22:23:05', '2025-09-07 20:00:00'),
+(59, 1, 'Duke', 'perro', 5, 'Macho', 'Mediano', 'si', 'si', 'no', 1, 1, 'Un perro noble que se lleva bien con otros perros. Muy equilibrado.', NULL, 2, 3, 2, 2, 0, '2025-11-13 22:23:05', '2025-09-15 14:00:00'),
+(60, 1, 'Gigi', 'gato', 3, 'Hembra', 'Pequeño', 'si', 'si', 'si', 1, 1, 'Glamorosa y exigente. Solo acepta las mejores caricias.', NULL, 1, 2, 2, 1, 0, '2025-11-13 22:23:05', '2025-09-19 10:00:00');
 
 -- --------------------------------------------------------
 
@@ -249,6 +294,15 @@ CREATE TABLE `mascota_vacunas` (
   `id_vacuna` int NOT NULL,
   `fecha_aplicacion` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `mascota_vacunas`
+--
+
+INSERT INTO `mascota_vacunas` (`id_mascota`, `id_vacuna`, `fecha_aplicacion`) VALUES
+(13, 9, '2019-12-08'),
+(13, 10, '2025-11-13'),
+(13, 11, '2023-06-04');
 
 -- --------------------------------------------------------
 
@@ -441,7 +495,7 @@ ALTER TABLE `vacunas`
 -- AUTO_INCREMENT for table `adopciones`
 --
 ALTER TABLE `adopciones`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `documentacion_ong`
@@ -459,7 +513,7 @@ ALTER TABLE `ImagenesMascota`
 -- AUTO_INCREMENT for table `mascotas`
 --
 ALTER TABLE `mascotas`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT for table `ONGs`
