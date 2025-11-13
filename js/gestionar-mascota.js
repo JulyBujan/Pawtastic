@@ -44,6 +44,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       "Editar Mascota | Pawtastic";
     document.getElementById("form-title").textContent = "Editar Mascota";
     document.getElementById("submit-btn").textContent = "Guardar Cambios";
+    document.getElementById("vacunas-section").style.display = "block";
     document.getElementById("foto-label").textContent =
       "Cambiar Foto (opcional)";
 
@@ -87,6 +88,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         fotoActual.src = `../img/mascotas/${mascota.imagen}`;
         fotoContainer.style.display = "block";
       }
+
+      // Cargar vacunas
+      await cargarVacunas(id);
     } catch (error) {
       console.error("Error:", error);
       showToast(error.message, "danger");
@@ -94,6 +98,115 @@ document.addEventListener("DOMContentLoaded", async () => {
       window.location.href = "mis-mascotas.html";
     }
   }
+
+  // --- Lógica de Vacunas ---
+  async function cargarVacunas(mascotaId) {
+    try {
+      const response = await fetch(`../api/gestionar_mascota_vacunas.php?mascota_id=${mascotaId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) throw new Error("No se pudieron cargar las vacunas.");
+
+      const data = await response.json();
+      renderTablaVacunas(data.aplicadas);
+      popularSelectVacunas(data.todas);
+
+      // Si hay al menos una vacuna, marcar como "Sí" el campo vacunado
+      if (data.aplicadas.length > 0) {
+        document.getElementById("vacunado").value = "si";
+      }
+    } catch (error) {
+      showToast(error.message, "danger");
+    }
+  }
+
+  function renderTablaVacunas(vacunasAplicadas) {
+    const tbody = document.getElementById("tabla-vacunas-body");
+    tbody.innerHTML = "";
+    if (vacunasAplicadas.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No hay vacunas registradas.</td></tr>';
+      return;
+    }
+    vacunasAplicadas.forEach(vacuna => {
+      const fecha = new Date(vacuna.fecha_aplicacion + 'T00:00:00').toLocaleDateString();
+      const row = `
+        <tr>
+          <td>${vacuna.nombre}</td>
+          <td>${fecha}</td>
+          <td>
+            <button class="btn btn-danger btn-sm btn-eliminar-vacuna" data-vacuna-id="${vacuna.id_vacuna}" data-fecha="${vacuna.fecha_aplicacion}">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>`;
+      tbody.innerHTML += row;
+    });
+
+    // Añadir listeners a los botones de eliminar
+    document.querySelectorAll('.btn-eliminar-vacuna').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const vacunaId = e.currentTarget.dataset.vacunaId;
+        const fecha = e.currentTarget.dataset.fecha;
+        if (confirm('¿Seguro que quieres eliminar esta vacuna?')) {
+          await eliminarVacuna(idMascota, vacunaId, fecha);
+        }
+      });
+    });
+  }
+
+  function popularSelectVacunas(todasLasVacunas) {
+    const select = document.getElementById("select-vacuna");
+    select.innerHTML = '<option value="">Seleccionar vacuna...</option>';
+    const tipoMascota = document.getElementById("tipo").value;
+    todasLasVacunas
+      .filter(v => v.tipo === tipoMascota)
+      .forEach(vacuna => {
+        select.innerHTML += `<option value="${vacuna.id_vacuna}">${vacuna.nombre}</option>`;
+      });
+  }
+
+  async function agregarVacuna(mascotaId, vacunaId, fecha) {
+    try {
+      const response = await fetch('../api/gestionar_mascota_vacunas.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ mascota_id: mascotaId, vacuna_id: vacunaId, fecha_aplicacion: fecha })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message);
+      showToast(result.message, 'success');
+      await cargarVacunas(mascotaId); // Recargar
+      bootstrap.Modal.getInstance(document.getElementById('modalAgregarVacuna')).hide();
+    } catch (error) {
+      showToast(`Error: ${error.message}`, 'danger');
+    }
+  }
+
+  async function eliminarVacuna(mascotaId, vacunaId, fecha) {
+    try {
+      const response = await fetch('../api/gestionar_mascota_vacunas.php', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ mascota_id: mascotaId, vacuna_id: vacunaId, fecha_aplicacion: fecha })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message);
+      showToast(result.message, 'success');
+      await cargarVacunas(mascotaId); // Recargar
+    } catch (error) {
+      showToast(`Error: ${error.message}`, 'danger');
+    }
+  }
+
+  document.getElementById('btn-guardar-vacuna').addEventListener('click', async () => {
+    const vacunaId = document.getElementById('select-vacuna').value;
+    const fecha = document.getElementById('fecha-aplicacion-vacuna').value;
+    if (vacunaId && fecha) {
+      await agregarVacuna(idMascota, vacunaId, fecha);
+    } else {
+      showToast('Por favor, selecciona una vacuna y una fecha.', 'warning');
+    }
+  });
 
   // --- Manejador del botón Cancelar ---
   const btnCancelar = document.getElementById("btn-cancelar");

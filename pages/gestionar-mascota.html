@@ -144,6 +144,26 @@
             </div>
           </div>
 
+          <!-- Contenedor para la gestión de vacunas (visible en modo edición) -->
+          <div id="vacunas-section" class="mb-3" style="display: none;">
+            <hr>
+            <h5 class="text-center text-warning mb-3">Vacunas Aplicadas</h5>
+            <table class="table table-sm table-striped">
+              <thead>
+                <tr>
+                  <th>Vacuna</th>
+                  <th>Fecha Aplicación</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-vacunas-body">
+                <!-- Las vacunas se insertarán aquí dinámicamente -->
+              </tbody>
+            </table>
+            <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalAgregarVacuna">
+              <i class="bi bi-plus-circle"></i> Agregar Vacuna
+            </button>
+          </div>
           <div class="row">
             <div class="col-md-6 mb-3">
               <label class="form-label">Apto Niños</label>
@@ -234,6 +254,33 @@
     </div>
   </div>
 
+  <!-- MODAL AGREGAR VACUNA -->
+  <div class="modal fade" id="modalAgregarVacuna" tabindex="-1" aria-labelledby="modalAgregarVacunaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalAgregarVacunaLabel">Agregar Vacuna</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="form-agregar-vacuna">
+            <div class="mb-3">
+              <label for="select-vacuna" class="form-label">Vacuna</label>
+              <select id="select-vacuna" class="form-select" required></select>
+            </div>
+            <div class="mb-3">
+              <label for="fecha-aplicacion-vacuna" class="form-label">Fecha de Aplicación</label>
+              <input type="date" id="fecha-aplicacion-vacuna" class="form-control" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" id="btn-guardar-vacuna" class="btn btn-primary">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- Contenedor de Toasts -->
   <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
     <!-- Los toasts se insertarán aquí dinámicamente -->
