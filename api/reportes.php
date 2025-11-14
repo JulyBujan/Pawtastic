@@ -26,9 +26,9 @@ function generarReporteParaPeriodo($conn, $id_ong, $fecha_inicio, $fecha_fin) {
     $stmt_adopciones = $conn->prepare(
         "SELECT 
             SUM(CASE WHEN fecha_inicio BETWEEN ? AND ? THEN 1 ELSE 0 END) as iniciadas,
-            SUM(CASE WHEN fecha_fin BETWEEN ? AND ? AND fecha_actualizacion NOT BETWEEN ? AND ? THEN 1 ELSE 0 END) as actualizadas,
-            SUM(CASE WHEN estado = 2 AND fecha_fin BETWEEN ? AND ? THEN 1 ELSE 0 END) as aprobadas,
-            SUM(CASE WHEN estado = 3 AND fecha_fin BETWEEN ? AND ? THEN 1 ELSE 0 END) as canceladas
+            SUM(CASE WHEN fecha_actualizacion BETWEEN ? AND ? AND fecha_actualizacion NOT BETWEEN ? AND ? THEN 1 ELSE 0 END) as actualizadas,
+            SUM(CASE WHEN estado = 1 AND fecha_fin BETWEEN ? AND ? THEN 1 ELSE 0 END) as aprobadas,
+            SUM(CASE WHEN estado = 2 AND fecha_fin BETWEEN ? AND ? THEN 1 ELSE 0 END) as canceladas
         FROM adopciones
         WHERE id_ong = ?"
     );
@@ -77,7 +77,7 @@ function generarReporteParaPeriodo($conn, $id_ong, $fecha_inicio, $fecha_fin) {
          JOIN adopciones a ON m.id = a.id_mascota
          WHERE m.id_ong = ? 
          AND m.date_publicacion BETWEEN ? AND ?
-         AND a.estado = 2" // 2 = Aprobada
+         AND a.estado = 1" // 1 = Aprobada
     );
     $stmt_pub_adopcion->bind_param("iss", $id_ong, $fecha_inicio, $fecha_fin_full);
     $stmt_pub_adopcion->execute();
@@ -95,7 +95,7 @@ function generarReporteParaPeriodo($conn, $id_ong, $fecha_inicio, $fecha_fin) {
         JOIN
             adopciones AS a ON m.id = a.id_mascota
         WHERE
-            a.estado = 2 -- Aprobada
+            a.estado = 1 -- Aprobada
             AND m.tipo IN ('perro', 'gato')
             AND a.id_ong = ?
             AND a.fecha_fin BETWEEN ? AND ?
