@@ -36,7 +36,8 @@
       <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
         <div id="nav-links" class="d-flex gap-2 align-items-center">
           <!-- Los enlaces se cargarán dinámicamente aquí -->
-          <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion" title="Salir">
+          <a href="#" class="btn btn-custom-nav" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion"
+            title="Salir">
             <i class="bi bi-box-arrow-right me-1"></i>Salir
           </a>
         </div>
@@ -286,7 +287,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       const tipoUsuario = localStorage.getItem('tipo');
       const navLinksContainer = document.getElementById('nav-links');
-      const salirButton = navLinksContainer.querySelector('.btn-danger');
+      const salirButton = navLinksContainer.querySelector('.btn-custom-nav');
 
       let linksHTML = '';
 
