@@ -26,9 +26,9 @@ function generarReporteParaPeriodo($conn, $id_ong, $fecha_inicio, $fecha_fin) {
     $stmt_adopciones = $conn->prepare(
         "SELECT 
             SUM(CASE WHEN fecha_inicio BETWEEN ? AND ? THEN 1 ELSE 0 END) as iniciadas,
-            SUM(CASE WHEN fecha_actualizacion BETWEEN ? AND ? AND fecha_inicio NOT BETWEEN ? AND ? THEN 1 ELSE 0 END) as actualizadas,
-            SUM(CASE WHEN estado = 2 AND fecha_actualizacion BETWEEN ? AND ? THEN 1 ELSE 0 END) as aprobadas,
-            SUM(CASE WHEN estado = 3 AND fecha_actualizacion BETWEEN ? AND ? THEN 1 ELSE 0 END) as canceladas
+            SUM(CASE WHEN fecha_fin BETWEEN ? AND ? AND fecha_actualizacion NOT BETWEEN ? AND ? THEN 1 ELSE 0 END) as actualizadas,
+            SUM(CASE WHEN estado = 2 AND fecha_fin BETWEEN ? AND ? THEN 1 ELSE 0 END) as aprobadas,
+            SUM(CASE WHEN estado = 3 AND fecha_fin BETWEEN ? AND ? THEN 1 ELSE 0 END) as canceladas
         FROM adopciones
         WHERE id_ong = ?"
     );
@@ -89,7 +89,7 @@ function generarReporteParaPeriodo($conn, $id_ong, $fecha_inicio, $fecha_fin) {
     $stmt_promedio_adopcion = $conn->prepare(
         "SELECT
             m.tipo,
-            ROUND(AVG(DATEDIFF(a.fecha_actualizacion, m.date_publicacion)), 1) AS tiempo_promedio_dias
+            ROUND(AVG(DATEDIFF(a.fecha_fin, m.date_publicacion)), 1) AS tiempo_promedio_dias
         FROM
             mascotas AS m
         JOIN
@@ -98,7 +98,7 @@ function generarReporteParaPeriodo($conn, $id_ong, $fecha_inicio, $fecha_fin) {
             a.estado = 2 -- Aprobada
             AND m.tipo IN ('perro', 'gato')
             AND a.id_ong = ?
-            AND a.fecha_actualizacion BETWEEN ? AND ?
+            AND a.fecha_fin BETWEEN ? AND ?
         GROUP BY
             m.tipo"
     );
