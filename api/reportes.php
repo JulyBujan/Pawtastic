@@ -118,6 +118,59 @@ function generarReporteParaPeriodo($conn, $id_ong, $fecha_inicio, $fecha_fin) {
     return $reporte;
 }
 
+function getTiempoAdopcionPorEdad($conn, $id_ong) {
+    $fecha_fin = (new DateTime())->format('Y-m-d H:i:s');
+    $fecha_inicio = (new DateTime())->sub(new DateInterval('P89D'))->format('Y-m-d');
+
+    $stmt = $conn->prepare(
+        "SELECT
+            m.tipo,
+            CASE
+                WHEN m.edad <= 12 THEN 'cachorros'
+                WHEN m.edad > 12 AND m.edad <= 36 THEN 'jovenes'
+                WHEN m.edad > 36 AND m.edad <= 84 THEN 'adultos'
+                ELSE 'seniors'
+            END AS rango_edad,
+            ROUND(AVG(DATEDIFF(a.fecha_fin, m.date_publicacion))) AS tiempo_promedio_dias
+        FROM
+            mascotas AS m
+        JOIN
+            adopciones AS a ON m.id = a.id_mascota
+        WHERE
+            a.estado = 1 -- Aprobada
+            AND m.tipo IN ('perro', 'gato')
+            AND a.id_ong = ?
+            AND a.fecha_fin BETWEEN ? AND ?
+        GROUP BY
+            m.tipo, rango_edad"
+    );
+
+    if (!$stmt) {
+        throw new Exception("Error al preparar la consulta de tiempo por edad: " . $conn->error);
+    }
+
+    $stmt->bind_param("iss", $id_ong, $fecha_inicio, $fecha_fin);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $stats = [
+        'perros' => ['cachorros' => null, 'jovenes' => null, 'adultos' => null, 'seniors' => null],
+        'gatos' => ['cachorros' => null, 'jovenes' => null, 'adultos' => null, 'seniors' => null]
+    ];
+
+    while ($row = $result->fetch_assoc()) {
+        if ($row['tipo'] === 'perro') {
+            $stats['perros'][$row['rango_edad']] = (int)$row['tiempo_promedio_dias'];
+        } elseif ($row['tipo'] === 'gato') {
+            $stats['gatos'][$row['rango_edad']] = (int)$row['tiempo_promedio_dias'];
+        }
+    }
+
+    $stmt->close();
+    return $stats;
+}
+
+
 try {
     // Obtener el ID de la ONG desde la tabla de usuarios usando el email del token
     $stmt_user = $conn->prepare("SELECT ong_id FROM usuarios WHERE email = ?");
@@ -137,6 +190,14 @@ try {
     }
     $id_ong = $usuario['ong_id'];
 
+    $accion = $_GET['accion'] ?? '';
+
+    if ($accion === 'adopcion_por_edad') {
+        $stats_edad = getTiempoAdopcionPorEdad($conn, $id_ong);
+        http_response_code(200);
+        echo json_encode(['status' => 'success', 'data' => $stats_edad]);
+        exit;
+    }
     // Si se piden fechas específicas, se devuelve el reporte para ese rango
     if (isset($_GET['fecha_inicio']) && isset($_GET['fecha_fin'])) {
         $fecha_inicio = $_GET['fecha_inicio'];

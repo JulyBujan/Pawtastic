@@ -10,6 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const reportePersonalizadoContainer = document.getElementById(
     "reporte-personalizado-container"
   );
+  const adopcionesRapidasContainer = document.getElementById(
+    "adopciones-rapidas-container"
+  );
   const loadingSpinner = document.getElementById("loading-spinner");
 
   const fechaFinInput = document.getElementById("fecha_fin_manual");
@@ -27,6 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (show) {
       indicadoresClaveContainer.classList.add("d-none");
       reportePersonalizadoContainer.classList.add("d-none");
+      adopcionesRapidasContainer.classList.add("d-none");
     }
   };
 
@@ -35,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
    * @param {string} inicio - Fecha de inicio (YYYY-MM-DD).
    * @param {string} fin - Fecha de fin (YYYY-MM-DD).
    */
-  const fetchReporte = async (inicio = null, fin = null) => {
+  const fetchReportePersonalizado = async (inicio, fin) => {
     const token = localStorage.getItem("token");
     if (!token) {
       showToast("Debes iniciar sesión para ver los reportes.", "danger");
@@ -46,11 +50,9 @@ document.addEventListener("DOMContentLoaded", () => {
     toggleLoading(true);
 
     try {
-      const url =
-        inicio && fin
-          ? `/api/reportes.php?fecha_inicio=${inicio}&fecha_fin=${fin}`
-          : `/api/reportes.php`;
+      const url = `/api/reportes.php?fecha_inicio=${inicio}&fecha_fin=${fin}`;
 
+      // La petición para el reporte personalizado no necesita 'accion'
       const response = await fetch(url, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -70,14 +72,61 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(data.message || "Error al generar el reporte.");
       }
 
-      // Decide qué renderizar basado en la respuesta
-      if (data.ultimos_30_dias) {
-        renderizarIndicadoresClave(data);
-      } else {
-        renderizarReportePersonalizado(data, inicio, fin);
-      }
+      renderizarReportePersonalizado(data, inicio, fin);
     } catch (error) {
       console.error("Error al obtener el reporte:", error);
+      showToast(error.message, "danger");
+    } finally {
+      toggleLoading(false);
+    }
+  };
+
+  /**
+   * Obtiene los datos iniciales (indicadores clave y adopción por edad).
+   */
+  const fetchDatosIniciales = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      showToast("Debes iniciar sesión para ver los reportes.", "danger");
+      window.location.href = "login.html";
+      return;
+    }
+
+    toggleLoading(true);
+
+    try {
+      // Petición para los indicadores clave (comportamiento por defecto del API)
+      const resIndicadores = await fetch(`/api/reportes.php`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const dataIndicadores = await resIndicadores.json();
+      if (!resIndicadores.ok)
+        throw new Error(
+          dataIndicadores.message || "Error al cargar indicadores."
+        );
+      renderizarIndicadoresClave(dataIndicadores);
+
+      // Petición para las estadísticas por edad
+      const resAdopcionEdad = await fetch(
+        `/api/reportes.php?accion=adopcion_por_edad`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const dataAdopcionEdad = await resAdopcionEdad.json();
+      if (!resAdopcionEdad.ok)
+        throw new Error(
+          dataAdopcionEdad.message || "Error al cargar stats por edad."
+        );
+      if (dataAdopcionEdad.status === "success") {
+        renderizarAdopcionPorEdad(dataAdopcionEdad.data);
+      } else {
+        throw new Error(
+          dataAdopcionEdad.message || "No se pudieron cargar las estadísticas."
+        );
+      }
+    } catch (error) {
+      console.error("Error al cargar datos iniciales:", error);
       showToast(error.message, "danger");
     } finally {
       toggleLoading(false);
@@ -209,13 +258,50 @@ document.addEventListener("DOMContentLoaded", () => {
     indicadoresClaveContainer.classList.remove("d-none");
   };
 
+  /**
+   * Renderiza las estadísticas de adopción por edad.
+   * @param {object} data - Datos con 'perros' y 'gatos'.
+   */
+  const renderizarAdopcionPorEdad = (data) => {
+    const { perros, gatos } = data;
+
+    const actualizarLista = (listId, stats, badgeColor) => {
+      const listElement = document.getElementById(listId);
+      if (!listElement) return;
+
+      const rangos = [
+        { key: "cachorros", label: "Cachorros (0-1 año)" },
+        { key: "jovenes", label: "Jóvenes (1-3 años)" },
+        { key: "adultos", label: "Adultos (3-7 años)" },
+        { key: "seniors", label: "Seniors (7+ años)" },
+      ];
+
+      listElement.innerHTML = ""; // Limpiar contenido placeholder
+
+      rangos.forEach((rango) => {
+        const dias =
+          stats[rango.key] !== null ? `${stats[rango.key]} días` : "N/A";
+        const li = document.createElement("li");
+        li.className =
+          "list-group-item d-flex justify-content-between align-items-center";
+        li.innerHTML = `${rango.label} <span class="badge bg-${badgeColor} rounded-pill">${dias}</span>`;
+        listElement.appendChild(li);
+      });
+    };
+
+    actualizarLista("edad-stats-perros", perros, "primary");
+    actualizarLista("edad-stats-gatos", gatos, "success");
+
+    adopcionesRapidasContainer.classList.remove("d-none");
+  };
+
   // --- Event Listeners ---
 
   btnSemana.addEventListener("click", () => {
     const fin = new Date();
     const inicio = new Date();
     inicio.setDate(fin.getDate() - 6);
-    fetchReporte(
+    fetchReportePersonalizado(
       inicio.toISOString().split("T")[0],
       fin.toISOString().split("T")[0]
     );
@@ -225,7 +311,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const fin = new Date();
     const inicio = new Date();
     inicio.setMonth(fin.getMonth() - 1);
-    fetchReporte(
+    fetchReportePersonalizado(
       inicio.toISOString().split("T")[0],
       fin.toISOString().split("T")[0]
     );
@@ -236,10 +322,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const inicio = fechaInicioInput.value;
     const fin = fechaFinInput.value;
     if (inicio && fin) {
-      fetchReporte(inicio, fin);
+      fetchReportePersonalizado(inicio, fin);
     }
   });
 
   // --- Carga Inicial Automática ---
-  fetchReporte(); // Llama sin argumentos para obtener los indicadores clave
+  fetchDatosIniciales(); // Carga los indicadores clave y las stats por edad
 });
