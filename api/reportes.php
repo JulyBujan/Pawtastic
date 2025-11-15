@@ -170,6 +170,70 @@ function getTiempoAdopcionPorEdad($conn, $id_ong) {
     return $stats;
 }
 
+function getAdopcionesPorZona($conn, $id_ong) {
+    $stmt = $conn->prepare(
+        "SELECT
+            u.suburb AS barrio,
+            u.city AS ciudad,
+            AVG(u.lat) as lat,
+            AVG(u.lon) as lon,
+            COUNT(a.id) AS total_adopciones
+        FROM
+            adopciones AS a
+        JOIN
+            usuarios AS u ON a.id_usuario = u.id
+        WHERE
+            a.id_ong = ?
+            AND a.estado = 1 -- Adopciones Aprobadas
+            AND u.suburb IS NOT NULL AND u.suburb != '' AND u.lat IS NOT NULL AND u.lon IS NOT NULL
+        GROUP BY
+            u.suburb, u.city
+        ORDER BY
+            total_adopciones DESC
+        LIMIT 10"
+    );
+
+    if (!$stmt) {
+        throw new Exception("Error al preparar la consulta de adopciones por zona: " . $conn->error);
+    }
+
+    $stmt->bind_param("i", $id_ong);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $zonas = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+    return $zonas;
+}
+
+function getMascotasEnEspera($conn, $id_ong) {
+    $stmt = $conn->prepare(
+        "SELECT
+            id,
+            nombre,
+            tipo,
+            imagen,
+            date_publicacion,
+            DATEDIFF(CURDATE(), date_publicacion) AS dias_en_espera
+        FROM
+            mascotas
+        WHERE
+            id_ong = ?
+            AND estado = 1 -- 1 = Disponible para adopción
+            AND date_publicacion IS NOT NULL
+        ORDER BY
+            date_publicacion ASC
+        LIMIT 5"
+    );
+
+    if (!$stmt) {
+        throw new Exception("Error al preparar la consulta de mascotas en espera: " . $conn->error);
+    }
+
+    $stmt->bind_param("i", $id_ong);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
 
 try {
     // Obtener el ID de la ONG desde la tabla de usuarios usando el email del token
@@ -196,6 +260,20 @@ try {
         $stats_edad = getTiempoAdopcionPorEdad($conn, $id_ong);
         http_response_code(200);
         echo json_encode(['status' => 'success', 'data' => $stats_edad]);
+        exit;
+    }
+
+    if ($accion === 'adopciones_por_zona') {
+        $stats_zona = getAdopcionesPorZona($conn, $id_ong);
+        http_response_code(200);
+        echo json_encode(['status' => 'success', 'data' => $stats_zona]);
+        exit;
+    }
+
+    if ($accion === 'mascotas_en_espera') {
+        $mascotas_espera = getMascotasEnEspera($conn, $id_ong);
+        http_response_code(200);
+        echo json_encode(['status' => 'success', 'data' => $mascotas_espera]);
         exit;
     }
     // Si se piden fechas específicas, se devuelve el reporte para ese rango

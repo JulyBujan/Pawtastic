@@ -13,12 +13,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const adopcionesRapidasContainer = document.getElementById(
     "adopciones-rapidas-container"
   );
+  const adopcionesPorZonaContainer = document.getElementById(
+    "adopciones-por-zona-container"
+  );
+  const mascotasEnEsperaContainer = document.getElementById(
+    "mascotas-en-espera-container"
+  );
   const loadingSpinner = document.getElementById("loading-spinner");
 
   const fechaFinInput = document.getElementById("fecha_fin_manual");
   const fechaInicioInput = document.getElementById("fecha_inicio_manual");
 
   let publicacionesChartManual = null;
+  let mapaZonas = null;
 
   /**
    * Muestra u oculta el spinner de carga.
@@ -31,6 +38,8 @@ document.addEventListener("DOMContentLoaded", () => {
       indicadoresClaveContainer.classList.add("d-none");
       reportePersonalizadoContainer.classList.add("d-none");
       adopcionesRapidasContainer.classList.add("d-none");
+      adopcionesPorZonaContainer.classList.add("d-none");
+      mascotasEnEsperaContainer.classList.add("d-none");
     }
   };
 
@@ -125,6 +134,39 @@ document.addEventListener("DOMContentLoaded", () => {
           dataAdopcionEdad.message || "No se pudieron cargar las estadísticas."
         );
       }
+
+      // Petición para las estadísticas por zona
+      const resAdopcionZona = await fetch(
+        `/api/reportes.php?accion=adopciones_por_zona`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const dataAdopcionZona = await resAdopcionZona.json();
+      if (!resAdopcionZona.ok)
+        throw new Error(
+          dataAdopcionZona.message || "Error al cargar stats por zona."
+        );
+      if (dataAdopcionZona.status === "success") {
+        renderizarAdopcionesPorZona(dataAdopcionZona.data);
+      }
+
+      // Petición para las mascotas con más tiempo en espera
+      const resMascotasEspera = await fetch(
+        `/api/reportes.php?accion=mascotas_en_espera`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const dataMascotasEspera = await resMascotasEspera.json();
+      if (!resMascotasEspera.ok)
+        throw new Error(
+          dataMascotasEspera.message || "Error al cargar mascotas en espera."
+        );
+      if (dataMascotasEspera.status === "success") {
+        renderizarMascotasEnEspera(dataMascotasEspera.data);
+      }
+
     } catch (error) {
       console.error("Error al cargar datos iniciales:", error);
       showToast(error.message, "danger");
@@ -293,6 +335,104 @@ document.addEventListener("DOMContentLoaded", () => {
     actualizarLista("edad-stats-gatos", gatos, "success");
 
     adopcionesRapidasContainer.classList.remove("d-none");
+  };
+
+  /**
+   * Renderiza la tabla de adopciones por zona.
+   * @param {Array} data - Array de objetos con barrio, ciudad y total_adopciones.
+   */
+  const renderizarAdopcionesPorZona = (data) => {
+    // Inicializar el mapa una sola vez
+    if (!mapaZonas) {
+      mapaZonas = L.map("mapa-zonas").setView([-31.4135, -64.181], 12); // Coordenadas de Córdoba
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(mapaZonas);
+    } else {
+      // Limpiar marcadores anteriores si el mapa ya existe (para futuras recargas)
+      mapaZonas.eachLayer((layer) => {
+        if (layer instanceof L.Marker) {
+          mapaZonas.removeLayer(layer);
+        }
+      });
+    }
+
+    // Renderizar la tabla
+    const tablaBody = document.getElementById("tabla-zonas-body");
+    if (!tablaBody) return;
+
+    tablaBody.innerHTML = ""; // Limpiar contenido
+
+    if (data.length === 0) {
+      tablaBody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">No hay datos de adopciones por zona para mostrar.</td></tr>`;
+    } else {
+      data.forEach((zona, index) => {
+        // Añadir marcador al mapa
+        if (zona.lat && zona.lon) {
+          const marker = L.marker([zona.lat, zona.lon]).addTo(mapaZonas);
+          marker.bindPopup(
+            `<b>${zona.barrio}, ${zona.ciudad}</b><br>${zona.total_adopciones} adopciones`
+          );
+        }
+
+        // Añadir fila a la tabla
+        const fila = `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${zona.barrio || "No especificado"}</td>
+            <td>${zona.ciudad || "No especificada"}</td>
+            <td><span class="badge bg-warning text-dark">${zona.total_adopciones}</span></td>
+          </tr>`;
+        tablaBody.innerHTML += fila;
+      });
+    }
+
+    adopcionesPorZonaContainer.classList.remove("d-none");
+
+    // Forzar al mapa a recalcular su tamaño después de ser visible.
+    // Se usa un setTimeout para asegurar que el DOM se haya actualizado.
+    setTimeout(() => {
+      mapaZonas.invalidateSize();
+    }, 10);
+  };
+
+  /**
+   * Renderiza la lista de mascotas con más tiempo en espera.
+   * @param {Array} data - Array de objetos de mascotas.
+   */
+  const renderizarMascotasEnEspera = (data) => {
+    const listaContainer = document.getElementById("lista-mascotas-espera");
+    if (!listaContainer) return;
+
+    listaContainer.innerHTML = ""; // Limpiar contenido
+
+    if (data.length === 0) {
+      listaContainer.innerHTML = `<p class="text-center text-muted">¡Felicidades! No hay mascotas con largos tiempos de espera.</p>`;
+    } else {
+      data.forEach((mascota) => {
+        const item = document.createElement("a");
+        item.href = `ver-mascota.html?id=${mascota.id}`; // Enlace al perfil de la mascota
+        item.className =
+          "list-group-item list-group-item-action d-flex justify-content-between align-items-center";
+
+        const imagenSrc = mascota.imagen ? `../img/mascotas/${mascota.imagen}` : '../img/default-image.webp';
+
+        item.innerHTML = `
+          <div class="d-flex align-items-center">
+            <img src="${imagenSrc}" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;" alt="${mascota.nombre}">
+            <div>
+              <h5 class="mb-1">${mascota.nombre}</h5>
+              <small class="text-muted">${mascota.tipo.charAt(0).toUpperCase() + mascota.tipo.slice(1)} - Publicado: ${new Date(mascota.date_publicacion).toLocaleDateString()}</small>
+            </div>
+          </div>
+          <span class="badge bg-danger rounded-pill fs-6">${mascota.dias_en_espera} días esperando</span>
+        `;
+        listaContainer.appendChild(item);
+      });
+    }
+
+    mascotasEnEsperaContainer.classList.remove("d-none");
   };
 
   // --- Event Listeners ---
