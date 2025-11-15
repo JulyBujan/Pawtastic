@@ -4,7 +4,7 @@ include_once "conexion.php";
 
 // Proteger el endpoint y obtener datos del token
 require __DIR__ . '/vendor/autoload.php';
-include_once "verificar_token.php"; // Este script nos da el payload en $decoded_token
+include_once "verificar_token.php"; // Este script nos da el payload en $decoded_token y maneja el error 401
 
 if ($decoded_token->tipo !== 'ong') {
     http_response_code(403);
@@ -18,7 +18,8 @@ function generarReporteParaPeriodo($conn, $id_ong, $fecha_inicio, $fecha_fin) {
     $reporte = [
         'adopciones' => [],
         'publicaciones' => [],
-        'metricas_clave' => [] // Nueva sección para métricas específicas
+        'metricas_clave' => [],
+        'perfil_adopcion' => [] // Nueva sección para los gráficos de perfil
     ];
 
     // --- 1. ESTADÍSTICAS DE ADOPCIONES ---
@@ -114,6 +115,51 @@ function generarReporteParaPeriodo($conn, $id_ong, $fecha_inicio, $fecha_fin) {
     }
     $reporte['metricas_clave']['tiempo_promedio_adopcion'] = $tiempos_promedio;
     $stmt_promedio_adopcion->close();
+
+    // --- 4. PERFIL DE ADOPCIÓN (PARA GRÁFICOS NUEVOS) ---
+
+    // a) Adopciones por tipo de vivienda
+    $stmt_vivienda = $conn->prepare(
+        "SELECT
+            COALESCE(u.tipo_casa, 'No especificado') AS tipo_vivienda,
+            COUNT(a.id) AS cantidad
+        FROM adopciones AS a
+        JOIN usuarios AS u ON a.id_usuario = u.id
+        WHERE a.id_ong = ?
+          AND a.estado = 1
+          AND a.fecha_fin BETWEEN ? AND ?
+        GROUP BY tipo_vivienda
+        ORDER BY cantidad DESC"
+    );
+    if (!$stmt_vivienda) {
+        throw new Exception("Error al preparar la consulta de vivienda: " . $conn->error);
+    }
+    $stmt_vivienda->bind_param("iss", $id_ong, $fecha_inicio, $fecha_fin_full);
+    $stmt_vivienda->execute();
+    $result_vivienda = $stmt_vivienda->get_result()->fetch_all(MYSQLI_ASSOC);
+    $reporte['perfil_adopcion']['por_vivienda'] = $result_vivienda;
+    $stmt_vivienda->close();
+
+    // b) Adopciones por tipo de mascota
+    $stmt_tipo_mascota = $conn->prepare(
+        "SELECT
+            m.tipo,
+            COUNT(a.id) AS cantidad
+        FROM adopciones AS a
+        JOIN mascotas AS m ON a.id_mascota = m.id
+        WHERE a.id_ong = ?
+          AND a.estado = 1
+          AND a.fecha_fin BETWEEN ? AND ?
+        GROUP BY m.tipo"
+    );
+    if (!$stmt_tipo_mascota) {
+        throw new Exception("Error al preparar la consulta de tipo de mascota: " . $conn->error);
+    }
+    $stmt_tipo_mascota->bind_param("iss", $id_ong, $fecha_inicio, $fecha_fin_full);
+    $stmt_tipo_mascota->execute();
+    $result_tipo_mascota = $stmt_tipo_mascota->get_result()->fetch_all(MYSQLI_ASSOC);
+    $reporte['perfil_adopcion']['por_tipo_mascota'] = $result_tipo_mascota;
+    $stmt_tipo_mascota->close();
 
     return $reporte;
 }

@@ -24,7 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const fechaFinInput = document.getElementById("fecha_fin_manual");
   const fechaInicioInput = document.getElementById("fecha_inicio_manual");
 
-  let publicacionesChartManual = null;
+  let viviendaChartManual = null;
+  let tipoMascotaChartManual = null;
   let mapaZonas = null;
 
   /**
@@ -229,47 +230,77 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
         `;
 
-    // 2. Renderizar publicaciones que terminaron en adopción
-    document.getElementById("publicaciones-con-adopcion-manual").textContent =
-      data.publicaciones.con_adopcion_aprobada;
+    // 2. Renderizar gráficos de perfil de adopción
+    const { por_vivienda, por_tipo_mascota } = data.perfil_adopcion;
 
-    // 3. Renderizar gráfico de publicaciones
-    const chartData = data.publicaciones.por_dia;
-    const ctx = document
-      .getElementById("publicacionesChart-manual")
+    // Gráfico de Tipo de Vivienda
+    const ctxVivienda = document
+      .getElementById("viviendaChart-manual")
       .getContext("2d");
-
-    if (publicacionesChartManual) {
-      publicacionesChartManual.destroy();
+    if (viviendaChartManual) {
+      viviendaChartManual.destroy();
     }
-
-    publicacionesChartManual = new Chart(ctx, {
-      type: "bar",
+    viviendaChartManual = new Chart(ctxVivienda, {
+      type: "doughnut",
       data: {
-        labels: chartData.map((d) => d.fecha),
+        labels: por_vivienda.map((item) => item.tipo_vivienda),
         datasets: [
           {
-            label: "Mascotas Publicadas por Día",
-            data: chartData.map((d) => d.cantidad),
-            backgroundColor: "rgba(247, 147, 30, 0.7)",
-            borderColor: "rgba(247, 147, 30, 1)",
-            borderWidth: 1,
+            label: "Adopciones",
+            data: por_vivienda.map((item) => item.cantidad),
+            backgroundColor: [
+              "rgba(255, 99, 132, 0.7)",
+              "rgba(54, 162, 235, 0.7)",
+              "rgba(255, 206, 86, 0.7)",
+              "rgba(75, 192, 192, 0.7)",
+              "rgba(153, 102, 255, 0.7)",
+            ],
+            borderColor: "#fff",
+            borderWidth: 2,
           },
         ],
       },
       options: {
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              stepSize: 1,
-            },
-          },
-        },
         responsive: true,
         plugins: {
           legend: {
-            display: false,
+            position: "top",
+          },
+        },
+      },
+    });
+
+    // Gráfico de Tipo de Mascota
+    const ctxTipoMascota = document
+      .getElementById("tipoMascotaChart-manual")
+      .getContext("2d");
+    if (tipoMascotaChartManual) {
+      tipoMascotaChartManual.destroy();
+    }
+    tipoMascotaChartManual = new Chart(ctxTipoMascota, {
+      type: "pie",
+      data: {
+        labels: por_tipo_mascota.map(
+          (item) => item.tipo.charAt(0).toUpperCase() + item.tipo.slice(1)
+        ),
+        datasets: [
+          {
+            label: "Adopciones",
+            data: por_tipo_mascota.map((item) => item.cantidad),
+            backgroundColor: [
+              "rgba(247, 147, 30, 0.8)", // Naranja Pawtastic
+              "rgba(26, 148, 196, 0.8)", // Azul Pawtastic
+            ],
+            borderColor: "#fff",
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: "top",
           },
         },
       },
@@ -465,6 +496,27 @@ document.addEventListener("DOMContentLoaded", () => {
       fetchReportePersonalizado(inicio, fin);
     }
   });
+
+  // Listener para el botón de descarga de PDF
+  const btnDescargarPDF = document.getElementById("btn-descargar-pdf");
+  if (btnDescargarPDF) {
+    btnDescargarPDF.addEventListener("click", () => {
+      const elemento = document.getElementById("reporte-personalizado-container");
+      const fechaInicio = fechaInicioInput.value;
+      const fechaFin = fechaFinInput.value;
+      const nombreArchivo = `Reporte_Pawtastic_${fechaInicio}_a_${fechaFin}.pdf`;
+
+      const opt = {
+        margin:       0.5,
+        filename:     nombreArchivo,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, logging: false },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+
+      html2pdf().from(elemento).set(opt).save();
+    });
+  }
 
   // --- Carga Inicial Automática ---
   fetchDatosIniciales(); // Carga los indicadores clave y las stats por edad
