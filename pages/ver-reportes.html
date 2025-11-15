@@ -236,7 +236,8 @@
                 <input type="date" id="fecha_fin_manual" class="form-control" required>
               </div>
               <div class="col-md-auto d-flex align-items-end">
-                <button type="submit" class="btn btn-dark">Generar Reporte</button>
+                <button type="submit" class="btn btn-dark me-2">Generar</button>
+                <button type="button" id="btn-limpiar-reporte" class="btn btn-outline-secondary">Limpiar</button>
               </div>
             </form>
           </div>
@@ -248,7 +249,6 @@
     <div id="reporte-personalizado-container" class="d-none mt-4">
       <div class="d-flex justify-content-center align-items-center mb-3">
         <h3 class="text-center mb-0" id="titulo-reporte-personalizado"></h3>
-        <button id="btn-descargar-pdf" class="btn btn-danger ms-3"><i class="bi bi-file-earmark-pdf-fill"></i> Descargar PDF</button>
       </div>
       <!-- Estadísticas de Adopciones -->
       <h4 class="text-center mb-3">Adopciones</h4>
@@ -353,8 +353,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Librería para exportar a PDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <!-- Leaflet JS para el mapa interactivo -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="../js/toast.js"></script>

@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const fechaFinInput = document.getElementById("fecha_fin_manual");
   const fechaInicioInput = document.getElementById("fecha_inicio_manual");
+  const btnLimpiarReporte = document.getElementById("btn-limpiar-reporte");
 
   let viviendaChartManual = null;
   let tipoMascotaChartManual = null;
@@ -34,13 +35,8 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   const toggleLoading = (show) => {
     loadingSpinner.classList.toggle("d-none", !show);
-    // Oculta ambos contenedores mientras carga
     if (show) {
-      indicadoresClaveContainer.classList.add("d-none");
       reportePersonalizadoContainer.classList.add("d-none");
-      adopcionesRapidasContainer.classList.add("d-none");
-      adopcionesPorZonaContainer.classList.add("d-none");
-      mascotasEnEsperaContainer.classList.add("d-none");
     }
   };
 
@@ -57,7 +53,13 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    toggleLoading(true);
+    // Al generar un reporte personalizado, solo mostramos el spinner
+    // y ocultamos el contenedor de ese reporte específico. Los demás quedan visibles.
+    const spinner = document.getElementById("loading-spinner");
+    const container = document.getElementById("reporte-personalizado-container");
+
+    spinner.classList.remove("d-none");
+    container.classList.add("d-none");
 
     try {
       const url = `/api/reportes.php?fecha_inicio=${inicio}&fecha_fin=${fin}`;
@@ -87,7 +89,8 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error al obtener el reporte:", error);
       showToast(error.message, "danger");
     } finally {
-      toggleLoading(false);
+      // Ocultamos el spinner al finalizar
+      spinner.classList.add("d-none");
     }
   };
 
@@ -497,26 +500,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Listener para el botón de descarga de PDF
-  const btnDescargarPDF = document.getElementById("btn-descargar-pdf");
-  if (btnDescargarPDF) {
-    btnDescargarPDF.addEventListener("click", () => {
-      const elemento = document.getElementById("reporte-personalizado-container");
-      const fechaInicio = fechaInicioInput.value;
-      const fechaFin = fechaFinInput.value;
-      const nombreArchivo = `Reporte_Pawtastic_${fechaInicio}_a_${fechaFin}.pdf`;
+  btnLimpiarReporte.addEventListener("click", () => {
+    // Limpia las fechas
+    fechaInicioInput.value = "";
+    fechaFinInput.value = "";
 
-      const opt = {
-        margin:       0.5,
-        filename:     nombreArchivo,
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, logging: false },
-        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-      };
+    // Oculta el contenedor del reporte personalizado
+    reportePersonalizadoContainer.classList.add("d-none");
 
-      html2pdf().from(elemento).set(opt).save();
-    });
-  }
+    // Asegura que los reportes generales estén visibles
+    indicadoresClaveContainer.classList.remove("d-none");
+    // (Los otros ya deberían estar visibles, pero esto lo asegura)
+  });
 
   // --- Carga Inicial Automática ---
   fetchDatosIniciales(); // Carga los indicadores clave y las stats por edad
