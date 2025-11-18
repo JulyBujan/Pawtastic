@@ -63,11 +63,11 @@ try {
             $stmt = $conn->prepare("UPDATE documentacion_ong SET estado = ?, fecha_revision = CURRENT_TIMESTAMP WHERE ong_id = ? AND estado = 0");
             $stmt->bind_param("ii", $nuevo_estado, $ong_id);
             $stmt->execute();
-
-            if ($stmt->affected_rows > 0) {
+            
+            if ($stmt->affected_rows !== -1) {
                 echo json_encode(["message" => $message]);
             } else {
-                throw new Exception("No se encontró la solicitud o ya fue procesada.");
+                throw new Exception("Error al procesar la solicitud.");
             }
             $stmt->close();
             break;

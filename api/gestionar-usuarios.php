@@ -47,11 +47,10 @@ try {
             case 'habilitar':
                 $stmt = $conn->prepare("UPDATE usuarios SET estado = 0 WHERE id = ?");
                 $stmt->bind_param("i", $user_id);
-                $stmt->execute();
-                if ($stmt->affected_rows > 0) {
+                if ($stmt->execute() && $stmt->affected_rows !== -1) {
                     echo json_encode(["message" => "Usuario habilitado correctamente."]);
                 } else {
-                    throw new Exception("No se pudo habilitar al usuario o ya estaba habilitado.");
+                    throw new Exception("Error al habilitar al usuario.");
                 }
                 $stmt->close();
                 break;
@@ -63,11 +62,10 @@ try {
                 }
                 $stmt = $conn->prepare("UPDATE usuarios SET estado = 1 WHERE id = ?");
                 $stmt->bind_param("i", $user_id);
-                $stmt->execute();
-                if ($stmt->affected_rows > 0) {
+                if ($stmt->execute() && $stmt->affected_rows !== -1) {
                     echo json_encode(["message" => "Usuario deshabilitado correctamente."]);
                 } else {
-                    throw new Exception("No se pudo deshabilitar al usuario o ya estaba deshabilitado.");
+                    throw new Exception("Error al deshabilitar al usuario.");
                 }
                 $stmt->close();
                 break;
@@ -91,11 +89,10 @@ try {
 
                 $stmt = $conn->prepare("UPDATE usuarios SET ong_id = ? WHERE id = ?");
                 $stmt->bind_param("ii", $ong_id, $user_id);
-                $stmt->execute();
-                if ($stmt->affected_rows > 0) {
+                if ($stmt->execute() && $stmt->affected_rows !== -1) {
                     echo json_encode(["message" => "ONG asignada correctamente al usuario."]);
                 } else {
-                    throw new Exception("No se pudo asignar la ONG o ya estaba asignada.");
+                    throw new Exception("Error al asignar la ONG.");
                 }
                 $stmt->close();
                 break;

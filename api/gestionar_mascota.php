@@ -163,8 +163,10 @@ try {
         );
         $query->execute();
 
-        if ($query->affected_rows === 0) {
-            throw new Exception("No se realizaron cambios en la base de datos.");
+        // affected_rows can be 0 if the data submitted is the same as the existing data.
+        // This is not an error. An error is indicated by -1.
+        if ($query->affected_rows === -1) {
+            throw new Exception("Error al actualizar la mascota en la base de datos.");
         }
 
         echo json_encode(["message" => "Mascota actualizada con éxito."]);

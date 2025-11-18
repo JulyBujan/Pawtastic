@@ -53,12 +53,16 @@ try {
                 throw new Exception("Error en la operación de la base de datos.");
             }
 
-            if ($stmt->affected_rows > 0) {
-                http_response_code(isset($data->id_vacuna) ? 200 : 201); // 200 OK para update, 201 Created para insert
-                echo json_encode(["message" => $message]);
-            } else {
-                echo json_encode(["message" => "No se realizaron cambios."]);
+            // An error is indicated by -1. For an INSERT, 0 rows affected is also an error.
+            if ($stmt->affected_rows === -1 || (!isset($data->id_vacuna) && $stmt->affected_rows === 0)) {
+                throw new Exception("No se realizaron cambios en la base de datos.");
             }
+
+            // For an UPDATE, affected_rows can be 0 if no data changed, which is not an error.
+            // Set the correct status code and send the success message.
+            http_response_code(isset($data->id_vacuna) ? 200 : 201); // 200 OK for update, 201 Created for insert
+            echo json_encode(["message" => $message]);
+
             $stmt->close();
             break;
 
