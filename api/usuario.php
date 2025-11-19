@@ -8,6 +8,38 @@ require_once __DIR__ . '/verificar_token.php'; // Este script ya nos da el paylo
 $user_email = $decoded_token->email;
 $user_tipo = $decoded_token->tipo;
 
+/**
+ * Gestiona la subida de una foto de perfil de usuario.
+ * Si se sube una nueva, mueve el archivo, opcionalmente borra el antiguo y devuelve la nueva URL relativa.
+ *
+ * @param string|null $urlActual La URL relativa de la imagen actual para borrarla si se sube una nueva.
+ * @return string|null La URL relativa a guardar en la BD (la nueva o la actual).
+ * @throws Exception Si ocurre un error al mover el archivo.
+ */
+function manejarSubidaFotoPerfil($urlActual = null) {
+    // Si no se subió un archivo nuevo, devolvemos la URL que ya existía.
+    if (!isset($_FILES['foto_perfil']) || $_FILES['foto_perfil']['error'] !== UPLOAD_ERR_OK) {
+        return $urlActual;
+    }
+
+    $directorioBase = __DIR__ . '/../img/profile/'; // Usar ruta absoluta del servidor
+    if (!is_dir($directorioBase)) {
+        mkdir($directorioBase, 0777, true);
+    }
+
+    $nombreArchivo = "user_" . uniqid() . "_" . basename($_FILES["foto_perfil"]["name"]);
+    $rutaDestino = $directorioBase . $nombreArchivo;
+    $urlRelativa = "/img/profile/" . $nombreArchivo;
+
+    if (move_uploaded_file($_FILES["foto_perfil"]["tmp_name"], $rutaDestino)) {
+        // Si se subió una nueva imagen y existía una anterior, la borramos.
+        if ($urlActual && file_exists(__DIR__ . '/..' . $urlActual)) {
+            unlink(__DIR__ . '/..' . $urlActual);
+        }
+        return $urlRelativa; // Devolvemos la nueva URL relativa.
+    }
+    throw new Exception("Error al mover el archivo de imagen subido.");
+}
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // --- OBTENER DATOS DEL USUARIO ---
     try {
@@ -41,7 +73,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             unset($user['password']);
             unset($user['tokenv']);
             $user['tipo_documento'] = !is_null($user['tipo_documento']) ? (int)$user['tipo_documento'] : null;
-            // Convertir valores numéricos de preferencias a enteros
             $user['lat'] = !is_null($user['lat']) ? (float)$user['lat'] : null;
             $user['lon'] = !is_null($user['lon']) ? (float)$user['lon'] : null;
             $user['otras_mascotas'] = !is_null($user['otras_mascotas']) ? (int)$user['otras_mascotas'] : null;
@@ -64,32 +95,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // --- ACTUALIZAR DATOS O SUBIR FOTO ---
     if (isset($_FILES['foto_perfil'])) {
-        $directorio = "../img/profile/";
-        if (!is_dir($directorio)) {
-            mkdir($directorio, 0777, true);
-        }
+        // --- LÓGICA PARA SUBIR FOTO ---
+        try {
+            // 1. Obtener la URL de la foto actual para poder borrarla.
+            $stmt_current = $conn->prepare("SELECT foto_perfil_url FROM usuarios WHERE email = ?");
+            $stmt_current->bind_param("s", $user_email);
+            $stmt_current->execute();
+            $user_actual = $stmt_current->get_result()->fetch_assoc();
+            $stmt_current->close();
 
-        $nombreArchivo = "user_" . uniqid() . "_" . basename($_FILES["foto_perfil"]["name"]);
-        $rutaDestino = $directorio . $nombreArchivo;
-        $urlRelativa = "/img/profile/" . $nombreArchivo;
+            // 2. Procesar la subida de la nueva imagen.
+            $nuevaUrl = manejarSubidaFotoPerfil($user_actual['foto_perfil_url'] ?? null);
 
-        if (move_uploaded_file($_FILES["foto_perfil"]["tmp_name"], $rutaDestino)) {
-            try {
-                $stmt = $conn->prepare("UPDATE usuarios SET foto_perfil_url = ? WHERE email = ?"); // Solo puede actualizar su propia foto
-                $stmt->bind_param("ss", $urlRelativa, $user_email);
-                if ($stmt->execute()) {
-                    echo json_encode(["message" => "Foto actualizada con éxito.", "foto_perfil_url" => $urlRelativa]);
-                } else {
-                    throw new Exception("Error al guardar la URL en la base de datos.");
-                }
-                $stmt->close();
-            } catch (Exception $e) {
-                http_response_code(500);
-                echo json_encode(["message" => "Error en el servidor: " . $e->getMessage()]);
+            // 3. Actualizar la base de datos con la nueva URL.
+            $stmt_update = $conn->prepare("UPDATE usuarios SET foto_perfil_url = ? WHERE email = ?");
+            $stmt_update->bind_param("ss", $nuevaUrl, $user_email);
+            if (!$stmt_update->execute()) {
+                throw new Exception("Error al guardar la URL en la base de datos.");
             }
-        } else {
+            $stmt_update->close();
+
+            echo json_encode(["message" => "Foto actualizada con éxito.", "foto_perfil_url" => $nuevaUrl]);
+        } catch (Exception $e) {
             http_response_code(500);
-            echo json_encode(["message" => "Error al subir el archivo."]);
+            echo json_encode(["message" => "Error en el servidor: " . $e->getMessage()]);
         }
     } else { // Si se están actualizando los datos del formulario (JSON)
         $data = json_decode(file_get_contents("php://input"));
