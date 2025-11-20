@@ -10,11 +10,14 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $id_mascota = (int)$_GET['id'];
 
     try {
-        $query = "SELECT m.*, o.nombre AS ong_nombre, o.lat AS ong_lat, o.lon AS ong_lon 
+        $query = "SELECT m.id, m.nombre, m.tipo, m.edad, m.sexo, m.tamaño, m.descripcion, m.imagen, m.id_ong, 
+                         m.vacunado, m.esterilizado, m.chip, m.apto_ninos, m.apto_mascotas, m.estado,
+                         m.energia, m.sociabilidad, m.presencia, m.estilov, m.date_publicacion,
+                         m.breed, m.color,
+                         o.nombre AS ong_nombre, o.lat AS ong_lat, o.lon AS ong_lon 
                   FROM mascotas m
                   LEFT JOIN ONGs o ON m.id_ong = o.id
                   WHERE m.id = ?";
-                  
         $stmt = $conn->prepare($query);
         if (!$stmt) {
             throw new Exception("Error en la preparación de la consulta: " . $conn->error);
@@ -57,7 +60,11 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
         }
 
         // 3. Traer mascotas de esa ONG que no estén archivadas (estado != 2)
-        $stmt = $conn->prepare("SELECT * FROM mascotas WHERE id_ong = ? AND estado != 2 ORDER BY id DESC");
+        $stmt = $conn->prepare("SELECT id, nombre, tipo, edad, sexo, tamaño, descripcion, imagen, id_ong, 
+                                       vacunado, esterilizado, chip, apto_ninos, apto_mascotas, estado,
+                                       energia, sociabilidad, presencia, estilov, date_publicacion,
+                                       breed, color
+                                FROM mascotas WHERE id_ong = ? AND estado != 2 ORDER BY id DESC");
         $stmt->bind_param("i", $idOng);
         $stmt->execute();
         $mascotas = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);

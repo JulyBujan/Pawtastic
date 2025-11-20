@@ -121,6 +121,8 @@ $sexo = trim($_POST['sexo']);
 $tamaño = trim($_POST['tamaño']);
 $descripcion = trim($_POST['descripcion']);
 $vacunado = trim($_POST['vacunado']);
+$breed = !empty($_POST['breed']) ? trim($_POST['breed']) : null; // Sanitizar breed
+$color = !empty($_POST['color']) ? trim($_POST['color']) : null; // Sanitizar color
 $esterilizado = trim($_POST['esterilizado']);
 $chip = trim($_POST['chip']);
 $apto_ninos = (int)$_POST['apto_ninos'];
@@ -149,15 +151,15 @@ try {
 
         $query = $conn->prepare("
             UPDATE mascotas SET 
-            nombre = ?, tipo = ?, edad = ?, sexo = ?, tamaño = ?, descripcion = ?, imagen = ?, 
+            nombre = ?, tipo = ?, edad = ?, sexo = ?, tamaño = ?, descripcion = ?, imagen = ?, breed = ?, color = ?,
             vacunado = ?, esterilizado = ?, chip = ?, apto_ninos = ?, apto_mascotas = ?, 
             energia = ?, sociabilidad = ?, presencia = ?, estilov = ?
             WHERE id = ? AND id_ong = ?
         ");
         $query->bind_param(
-            "ssisssssssiiiiiiii", 
-            $nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $imagen_path, 
-            $vacunado, $esterilizado, $chip, $apto_ninos, $apto_mascotas, 
+            "ssissssssssssiiiiiiii", 
+            $nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $imagen_path, $breed, $color,
+            $vacunado, $esterilizado, $chip, $apto_ninos, $apto_mascotas,
             $energia, $sociabilidad, $presencia, $estilov, 
             $idMascota, $idOng
         );
@@ -177,12 +179,12 @@ try {
         $imagen_path = manejarSubidaImagen(); // Usamos la función para manejar la subida.
         $query = $conn->prepare("
             INSERT INTO mascotas 
-            (nombre, tipo, edad, sexo, tamaño, descripcion, imagen, id_ong, vacunado, esterilizado, chip, apto_ninos, apto_mascotas,
+            (nombre, tipo, edad, sexo, tamaño, descripcion, imagen, id_ong, breed, color, vacunado, esterilizado, chip, apto_ninos, apto_mascotas,
             energia, sociabilidad, presencia, estilov, date_publicacion)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
         ");
-        $query->bind_param("ssissssisssiiiiii", 
-            $nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $imagen_path, $idOng, $vacunado, $esterilizado, $chip, $apto_ninos, $apto_mascotas, 
+        $query->bind_param("ssissssissssssiiiiii", 
+            $nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $imagen_path, $idOng, $breed, $color, $vacunado, $esterilizado, $chip, $apto_ninos, $apto_mascotas, 
             $energia, $sociabilidad, $presencia, $estilov);
         $query->execute();
 
