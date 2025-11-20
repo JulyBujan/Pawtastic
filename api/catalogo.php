@@ -22,11 +22,11 @@ if (!empty($especie)) {
 
 if (!empty($edad)) {
     if ($edad === 'cachorro') {
-        $query .= " AND edad BETWEEN 0 AND 3";
+        $query .= " AND edad BETWEEN 0 AND 42";
     } elseif ($edad === 'adulto') {
-        $query .= " AND edad BETWEEN 4 AND 8";
+        $query .= " AND edad BETWEEN 43 AND 95";
     } elseif ($edad === 'senior') {
-        $query .= " AND edad > 8";
+        $query .= " AND edad > 95";
     }
 }
 
