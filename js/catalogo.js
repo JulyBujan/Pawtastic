@@ -19,6 +19,15 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /**
+     * Resetea los campos de los filtros a su valor por defecto ("Todas").
+     */
+    const resetearFiltros = () => {
+        document.getElementById('filtroEspecie').value = '';
+        document.getElementById('filtroEdad').value = '';
+        document.getElementById('filtroTamano').value = '';
+    };
+
+    /**
      * Renderiza las tarjetas de mascotas en el contenedor.
      * @param {Array} mascotas - El array de objetos de mascotas.
      * @param {boolean} porCompatibilidad - Flag para saber si se debe mostrar la compatibilidad.
@@ -89,6 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             renderizarMascotas(data, true); // true para indicar que es por compatibilidad
+            resetearFiltros(); // Reiniciamos los filtros visualmente
 
         } catch (error) {
             console.error('Error al buscar por compatibilidad:', error);
@@ -129,6 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             renderizarMascotas(data, false, true); // true para indicar que es por cercanía
+            resetearFiltros(); // Reiniciamos los filtros visualmente
 
         } catch (error) {
             console.error('Error al buscar por cercanía:', error);
