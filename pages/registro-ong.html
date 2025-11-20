@@ -23,9 +23,11 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link" href="../index.html">Inicio</a></li>
-                    <li class="nav-item"><a class="nav-link" href="login.html">Iniciar Sesión</a></li>
+                <ul class="navbar-nav align-items-center">
+                    <li class="nav-item">
+                        <a class="btn btn-custom-nav me-2" href="../index.html">Inicio</a>
+                    </li>
+                    <li class="nav-item"><a class="btn btn-custom-nav" href="login.html">Iniciar Sesión</a></li>
                 </ul>
             </div>
         </div>
@@ -54,7 +56,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label for="ong-cuit" class="form-label">CUIT</label>
-                                    <input type="text" class="form-control" id="ong-cuit" placeholder="Ej: 30-12345678-9" required>
+                                    <input type="text" class="form-control" id="ong-cuit"
+                                        placeholder="Ej: 30-12345678-9" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="ong-fecha-constitucion" class="form-label">Fecha de Constitución</label>
@@ -92,16 +95,20 @@
                                 </div>
                                 <div class="col-md-12">
                                     <label for="ong-constancia-cuit" class="form-label">Constancia de CUIT (PDF)</label>
-                                    <input class="form-control" type="file" id="ong-constancia-cuit" accept=".pdf" required>
+                                    <input class="form-control" type="file" id="ong-constancia-cuit" accept=".pdf"
+                                        required>
                                 </div>
                                 <div class="col-md-12">
-                                    <label for="ong-acta-autoridades" class="form-label">Acta de Designación de Autoridades (PDF)</label>
-                                    <input class="form-control" type="file" id="ong-acta-autoridades" accept=".pdf" required>
+                                    <label for="ong-acta-autoridades" class="form-label">Acta de Designación de
+                                        Autoridades (PDF)</label>
+                                    <input class="form-control" type="file" id="ong-acta-autoridades" accept=".pdf"
+                                        required>
                                 </div>
                             </div>
 
                             <div class="d-grid mt-4">
-                                <button type="submit" class="btn btn-primary btn-lg">Enviar Solicitud de Registro</button>
+                                <button type="submit" class="btn btn-primary btn-lg">Enviar Solicitud de
+                                    Registro</button>
                             </div>
                         </form>
                     </div>
@@ -115,7 +122,43 @@
 
     <!-- FOOTER -->
     <footer class="bg-footer text-dark pt-4 pb-3 mt-auto">
-        <div class="container text-center"><hr class="border-dark"><small>&copy; 2025 Pawtastic. Todos los derechos reservados.</small></div>
+        <div class="container text-center text-md-start">
+            <div class="row">
+                <div class="col-md-4 mb-3 text-center">
+                    <h5 class="fw-bold mt-2">Pawtastic</h5>
+                    <p class="small">Conectamos corazones con patas. Gracias por elegir adoptar.</p>
+                    <a href="../index.html">
+                        <img src="../img/logo.png" alt="Logo Pawtastic" style="max-width: 100px; border-radius: 40%;">
+                    </a>
+                </div>
+                <div class="col-md-4 mb-3 d-flex flex-column align-items-center">
+                    <h5 class="fw-bold text-center">Navegación</h5>
+                    <ul class="list-unstyled text-center">
+                        <li><a href="https://interfacessistemas3.my.canva.site/manual-de-usuario-pawtastic"
+                                class="text-dark text-decoration-none" target="_blank" rel="noopener noreferrer">Manual
+                                de Usuario</a>
+                        </li>
+                        <li><a href="https://drive.google.com/drive/folders/1UiabMGZbGNRz8LPfdU74eroOOLEoH8Xb?usp=sharing"
+                                class="text-dark text-decoration-none" target="_blank"
+                                rel="noopener noreferrer">Documentación del
+                                Proyecto</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-3 fs-5">
+                    <h5 class="fw-bold">Seguinos</h5>
+                    <a href="https://www.facebook.com/profile.php?id=61581919419192" class="text-dark me-3"><i
+                            class="bi bi-facebook" style="font-size: 2.5rem;"></i></a>
+                    <a href="https://www.instagram.com/pawtasticarg/" class="text-dark me-3"><i class="bi bi-instagram"
+                            style="font-size: 2.5rem;"></i></a>
+                    <a href="https://x.com/PawtasticArg" class="text-dark"><i class="bi bi-x-circle-fill"
+                            style="font-size: 2.5rem;"></i></a>
+                </div>
+            </div>
+            <hr class="border-dark">
+            <div class="text-center">
+                <small>&copy; 2025 Pawtastic. Todos los derechos reservados.</small>
+            </div>
+        </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
