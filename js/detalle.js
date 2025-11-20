@@ -59,6 +59,42 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  const getRaza = (breedValue) => {
+    const razas = {
+      "DOMESTIC SH": "Mestizo Pelo Corto",
+      "PIT BULL": "Pit Bull",
+      "LABRADOR RETR": "Labrador Retriever",
+      "GERM SHEPHERD": "Pastor Alemán",
+      "DOMESTIC MH": "Mestizo Pelo Mediano",
+      "BEAGLE": "Beagle",
+      "BOXER": "Boxer",
+      "DOMESTIC LH": "Mestizo Pelo Largo",
+      "CHIHUAHUA SH": "Chihuahua Pelo Corto",
+      "SHIH TZU": "Shih Tzu",
+      "SIBERIAN HUSKY": "Husky Siberiano",
+      "ALASKAN HUSKY": "Husky de Alaska",
+      "OTHER": "Otro",
+    };
+    return razas[breedValue] || breedValue || "No especificada";
+  };
+
+  const getColor = (colorValue) => {
+    const colores = {
+      "BLACK": "Negro",
+      "TABBY": "Atigrado",
+      "WHITE": "Blanco",
+      "BROWN": "Marrón",
+      "GRAY": "Gris",
+      "TAN": "Canela",
+      "BRINDLE": "Brindle",
+      "TORTIE": "Tortuga",
+      "ORANGE": "Naranja",
+      "CALICO": "Calicó",
+      "OTHER": "Otro",
+    };
+    return colores[colorValue] || colorValue || "No especificado";
+  };
+
   /**
    * Convierte la edad total en meses a un formato legible de años y meses.
    * @param {number} totalMeses - La edad total de la mascota en meses.
@@ -245,6 +281,8 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     document.getElementById("mascota-especie").textContent = mascota.tipo;
     document.getElementById("mascota-tamano").textContent = mascota.tamaño;
+    document.getElementById("mascota-raza").textContent = getRaza(mascota.breed);
+    document.getElementById("mascota-color").textContent = getColor(mascota.color);
     document.getElementById("mascota-vacunas").textContent = mascota.vacunado;
     document.getElementById("mascota-esterilizado").textContent =
       mascota.esterilizado;

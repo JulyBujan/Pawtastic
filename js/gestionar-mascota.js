@@ -67,6 +67,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       document.getElementById("sexo").value = mascota.sexo;
       document.getElementById("tamaño").value = mascota.tamaño;
+      document.getElementById("breed").value = mascota.breed; // Seleccionar raza
+      document.getElementById("color").value = mascota.color; // Seleccionar color
       document.getElementById("descripcion").value = mascota.descripcion;
       document.getElementById("vacunado").value = mascota.vacunado;
       document.getElementById("esterilizado").value = mascota.esterilizado;

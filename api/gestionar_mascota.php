@@ -157,7 +157,7 @@ try {
             WHERE id = ? AND id_ong = ?
         ");
         $query->bind_param(
-            "ssissssssssssiiiiiiii", 
+            "ssissssssssssiiiiiii", 
             $nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $imagen_path, $breed, $color,
             $vacunado, $esterilizado, $chip, $apto_ninos, $apto_mascotas,
             $energia, $sociabilidad, $presencia, $estilov, 
@@ -182,8 +182,8 @@ try {
             (nombre, tipo, edad, sexo, tamaño, descripcion, imagen, id_ong, breed, color, vacunado, esterilizado, chip, apto_ninos, apto_mascotas,
             energia, sociabilidad, presencia, estilov, date_publicacion)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
-        ");
-        $query->bind_param("ssissssissssssiiiiii", 
+        "); // The last value is NOW(), which doesn't need a placeholder
+        $query->bind_param("ssissssissssssiiiii",  // Corrected: 19 types for 19 variables
             $nombre, $tipo, $edad, $sexo, $tamaño, $descripcion, $imagen_path, $idOng, $breed, $color, $vacunado, $esterilizado, $chip, $apto_ninos, $apto_mascotas, 
             $energia, $sociabilidad, $presencia, $estilov);
         $query->execute();

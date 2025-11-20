@@ -176,6 +176,22 @@ async function estimarAdopcion(mascota) {
 
     const diasRestantes = Math.max(0, Math.round(diasEstimados - diasPasados));
 
+    // --- Generar HTML para las probabilidades temporales ---
+    let probabilidadesHTML = '';
+    if (prediction.probabilidades_temporales) {
+      probabilidadesHTML += '<li class="list-group-item"><h6 class="mb-1 mt-2 text-center">Probabilidades Temporales</h6></li>';
+      for (const key in prediction.probabilidades_temporales) {
+        // Formatear la clave para que sea legible: "adopcion_en_menos_de_30_dias" -> "Adopción en menos de 30 días"
+        const label = key.replace(/_/g, ' ').replace('adopcion en menos de ', '').replace(' dias', ' días');
+        const formattedLabel = label.charAt(0).toUpperCase() + label.slice(1);
+        
+        probabilidadesHTML += `
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            ${formattedLabel}: <span class="badge bg-secondary rounded-pill">${prediction.probabilidades_temporales[key]}</span>
+          </li>`;
+      }
+    }
+
     // --- Mostrar resultados ---
     modalBody.innerHTML = `
       <h6 class="card-title text-center mb-3">Resultados para: <strong>${mascota.nombre}</strong></h6>
@@ -197,6 +213,7 @@ async function estimarAdopcion(mascota) {
             La estimación original fue de ${prediction.dias_estimados} días. Han pasado ${diasPasados} día(s) desde su publicación.
           </small>
         </li>
+        ${probabilidadesHTML}
       </ul>
       <div class="alert alert-secondary mt-3" role="alert">
         <small><i class="bi bi-info-circle-fill"></i> Esta es una estimación basada en un modelo de Machine Learning y no garantiza el tiempo real de adopción.</small>
