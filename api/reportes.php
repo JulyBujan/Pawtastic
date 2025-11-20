@@ -19,7 +19,8 @@ function generarReporteParaPeriodo($conn, $id_ong, $fecha_inicio, $fecha_fin) {
         'adopciones' => [],
         'publicaciones' => [],
         'metricas_clave' => [],
-        'perfil_adopcion' => [] // Nueva sección para los gráficos de perfil
+        'perfil_adopcion' => [],
+        'tasa_exito' => [] // Nueva sección para la tasa de éxito
     ];
 
     // --- 1. ESTADÍSTICAS DE ADOPCIONES ---
@@ -160,6 +161,28 @@ function generarReporteParaPeriodo($conn, $id_ong, $fecha_inicio, $fecha_fin) {
     $result_tipo_mascota = $stmt_tipo_mascota->get_result()->fetch_all(MYSQLI_ASSOC);
     $reporte['perfil_adopcion']['por_tipo_mascota'] = $result_tipo_mascota;
     $stmt_tipo_mascota->close();
+
+    // --- 5. TASA DE ÉXITO DE POSTULACIONES ---
+    $stmt_tasa_exito = $conn->prepare(
+        "SELECT
+            SUM(CASE WHEN estado = 1 AND fecha_fin BETWEEN ? AND ? THEN 1 ELSE 0 END) as aprobadas,
+            SUM(CASE WHEN estado = 2 AND fecha_actualizacion BETWEEN ? AND ? THEN 1 ELSE 0 END) as rechazadas
+        FROM adopciones
+        WHERE id_ong = ?
+          AND estado IN (1, 2)"
+    );
+    if (!$stmt_tasa_exito) {
+        throw new Exception("Error al preparar la consulta de tasa de éxito: " . $conn->error);
+    }
+    // Se bindean 4 fechas y el id_ong
+    $stmt_tasa_exito->bind_param("ssssi", $fecha_inicio, $fecha_fin_full, $fecha_inicio, $fecha_fin_full, $id_ong);
+    $stmt_tasa_exito->execute();
+    $result_tasa_exito = $stmt_tasa_exito->get_result()->fetch_assoc();
+    $reporte['tasa_exito'] = [
+        'aprobadas' => (int)$result_tasa_exito['aprobadas'],
+        'rechazadas' => (int)$result_tasa_exito['rechazadas']
+    ];
+    $stmt_tasa_exito->close();
 
     return $reporte;
 }

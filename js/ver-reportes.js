@@ -317,6 +317,9 @@ document.addEventListener("DOMContentLoaded", () => {
    * @param {object} data - La respuesta de la API con los bloques de 30 y 90 días.
    */
   const renderizarIndicadoresClave = (data) => {
+    // PRUEBA DE DEPURACIÓN: Mostramos en la consola los datos que llegan.
+    console.log("Datos recibidos para indicadores clave:", data);
+
     const tiempos30 =
       data.ultimos_30_dias.metricas_clave.tiempo_promedio_adopcion || {};
     document.getElementById("tiempo-promedio-perros-30").textContent =
@@ -330,6 +333,30 @@ document.addEventListener("DOMContentLoaded", () => {
       tiempos90.perro ?? "--";
     document.getElementById("tiempo-promedio-gatos-90").textContent =
       tiempos90.gato ?? "--";
+
+    // --- Calcular y mostrar Tasa de Éxito para 30 días ---
+    const tasaExito30 = data.ultimos_30_dias.tasa_exito || {};
+    const aprobadas30 = tasaExito30.aprobadas ?? 0;
+    const rechazadas30 = tasaExito30.rechazadas ?? 0;
+    const total30 = aprobadas30 + rechazadas30;
+    const porcientoAprobadas30 =
+      total30 > 0 ? Math.round((aprobadas30 / total30) * 100) : 0;
+    const porcientoRechazadas30 =
+      total30 > 0 ? Math.round((rechazadas30 / total30) * 100) : 0;
+    document.getElementById("tasa-aprobadas-30").textContent = `${porcientoAprobadas30}%`;
+    document.getElementById("tasa-rechazadas-30").textContent = `${porcientoRechazadas30}%`;
+
+    // --- Calcular y mostrar Tasa de Éxito para 90 días ---
+    const tasaExito90 = data.ultimos_90_dias.tasa_exito || {};
+    const aprobadas90 = tasaExito90.aprobadas ?? 0;
+    const rechazadas90 = tasaExito90.rechazadas ?? 0;
+    const total90 = aprobadas90 + rechazadas90;
+    const porcientoAprobadas90 =
+      total90 > 0 ? Math.round((aprobadas90 / total90) * 100) : 0;
+    const porcientoRechazadas90 =
+      total90 > 0 ? Math.round((rechazadas90 / total90) * 100) : 0;
+    document.getElementById("tasa-aprobadas-90").textContent = `${porcientoAprobadas90}%`;
+    document.getElementById("tasa-rechazadas-90").textContent = `${porcientoRechazadas90}%`;
 
     indicadoresClaveContainer.classList.remove("d-none");
   };
