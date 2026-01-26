@@ -187,6 +187,59 @@ INSERT INTO `adopciones` (`id`, `id_usuario`, `id_mascota`, `id_ong`, `comentari
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `adopcion_eventos`
+--
+
+CREATE TABLE `adopcion_eventos` (
+  `id` int NOT NULL,
+  `adopcion_id` int NOT NULL,
+  `actor_id` int NOT NULL,
+  `tipo` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `estado_anterior` tinyint DEFAULT NULL,
+  `estado_nuevo` tinyint DEFAULT NULL,
+  `detalle` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `metadata` json DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notificaciones`
+--
+
+CREATE TABLE `notificaciones` (
+  `id` int NOT NULL,
+  `usuario_id` int NOT NULL,
+  `actor_id` int DEFAULT NULL,
+  `tipo` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `titulo` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `cuerpo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `entidad_tipo` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `entidad_id` int DEFAULT NULL,
+  `leida_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `payload` json DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `usuario_notificacion_preferencias`
+--
+
+CREATE TABLE `usuario_notificacion_preferencias` (
+  `id` int NOT NULL,
+  `usuario_id` int NOT NULL,
+  `tipo` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `habilitado` tinyint NOT NULL DEFAULT '1',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `documentacion_ong`
 --
 
@@ -477,6 +530,14 @@ ALTER TABLE `adopciones`
   ADD KEY `id_ong` (`id_ong`);
 
 --
+-- Indexes for table `adopcion_eventos`
+--
+ALTER TABLE `adopcion_eventos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `adopcion_id` (`adopcion_id`),
+  ADD KEY `actor_id` (`actor_id`);
+
+--
 -- Indexes for table `documentacion_ong`
 --
 ALTER TABLE `documentacion_ong`
@@ -505,11 +566,27 @@ ALTER TABLE `mascota_vacunas`
   ADD KEY `id_vacuna` (`id_vacuna`);
 
 --
+-- Indexes for table `notificaciones`
+--
+ALTER TABLE `notificaciones`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `usuario_id` (`usuario_id`),
+  ADD KEY `actor_id` (`actor_id`),
+  ADD KEY `idx_notif_user_unread` (`usuario_id`, `leida_at`, `created_at`);
+
+--
 -- Indexes for table `ONGs`
 --
 ALTER TABLE `ONGs`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `cuit` (`cuit`);
+
+--
+-- Indexes for table `usuario_notificacion_preferencias`
+--
+ALTER TABLE `usuario_notificacion_preferencias`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_usuario_tipo` (`usuario_id`, `tipo`);
 
 --
 -- Indexes for table `usuarios`
@@ -536,6 +613,12 @@ ALTER TABLE `adopciones`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
+-- AUTO_INCREMENT for table `adopcion_eventos`
+--
+ALTER TABLE `adopcion_eventos`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `documentacion_ong`
 --
 ALTER TABLE `documentacion_ong`
@@ -560,6 +643,18 @@ ALTER TABLE `ONGs`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
+-- AUTO_INCREMENT for table `notificaciones`
+--
+ALTER TABLE `notificaciones`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `usuario_notificacion_preferencias`
+--
+ALTER TABLE `usuario_notificacion_preferencias`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `usuarios`
 --
 ALTER TABLE `usuarios`
@@ -582,6 +677,13 @@ ALTER TABLE `adopciones`
   ADD CONSTRAINT `adopciones_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `adopciones_ibfk_2` FOREIGN KEY (`id_mascota`) REFERENCES `mascotas` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `adopciones_ibfk_3` FOREIGN KEY (`id_ong`) REFERENCES `ONGs` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `adopcion_eventos`
+--
+ALTER TABLE `adopcion_eventos`
+  ADD CONSTRAINT `adopcion_eventos_ibfk_1` FOREIGN KEY (`adopcion_id`) REFERENCES `adopciones` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `adopcion_eventos_ibfk_2` FOREIGN KEY (`actor_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `documentacion_ong`
@@ -609,10 +711,23 @@ ALTER TABLE `mascota_vacunas`
   ADD CONSTRAINT `mascota_vacunas_ibfk_2` FOREIGN KEY (`id_vacuna`) REFERENCES `vacunas` (`id_vacuna`);
 
 --
+-- Constraints for table `notificaciones`
+--
+ALTER TABLE `notificaciones`
+  ADD CONSTRAINT `notificaciones_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `notificaciones_ibfk_2` FOREIGN KEY (`actor_id`) REFERENCES `usuarios` (`id`) ON DELETE SET NULL;
+
+--
 -- Constraints for table `usuarios`
 --
 ALTER TABLE `usuarios`
   ADD CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`ong_id`) REFERENCES `ONGs` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `usuario_notificacion_preferencias`
+--
+ALTER TABLE `usuario_notificacion_preferencias`
+  ADD CONSTRAINT `usuario_notificacion_preferencias_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
