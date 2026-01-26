@@ -693,7 +693,7 @@
         return;
       }
       try {
-        const response = await fetch("../api/notificaciones.php?limit=6", {
+        const response = await fetch("../api/notificaciones.php?limit=6&unread=1", {
           headers: {
             Authorization: "Bearer " + token
           }
