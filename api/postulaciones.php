@@ -65,6 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Manejar la adición de comentarios
     $data = json_decode(file_get_contents("php://input"));
+    $inTransaction = false;
 
     try {
         // Primero, obtenemos el ID del usuario/ONG desde la base de datos usando el email del token
@@ -89,11 +90,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
             // ... (validaciones de comentario)
 
-            $stmt_adopcion = $conn->prepare("SELECT id_usuario, id_ong, comentarios FROM adopciones WHERE id = ?");
+            $conn->begin_transaction();
+            $inTransaction = true;
+
+            $stmt_adopcion = $conn->prepare("SELECT a.id_usuario, a.id_ong, a.id_mascota, a.comentarios, m.nombre AS mascota_nombre FROM adopciones a JOIN mascotas m ON a.id_mascota = m.id WHERE a.id = ?");
             $stmt_adopcion->bind_param("i", $adopcion_id);
             $stmt_adopcion->execute();
             $adopcion = $stmt_adopcion->get_result()->fetch_assoc();
             $stmt_adopcion->close();
+            if (!$adopcion) {
+                $conn->rollback();
+                $inTransaction = false;
+                http_response_code(404);
+                echo json_encode(["message" => "Postulación no encontrada."]);
+                exit;
+            }
+            $mascotaNombre = $adopcion['mascota_nombre'] ?? 'mascota';
 
             // ... (verificación de permisos para comentar)
 
@@ -105,12 +117,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
             $stmt_update = $conn->prepare("UPDATE adopciones SET comentarios = ? WHERE id = ?");
             $stmt_update->bind_param("si", $nuevo_comentarios_final, $adopcion_id);
-            if ($stmt_update->execute()) {
-                echo json_encode(["message" => "Comentario agregado con éxito.", "comentarios" => $nuevo_comentarios_final]);
-            } else {
+            if (!$stmt_update->execute()) {
                 throw new Exception("Error al actualizar el comentario: " . $conn->error);
             }
             $stmt_update->close();
+
+            $eventoTipo = "comentario_agregado";
+            $eventoMeta = json_encode([
+                "comentario" => $nuevo_comentario_texto
+            ]);
+            $stmtEvento = $conn->prepare("INSERT INTO adopcion_eventos (adopcion_id, actor_id, tipo, detalle, metadata) VALUES (?, ?, ?, ?, ?)");
+            $stmtEvento->bind_param("iisss", $adopcion_id, $usuario_data['id'], $eventoTipo, $nuevo_comentario_texto, $eventoMeta);
+            if (!$stmtEvento->execute()) {
+                throw new Exception("Error al registrar el evento: " . $stmtEvento->error);
+            }
+            $stmtEvento->close();
+
+            $notifTipo = "comentario_agregado";
+            $notifTitulo = "Nuevo comentario";
+            $notifCuerpo = "Nuevo comentario en la postulacion de " . $mascotaNombre . ".";
+            $notifEntidadTipo = "adopcion";
+            $notifEntidadId = $adopcion_id;
+            $notifPayload = json_encode([
+                "adopcion_id" => $adopcion_id,
+                "mascota_id" => $adopcion['id_mascota']
+            ]);
+            $stmtNotif = $conn->prepare("INSERT INTO notificaciones (usuario_id, actor_id, tipo, titulo, cuerpo, entidad_tipo, entidad_id, payload) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+
+            if ($user_tipo === 'ong') {
+                $usuarioDestino = (int) $adopcion['id_usuario'];
+                $stmtNotif->bind_param("iissssis", $usuarioDestino, $usuario_data['id'], $notifTipo, $notifTitulo, $notifCuerpo, $notifEntidadTipo, $notifEntidadId, $notifPayload);
+                if (!$stmtNotif->execute()) {
+                    throw new Exception("Error al crear la notificacion: " . $stmtNotif->error);
+                }
+            } else {
+                $stmtOngUsers = $conn->prepare("SELECT id FROM usuarios WHERE tipo = 'ong' AND ong_id = ?");
+                $stmtOngUsers->bind_param("i", $adopcion['id_ong']);
+                $stmtOngUsers->execute();
+                $resultOngUsers = $stmtOngUsers->get_result();
+                while ($row = $resultOngUsers->fetch_assoc()) {
+                    $ongUserId = (int) $row['id'];
+                    $stmtNotif->bind_param("iissssis", $ongUserId, $usuario_data['id'], $notifTipo, $notifTitulo, $notifCuerpo, $notifEntidadTipo, $notifEntidadId, $notifPayload);
+                    if (!$stmtNotif->execute()) {
+                        throw new Exception("Error al crear la notificacion: " . $stmtNotif->error);
+                    }
+                }
+                $stmtOngUsers->close();
+            }
+
+            $stmtNotif->close();
+            $conn->commit();
+            $inTransaction = false;
+            echo json_encode(["message" => "Comentario agregado con éxito.", "comentarios" => $nuevo_comentarios_final]);
 
         } elseif (isset($data->new_status)) {
             // --- LÓGICA PARA ACTUALIZAR ESTADO ---
@@ -121,41 +179,92 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             }
 
             $adopcion_id = $data->adopcion_id;
-            $new_status = $data->new_status;
+            $new_status = (int) $data->new_status;
+
+            $conn->begin_transaction();
+            $inTransaction = true;
 
             // Obtener la postulación para verificar que pertenece a la ONG
-            $stmt_adopcion = $conn->prepare("SELECT id_ong FROM adopciones WHERE id = ?");
+            $stmt_adopcion = $conn->prepare("SELECT a.id_ong, a.id_usuario, a.id_mascota, a.estado, m.nombre AS mascota_nombre FROM adopciones a JOIN mascotas m ON a.id_mascota = m.id WHERE a.id = ?");
             $stmt_adopcion->bind_param("i", $adopcion_id);
             $stmt_adopcion->execute();
             $adopcion = $stmt_adopcion->get_result()->fetch_assoc();
             $stmt_adopcion->close();
 
             if (!$adopcion) {
+                $conn->rollback();
+                $inTransaction = false;
                 http_response_code(404);
                 echo json_encode(["message" => "Postulación no encontrada."]);
                 exit;
             }
 
             if ($usuario_data['ong_id'] != $adopcion['id_ong']) {
+                $conn->rollback();
+                $inTransaction = false;
                 http_response_code(403);
                 echo json_encode(["message" => "No tienes permiso para modificar esta postulación."]);
                 exit;
             }
 
+            $estadoAnterior = (int) $adopcion['estado'];
             $stmt_update = $conn->prepare("UPDATE adopciones SET estado = ? WHERE id = ?");
             $stmt_update->bind_param("ii", $new_status, $adopcion_id);
-            if ($stmt_update->execute()) {
-                echo json_encode(["message" => "Estado de la postulación actualizado con éxito."]);
-            } else {
+            if (!$stmt_update->execute()) {
                 throw new Exception("Error al actualizar el estado: " . $conn->error);
             }
             $stmt_update->close();
+
+            $eventoTipo = "estado_actualizado";
+            $eventoDetalle = "Estado actualizado";
+            $eventoMeta = json_encode([
+                "estado_anterior" => $estadoAnterior,
+                "estado_nuevo" => $new_status
+            ]);
+            $stmtEvento = $conn->prepare("INSERT INTO adopcion_eventos (adopcion_id, actor_id, tipo, estado_anterior, estado_nuevo, detalle, metadata) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmtEvento->bind_param("iisiiss", $adopcion_id, $usuario_data['id'], $eventoTipo, $estadoAnterior, $new_status, $eventoDetalle, $eventoMeta);
+            if (!$stmtEvento->execute()) {
+                throw new Exception("Error al registrar el evento: " . $stmtEvento->error);
+            }
+            $stmtEvento->close();
+
+            $estadoLabels = [
+                0 => "Pendiente",
+                1 => "Aprobada",
+                2 => "Rechazada"
+            ];
+            $estadoTexto = $estadoLabels[$new_status] ?? "Actualizada";
+            $notifTipo = "estado_actualizado";
+            $notifTitulo = "Estado actualizado";
+            $notifCuerpo = "Tu postulacion para " . $adopcion['mascota_nombre'] . " fue " . $estadoTexto . ".";
+            $notifEntidadTipo = "adopcion";
+            $notifEntidadId = $adopcion_id;
+            $notifPayload = json_encode([
+                "adopcion_id" => $adopcion_id,
+                "mascota_id" => $adopcion['id_mascota'],
+                "estado_anterior" => $estadoAnterior,
+                "estado_nuevo" => $new_status
+            ]);
+            $stmtNotif = $conn->prepare("INSERT INTO notificaciones (usuario_id, actor_id, tipo, titulo, cuerpo, entidad_tipo, entidad_id, payload) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $usuarioDestino = (int) $adopcion['id_usuario'];
+            $stmtNotif->bind_param("iissssis", $usuarioDestino, $usuario_data['id'], $notifTipo, $notifTitulo, $notifCuerpo, $notifEntidadTipo, $notifEntidadId, $notifPayload);
+            if (!$stmtNotif->execute()) {
+                throw new Exception("Error al crear la notificacion: " . $stmtNotif->error);
+            }
+            $stmtNotif->close();
+
+            $conn->commit();
+            $inTransaction = false;
+            echo json_encode(["message" => "Estado de la postulación actualizado con éxito."]);
         } else {
             http_response_code(400);
             echo json_encode(["message" => "Petición no válida."]);
         }
 
     } catch (Exception $e) {
+        if ($inTransaction) {
+            $conn->rollback();
+        }
         http_response_code(500);
         echo json_encode(["message" => "Error en el servidor: " . $e->getMessage()]);
     }
