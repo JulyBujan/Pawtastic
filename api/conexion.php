@@ -1,8 +1,8 @@
 <?php
-$host = $_ENV["MYSQL_HOST"];
-$user = $_ENV["MYSQL_USER"];
-$pass = $_ENV["MYSQL_PASSWORD"];
-$db = $_ENV["MYSQL_DB"];
+$host = getenv("MYSQL_HOST") ?: ($_ENV["MYSQL_HOST"] ?? "db");
+$user = getenv("MYSQL_USER") ?: ($_ENV["MYSQL_USER"] ?? "");
+$pass = getenv("MYSQL_PASSWORD") ?: ($_ENV["MYSQL_PASSWORD"] ?? "");
+$db = getenv("MYSQL_DB") ?: ($_ENV["MYSQL_DB"] ?? "");
 
 $conn = new mysqli($host, $user, $pass, $db);
 

@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mis Mascotas Mockup | Pawtastic</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" href="../img/favicon.ico" type="image/png">
+  <style>
+    :root {
+      --catalog-bg: radial-gradient(circle at top, #f7f4ee 0%, #ece7dd 45%, #e2ddcf 100%);
+      --card-surface: #ffffff;
+      --card-border: rgba(27, 36, 54, 0.12);
+      --card-shadow: 0 18px 45px rgba(27, 36, 54, 0.12);
+      --nav-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+      --pill-bg: rgba(26, 148, 196, 0.16);
+      --pill-border: rgba(26, 148, 196, 0.3);
+    }
+
+    body {
+      background: var(--catalog-bg);
+    }
+
+    .nav-app {
+      position: sticky;
+      top: 0;
+      z-index: 1030;
+      background: var(--azul-logo-fondo);
+      background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.12));
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: var(--nav-shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-app .btn-custom-nav {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 999px;
+      color: #ffffff !important;
+      font-weight: 600;
+      padding: 0.4rem 0.95rem;
+      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .nav-app .btn-custom-nav:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.4);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .nav-icon {
+      align-items: center;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 999px;
+      color: #ffffff;
+      display: inline-flex;
+      height: 40px;
+      justify-content: center;
+      padding: 0;
+      width: 40px;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .nav-icon:hover {
+      background: rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .nav-badge {
+      font-size: 0.65rem;
+    }
+
+    .catalog-hero {
+      background: linear-gradient(120deg, #ffffff 0%, #f8f6f2 100%);
+      border: 1px solid rgba(27, 36, 54, 0.08);
+      border-radius: 24px;
+      box-shadow: 0 18px 40px rgba(27, 36, 54, 0.12);
+    }
+
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      border: 1px solid transparent;
+      background: #ffffff;
+      box-shadow: 0 10px 24px rgba(27, 36, 54, 0.12);
+    }
+
+    .status-active {
+      color: #0f6b4a;
+      background: rgba(65, 192, 120, 0.16);
+      border-color: rgba(65, 192, 120, 0.35);
+    }
+
+    .status-pending {
+      color: #7a4d00;
+      background: rgba(241, 178, 74, 0.18);
+      border-color: rgba(241, 178, 74, 0.4);
+    }
+
+    .status-adopted {
+      color: #1b4f6d;
+      background: rgba(26, 148, 196, 0.18);
+      border-color: rgba(26, 148, 196, 0.4);
+    }
+
+    .title-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 10px;
+      font-size: 1.5rem;
+      color: #f1b24a;
+      animation: floatIcon 2.4s ease-in-out infinite;
+    }
+
+    .title-icon svg {
+      width: 26px;
+      height: 26px;
+      fill: currentColor;
+    }
+
+    @keyframes floatIcon {
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+
+    .filter-input,
+    .filter-select {
+      border-radius: 12px;
+      border: 1px solid rgba(27, 36, 54, 0.15);
+      box-shadow: 0 12px 30px rgba(27, 36, 54, 0.08);
+    }
+
+    .pet-card {
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      background: var(--card-surface);
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+    }
+
+    .pet-image {
+      height: 180px;
+      background: linear-gradient(135deg, #d7e6f2, #f7e8d2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pet-image::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 0.25) 100%);
+      z-index: 1;
+    }
+
+    .pet-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      position: relative;
+      z-index: 0;
+    }
+
+    .pet-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 2;
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(27, 36, 54, 0.1);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .pet-meta {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: #5a6b7a;
+    }
+
+    .pet-actions .btn {
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    .pagination-modern .page-link {
+      border-radius: 12px;
+      border: 1px solid rgba(27, 36, 54, 0.18);
+      color: #1b5164;
+      font-weight: 600;
+      padding: 0.45rem 0.8rem;
+    }
+
+    .pagination-modern .page-item.active .page-link {
+      background: var(--azul-logo-fondo);
+      border-color: var(--azul-logo-fondo);
+      color: #ffffff;
+      box-shadow: 0 12px 24px rgba(27, 36, 54, 0.2);
+    }
+
+    .mini-footer {
+      margin-top: 3rem;
+      background: var(--azul-logo-fondo);
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      font-size: 0.8rem;
+      padding: 1rem 0;
+    }
+
+    .mini-footer a {
+      color: inherit;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark nav-app">
+    <div class="container">
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCatalogo"
+        aria-controls="navbarCatalogo" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand text-warning fw-bold me-3" href="../index.html">
+        <img src="../img/logo.png" alt="Logo Pawtastic" width="40" height="40" class="d-inline-block d-lg-none">
+        <span class="d-none d-lg-inline">Pawtastic</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarCatalogo">
+        <ul class="navbar-nav align-items-lg-center me-auto">
+          <li class="nav-item"><a class="btn btn-custom-nav me-2" href="./perfil-ong.html">Inicio</a></li>
+          <li class="nav-item"><a class="btn btn-custom-nav me-2" href="./postulaciones.html">Postulaciones</a></li>
+          <li class="nav-item"><a class="btn btn-custom-nav me-2" href="./ver-reportes.html">Reportes</a></li>
+          <li class="nav-item">
+            <a href="#" class="btn btn-custom-nav" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion">
+              <i class="bi bi-box-arrow-right"></i> Cerrar Sesion
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="d-flex align-items-center gap-2 ms-auto">
+        <button type="button" class="btn nav-icon position-relative" aria-label="Notificaciones">
+          <i class="bi bi-bell"></i>
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark nav-badge">4</span>
+        </button>
+        <button type="button" class="btn nav-icon" aria-label="Perfil">
+          <i class="bi bi-person-circle"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="container py-4">
+    <section class="catalog-hero p-4 p-lg-5 mb-4 text-center">
+      <h2 class="fw-bold text-dark mb-0">
+        Mis mascotas
+        <span class="title-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+            <circle cx="6.8" cy="8.5" r="2.1"></circle>
+            <circle cx="10.6" cy="6.5" r="2.0"></circle>
+            <circle cx="13.4" cy="6.5" r="2.0"></circle>
+            <circle cx="17.2" cy="8.5" r="2.1"></circle>
+            <ellipse cx="12" cy="15.5" rx="5" ry="4"></ellipse>
+          </svg>
+        </span>
+      </h2>
+      <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
+        <span class="status-chip status-active"><i class="bi bi-check-circle"></i> Activas: 12</span>
+        <span class="status-chip status-pending"><i class="bi bi-hourglass-split"></i> Pendientes: 3</span>
+        <span class="status-chip status-adopted"><i class="bi bi-heart-fill"></i> Adoptadas: 5</span>
+      </div>
+    </section>
+
+    <div class="row g-3 align-items-center mb-4">
+      <div class="col-12 col-lg-6">
+        <div class="input-group">
+          <span class="input-group-text bg-white border-0"><i class="bi bi-search"></i></span>
+          <input type="text" class="form-control filter-input" placeholder="Buscar por nombre, raza o estado">
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <select class="form-select filter-select">
+          <option selected>Tipo</option>
+          <option>Perro</option>
+          <option>Gato</option>
+        </select>
+      </div>
+      <div class="col-6 col-lg-3">
+        <select class="form-select filter-select">
+          <option selected>Estado</option>
+          <option>Activa</option>
+          <option>Pendiente</option>
+          <option>Adoptada</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-12 col-sm-6 col-lg-4 col-xxl-3">
+        <div class="pet-card h-100">
+          <div class="pet-image">
+            <span class="pet-badge">Activa</span>
+            <img class="pet-photo" src="../img/mascotas/mascota_69137509c440d_perro1.jpg" alt="Luna">
+          </div>
+          <div class="card-body">
+            <h5 class="fw-bold">Luna</h5>
+            <p class="text-muted small mb-3">Hembra, 2 anos, energia media.</p>
+            <div class="pet-meta mb-3">
+              <span><i class="bi bi-geo-alt"></i> Rosario</span>
+              <span><i class="bi bi-heart"></i> Esterilizada</span>
+            </div>
+            <div class="d-flex gap-2 pet-actions">
+              <button class="btn btn-outline-secondary btn-sm">Editar</button>
+              <button class="btn btn-dark btn-sm">Ver perfil</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-4 col-xxl-3">
+        <div class="pet-card h-100">
+          <div class="pet-image">
+            <span class="pet-badge">Pendiente</span>
+            <img class="pet-photo" src="../img/mascotas/mascota_6913748c2ed81_perro6.jpg" alt="Max">
+          </div>
+          <div class="card-body">
+            <h5 class="fw-bold">Max</h5>
+            <p class="text-muted small mb-3">Macho, 4 anos, energia alta.</p>
+            <div class="pet-meta mb-3">
+              <span><i class="bi bi-geo-alt"></i> Santa Fe</span>
+              <span><i class="bi bi-shield-check"></i> Vacunado</span>
+            </div>
+            <div class="d-flex gap-2 pet-actions">
+              <button class="btn btn-outline-secondary btn-sm">Editar</button>
+              <button class="btn btn-dark btn-sm">Ver perfil</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-4 col-xxl-3">
+        <div class="pet-card h-100">
+          <div class="pet-image">
+            <span class="pet-badge">Activa</span>
+            <img class="pet-photo" src="../img/mascotas/mascota_6913757bc4b24_gato2.jpg" alt="Nina">
+          </div>
+          <div class="card-body">
+            <h5 class="fw-bold">Nina</h5>
+            <p class="text-muted small mb-3">Hembra, 1 ano, energia baja.</p>
+            <div class="pet-meta mb-3">
+              <span><i class="bi bi-geo-alt"></i> Rafaela</span>
+              <span><i class="bi bi-heart"></i> Apto ninos</span>
+            </div>
+            <div class="d-flex gap-2 pet-actions">
+              <button class="btn btn-outline-secondary btn-sm">Editar</button>
+              <button class="btn btn-dark btn-sm">Ver perfil</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-4 col-xxl-3">
+        <div class="pet-card h-100">
+          <div class="pet-image">
+            <span class="pet-badge">Adoptada</span>
+            <img class="pet-photo" src="../img/mascotas/mascota_691374e478000_perro7.jpg" alt="Toby">
+          </div>
+          <div class="card-body">
+            <h5 class="fw-bold">Toby</h5>
+            <p class="text-muted small mb-3">Macho, 6 anos, energia media.</p>
+            <div class="pet-meta mb-3">
+              <span><i class="bi bi-geo-alt"></i> Rosario</span>
+              <span><i class="bi bi-clipboard-heart"></i> Seguimiento</span>
+            </div>
+            <div class="d-flex gap-2 pet-actions">
+              <button class="btn btn-outline-secondary btn-sm">Editar</button>
+              <button class="btn btn-dark btn-sm">Ver perfil</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-4 col-xxl-3">
+        <div class="pet-card h-100">
+          <div class="pet-image">
+            <span class="pet-badge">Activa</span>
+            <img class="pet-photo" src="../img/mascotas/mascota_6902850151c60_rhodesian-perro-adulto.jpg" alt="Kira">
+          </div>
+          <div class="card-body">
+            <h5 class="fw-bold">Kira</h5>
+            <p class="text-muted small mb-3">Hembra, 3 anos, energia alta.</p>
+            <div class="pet-meta mb-3">
+              <span><i class="bi bi-geo-alt"></i> Venado Tuerto</span>
+              <span><i class="bi bi-shield-check"></i> Vacunada</span>
+            </div>
+            <div class="d-flex gap-2 pet-actions">
+              <button class="btn btn-outline-secondary btn-sm">Editar</button>
+              <button class="btn btn-dark btn-sm">Ver perfil</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-4 col-xxl-3">
+        <div class="pet-card h-100">
+          <div class="pet-image">
+            <span class="pet-badge">Pendiente</span>
+            <img class="pet-photo" src="../img/mascotas/mascota_691648fe7ec85_black-cat-2680541_1280.jpg" alt="Bruno">
+          </div>
+          <div class="card-body">
+            <h5 class="fw-bold">Bruno</h5>
+            <p class="text-muted small mb-3">Macho, 5 anos, energia media.</p>
+            <div class="pet-meta mb-3">
+              <span><i class="bi bi-geo-alt"></i> Esperanza</span>
+              <span><i class="bi bi-heart"></i> Apto mascotas</span>
+            </div>
+            <div class="d-flex gap-2 pet-actions">
+              <button class="btn btn-outline-secondary btn-sm">Editar</button>
+              <button class="btn btn-dark btn-sm">Ver perfil</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-4 col-xxl-3">
+        <div class="pet-card h-100">
+          <div class="pet-image">
+            <span class="pet-badge">Activa</span>
+            <img class="pet-photo" src="../img/mascotas/schnauzer-5232202_1280.jpg" alt="Milo">
+          </div>
+          <div class="card-body">
+            <h5 class="fw-bold">Milo</h5>
+            <p class="text-muted small mb-3">Macho, 2 anos, energia baja.</p>
+            <div class="pet-meta mb-3">
+              <span><i class="bi bi-geo-alt"></i> Santa Fe</span>
+              <span><i class="bi bi-lightning"></i> Tranquilo</span>
+            </div>
+            <div class="d-flex gap-2 pet-actions">
+              <button class="btn btn-outline-secondary btn-sm">Editar</button>
+              <button class="btn btn-dark btn-sm">Ver perfil</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-4 col-xxl-3">
+        <div class="pet-card h-100">
+          <div class="pet-image">
+            <span class="pet-badge">Adoptada</span>
+            <img class="pet-photo" src="../img/mascotas/cat-4098058_1280.jpg" alt="Olivia">
+          </div>
+          <div class="card-body">
+            <h5 class="fw-bold">Olivia</h5>
+            <p class="text-muted small mb-3">Hembra, 7 anos, energia baja.</p>
+            <div class="pet-meta mb-3">
+              <span><i class="bi bi-geo-alt"></i> Rafaela</span>
+              <span><i class="bi bi-award"></i> Caso especial</span>
+            </div>
+            <div class="d-flex gap-2 pet-actions">
+              <button class="btn btn-outline-secondary btn-sm">Editar</button>
+              <button class="btn btn-dark btn-sm">Ver perfil</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mt-4 gap-3">
+      <span class="text-muted small">Mostrando 1-8 de 20 mascotas</span>
+      <nav aria-label="Paginado catalogo">
+        <ul class="pagination pagination-modern mb-0">
+          <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+          <li class="page-item active"><span class="page-link">1</span></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item"><a class="page-link" href="#">Siguiente</a></li>
+        </ul>
+      </nav>
+    </div>
+  </main>
+
+  <!-- MODAL SALIR -->
+  <div class="modal fade" id="modalCerrarSesion" tabindex="-1" aria-labelledby="modalCerrarSesionLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-warning-subtle">
+          <h5 class="modal-title" id="modalCerrarSesionLabel">Cerrar sesion?</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          Estas segura de que queres salir del sitio?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button id="confirmarSalir" class="btn btn-danger">Si, salir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="mini-footer">
+    <div class="container text-center">
+      <a href="./terminosYcondiciones.html" class="text-decoration-none">Terminos</a>
+      <span class="mx-2">|</span>
+      <a href="./politicaDeCookies.html" class="text-decoration-none">Politica</a>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("confirmarSalir").addEventListener("click", function () {
+      localStorage.removeItem("token");
+      localStorage.removeItem("tipo");
+      window.location.href = "/index.html";
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
