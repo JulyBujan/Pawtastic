@@ -76,6 +76,44 @@
       font-size: 0.65rem;
     }
 
+    #notifDropdown::after {
+      display: none;
+    }
+
+    .notification-menu {
+      width: 320px;
+      max-height: 360px;
+      overflow-y: auto;
+    }
+
+    .notification-item {
+      padding: 0.55rem 0;
+      border-bottom: 1px solid rgba(27, 36, 54, 0.08);
+    }
+
+    .notification-item:last-child {
+      border-bottom: none;
+    }
+
+    .notification-item.unread {
+      background: rgba(255, 255, 255, 0.75);
+    }
+
+    .notification-link {
+      display: block;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .notification-link:hover {
+      background: rgba(27, 36, 54, 0.05);
+    }
+
+    .notification-meta {
+      font-size: 0.72rem;
+      color: #6b7682;
+    }
+
     .catalog-hero {
       background: linear-gradient(120deg, #ffffff 0%, #f8f6f2 100%);
       border: 1px solid rgba(27, 36, 54, 0.08);
@@ -263,10 +301,23 @@
         </ul>
       </div>
       <div class="d-flex align-items-center gap-2 ms-auto">
-        <button type="button" class="btn nav-icon position-relative" aria-label="Notificaciones">
-          <i class="bi bi-bell"></i>
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark nav-badge">4</span>
-        </button>
+        <div class="dropdown">
+          <button type="button" class="btn nav-icon position-relative dropdown-toggle" id="notifDropdown"
+            data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notificaciones">
+            <i class="bi bi-bell"></i>
+            <span id="notifBadge"
+              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark nav-badge d-none">0</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end notification-menu shadow" aria-labelledby="notifDropdown">
+            <li class="dropdown-header d-flex justify-content-between align-items-center">
+              <span class="fw-semibold">Notificaciones</span>
+              <button type="button" class="btn btn-sm btn-link p-0 text-decoration-none" id="markAllNotif">Marcar todas</button>
+            </li>
+            <li>
+              <div id="notifList" class="px-3 pb-2 small text-muted">Cargando...</div>
+            </li>
+          </ul>
+        </div>
         <button type="button" class="btn nav-icon" aria-label="Perfil">
           <i class="bi bi-person-circle"></i>
         </button>
@@ -531,6 +582,170 @@
       localStorage.removeItem("tipo");
       window.location.href = "/index.html";
     });
+
+    const notifBadge = document.getElementById("notifBadge");
+    const notifList = document.getElementById("notifList");
+    const notifDropdown = document.getElementById("notifDropdown");
+    const markAllNotif = document.getElementById("markAllNotif");
+    const token = localStorage.getItem("token");
+
+    const setBadge = (count) => {
+      if (!notifBadge) {
+        return;
+      }
+      if (count > 0) {
+        notifBadge.textContent = count;
+        notifBadge.classList.remove("d-none");
+      } else {
+        notifBadge.textContent = "0";
+        notifBadge.classList.add("d-none");
+      }
+    };
+
+    const formatDate = (value) => {
+      if (!value) {
+        return "";
+      }
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) {
+        return "";
+      }
+      return date.toLocaleString("es-AR");
+    };
+
+    const renderNotifications = (items) => {
+      if (!notifList) {
+        return;
+      }
+      notifList.innerHTML = "";
+      if (!items || items.length === 0) {
+        notifList.textContent = "Sin notificaciones.";
+        return;
+      }
+
+      items.forEach((item) => {
+        let payload = item.payload;
+        if (typeof payload === "string") {
+          try {
+            payload = JSON.parse(payload);
+          } catch (error) {
+            payload = null;
+          }
+        }
+        const adopcionId = payload && payload.adopcion_id
+          ? payload.adopcion_id
+          : (item.entidad_tipo === "adopcion" ? item.entidad_id : null);
+        const targetUrl = adopcionId
+          ? `./postulaciones.html?adopcion_id=${adopcionId}`
+          : "./postulaciones.html";
+
+        const wrapper = document.createElement("a");
+        wrapper.href = targetUrl;
+        wrapper.className = "notification-item notification-link" + (item.leida_at ? "" : " unread");
+        wrapper.setAttribute("role", "menuitem");
+        if (adopcionId) {
+          wrapper.dataset.adopcionId = adopcionId;
+        }
+
+        const title = document.createElement("div");
+        title.className = "fw-semibold";
+        title.textContent = item.titulo;
+
+        const body = document.createElement("div");
+        body.className = "text-muted small";
+        body.textContent = item.cuerpo;
+
+        const meta = document.createElement("div");
+        meta.className = "notification-meta";
+        meta.textContent = formatDate(item.created_at);
+
+        wrapper.append(title, body, meta);
+        notifList.appendChild(wrapper);
+      });
+    };
+
+    const fetchUnreadCount = async () => {
+      if (!token) {
+        setBadge(0);
+        return;
+      }
+      try {
+        const response = await fetch("../api/notificaciones.php?count=1", {
+          headers: {
+            Authorization: "Bearer " + token
+          }
+        });
+        if (!response.ok) {
+          throw new Error("Error al cargar el contador.");
+        }
+        const data = await response.json();
+        setBadge(Number(data.unread) || 0);
+      } catch (error) {
+        setBadge(0);
+      }
+    };
+
+    const fetchNotifications = async () => {
+      if (!token) {
+        if (notifList) {
+          notifList.textContent = "Inicia sesion para ver notificaciones.";
+        }
+        return;
+      }
+      try {
+        const response = await fetch("../api/notificaciones.php?limit=6", {
+          headers: {
+            Authorization: "Bearer " + token
+          }
+        });
+        if (!response.ok) {
+          throw new Error("Error al cargar notificaciones.");
+        }
+        const data = await response.json();
+        renderNotifications(data);
+      } catch (error) {
+        if (notifList) {
+          notifList.textContent = "No se pudieron cargar las notificaciones.";
+        }
+      }
+    };
+
+    if (notifDropdown) {
+      notifDropdown.addEventListener("show.bs.dropdown", () => {
+        fetchNotifications();
+        fetchUnreadCount();
+      });
+    }
+
+    if (markAllNotif) {
+      markAllNotif.addEventListener("click", async (event) => {
+        event.preventDefault();
+        if (!token) {
+          return;
+        }
+        try {
+          const response = await fetch("../api/notificaciones.php", {
+            method: "POST",
+            headers: {
+              Authorization: "Bearer " + token,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ mark_all: true })
+          });
+          if (!response.ok) {
+            throw new Error("Error al marcar notificaciones.");
+          }
+          fetchNotifications();
+          fetchUnreadCount();
+        } catch (error) {
+          if (notifList) {
+            notifList.textContent = "No se pudieron actualizar las notificaciones.";
+          }
+        }
+      });
+    }
+
+    fetchUnreadCount();
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
