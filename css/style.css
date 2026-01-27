@@ -915,6 +915,261 @@ div.card:has(#form-title) {
   color: rgba(255, 255, 255, 0.7);
 }
 
+/* === NAV APP (ONG) === */
+.nav-app {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  background: var(--azul-logo-fondo);
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.12));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(10px);
+}
+
+.nav-app .btn-custom-nav {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  color: #ffffff !important;
+  font-weight: 600;
+  padding: 0.4rem 0.95rem;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.nav-app .btn-custom-nav:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+.nav-icon {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  color: #ffffff;
+  display: inline-flex;
+  height: 40px;
+  justify-content: center;
+  padding: 0;
+  width: 40px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.nav-icon:hover {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.nav-badge {
+  font-size: 0.65rem;
+}
+
+#notifDropdown::after {
+  display: none;
+}
+
+.notification-menu {
+  width: 320px;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.notification-item {
+  padding: 0.55rem 0;
+  border-bottom: 1px solid rgba(27, 36, 54, 0.08);
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item.unread {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.notification-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.notification-link:hover {
+  background: rgba(27, 36, 54, 0.05);
+}
+
+.notification-meta {
+  font-size: 0.72rem;
+  color: #6b7682;
+}
+
+/* === PERFIL ONG MODERNO === */
+.ong-dashboard {
+  background: linear-gradient(180deg, #b7d8f0 0%, #dcecf8 100%);
+  color: #1b2436;
+}
+
+.ong-shell {
+  display: flex;
+  justify-content: center;
+}
+
+.ong-card {
+  background: #ffffff;
+  border-radius: 28px;
+  box-shadow: 0 28px 60px rgba(27, 36, 54, 0.18);
+  padding: 2.5rem;
+  width: min(900px, 100%);
+}
+
+.ong-greeting {
+  font-weight: 600;
+  color: #1b2436;
+  margin-bottom: 0.75rem;
+}
+
+.ong-banner {
+  background: #fde7cf;
+  border-radius: 18px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: inset 0 0 0 1px rgba(27, 36, 54, 0.05);
+  margin-bottom: 1.5rem;
+}
+
+.ong-banner h2 {
+  color: var(--naranja-logo);
+  margin-bottom: 0.35rem;
+}
+
+.ong-banner p {
+  margin: 0;
+  font-weight: 600;
+}
+
+.ong-actions {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.btn-ong-primary {
+  background: #0e5a7e;
+  border: none;
+  border-radius: 999px;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.5rem 1.5rem;
+  box-shadow: 0 12px 24px rgba(14, 90, 126, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.btn-ong-primary:hover {
+  background: #0b4b67;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 16px 30px rgba(14, 90, 126, 0.3);
+}
+
+.ong-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background: #fff7ec;
+  border-radius: 18px;
+  padding: 1.5rem;
+  border: 1px solid rgba(27, 36, 54, 0.08);
+  box-shadow: 0 16px 30px rgba(27, 36, 54, 0.12);
+}
+
+.stat-number {
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: #0e5a7e;
+  line-height: 1;
+  margin-bottom: 0.35rem;
+}
+
+.stat-label {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stat-meta {
+  color: #6b6b6b;
+  font-size: 0.85rem;
+  margin: 0.35rem 0 0.9rem;
+}
+
+.btn-stat {
+  border-radius: 999px;
+  border: 2px solid #0e5a7e;
+  color: #0e5a7e;
+  font-weight: 600;
+  padding: 0.35rem 1rem;
+  background: transparent;
+}
+
+.btn-stat:hover {
+  background: #0e5a7e;
+  color: #ffffff;
+}
+
+.ong-activity {
+  background: #fff7ec;
+  border-radius: 18px;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid rgba(27, 36, 54, 0.08);
+}
+
+.ong-activity h5 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+}
+
+.activity-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.activity-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.95rem;
+}
+
+.activity-time {
+  color: #6b6b6b;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .ong-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .ong-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 767px) {
   .login-section {
     padding: 3rem 0;
