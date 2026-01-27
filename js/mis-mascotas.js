@@ -215,12 +215,12 @@ async function estimarAdopcion(mascota) {
         </li>
         ${probabilidadesHTML}
       </ul>
-      <div class="alert alert-secondary mt-3" role="alert">
+      <div class="bg-light border rounded-3 p-3 mt-3">
         <small><i class="bi bi-info-circle-fill"></i> Esta es una estimación basada en un modelo de Machine Learning y no garantiza el tiempo real de adopción.</small>
       </div>
     `;
 
   } catch (error) {
-    modalBody.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+    modalBody.innerHTML = `<div class="bg-danger-subtle text-danger border border-danger-subtle rounded-3 p-3">${error.message}</div>`;
   }
 }

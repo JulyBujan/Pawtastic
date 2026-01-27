@@ -2,9 +2,45 @@ document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("postulaciones-container");
   const token = localStorage.getItem("token");
   const tipoUsuario = localStorage.getItem("tipo");
+  const comentarioModalEl = document.getElementById("modalComentario");
+  const comentarioModal = comentarioModalEl
+    ? new bootstrap.Modal(comentarioModalEl)
+    : null;
+  const comentarioTextarea = document.getElementById("comentarioTexto");
+  const guardarComentarioBtn = document.getElementById("guardarComentarioBtn");
+  const confirmModalEl = document.getElementById("modalConfirmAction");
+  const confirmModal = confirmModalEl
+    ? new bootstrap.Modal(confirmModalEl)
+    : null;
+  const confirmActionBtn = document.getElementById("confirmActionBtn");
+  const confirmActionText = document.getElementById("confirmActionText");
+  const confirmActionTitle = document.getElementById("confirmActionTitle");
+  let comentarioAdopcionId = null;
+  let confirmAdopcionId = null;
+  let confirmStatus = null;
+
+  const renderState = (title, message, actionHtml = "") => {
+    if (!container) {
+      return;
+    }
+    container.innerHTML = `
+      <div class="bg-white border rounded-4 p-4 shadow-sm text-center">
+        <h5 class="fw-bold mb-2">${title}</h5>
+        <p class="text-muted mb-3">${message}</p>
+        ${actionHtml}
+      </div>
+    `;
+  };
 
   if (!token) {
-    container.innerHTML = `<div class="alert alert-danger">Debes <a href="login.html">iniciar sesión</a> para ver tus postulaciones.</div>`;
+    if (typeof showToast === "function") {
+      showToast('Debes iniciar sesión para ver tus postulaciones.', "warning");
+    }
+    renderState(
+      "Inicia sesión",
+      "Para ver tus postulaciones necesitas ingresar con tu cuenta.",
+      '<a href="login.html" class="btn btn-dark">Ingresar</a>'
+    );
     return;
   }
 
@@ -27,13 +63,25 @@ document.addEventListener("DOMContentLoaded", () => {
       renderTabla(postulaciones);
     } catch (error) {
       console.error("Error:", error);
-      container.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+      if (typeof showToast === "function") {
+        showToast(error.message, "danger");
+      }
+      renderState(
+        "Ocurrió un error",
+        error.message || "No se pudieron cargar las postulaciones."
+      );
     }
   };
 
   const renderTabla = (postulaciones) => {
     if (postulaciones.length === 0) {
-      container.innerHTML = `<div class="alert alert-info">Aún no tienes postulaciones.</div>`;
+      if (typeof showToast === "function") {
+        showToast("Aún no tienes postulaciones.", "info");
+      }
+      renderState(
+        "Sin postulaciones",
+        "Todavía no registras postulaciones. ¡Explora el catálogo y encuentra tu match!"
+      );
       return;
     }
 
@@ -120,30 +168,52 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".add-comment-btn").forEach((button) => {
       button.addEventListener("click", async (event) => {
         const adopcionId = event.target.dataset.id;
-        const newComment = prompt("Introduce tu comentario:");
-        if (newComment) {
-          await addComment(adopcionId, newComment);
+        comentarioAdopcionId = adopcionId;
+        if (comentarioTextarea) {
+          comentarioTextarea.value = "";
+          comentarioTextarea.focus();
         }
+        comentarioModal?.show();
       });
     });
 
     document.querySelectorAll(".approve-btn").forEach((button) => {
       button.addEventListener("click", async (event) => {
         const adopcionId = event.target.dataset.id;
-        if (confirm("¿Estás seguro de que quieres APROBAR esta postulación?")) {
-          await updatePostulacionStatus(adopcionId, 1); // 1 = Aprobada
+        confirmAdopcionId = adopcionId;
+        confirmStatus = 1;
+        if (confirmActionTitle) {
+          confirmActionTitle.textContent = "Aprobar postulación";
         }
+        if (confirmActionText) {
+          confirmActionText.textContent =
+            "¿Estás seguro de que quieres aprobar esta postulación?";
+        }
+        if (confirmActionBtn) {
+          confirmActionBtn.textContent = "Aprobar";
+          confirmActionBtn.className = "btn btn-success";
+        }
+        confirmModal?.show();
       });
     });
 
     document.querySelectorAll(".reject-btn").forEach((button) => {
       button.addEventListener("click", async (event) => {
         const adopcionId = event.target.dataset.id;
-        if (
-          confirm("¿Estás seguro de que quieres RECHAZAR esta postulación?")
-        ) {
-          await updatePostulacionStatus(adopcionId, 2); // 2 = Rechazada
+        confirmAdopcionId = adopcionId;
+        confirmStatus = 2;
+        if (confirmActionTitle) {
+          confirmActionTitle.textContent = "Rechazar postulación";
         }
+        if (confirmActionText) {
+          confirmActionText.textContent =
+            "¿Estás seguro de que quieres rechazar esta postulación?";
+        }
+        if (confirmActionBtn) {
+          confirmActionBtn.textContent = "Rechazar";
+          confirmActionBtn.className = "btn btn-danger";
+        }
+        confirmModal?.show();
       });
     });
   };
@@ -203,6 +273,36 @@ document.addEventListener("DOMContentLoaded", () => {
       showToast(error.message, "danger");
     }
   };
+
+  if (guardarComentarioBtn) {
+    guardarComentarioBtn.addEventListener("click", async () => {
+      if (!comentarioAdopcionId) {
+        showToast("No se pudo identificar la postulación.", "danger");
+        return;
+      }
+      const newComment = comentarioTextarea?.value.trim();
+      if (!newComment) {
+        showToast("Escribe un comentario antes de guardar.", "warning");
+        return;
+      }
+      comentarioModal?.hide();
+      await addComment(comentarioAdopcionId, newComment);
+      comentarioAdopcionId = null;
+    });
+  }
+
+  if (confirmActionBtn) {
+    confirmActionBtn.addEventListener("click", async () => {
+      if (!confirmAdopcionId || confirmStatus === null) {
+        showToast("No se pudo continuar con la acción.", "danger");
+        return;
+      }
+      confirmModal?.hide();
+      await updatePostulacionStatus(confirmAdopcionId, confirmStatus);
+      confirmAdopcionId = null;
+      confirmStatus = null;
+    });
+  }
 
   const getEstadoTexto = (estado) => {
     switch (parseInt(estado)) {

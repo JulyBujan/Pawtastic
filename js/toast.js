@@ -5,13 +5,12 @@
  * @param {number} [delay=4000] - El tiempo en milisegundos que el toast permanecerá visible.
  */
 function showToast(message, type = 'info', delay = 4000) {
-    const toastContainer = document.querySelector('.toast-container');
+    let toastContainer = document.querySelector('.toast-container');
 
-    // Si no se encuentra el contenedor de toasts, se usa un alert como fallback.
     if (!toastContainer) {
-        console.warn('Contenedor de toasts no encontrado. Usando alert() como fallback.');
-        alert(message);
-        return;
+        toastContainer = document.createElement('div');
+        toastContainer.className = 'toast-container position-fixed top-0 start-50 translate-middle-x p-3';
+        document.body.appendChild(toastContainer);
     }
 
     const toastId = 'toast-' + Date.now();

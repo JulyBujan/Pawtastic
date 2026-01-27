@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {boolean} porCercania - Flag para saber si se debe mostrar la distancia.
      */
     const renderizarMascotas = (mascotas, porCompatibilidad = false, porCercania = false) => {
+        const isLoggedIn = Boolean(localStorage.getItem('token'));
         mascotasContainer.innerHTML = ''; // Limpiar contenedor
 
         if (mascotas.length === 0) {
@@ -52,6 +53,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 descripcionModificada = `<strong class="text-info"><i class="bi bi-geo-alt-fill"></i> A ${mascota.distancia_km} km de ti</strong><br>${mascota.descripcion}`;
             }
 
+            const actionButton = isLoggedIn
+                ? `<a href="detalle-mascota.html?id=${mascota.id}" class="btn btn-dark">Ver más</a>`
+                : `<button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#modalLoginRequired">Ver más</button>`;
+
             const card = `
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm">
@@ -61,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <p class="card-text">${descripcionModificada}</p>
                         </div>
                         <div class="card-footer bg-transparent border-0 text-end pb-3">
-                            <a href="detalle-mascota.html?id=${mascota.id}" class="btn btn-dark">Ver más</a>
+                            ${actionButton}
                         </div>
                     </div>
                 </div>

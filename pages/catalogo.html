@@ -23,9 +23,6 @@
       <h2 class="titulo-catalogo mb-2 mb-md-0">¡ENCONTRÁ A TU MATCH! 🐾</h2>
       <div id="nav-links" class="d-flex gap-2 align-items-center">
         <!-- Los enlaces se cargarán dinámicamente aquí -->
-        <a href="#" class="btn btn-custom-nav" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion" title="Salir">
-          <i class="bi bi-box-arrow-right me-1"></i>Salir
-        </a>
       </div>
     </div>
   </header>
@@ -107,6 +104,26 @@
     </div>
   </div>
 
+  <!-- MODAL LOGIN REQUERIDO -->
+  <div class="modal fade" id="modalLoginRequired" tabindex="-1" aria-labelledby="modalLoginRequiredLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-info-subtle">
+          <h5 class="modal-title" id="modalLoginRequiredLabel">Inicia sesión para continuar</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          Podés explorar el catálogo, pero para ver detalles o postularte necesitás iniciar sesión.
+        </div>
+        <div class="modal-footer">
+          <a href="login.html" class="btn btn-dark">Ingresar</a>
+          <a href="registro.html" class="btn btn-outline-secondary">Registrarme</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Contenedor de Toasts -->
   <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
     <!-- Los toasts se insertarán aquí dinámicamente -->
@@ -160,24 +177,42 @@
   <script>
     // Lógica para el botón de salir y el enlace de perfil dinámico
     document.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('token');
       const tipoUsuario = localStorage.getItem('tipo');
       const navLinksContainer = document.getElementById('nav-links');
-      const salirButton = navLinksContainer.querySelector('.btn-custom-nav');
-
       let linksHTML = '';
 
-      if (tipoUsuario === 'ong') {
+      if (!token) {
+        linksHTML = `
+          <a href="login.html" class="btn btn-outline-dark">Ingresar</a>
+          <a href="registro.html" class="btn btn-dark">Registrarme</a>
+        `;
+      } else if (tipoUsuario === 'ong') {
         linksHTML = `
           <a href="perfil-ong.html" class="btn btn-outline-dark">Inicio</a>
           <a href="mis-mascotas.html" class="btn btn-outline-dark">Mis Mascotas</a>
+          <a href="#" class="btn btn-custom-nav" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion" title="Salir">
+            <i class="bi bi-box-arrow-right me-1"></i>Salir
+          </a>
         `;
-      } else { // 'usuario' o no logueado
+      } else if (tipoUsuario === 'admin') {
+        linksHTML = `
+          <a href="perfil-admin.html" class="btn btn-outline-dark">Panel</a>
+          <a href="#" class="btn btn-custom-nav" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion" title="Salir">
+            <i class="bi bi-box-arrow-right me-1"></i>Salir
+          </a>
+        `;
+      } else {
         linksHTML = `
           <a href="./usuario.html" class="btn btn-outline-dark">Mi perfil</a>
           <a href="./postulaciones.html" class="btn btn-outline-dark">Mis postulaciones</a>
+          <a href="#" class="btn btn-custom-nav" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion" title="Salir">
+            <i class="bi bi-box-arrow-right me-1"></i>Salir
+          </a>
         `;
       }
-      salirButton.insertAdjacentHTML('beforebegin', linksHTML);
+
+      navLinksContainer.innerHTML = linksHTML;
 
       document.getElementById("confirmarSalir").addEventListener("click", function () {
         localStorage.removeItem("token");

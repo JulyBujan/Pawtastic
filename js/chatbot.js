@@ -181,6 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
     chatLi.innerHTML = `
       <span class="material-symbols-outlined">smart_toy</span>
       <p>
+        <span class="typing-text">Escribiendo</span>
         <span class="dot"></span>
         <span class="dot"></span>
         <span class="dot"></span>

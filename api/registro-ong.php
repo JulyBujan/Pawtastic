@@ -122,7 +122,7 @@ try {
     $conn->commit();
 
     http_response_code(201); // 201 Created
-    echo json_encode(["message" => "Solicitud de registro de ONG enviada con éxito. Será revisada por un administrador."]);
+    echo json_encode(["message" => "Analizaremos la solicitud y nos comunicaremos en breve."]);
 
 } catch (Exception $e) {
     // 9. Si algo falla, revertir la transacción

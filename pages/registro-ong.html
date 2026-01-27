@@ -13,21 +13,24 @@
 
 <body class="bg-light d-flex flex-column min-vh-100">
     <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg navbar-dark encabezado-azul">
+    <nav class="navbar navbar-expand-lg navbar-dark login-nav">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="../index.html">
-                <img src="../img/logo.png" alt="Logo Pawtastic" width="50" height="50" class="me-2 logo-navbar">
-                <span class="text-warning fw-bold">Pawtastic</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav align-items-center">
+            <a class="navbar-brand text-warning fw-bold me-3" href="../index.html">
+                <img src="../img/logo.png" alt="Logo Pawtastic" width="40" height="40" class="d-inline-block d-lg-none">
+                <span class="d-none d-lg-inline">Pawtastic</span>
+            </a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav align-items-lg-center ms-auto">
                     <li class="nav-item">
-                        <a class="btn btn-custom-nav me-2" href="../index.html">Inicio</a>
+                        <a class="btn btn-custom-nav btn-custom-nav-light me-lg-2" href="../index.html">Inicio</a>
                     </li>
-                    <li class="nav-item"><a class="btn btn-custom-nav" href="login.html">Iniciar Sesión</a></li>
+                    <li class="nav-item">
+                        <a class="btn btn-custom-nav btn-custom-nav-light" href="login.html">Iniciar Sesión</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -121,43 +124,11 @@
     <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3"></div>
 
     <!-- FOOTER -->
-    <footer class="bg-footer text-dark pt-4 pb-3 mt-auto">
-        <div class="container text-center text-md-start">
-            <div class="row">
-                <div class="col-md-4 mb-3 text-center">
-                    <h5 class="fw-bold mt-2">Pawtastic</h5>
-                    <p class="small">Conectamos corazones con patas. Gracias por elegir adoptar.</p>
-                    <a href="../index.html">
-                        <img src="../img/logo.png" alt="Logo Pawtastic" style="max-width: 100px; border-radius: 40%;">
-                    </a>
-                </div>
-                <div class="col-md-4 mb-3 d-flex flex-column align-items-center">
-                    <h5 class="fw-bold text-center">Navegación</h5>
-                    <ul class="list-unstyled text-center">
-                        <li><a href="https://interfacessistemas3.my.canva.site/manual-de-usuario-pawtastic"
-                                class="text-dark text-decoration-none" target="_blank" rel="noopener noreferrer">Manual
-                                de Usuario</a>
-                        </li>
-                        <li><a href="https://drive.google.com/drive/folders/1UiabMGZbGNRz8LPfdU74eroOOLEoH8Xb?usp=sharing"
-                                class="text-dark text-decoration-none" target="_blank"
-                                rel="noopener noreferrer">Documentación del
-                                Proyecto</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4 mb-3 fs-5">
-                    <h5 class="fw-bold">Seguinos</h5>
-                    <a href="https://www.facebook.com/profile.php?id=61581919419192" class="text-dark me-3"><i
-                            class="bi bi-facebook" style="font-size: 2.5rem;"></i></a>
-                    <a href="https://www.instagram.com/pawtasticarg/" class="text-dark me-3"><i class="bi bi-instagram"
-                            style="font-size: 2.5rem;"></i></a>
-                    <a href="https://x.com/PawtasticArg" class="text-dark"><i class="bi bi-x-circle-fill"
-                            style="font-size: 2.5rem;"></i></a>
-                </div>
-            </div>
-            <hr class="border-dark">
-            <div class="text-center">
-                <small>&copy; 2025 Pawtastic. Todos los derechos reservados.</small>
-            </div>
+    <footer class="login-footer">
+        <div class="container text-center">
+            <a href="./terminosYcondiciones.html">Términos</a>
+            <span class="footer-divider">|</span>
+            <a href="./politicaDeCookies.html">Cookies</a>
         </div>
     </footer>
 

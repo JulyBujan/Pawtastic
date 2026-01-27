@@ -10,91 +10,139 @@
 
   <meta name="author" content="Wunsche Julieta, Sergio Bujan, Georgina Contreras, Jonathan Revelino">
   <title>Pawtastic</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="icon" href="./img/favicon.ico" type="image/png">
   <link rel="stylesheet" href="./css/style.css">
 </head>
 
-<body class="bg-light">
+<body class="landing-body">
 
   <!-- NAVBAR -->
-  <nav class="navbar navbar-expand-lg navbar-dark">
+  <nav class="navbar navbar-expand-lg navbar-dark landing-nav">
     <div class="container">
-      <a class="navbar-brand d-flex align-items-center" href="./index.html">
-        <img src="img/logo.png" alt="Logo Pawtastic" width="50" height="50" class="me-2 logo-navbar">
-
-        <span class="text-warning fw-bold">Pawtastic</span>
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav align-items-center">
+      <a class="navbar-brand landing-brand fw-bold me-3" href="./index.html">
+        <img src="img/logo.png" alt="Logo Pawtastic" width="42" height="42" class="d-inline-block d-lg-none">
+        <span class="d-none d-lg-inline">Pawtastic</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav align-items-lg-center ms-auto">
           <li class="nav-item">
-            <a class="btn btn-custom-nav me-2" href="./pages/login.html">Ingresar</a>
+            <a class="btn btn-custom-nav me-lg-2" href="./pages/login.html">Ingresar</a>
           </li>
-          <li class="nav-item"><a class="btn btn-custom-nav" href="./pages/registro.html">Registrate</a></li>
+          <li class="nav-item">
+            <button class="btn btn-custom-nav nav-cta" type="button" data-bs-toggle="modal"
+              data-bs-target="#modalRegistro">Registrate</button>
+          </li>
         </ul>
       </div>
     </div>
   </nav>
 
-
-  <!-- CAROUSEL -->
-  <!-- CAROUSEL -->
-  <section class="hero">
-    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
-      <div class="carousel-inner">
-        <div class="carousel-item active">
-          <img src="./img/carru9.jpg" class="d-block w-100" alt="Perrito jugando con una pelota">
+  <!-- HERO -->
+  <section class="landing-hero">
+    <div class="container">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-6">
+          <span class="hero-kicker hero-animate">Adopcion responsable</span>
+          <h1 class="hero-title hero-animate delay-1">Conecta corazones con patas</h1>
+          <p class="hero-lead hero-animate delay-2">
+            Pawtastic te ayuda a encontrar tu compañero ideal con procesos claros, seguros y centrados en el bienestar
+            animal.
+          </p>
+          <div class="d-flex flex-wrap gap-3 hero-animate delay-3">
+            <a class="btn btn-hero-primary" href="./pages/catalogo.html">Quiero adoptar</a>
+          </div>
+          <p class="hero-secondary hero-animate delay-4">
+            ¿Ya tenés cuenta? <a href="./pages/login.html">Ingresá</a>
+          </p>
+          <div class="hero-trust hero-animate delay-4">
+            <div class="trust-item">
+              <span class="trust-icon"><i class="bi bi-shield-check"></i></span>
+              <div>
+                <strong>ONGs verificadas</strong>
+                <span>Adopciones responsables</span>
+              </div>
+            </div>
+            <div class="trust-item">
+              <span class="trust-icon"><i class="bi bi-clipboard-heart"></i></span>
+              <div>
+                <strong>Seguimiento real</strong>
+                <span>Transparencia en cada paso</span>
+              </div>
+            </div>
+            <div class="trust-item">
+              <span class="trust-icon"><i class="bi bi-chat-dots"></i></span>
+              <div>
+                <strong>Acompañamiento</strong>
+                <span>Soporte para adoptantes</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="carousel-item">
-          <img src="./img/carru5.jpg" class="d-block w-100" alt="Gatito naranja">
-        </div>
-        <div class="carousel-item">
-          <img src="./img/carru11.png" class="d-block w-100" alt="Perro blanco y gato naranja enfrentados">
+        <div class="col-lg-6">
+          <div class="hero-visual">
+            <img src="./img/carru9.jpg" class="hero-photo" alt="Perrito jugando con una pelota">
+            <div class="hero-card hero-card-top">
+              <span class="hero-card-icon"><i class="bi bi-heart-fill"></i></span>
+              <div>
+                <p class="hero-card-title">Match perfecto</p>
+                <span class="hero-card-text">Encuentra mascotas segun tu estilo de vida.</span>
+              </div>
+            </div>
+            <div class="hero-card hero-card-bottom">
+              <span class="hero-card-icon"><i class="bi bi-star-fill"></i></span>
+              <div>
+                <p class="hero-card-title">Historias felices</p>
+                <span class="hero-card-text">Compartimos adopciones reales y testimonios.</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Anterior</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Siguiente</span>
-      </button>
-
     </div>
   </section>
 
   <!-- SECCIÓN CENTRAL  -->
-  <section class="info-section py-5 bg-light text-center">
+  <section class="landing-section landing-resources">
     <div class="container">
-      <h2 class="mb-5">¿Estás pensando en adoptar?</h2>
-      <div class="row">
-        <div class="col-md-4 d-flex flex-column h-100">
-          <img src="https://img.icons8.com/ios/100/F7931E/home.png" alt="Checklist" class="mb-3">
-          <h5 class="text-dark fw-bold">Consejos para nuevos adoptantes</h5>
-          <p class="text-muted">Te ayudamos a que la transición sea lo más suave posible.</p>
-          <div class="mt-4">
-            <a href="./pages/consejos.html" class="btn btn-borde-negro rounded-pill px-4">Saber más</a>
+      <div class="section-heading text-center">
+        <span class="section-eyebrow">Recursos</span>
+        <h2>¿Estas pensando en adoptar?</h2>
+        <p>Todo lo que necesitas para tomar una decision informada y responsable.</p>
+      </div>
+      <div class="row g-4 mt-4">
+        <div class="col-md-4">
+          <div class="resource-card">
+            <div class="resource-icon"><i class="bi bi-house-heart"></i></div>
+            <h5>Consejos para nuevos adoptantes</h5>
+            <p>Te ayudamos a que la transicion sea lo mas suave posible.</p>
+            <a href="./pages/consejos.html" class="btn btn-resource">Saber mas</a>
           </div>
         </div>
-        <div class="col-md-4 d-flex flex-column h-100">
-          <img src="https://img.icons8.com/ios/100/F7931E/dog.png" alt="Edad del perro" class="mb-3">
-          <h5 class="text-dark fw-bold">¿Qué edad tiene mi perro?</h5>
-          <p class="text-muted">Convertí edad perruna a humana de manera divertida.</p>
-          <div class="mt-4">
-            <a href="./pages/edad.html" class="btn btn-borde-negro rounded-pill px-4">Saber más</a>
+        <div class="col-md-4">
+          <div class="resource-card">
+            <div class="resource-icon"><i class="bi bi-heart-pulse"></i></div>
+            <h5>¿Que edad tiene mi perro?</h5>
+            <p>Converti edad perruna a humana de manera divertida.</p>
+            <a href="./pages/edad.html" class="btn btn-resource">Saber mas</a>
           </div>
         </div>
-        <div class="col-md-4 d-flex flex-column h-100">
-          <img src="https://img.icons8.com/ios/100/F7931E/conference-call.png" alt="Equipo" class="mb-3">
-          <h5 class="text-dark fw-bold">Conocé a nuestro equipo</h5>
-          <p class="text-muted">Descubrí quiénes forman parte de Pawtastic y nuestra misión.</p>
-          <div class="mt-4">
-            <a href="./pages/nosotros.html" class="btn btn-borde-negro rounded-pill px-4">Saber más</a>
+        <div class="col-md-4">
+          <div class="resource-card">
+            <div class="resource-icon"><i class="bi bi-people"></i></div>
+            <h5>Acompañamiento</h5>
+            <p>Descubri quienes forman parte de Pawtastic y nuestra mision.</p>
+            <a href="./pages/nosotros.html" class="btn btn-resource">Saber mas</a>
           </div>
         </div>
       </div>
@@ -102,45 +150,61 @@
   </section>
 
   <!-- FOOTER -->
-  <footer class="bg-footer text-dark pt-4 pb-3 mt-3">
-    <div class="container text-center text-md-start">
-      <div class="row">
-        <div class="col-md-4 mb-3 text-center">
-
-          <h5 class="fw-bold mt-2">Pawtastic</h5>
-          <p class="small">Conectamos corazones con patas. Gracias por elegir adoptar.</p>
-          <a href="./index.html">
-            <img src="./img/logo.png" alt="Logo Pawtastic" style="max-width: 100px; border-radius: 40%;">
-          </a>
+  <footer class="landing-footer-min">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <img src="./img/logo.png" alt="Logo Pawtastic">
+          <h5>Pawtastic</h5>
+          <p>Adopciones responsables con acompañamiento real.</p>
         </div>
-        <div class="col-md-4 mb-3 d-flex flex-column align-items-center">
-          <h5 class="fw-bold text-center">Navegación</h5>
-          <ul class="list-unstyled text-center">
-            <li><a href="https://interfacessistemas3.my.canva.site/manual-de-usuario-pawtastic" class="text-dark text-decoration-none" target="_blank" rel="noopener noreferrer">Manual de Usuario</a></li>
-            <li><a href="https://drive.google.com/drive/folders/1UiabMGZbGNRz8LPfdU74eroOOLEoH8Xb?usp=sharing" class="text-dark text-decoration-none" target="_blank" rel="noopener noreferrer">Documentación del Proyecto</a></li>
-          </ul>
+        <div class="footer-links">
+          <a href="https://interfacessistemas3.my.canva.site/manual-de-usuario-pawtastic" target="_blank"
+            rel="noopener noreferrer">Manual de Usuario</a>
+          <a href="https://drive.google.com/drive/folders/1UiabMGZbGNRz8LPfdU74eroOOLEoH8Xb?usp=sharing" target="_blank"
+            rel="noopener noreferrer">Documentación</a>
+          <a href="./pages/terminosYcondiciones.html">Términos</a>
+          <a href="./pages/politicaDeCookies.html">Cookies</a>
         </div>
-        <div class="col-md-4 mb-3 fs-5">
-          <h5 class="fw-bold">Seguinos</h5>
-          <a href=" https://www.facebook.com/profile.php?id=61581919419192" class="text-dark me-3"><i
-              class="bi bi-facebook" style="font-size: 2.5rem;"></i></a>
-          <a href="https://www.instagram.com/pawtasticarg/" class="text-dark me-3"><i class="bi bi-instagram"
-              style="font-size: 2.5rem;"></i></a>
-          <a href="https://x.com/PawtasticArg" class="text-dark"><i class="bi bi-x-circle-fill"
-              style="font-size: 2.5rem;"></i></a>
+        <div class="footer-social">
+          <span>Seguinos</span>
+          <div class="social-icons">
+            <a href="https://www.facebook.com/profile.php?id=61581919419192" aria-label="Facebook">
+              <i class="bi bi-facebook"></i>
+            </a>
+            <a href="https://www.instagram.com/pawtasticarg/" aria-label="Instagram">
+              <i class="bi bi-instagram"></i>
+            </a>
+            <a href="https://x.com/PawtasticArg" aria-label="X">
+              <i class="bi bi-x-circle-fill"></i>
+            </a>
+          </div>
         </div>
       </div>
-      <hr class="border-dark">
-      <div class="text-center">
+      <div class="footer-bottom">
         <small>&copy; 2025 Pawtastic. Todos los derechos reservados.</small>
-        <br>
-        <a href="./pages/terminosYcondiciones.html" class="text-dark text-decoration-underline small">Términos y
-          Condiciones</a> |
-        <a href="./pages/politicaDeCookies.html" class="text-dark text-decoration-underline small">Política de
-          Cookies</a>
       </div>
     </div>
   </footer>
+
+  <!-- MODAL REGISTRO -->
+  <div class="modal fade" id="modalRegistro" tabindex="-1" aria-labelledby="modalRegistroLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-light">
+          <h5 class="modal-title" id="modalRegistroLabel">Crear cuenta</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-0">¿Qué tipo de cuenta querés crear?</p>
+        </div>
+        <div class="modal-footer">
+          <a href="./pages/registro.html" class="btn btn-dark">Soy adoptante</a>
+          <a href="./pages/registro-ong.html" class="btn btn-outline-secondary">Soy ONG</a>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- CHATBOT -->
   <button class="chatbot-toggler">
@@ -165,7 +229,6 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="js/main.js"></script>
   <script src="js/chatbot.js"></script>
 
 </body>
