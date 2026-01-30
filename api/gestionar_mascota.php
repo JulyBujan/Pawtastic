@@ -81,6 +81,94 @@ function manejarSubidaImagen($imagenActual = null) {
     }
 }
 
+/**
+ * Guarda imagenes extra para una mascota (hasta $maxExtra).
+ * @param mysqli $conn
+ * @param int $idMascota
+ * @param int $maxExtra
+ * @return array Lista de nombres de archivo subidos
+ * @throws Exception
+ */
+function guardarImagenesExtra($conn, $idMascota, $maxExtra = 3) {
+    $uploaded = [];
+    if (!isset($_FILES['imagenes'])) {
+        return $uploaded;
+    }
+
+    $names = $_FILES['imagenes']['name'];
+    $tmpNames = $_FILES['imagenes']['tmp_name'];
+    $errors = $_FILES['imagenes']['error'];
+
+    if (!is_array($names)) {
+        $names = [$names];
+        $tmpNames = [$tmpNames];
+        $errors = [$errors];
+    }
+
+    $totalFiles = count($names);
+    if ($totalFiles === 0) {
+        return $uploaded;
+    }
+
+    $indices = [];
+    for ($i = 0; $i < $totalFiles; $i++) {
+        if ($errors[$i] !== UPLOAD_ERR_NO_FILE) {
+            $indices[] = $i;
+        }
+    }
+    $filesToUpload = count($indices);
+    if ($filesToUpload === 0) {
+        return $uploaded;
+    }
+    if ($filesToUpload > $maxExtra) {
+        throw new Exception("Solo podes subir hasta {$maxExtra} fotos adicionales.");
+    }
+
+    $stmtCount = $conn->prepare("SELECT COUNT(*) AS total FROM ImagenesMascota WHERE mascota_id = ?");
+    $stmtCount->bind_param("i", $idMascota);
+    $stmtCount->execute();
+    $currentCount = (int) ($stmtCount->get_result()->fetch_assoc()['total'] ?? 0);
+    $stmtCount->close();
+
+    if ($currentCount + $filesToUpload > $maxExtra) {
+        throw new Exception("Esta mascota ya tiene {$maxExtra} fotos adicionales.");
+    }
+
+    $directorio = "../img/mascotas/";
+    if (!is_dir($directorio)) {
+        mkdir($directorio, 0777, true);
+    }
+
+    $allowedExtensions = ["jpg", "jpeg", "png", "webp"];
+    $stmtImg = $conn->prepare("INSERT INTO ImagenesMascota (mascota_id, url_imagen) VALUES (?, ?)");
+
+    foreach ($indices as $i) {
+        if ($errors[$i] !== UPLOAD_ERR_OK) {
+            throw new Exception("Error al subir una de las fotos adicionales.");
+        }
+        $extension = strtolower(pathinfo($names[$i], PATHINFO_EXTENSION));
+        if (!in_array($extension, $allowedExtensions, true)) {
+            throw new Exception("Formato de imagen extra inválido. Usá JPG, PNG o WEBP.");
+        }
+        $nombreArchivo = uniqid('mascota_extra_') . "_" . basename($names[$i]);
+        $rutaDestino = $directorio . $nombreArchivo;
+
+        if (!move_uploaded_file($tmpNames[$i], $rutaDestino)) {
+            throw new Exception("Error al mover una de las fotos adicionales.");
+        }
+
+        $stmtImg->bind_param("is", $idMascota, $nombreArchivo);
+        if (!$stmtImg->execute()) {
+            throw new Exception("Error al guardar las fotos adicionales.");
+        }
+        $uploaded[] = $nombreArchivo;
+    }
+
+    $stmtImg->close();
+
+    return $uploaded;
+}
+
 // --- Manejo de Borrado Lógico (Método DELETE) ---
 if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     // Obtener el ID de la mascota desde la URL (query parameter)
@@ -159,6 +247,7 @@ $esterilizado = trim($_POST['esterilizado']);
 $chip = trim($_POST['chip']);
 $apto_ninos = (int)$_POST['apto_ninos'];
 $apto_mascotas = (int)$_POST['apto_mascotas'];
+$extraImagesUploaded = [];
 
 try {
     $conn->begin_transaction(); // Iniciar transacción
@@ -210,6 +299,8 @@ try {
             throw new Exception("Error al actualizar la mascota en la base de datos.");
         }
 
+        $extraImagesUploaded = array_merge($extraImagesUploaded, guardarImagenesExtra($conn, $idMascota));
+
         $notifTipo = "mascota_actualizada";
         $notifTitulo = "Mascota actualizada";
         $notifCuerpo = "Actualizaste los datos de " . $nombre . ".";
@@ -255,6 +346,10 @@ try {
             $stmtVacunas->close();
         }
 
+        if ($newMascotaId) {
+            $extraImagesUploaded = array_merge($extraImagesUploaded, guardarImagenesExtra($conn, $newMascotaId));
+        }
+
         $notifTipo = "mascota_creada";
         $notifTitulo = "Mascota publicada";
         $notifCuerpo = "Publicaste a " . $nombre . ".";
@@ -273,6 +368,14 @@ try {
         $rutaCompleta = "../img/mascotas/" . $imagen_path;
         if (file_exists($rutaCompleta)) {
             unlink($rutaCompleta);
+        }
+    }
+    if (!empty($extraImagesUploaded)) {
+        foreach ($extraImagesUploaded as $extraImg) {
+            $rutaExtra = "../img/mascotas/" . $extraImg;
+            if (file_exists($rutaExtra)) {
+                unlink($rutaExtra);
+            }
         }
     }
     http_response_code(500);

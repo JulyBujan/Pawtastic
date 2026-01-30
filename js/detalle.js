@@ -1,6 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
   const urlParams = new URLSearchParams(window.location.search);
   const mascotaId = urlParams.get("id");
+  const mapaSection = document.getElementById("mapa-section");
+  const mapaCollapse = document.getElementById("mapa-collapse");
+  let mascotaData = null;
+  let mapInstance = null;
 
   if (!mascotaId) {
     window.location.href = "./catalogo.html";
@@ -18,6 +22,20 @@ document.addEventListener("DOMContentLoaded", () => {
       default:
         return "No especificado";
     }
+  };
+
+  const handleUnauthorized = (response) => {
+    if (response && response.status === 401) {
+      if (!window.__pawtasticAuthExpired) {
+        window.__pawtasticAuthExpired = true;
+        showToast("Tu sesión expiró. Volvé a iniciar sesión.", "warning");
+        localStorage.removeItem("token");
+        localStorage.removeItem("tipo");
+        window.location.href = "login.html";
+      }
+      return true;
+    }
+    return false;
   };
 
   const getEnergia = (level) => {
@@ -127,25 +145,39 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error("Error al cargar la mascota");
       }
       const mascota = await response.json();
+      mascotaData = mascota;
       renderMascotaDetalle(mascota);
-
-      // Intentar mostrar el mapa si el usuario está logueado
       if (mascota.ong_lat && mascota.ong_lon) {
-        const token = localStorage.getItem("token");
-        fetchUsuarioYMostrarMapa(token, mascota);
-      } else {
-        // Si no hay token o la ONG no tiene coordenadas, nos aseguramos de que el mapa no se muestre.
-        const mapaContainer = document.getElementById("mapa-container");
-        if (mapaContainer) {
-          // Doble chequeo por si acaso
-          mapaContainer.style.display = "none";
+        if (mapaSection) {
+          mapaSection.classList.remove("d-none");
         }
+      } else if (mapaSection) {
+        mapaSection.classList.add("d-none");
       }
     } catch (error) {
       console.error(error);
       document.querySelector("main.container").innerHTML =
         '<p class="text-center">No se pudo cargar la información de la mascota. Intente más tarde.</p>';
     }
+  };
+
+  const resolveImageUrl = (value) => {
+    if (!value) {
+      return "../img/mascotas/default.jpg";
+    }
+    if (/^https?:\/\//i.test(value)) {
+      return value;
+    }
+    if (value.startsWith("../") || value.startsWith("/")) {
+      return value;
+    }
+    if (value.startsWith("img/")) {
+      return `../${value}`;
+    }
+    if (value.startsWith("mascotas/")) {
+      return `../img/${value}`;
+    }
+    return `../img/mascotas/${value}`;
   };
 
   /**
@@ -161,7 +193,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Si no hay token, mostramos el mapa solo con la ONG.
     if (!token) {
-      document.getElementById("mapa-container").style.display = "block";
       document.getElementById(
         "distancia-info"
       ).textContent = `Inicia sesión para ver la distancia desde tu ubicación.`;
@@ -174,17 +205,27 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      document.getElementById("mapa-container").style.display = "block";
-
-      if (response.ok) {
-        const usuario = await response.json();
-        // Si el usuario tiene coordenadas, mostramos ambos puntos y la distancia.
-        const userCoords = [parseFloat(usuario.lat), parseFloat(usuario.lon)];
-        const distancia = calcularDistancia(
-          userCoords[0],
-          userCoords[1],
-          ongCoords[0],
-          ongCoords[1]
+      if (handleUnauthorized(response)) {
+        return;
+      }
+    if (response.ok) {
+      const usuario = await response.json();
+      // Si el usuario tiene coordenadas, mostramos ambos puntos y la distancia.
+      const userLat = parseFloat(usuario.lat);
+      const userLon = parseFloat(usuario.lon);
+      const userCoords = [userLat, userLon];
+      if (!Number.isFinite(userLat) || !Number.isFinite(userLon)) {
+        document.getElementById(
+          "distancia-info"
+        ).textContent = `Completá tu dirección en el perfil para ver la distancia.`;
+        inicializarMapa(null, ongCoords);
+        return;
+      }
+      const distancia = calcularDistancia(
+        userCoords[0],
+        userCoords[1],
+        ongCoords[0],
+        ongCoords[1]
         );
         document.getElementById(
           "distancia-info"
@@ -213,21 +254,21 @@ document.addEventListener("DOMContentLoaded", () => {
    * @param {Array<number>} ongCoords - Coordenadas [lat, lon] de la ONG.
    */
   const inicializarMapa = (userCoords, ongCoords) => {
-    const map = L.map("map").setView(ongCoords, 13); // Centra el mapa en la ONG por defecto
+    mapInstance = L.map("map").setView(ongCoords, 13); // Centra el mapa en la ONG por defecto
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(map);
+    }).addTo(mapInstance);
 
     const ongMarker = L.marker(ongCoords)
-      .addTo(map)
+      .addTo(mapInstance)
       .bindPopup("<b>Ubicación de la ONG</b>");
 
     // Si también tenemos las coordenadas del usuario, añadimos su marcador y la línea.
     if (userCoords) {
       const userMarker = L.marker(userCoords)
-        .addTo(map)
+        .addTo(mapInstance)
         .bindPopup("<b>Tu ubicación</b>")
         .openPopup();
 
@@ -235,10 +276,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const polyline = L.polyline([userCoords, ongCoords], {
         color: "red",
         dashArray: "5, 10",
-      }).addTo(map);
+      }).addTo(mapInstance);
 
       // Ajustar el zoom del mapa para que ambos puntos sean visibles
-      map.fitBounds(polyline.getBounds().pad(0.2)); // pad añade un poco de margen
+      mapInstance.fitBounds(polyline.getBounds().pad(0.2)); // pad añade un poco de margen
     } else {
       // Si solo tenemos la ONG, abrimos su popup por defecto.
       ongMarker.openPopup();
@@ -269,46 +310,135 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const renderMascotaDetalle = (mascota) => {
-    document.getElementById("mascota-nombre").textContent = mascota.nombre;
-    document.getElementById("mascota-descripcion").textContent =
-      mascota.descripcion;
-    document.getElementById("mascota-imagen").src = `../img/mascotas/${
-      mascota.imagen || "default.jpg"
-    }`;
+    const setText = (id, value) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.textContent = value ?? "";
+      }
+    };
+
+    const mainImage = mascota.imagen || null;
+    const extraImages = Array.isArray(mascota.imagenes)
+      ? mascota.imagenes.filter(Boolean)
+      : [];
+    const mainImageUrl = resolveImageUrl(mainImage);
+
+    const nombreEl = document.getElementById("mascota-nombre");
+    if (nombreEl) {
+      nombreEl.textContent = mascota.nombre || "";
+    }
+    setText("mascota-descripcion", mascota.descripcion);
+    document.getElementById("mascota-imagen").src = mainImageUrl;
     document.getElementById("mascota-imagen").alt = mascota.nombre;
-    document.getElementById("mascota-edad").textContent = formatarEdad(
-      parseInt(mascota.edad, 10)
-    );
-    document.getElementById("mascota-especie").textContent = mascota.tipo;
-    document.getElementById("mascota-tamano").textContent = mascota.tamaño;
-    document.getElementById("mascota-raza").textContent = getRaza(mascota.breed);
-    document.getElementById("mascota-color").textContent = getColor(mascota.color);
-    document.getElementById("mascota-vacunas").textContent = mascota.vacunado;
-    document.getElementById("mascota-esterilizado").textContent =
-      mascota.esterilizado;
-    document.getElementById("mascota-chip").textContent = mascota.chip;
-    document.getElementById("mascota-energia").textContent = getEnergia(
-      parseInt(mascota.energia)
-    );
-    document.getElementById("mascota-sociabilidad").textContent =
-      getSociabilidad(parseInt(mascota.sociabilidad));
-    document.getElementById("mascota-presencia").textContent = getPresencia(
-      parseInt(mascota.presencia)
-    );
-    document.getElementById("mascota-estilo-vida").textContent = getEstiloVida(
-      parseInt(mascota.estilov)
-    );
-    document.getElementById("mascota-estado").textContent =
-      mascota.estado == 0 ? "En adopción" : "En gestión";
-    document.getElementById("mascota-ong").textContent =
-      mascota.ong_nombre || "ONG Desconocida";
+    const edadEl = document.getElementById("mascota-edad");
+    if (edadEl) {
+      edadEl.textContent = formatarEdad(parseInt(mascota.edad, 10));
+    }
+    const especieEl = document.getElementById("mascota-especie");
+    if (especieEl) {
+      especieEl.textContent = mascota.tipo;
+    }
+    const tamanoEl = document.getElementById("mascota-tamano");
+    if (tamanoEl) {
+      tamanoEl.textContent = mascota.tamaño;
+    }
+    setText("mascota-raza", getRaza(mascota.breed));
+    setText("mascota-color", getColor(mascota.color));
+    setText("mascota-vacunas", mascota.vacunado);
+    setText("mascota-esterilizado", mascota.esterilizado);
+    setText("mascota-chip", mascota.chip);
+    setText("mascota-energia", getEnergia(parseInt(mascota.energia)));
+    setText("mascota-sociabilidad", getSociabilidad(parseInt(mascota.sociabilidad)));
+    setText("mascota-presencia", getPresencia(parseInt(mascota.presencia)));
+    setText("mascota-estilo-vida", getEstiloVida(parseInt(mascota.estilov)));
+    let estadoLabel = "En revisión";
+    if (parseInt(mascota.estado, 10) === 0) {
+      estadoLabel = "Activa";
+    } else if (parseInt(mascota.estado, 10) === 2) {
+      estadoLabel = "Adoptada";
+    }
+    setText("mascota-estado", estadoLabel);
+    setText("mascota-ong", mascota.ong_nombre || "ONG Desconocida");
+
+    const chipEdad = document.getElementById("chip-edad");
+    if (chipEdad) {
+      chipEdad.textContent = `Edad: ${formatarEdad(parseInt(mascota.edad, 10))}`;
+    }
+    const chipEspecie = document.getElementById("chip-especie");
+    if (chipEspecie) {
+      chipEspecie.textContent = mascota.tipo ? mascota.tipo : "Especie";
+    }
+    const chipTamano = document.getElementById("chip-tamano");
+    if (chipTamano) {
+      chipTamano.textContent = mascota.tamaño ? `Tamaño: ${mascota.tamaño}` : "Tamaño";
+    }
+    const chipEnergia = document.getElementById("chip-energia");
+    if (chipEnergia) {
+      chipEnergia.textContent = `Energía: ${getEnergia(parseInt(mascota.energia))}`;
+    }
+
+    const thumbsContainer = document.getElementById("mascota-thumbs");
+    if (thumbsContainer) {
+      thumbsContainer.innerHTML = "";
+      const gallery = document.getElementById("detailGallery");
+      const hasExtras = extraImages.length > 0;
+      if (gallery) {
+        gallery.classList.toggle("equal", hasExtras);
+      }
+
+      if (hasExtras) {
+        const extraSlots = 3;
+        const extras = extraImages.slice(0, extraSlots);
+        extras.forEach((img) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "detail-thumb";
+          const imgEl = document.createElement("img");
+          imgEl.src = resolveImageUrl(img);
+          imgEl.alt = mascota.nombre;
+          btn.appendChild(imgEl);
+          btn.addEventListener("click", () => {
+            document.getElementById("mascota-imagen").src = resolveImageUrl(img);
+          });
+          thumbsContainer.appendChild(btn);
+        });
+
+        const missing = extraSlots - extras.length;
+        for (let i = 0; i < missing; i += 1) {
+          const placeholder = document.createElement("div");
+          placeholder.className = "detail-thumb placeholder";
+          const icon = document.createElement("i");
+          icon.className = "bi bi-image";
+          placeholder.appendChild(icon);
+          thumbsContainer.appendChild(placeholder);
+        }
+      }
+    }
   };
 
   fetchMascotaDetalle();
 
-  document
-    .getElementById("postular-btn")
-    .addEventListener("click", async (e) => {
+  if (mapaCollapse) {
+    mapaCollapse.addEventListener("show.bs.collapse", () => {
+      if (!mascotaData || !mascotaData.ong_lat || !mascotaData.ong_lon || mapInstance) {
+        if (mapInstance) {
+          setTimeout(() => mapInstance.invalidateSize(), 200);
+        }
+        return;
+      }
+      const token = localStorage.getItem("token");
+      fetchUsuarioYMostrarMapa(token, mascotaData);
+      setTimeout(() => {
+        if (mapInstance) {
+          mapInstance.invalidateSize();
+        }
+      }, 200);
+    });
+  }
+
+  const postularBtn = document.getElementById("postular-btn");
+  if (postularBtn) {
+    postularBtn.addEventListener("click", async (e) => {
       e.preventDefault();
       const token = localStorage.getItem("token");
 
@@ -327,6 +457,9 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify({ id_mascota: mascotaId }),
         });
 
+        if (handleUnauthorized(response)) {
+          return;
+        }
         const data = await response.json();
 
         if (!response.ok) {
@@ -339,4 +472,5 @@ document.addEventListener("DOMContentLoaded", () => {
         showToast(error.message, "danger");
       }
     });
+  }
 });

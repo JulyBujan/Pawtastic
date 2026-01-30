@@ -302,17 +302,8 @@ document.addEventListener("DOMContentLoaded", () => {
           payload = null;
         }
       }
-      const adopcionId = payload && payload.adopcion_id
-        ? payload.adopcion_id
-        : (item.entidad_tipo === "adopcion" ? item.entidad_id : null);
-      const targetUrl = adopcionId
-        ? `./postulaciones.html?adopcion_id=${adopcionId}`
-        : "./postulaciones.html";
-
-      const wrapper = document.createElement("a");
-      wrapper.href = targetUrl;
-      wrapper.className = "notification-item notification-link" + (item.leida_at ? "" : " unread");
-      wrapper.setAttribute("role", "menuitem");
+      const wrapper = document.createElement("div");
+      wrapper.className = "notification-item" + (item.leida_at ? "" : " unread");
       wrapper.dataset.notifId = item.id;
 
       const header = document.createElement("div");

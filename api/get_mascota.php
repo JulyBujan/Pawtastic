@@ -28,6 +28,18 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
         $result = $stmt->get_result();
 
         if ($mascota = $result->fetch_assoc()) {
+            $stmt_imgs = $conn->prepare("SELECT url_imagen FROM ImagenesMascota WHERE mascota_id = ? ORDER BY id ASC");
+            if ($stmt_imgs) {
+                $stmt_imgs->bind_param("i", $id_mascota);
+                $stmt_imgs->execute();
+                $imagenes = $stmt_imgs->get_result()->fetch_all(MYSQLI_ASSOC);
+                $stmt_imgs->close();
+                $mascota['imagenes'] = array_map(function ($row) {
+                    return $row['url_imagen'];
+                }, $imagenes);
+            } else {
+                $mascota['imagenes'] = [];
+            }
             echo json_encode($mascota);
         } else {
             http_response_code(404);

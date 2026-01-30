@@ -13,60 +13,125 @@
   <link rel="icon" href="../img/favicon.ico" type="image/png" />
 </head>
 
-<body class="bg-light">
-  <!-- ENCABEZADO -->
-  <header class="encabezado-azul shadow-sm py-3 sticky-top">
-    <div class="container d-flex justify-content-between align-items-center">
-      <div class="d-flex align-items-center">
-        <img src="../img/logo.png" alt="Logo Pawtastic" width="50" class="me-2 rounded-circle" />
-        <h1 class="h4 text-warning m-0">Pawtastic</h1>
+<body class="detalle-body">
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark nav-app">
+    <div class="container">
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand d-flex align-items-center" href="../index.html">
+        <img src="../img/logo.png" alt="Logo Pawtastic" width="40" height="40" class="me-2 rounded-circle d-lg-none" />
+        <span class="text-warning fw-bold d-none d-lg-inline">Pawtastic</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item">
+            <a href="./mis-mascotas.html" class="btn btn-custom-nav">
+              <i class="bi bi-arrow-left"></i> Volver a mis mascotas
+            </a>
+          </li>
+        </ul>
       </div>
-      <a href="./catalogo.html" class="btn btn-outline-dark">← Volver al catálogo</a>
     </div>
-  </header>
+  </nav>
 
   <!-- DETALLE DE MASCOTA -->
   <main class="container py-5">
-    <div class="row">
+    <div class="detail-shell">
+      <div class="row g-4">
       <!-- IMAGEN -->
-      <div class="col-md-6">
-        <img src="" alt="" class="img-fluid rounded shadow" id="mascota-imagen" />
+      <div class="col-lg-6">
+        <div class="card detail-card border-0 shadow-sm">
+          <div class="detail-gallery" id="detailGallery">
+            <div class="detail-main-img">
+              <img src="" alt="" class="img-fluid" id="mascota-imagen" />
+            </div>
+            <div class="detail-thumbs" id="mascota-thumbs"></div>
+          </div>
+        </div>
 
         <!-- MAPA DE DISTANCIA -->
-        <div id="mapa-container" class="mt-4" style="display: none;">
-          <hr>
-          <h5 class="text-warning">Ubicación de la ONG</h5>
-          <div id="map" style="height: 300px; width: 100%;" class="rounded shadow-sm"></div>
-          <p id="distancia-info" class="text-center mt-2 fw-bold"></p>
+        <div id="mapa-section" class="card detail-card border-0 shadow-sm mt-4 d-none">
+          <div class="card-body">
+            <button class="btn detail-map-toggle w-100 d-flex align-items-center justify-content-between"
+              type="button" data-bs-toggle="collapse" data-bs-target="#mapa-collapse" aria-expanded="false"
+              aria-controls="mapa-collapse">
+              <span><i class="bi bi-geo-alt-fill me-2"></i>Ubicación de la ONG</span>
+              <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="collapse mt-3" id="mapa-collapse">
+              <div id="map" class="detail-map"></div>
+              <p id="distancia-info" class="text-center mt-2 fw-semibold small text-muted"></p>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- INFORMACIÓN -->
-      <div class="col-md-6">
-        <h2 class="text-warning" id="mascota-nombre"></h2>
-        <p class="text-muted fs-5" id="mascota-descripcion"></p>
-        <ul class="list-group list-group-flush mb-4">
-          <li class="list-group-item"><strong>Edad:</strong> <span id="mascota-edad"></span></li>
-          <li class="list-group-item"><strong>Especie:</strong> <span id="mascota-especie"></span></li>
-          <li class="list-group-item"><strong>Tamaño:</strong> <span id="mascota-tamano"></span></li>
-          <li class="list-group-item"><strong>Raza:</strong> <span id="mascota-raza"></span></li>
-          <li class="list-group-item"><strong>Color:</strong> <span id="mascota-color"></span></li>
-          <li class="list-group-item"><strong>Vacunas:</strong> <span id="mascota-vacunas"></span></li>
-          <li class="list-group-item"><strong>Esterilizado:</strong> <span id="mascota-esterilizado"></span></li>
-          <li class="list-group-item"><strong>Chip:</strong> <span id="mascota-chip"></span></li>
-          <li class="list-group-item"><strong>Energía:</strong> <span id="mascota-energia"></span></li>
-          <li class="list-group-item"><strong>Sociabilidad:</strong> <span id="mascota-sociabilidad"></span></li>
-          <li class="list-group-item"><strong>Presencia:</strong> <span id="mascota-presencia"></span></li>
-          <li class="list-group-item"><strong>Estilo de vida:</strong> <span id="mascota-estilo-vida"></span></li>
-          <li class="list-group-item"><strong>Estado:</strong> <span id="mascota-estado"></span></li>
-          <li class="list-group-item"><strong>ONG responsable:</strong> <span id="mascota-ong"></span></li>
-        </ul>
-        <div class="d-grid gap-2">
-          <a href="#" class="btn btn-dark" id="postular-btn">Postularme para adoptar</a>
+      <div class="col-lg-6">
+        <div class="card detail-card border-0 shadow-sm">
+          <div class="card-body">
+            <div class="detail-header">
+              <div class="detail-title-block">
+                <span class="detail-badge" id="mascota-estado"></span>
+                <h2 class="detail-title">
+                  <span id="mascota-nombre"></span>
+                  <i class="bi bi-paw-fill detail-title-icon" aria-hidden="true"></i>
+                </h2>
+                <div class="detail-ong">ONG: <span id="mascota-ong"></span></div>
+              </div>
+              <div class="detail-chip-group">
+                <span class="detail-chip" id="chip-edad"></span>
+                <span class="detail-chip" id="chip-especie"></span>
+                <span class="detail-chip" id="chip-tamano"></span>
+                <span class="detail-chip" id="chip-energia"></span>
+              </div>
+            </div>
+
+            <p class="text-muted fs-6 mt-3 detail-description" id="mascota-descripcion"></p>
+
+            <div class="detail-sections mt-4">
+              <div class="detail-section">
+                <div class="detail-section-title detail-title-quick"><i class="bi bi-stars me-2"></i>Ficha rápida</div>
+                <div class="detail-list">
+                  <div class="detail-item"><span>Raza</span><strong id="mascota-raza"></strong></div>
+                  <div class="detail-item"><span>Color</span><strong id="mascota-color"></strong></div>
+                </div>
+              </div>
+              <div class="detail-section">
+                <div class="detail-section-title detail-title-health"><i class="bi bi-shield-check me-2"></i>Salud</div>
+                <div class="detail-list">
+                  <div class="detail-item"><span>Vacunas</span><strong id="mascota-vacunas"></strong></div>
+                  <div class="detail-item"><span>Esterilizado</span><strong id="mascota-esterilizado"></strong></div>
+                  <div class="detail-item"><span>Chip</span><strong id="mascota-chip"></strong></div>
+                </div>
+              </div>
+              <div class="detail-section">
+                <div class="detail-section-title detail-title-social"><i class="bi bi-emoji-smile me-2"></i>Convivencia</div>
+                <div class="detail-list">
+                  <div class="detail-item"><span>Sociabilidad</span><strong id="mascota-sociabilidad"></strong></div>
+                  <div class="detail-item"><span>Presencia</span><strong id="mascota-presencia"></strong></div>
+                  <div class="detail-item"><span>Estilo de vida</span><strong id="mascota-estilo-vida"></strong></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
+    </div>
   </main>
+
+  <footer class="mini-footer mt-4">
+    <div class="container text-center">
+      <a href="./terminosYcondiciones.html" class="text-decoration-none">Términos</a>
+      <span class="mx-2">|</span>
+      <a href="./politicaDeCookies.html" class="text-decoration-none">Cookies</a>
+    </div>
+  </footer>
 
   <!-- Contenedor de Toasts -->
   <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">

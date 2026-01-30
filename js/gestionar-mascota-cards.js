@@ -11,6 +11,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   const fotoActualPreview = document.getElementById("fotoActualPreview");
   const fotoPlaceholder = document.getElementById("fotoPlaceholder");
   const fotoInput = document.getElementById("foto");
+  const extraFotosInput = document.getElementById("fotos-extra");
+  const extraExistingLabel = document.getElementById("fotos-extra-existing-label");
+  const extraExistingContainer = document.getElementById("fotos-extra-existing");
+  const extraPreviewLabel = document.getElementById("fotos-extra-preview-label");
+  const extraPreviewContainer = document.getElementById("fotos-extra-preview");
   const formTitle = document.getElementById("formTitle");
   const formSubtitle = document.getElementById("formSubtitle");
   const cancelBtn = document.getElementById("btn-cancelar");
@@ -62,6 +67,83 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
+  const MAX_EXTRA_FOTOS = 3;
+  let extraPreviewUrls = [];
+
+  const resolveImageUrl = (value) => {
+    if (!value) {
+      return "../img/mascotas/default.jpg";
+    }
+    if (/^https?:\/\//i.test(value)) {
+      return value;
+    }
+    if (value.startsWith("../") || value.startsWith("/")) {
+      return value;
+    }
+    if (value.startsWith("img/")) {
+      return `../${value}`;
+    }
+    if (value.startsWith("mascotas/")) {
+      return `../img/${value}`;
+    }
+    return `../img/mascotas/${value}`;
+  };
+
+  const clearPreviewUrls = () => {
+    extraPreviewUrls.forEach((url) => URL.revokeObjectURL(url));
+    extraPreviewUrls = [];
+  };
+
+  const renderExtraImages = (images, container, labelEl) => {
+    if (!container) return;
+    container.innerHTML = "";
+    if (!images || images.length === 0) {
+      if (labelEl) {
+        labelEl.classList.add("d-none");
+      }
+      return;
+    }
+    if (labelEl) {
+      labelEl.classList.remove("d-none");
+    }
+    images.forEach((img) => {
+      const item = document.createElement("div");
+      item.className = "photo-extra-item";
+      const imgEl = document.createElement("img");
+      imgEl.src = resolveImageUrl(img);
+      imgEl.alt = "Foto adicional";
+      item.appendChild(imgEl);
+      container.appendChild(item);
+    });
+  };
+
+  const renderExtraFiles = (files) => {
+    if (!extraPreviewContainer) return;
+    extraPreviewContainer.innerHTML = "";
+    clearPreviewUrls();
+    if (!files || files.length === 0) {
+      if (extraPreviewLabel) {
+        extraPreviewLabel.classList.add("d-none");
+      }
+      return;
+    }
+    if (extraPreviewLabel) {
+      extraPreviewLabel.classList.remove("d-none");
+    }
+    files.forEach((file) => {
+      const item = document.createElement("div");
+      item.className = "photo-extra-item";
+      const imgEl = document.createElement("img");
+      const url = URL.createObjectURL(file);
+      extraPreviewUrls.push(url);
+      imgEl.src = url;
+      imgEl.alt = "Foto nueva";
+      imgEl.onload = () => URL.revokeObjectURL(url);
+      item.appendChild(imgEl);
+      extraPreviewContainer.appendChild(item);
+    });
+  };
+
   const setBadge = (count) => {
     if (!notifBadge) {
       return;
@@ -105,17 +187,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           payload = null;
         }
       }
-      const adopcionId = payload && payload.adopcion_id
-        ? payload.adopcion_id
-        : (item.entidad_tipo === "adopcion" ? item.entidad_id : null);
-      const targetUrl = adopcionId
-        ? `./postulaciones.html?adopcion_id=${adopcionId}`
-        : "./postulaciones.html";
-
-      const wrapper = document.createElement("a");
-      wrapper.href = targetUrl;
-      wrapper.className = "notification-item notification-link" + (item.leida_at ? "" : " unread");
-      wrapper.setAttribute("role", "menuitem");
+      const wrapper = document.createElement("div");
+      wrapper.className = "notification-item" + (item.leida_at ? "" : " unread");
       wrapper.dataset.notifId = item.id;
 
       const header = document.createElement("div");
@@ -460,6 +533,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  if (extraFotosInput) {
+    extraFotosInput.addEventListener("change", () => {
+      const files = Array.from(extraFotosInput.files || []);
+      if (files.length > MAX_EXTRA_FOTOS) {
+        showToast(`Podés subir hasta ${MAX_EXTRA_FOTOS} fotos adicionales.`, "warning");
+        extraFotosInput.value = "";
+        renderExtraFiles([]);
+        return;
+      }
+      renderExtraFiles(files);
+    });
+  }
+
   async function setupEditMode(id) {
     if (formTitle) {
       formTitle.textContent = "Editar mascota";
@@ -515,6 +601,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (fotoInput) {
           fotoInput.setAttribute("data-existing-src", fotoActualPreview.src);
         }
+      }
+
+      if (Array.isArray(mascota.imagenes)) {
+        renderExtraImages(mascota.imagenes.slice(0, MAX_EXTRA_FOTOS), extraExistingContainer, extraExistingLabel);
+      } else {
+        renderExtraImages([], extraExistingContainer, extraExistingLabel);
       }
 
       if (breedSelect && mascota.breed) {
@@ -616,6 +708,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const anos = parseInt(edadAnosInput.value, 10) || 0;
     const meses = parseInt(edadMesesInput.value, 10) || 0;
     edadInput.value = anos * 12 + meses;
+
+    const extraFiles = extraFotosInput ? Array.from(extraFotosInput.files || []) : [];
+    if (extraFiles.length > MAX_EXTRA_FOTOS) {
+      showToast(`Podés subir hasta ${MAX_EXTRA_FOTOS} fotos adicionales.`, "warning");
+      return;
+    }
 
     const formData = new FormData(formMascota);
     if (breedSelect && breedSelect.value === "OTHER") {
