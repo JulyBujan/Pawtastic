@@ -398,6 +398,7 @@ INSERT INTO `mascota_vacunas` (`id_mascota`, `id_vacuna`, `fecha_aplicacion`) VA
 CREATE TABLE `ONGs` (
   `id` int NOT NULL,
   `nombre` varchar(150) NOT NULL,
+  `logo_url` varchar(255) DEFAULT NULL,
   `razon_social` varchar(255) DEFAULT NULL,
   `cuit` varchar(13) DEFAULT NULL,
   `lat` float NOT NULL DEFAULT '-31',

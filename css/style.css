@@ -319,6 +319,11 @@ a.btn:hover {
   border-top-right-radius: 1rem;
 }
 
+.catalog-card-img {
+  height: 220px;
+  object-fit: cover;
+}
+
 /*Usuario */
 /* Imagen de perfil */
 img.rounded-circle {
@@ -981,6 +986,7 @@ div.card:has(#form-title) {
 .notification-item {
   padding: 0.55rem 0;
   border-bottom: 1px solid rgba(27, 36, 54, 0.08);
+  cursor: pointer;
 }
 
 .notification-item:last-child {
@@ -989,6 +995,25 @@ div.card:has(#form-title) {
 
 .notification-item.unread {
   background: rgba(255, 255, 255, 0.75);
+}
+
+.notification-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.notification-pill {
+  background: rgba(255, 193, 7, 0.2);
+  border: 1px solid rgba(255, 193, 7, 0.45);
+  border-radius: 999px;
+  color: #b45309;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.15rem 0.45rem;
+  text-transform: uppercase;
 }
 
 .notification-link {
@@ -1004,6 +1029,299 @@ div.card:has(#form-title) {
 .notification-meta {
   font-size: 0.72rem;
   color: #6b7682;
+}
+
+/* === MIS MASCOTAS (ONG) === */
+.mis-mascotas-body {
+  --catalog-bg: radial-gradient(circle at top, #f7f4ee 0%, #ece7dd 45%, #e2ddcf 100%);
+  --card-surface: #ffffff;
+  --card-border: rgba(27, 36, 54, 0.12);
+  --card-shadow: 0 18px 45px rgba(27, 36, 54, 0.12);
+  --nav-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  --pill-bg: rgba(26, 148, 196, 0.16);
+  --pill-border: rgba(26, 148, 196, 0.3);
+  background: var(--catalog-bg);
+}
+
+.catalog-hero {
+  background: linear-gradient(120deg, #ffffff 0%, #f8f6f2 100%);
+  border: 1px solid rgba(27, 36, 54, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 18px 40px rgba(27, 36, 54, 0.12);
+}
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(27, 36, 54, 0.12);
+}
+
+.status-active {
+  color: #0f6b4a;
+  background: rgba(65, 192, 120, 0.16);
+  border-color: rgba(65, 192, 120, 0.35);
+}
+
+.status-pending {
+  color: #7a4d00;
+  background: rgba(241, 178, 74, 0.18);
+  border-color: rgba(241, 178, 74, 0.4);
+}
+
+.status-adopted {
+  color: #1b4f6d;
+  background: rgba(26, 148, 196, 0.18);
+  border-color: rgba(26, 148, 196, 0.4);
+}
+
+.title-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+  font-size: 1.5rem;
+  color: #f1b24a;
+  animation: floatIcon 2.4s ease-in-out infinite;
+}
+
+.title-icon svg {
+  width: 26px;
+  height: 26px;
+  fill: currentColor;
+}
+
+@keyframes floatIcon {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.filter-input,
+.filter-select {
+  border-radius: 12px;
+  border: 1px solid rgba(27, 36, 54, 0.15);
+  box-shadow: 0 12px 30px rgba(27, 36, 54, 0.08);
+}
+
+.filter-panel {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(27, 36, 54, 0.12);
+  border-radius: 18px;
+  padding: 1.2rem 1.4rem;
+  box-shadow: 0 16px 35px rgba(27, 36, 54, 0.12);
+  backdrop-filter: blur(6px);
+}
+
+.filter-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1b2436;
+}
+
+.filter-field .input-group-text {
+  background: #ffffff;
+  border: 1px solid rgba(27, 36, 54, 0.15);
+  color: #1a94c4;
+}
+
+.btn-clear-filters {
+  color: #6b7682;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.btn-clear-filters:hover {
+  color: #1b2436;
+  text-decoration: underline;
+}
+
+.pet-card {
+  border: 1px solid var(--card-border);
+  border-radius: 18px;
+  background: var(--card-surface);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+
+.pet-image {
+  aspect-ratio: 3 / 2;
+  background: linear-gradient(135deg, #eef3f8, #f8efe1);
+  position: relative;
+  overflow: hidden;
+}
+
+.pet-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.12) 100%);
+  z-index: 1;
+}
+
+.pet-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  position: relative;
+  z-index: 0;
+  background: transparent;
+}
+
+.pet-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(27, 36, 54, 0.1);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pet-badge.status-active {
+  color: #0f6b4a;
+  background: rgba(65, 192, 120, 0.18);
+  border-color: rgba(65, 192, 120, 0.45);
+}
+
+.pet-badge.status-pending {
+  color: #7a4d00;
+  background: rgba(241, 178, 74, 0.18);
+  border-color: rgba(241, 178, 74, 0.5);
+}
+
+.pet-badge.status-adopted {
+  color: #1b4f6d;
+  background: rgba(26, 148, 196, 0.18);
+  border-color: rgba(26, 148, 196, 0.45);
+}
+
+.pet-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: #5a6b7a;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pet-meta i {
+  color: #1a94c4;
+}
+
+.pet-actions .btn {
+  border-radius: 14px;
+  font-weight: 600;
+  padding: 0.35rem 0.9rem;
+  border-width: 2px;
+}
+
+.pet-card .card-body {
+  text-align: center;
+}
+
+.pet-summary {
+  color: #5a6b7a;
+  font-size: 0.9rem;
+}
+
+.pet-highlight {
+  color: inherit;
+  font-weight: 700;
+}
+
+.btn-icon {
+  width: 40px;
+  height: 38px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon i {
+  font-size: 1.1rem;
+}
+.pet-actions .btn-outline-secondary {
+  border-color: rgba(65, 192, 120, 0.6);
+  color: #0f6b4a;
+}
+
+.pet-actions .btn-outline-secondary:hover {
+  background: rgba(65, 192, 120, 0.18);
+  color: #0f6b4a;
+  border-color: rgba(65, 192, 120, 0.7);
+}
+
+.pet-actions .btn-dark {
+  background: transparent;
+  border-color: rgba(26, 148, 196, 0.7);
+  color: #1a94c4;
+  border-style: solid;
+  border-width: 2px;
+}
+
+.pet-actions .btn-dark:hover {
+  background: rgba(26, 148, 196, 0.12);
+  color: #1a94c4;
+  border-color: rgba(26, 148, 196, 0.8);
+}
+
+.pet-actions .btn-outline-info {
+  border-color: rgba(137, 87, 229, 0.6);
+  color: #7a4fe0;
+}
+
+.pet-actions .btn-outline-info:hover {
+  background: rgba(137, 87, 229, 0.14);
+  color: #7a4fe0;
+  border-color: rgba(137, 87, 229, 0.7);
+}
+
+.pet-actions .btn-outline-danger {
+  border-color: rgba(226, 85, 85, 0.4);
+  color: #e25555;
+}
+
+.pet-actions .btn-outline-danger:hover {
+  background: rgba(226, 85, 85, 0.1);
+  color: #e25555;
+}
+
+.pagination-modern .page-link {
+  border-radius: 12px;
+  border: 1px solid rgba(27, 36, 54, 0.18);
+  color: #1b2436;
+}
+
+.pagination-modern .page-item.active .page-link {
+  background: #1a94c4;
+  border-color: #1a94c4;
+  color: #ffffff;
+}
+
+.pagination-modern .page-link:hover {
+  background: rgba(26, 148, 196, 0.12);
+  color: #1b2436;
 }
 
 /* === PERFIL ONG MODERNO === */
@@ -1038,16 +1356,58 @@ div.card:has(#form-title) {
   text-align: center;
   box-shadow: inset 0 0 0 1px rgba(27, 36, 54, 0.05);
   margin-bottom: 1.5rem;
+  animation: ong-banner-fade 0.6s ease both;
 }
 
 .ong-banner h2 {
   color: var(--naranja-logo);
   margin-bottom: 0.35rem;
+  font-size: clamp(1.6rem, 2.6vw, 2rem);
+  font-weight: 700;
 }
 
 .ong-banner p {
   margin: 0;
   font-weight: 600;
+}
+
+.ong-name {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: clamp(1.4rem, 2.2vw, 1.9rem);
+  font-weight: 700;
+  color: #1b2436;
+}
+
+.ong-icon {
+  font-size: 1.4em;
+  line-height: 1;
+  color: var(--naranja-logo);
+  display: inline-flex;
+  animation: ong-paw-bounce 1.4s ease-in-out infinite;
+}
+
+@keyframes ong-paw-bounce {
+  from {
+    transform: translateY(0) scale(1);
+  }
+  35% {
+    transform: translateY(-6px) scale(1.05);
+  }
+  55% {
+    transform: translateY(0) scale(0.98);
+  }
+  to {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ong-icon {
+    animation: none;
+  }
 }
 
 .ong-actions {
@@ -1087,6 +1447,18 @@ div.card:has(#form-title) {
   padding: 1.5rem;
   border: 1px solid rgba(27, 36, 54, 0.08);
   box-shadow: 0 16px 30px rgba(27, 36, 54, 0.12);
+}
+
+.stat-card-center {
+  text-align: center;
+}
+
+.stat-card-center .stat-label {
+  justify-content: center;
+}
+
+.stat-card-center .btn-stat {
+  margin-inline: auto;
 }
 
 .stat-number {

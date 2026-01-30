@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = `
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm">
-                        <img src="${mascota.imagen ? '/img/mascotas/' + mascota.imagen : '/img/mascotas/default.jpg'}" class="card-img-top" alt="Foto de ${mascota.nombre}">
+                        <img src="${mascota.imagen ? '/img/mascotas/' + mascota.imagen : '/img/mascotas/default.jpg'}" class="card-img-top catalog-card-img" alt="Foto de ${mascota.nombre}">
                         <div class="card-body">
                             <h5 class="card-title">${mascota.nombre}</h5>
                             <p class="card-text">${descripcionModificada}</p>

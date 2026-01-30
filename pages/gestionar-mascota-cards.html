@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Prueba Cards Form | Pawtastic</title>
+  <title>Gestionar Mascota | Pawtastic</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
   <link rel="icon" href="../img/favicon.ico" type="image/png">
@@ -32,6 +32,14 @@
       background: var(--card-header);
     }
 
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: none;
+      color: #1b2436;
+    }
+
     .label-pill {
       display: inline-flex;
       align-items: center;
@@ -40,9 +48,9 @@
       background: rgba(26, 148, 196, 0.18);
       border: 1px solid rgba(26, 148, 196, 0.35);
       color: #0b3b50;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: 700;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
     }
 
@@ -183,6 +191,62 @@
       border-color: rgba(255, 255, 255, 0.35);
       color: #41c078;
     }
+
+    .photo-preview {
+      border-radius: 16px;
+      border: 1px dashed rgba(27, 36, 54, 0.2);
+      background: rgba(255, 255, 255, 0.7);
+      height: 170px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .photo-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .photo-placeholder {
+      text-align: center;
+      color: #6b7682;
+      font-size: 0.9rem;
+    }
+
+    .photo-placeholder i {
+      font-size: 1.4rem;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .form-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 2rem;
+    }
+
+    .btn-save {
+      border-radius: 999px;
+      padding: 0.6rem 1.8rem;
+      font-weight: 700;
+      box-shadow: 0 16px 32px rgba(14, 90, 126, 0.2);
+    }
+
+    .btn-cancel-link {
+      color: #6b7682;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .btn-cancel-link:hover {
+      color: #1b2436;
+      text-decoration: underline;
+    }
   </style>
 </head>
 
@@ -214,13 +278,24 @@
         </ul>
       </div>
       <div class="d-flex align-items-center gap-2 ms-auto">
-        <button type="button" class="btn nav-icon position-relative" aria-label="Notificaciones">
-          <i class="bi bi-bell"></i>
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark nav-badge">3</span>
-        </button>
-        <button type="button" class="btn nav-icon" aria-label="Perfil">
-          <i class="bi bi-person-circle"></i>
-        </button>
+        <div class="dropdown">
+          <button type="button" class="btn nav-icon position-relative dropdown-toggle" id="notifDropdown"
+            data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notificaciones">
+            <i class="bi bi-bell"></i>
+            <span id="notifBadge"
+              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark nav-badge d-none">0</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end notification-menu shadow" aria-labelledby="notifDropdown">
+            <li class="dropdown-header d-flex justify-content-between align-items-center">
+              <span class="fw-semibold">Notificaciones</span>
+              <button type="button" class="btn btn-sm btn-link p-0 text-decoration-none" id="markAllNotif">Marcar
+                todas</button>
+            </li>
+            <li>
+              <div id="notifList" class="px-3 pb-2 small text-muted">Cargando...</div>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </nav>
@@ -228,18 +303,20 @@
   <!-- CONTENIDO PRINCIPAL -->
   <main class="container py-5">
     <div class="d-flex flex-column align-items-center mb-4">
-      <h2 class="text-warning fw-bold mb-2">Prueba de Formulario con Cards</h2>
-      <p class="text-muted mb-0 text-center">Secciones agrupadas en cards para probar el layout responsive.</p>
+      <h2 id="formTitle" class="text-warning fw-bold mb-2">Cargar nueva mascota</h2>
+      <p id="formSubtitle" class="text-muted mb-0 text-center">Completá los datos para publicar en adopción.</p>
     </div>
 
-    <form id="form-mascota-cards">
+    <form id="form-mascota-cards" enctype="multipart/form-data">
+      <input type="hidden" id="id_mascota" name="id">
+      <input type="hidden" id="edad" name="edad">
       <div class="row g-4">
         <div class="col-12 col-xl-6">
           <div class="card border-0 shadow-sm rounded-4 h-100">
             <div class="card-header bg-body-tertiary border-0">
               <div class="d-flex align-items-center gap-2">
                 <i class="bi bi-person-vcard text-warning"></i>
-                <span class="text-uppercase small fw-semibold text-muted">Datos basicos</span>
+                <span class="section-title">Datos básicos</span>
               </div>
             </div>
             <div class="card-body">
@@ -260,7 +337,7 @@
                   <label class="form-label"><span class="label-pill">Edad</span></label>
                   <div class="row g-2">
                     <div class="col">
-                      <label for="edad_anos" class="form-label small">Anos</label>
+                      <label for="edad_anos" class="form-label small">Años</label>
                       <input type="number" class="form-control" id="edad_anos" min="0" value="0">
                     </div>
                     <div class="col">
@@ -287,16 +364,16 @@
             <div class="card-header bg-body-tertiary border-0">
               <div class="d-flex align-items-center gap-2">
                 <i class="bi bi-tags text-warning"></i>
-                <span class="text-uppercase small fw-semibold text-muted">Tamano, raza y color</span>
+                <span class="section-title">Tamaño, raza y color</span>
               </div>
             </div>
             <div class="card-body">
               <div class="row g-3">
                 <div class="col-12 col-md-6 col-lg-4">
-                  <label for="tamano" class="form-label"><span class="label-pill">Tamano</span></label>
-                  <select id="tamano" name="tamano" class="form-select">
+                  <label for="tamano" class="form-label"><span class="label-pill">Tamaño</span></label>
+                  <select id="tamano" name="tamaño" class="form-select">
                     <option value="">Seleccionar</option>
-                    <option value="Pequeno">Pequeno</option>
+                    <option value="Pequeño">Pequeño</option>
                     <option value="Mediano">Mediano</option>
                     <option value="Grande">Grande</option>
                   </select>
@@ -319,6 +396,8 @@
                     <option value="ALASKAN HUSKY">Husky de Alaska</option>
                     <option value="OTHER">Otro</option>
                   </select>
+                  <input type="text" id="breed_custom" name="breed_custom" class="form-control mt-2 d-none"
+                    placeholder="Especificar raza">
                 </div>
                 <div class="col-12 col-md-6 col-lg-4">
                   <label for="color" class="form-label"><span class="label-pill">Color</span></label>
@@ -347,7 +426,7 @@
             <div class="card-header bg-body-tertiary border-0">
               <div class="d-flex align-items-center gap-2">
                 <i class="bi bi-image text-warning"></i>
-                <span class="text-uppercase small fw-semibold text-muted">Descripcion y fotos</span>
+                <span class="section-title">Descripción y fotos</span>
               </div>
             </div>
             <div class="card-body">
@@ -359,9 +438,12 @@
                 </div>
                 <div class="col-12 col-md-6 col-lg-3">
                   <label class="form-label"><span class="label-pill">Foto actual</span></label>
-                  <div class="border rounded-3 bg-light d-flex align-items-center justify-content-center text-muted"
-                    style="height: 150px;">
-                    Vista previa
+                  <div class="photo-preview" id="fotoActualContainer">
+                    <img id="fotoActualPreview" src="" alt="Foto actual">
+                    <div class="photo-placeholder" id="fotoPlaceholder">
+                      <i class="bi bi-camera"></i>
+                      Sin foto todavía
+                    </div>
                   </div>
                 </div>
                 <div class="col-12 col-md-6 col-lg-3">
@@ -379,7 +461,7 @@
             <div class="card-header bg-body-tertiary border-0">
               <div class="d-flex align-items-center gap-2">
                 <i class="bi bi-shield-check text-warning"></i>
-                <span class="text-uppercase small fw-semibold text-muted">Datos adicionales</span>
+                <span class="section-title">Datos adicionales</span>
               </div>
             </div>
             <div class="card-body">
@@ -412,7 +494,8 @@
               <hr>
               <div class="d-flex align-items-center justify-content-between mb-2">
                 <span class="fw-semibold">Vacunas aplicadas</span>
-                <button type="button" class="btn btn-outline-secondary btn-sm">Agregar vacuna</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="btnAgregarVacuna"
+                  data-bs-toggle="modal" data-bs-target="#modalAgregarVacuna">Agregar vacuna</button>
               </div>
               <div class="table-responsive">
                 <table class="table table-sm align-middle mb-0">
@@ -420,19 +503,12 @@
                     <tr>
                       <th>Vacuna</th>
                       <th>Fecha</th>
-                      <th>Estado</th>
+                      <th>Acción</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody id="tabla-vacunas-body">
                     <tr>
-                      <td>Triple felina</td>
-                      <td>12/05/2024</td>
-                      <td><span class="badge text-bg-success">Ok</span></td>
-                    </tr>
-                    <tr>
-                      <td>Antirrabica</td>
-                      <td>01/02/2025</td>
-                      <td><span class="badge text-bg-warning">Pendiente</span></td>
+                      <td colspan="3" class="text-center text-muted">Guardá la mascota para cargar vacunas.</td>
                     </tr>
                   </tbody>
                 </table>
@@ -446,7 +522,7 @@
             <div class="card-header bg-body-tertiary border-0">
               <div class="d-flex align-items-center gap-2">
                 <i class="bi bi-emoji-smile text-warning"></i>
-                <span class="text-uppercase small fw-semibold text-muted">Apto y personalidad</span>
+                <span class="section-title">Apto y personalidad</span>
               </div>
             </div>
             <div class="card-body">
@@ -509,14 +585,10 @@
         </div>
       </div>
 
-      <div class="d-flex justify-content-between align-items-center mt-4">
-        <button type="button" class="btn rounded-circle action-btn action-btn-cancel" aria-label="Cancelar">
-          <span class="action-label">Cancelar</span>
-          <i class="bi bi-x-lg"></i>
-        </button>
-        <button type="submit" class="btn rounded-circle action-btn action-btn-confirm" aria-label="Guardar">
-          <span class="action-label">Guardar</span>
-          <i class="bi bi-check-lg"></i>
+      <div class="form-actions">
+        <a href="#" class="btn-cancel-link" id="btn-cancelar"><i class="bi bi-x-circle me-1"></i>Cancelar</a>
+        <button type="submit" class="btn btn-primary btn-save" id="btn-guardar">
+          <i class="bi bi-check-lg me-2"></i>Guardar cambios
         </button>
       </div>
     </form>
@@ -542,6 +614,35 @@
     </div>
   </div>
 
+  <!-- MODAL AGREGAR VACUNA -->
+  <div class="modal fade" id="modalAgregarVacuna" tabindex="-1" aria-labelledby="modalAgregarVacunaLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalAgregarVacunaLabel">Agregar Vacuna</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="form-agregar-vacuna">
+            <div class="mb-3">
+              <label for="select-vacuna" class="form-label">Vacuna</label>
+              <select id="select-vacuna" class="form-select" required></select>
+            </div>
+            <div class="mb-3">
+              <label for="fecha-aplicacion-vacuna" class="form-label">Fecha de Aplicación</label>
+              <input type="date" id="fecha-aplicacion-vacuna" class="form-control" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" id="btn-guardar-vacuna" class="btn btn-primary">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <footer class="mini-footer">
     <div class="container text-center">
       <a href="./terminosYcondiciones.html" class="text-decoration-none">Terminos</a>
@@ -558,6 +659,8 @@
     });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/gestionar-mascota-cards.js"></script>
 </body>
 
 </html>

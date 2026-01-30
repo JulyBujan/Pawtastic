@@ -19,6 +19,20 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  const handleUnauthorized = (response) => {
+    if (response && response.status === 401) {
+      if (!window.__pawtasticAuthExpired) {
+        window.__pawtasticAuthExpired = true;
+        showToast("Tu sesión expiró. Volvé a iniciar sesión.", "warning");
+        localStorage.removeItem("token");
+        localStorage.removeItem("tipo");
+        window.location.href = "login.html";
+      }
+      return true;
+    }
+    return false;
+  };
+
   const formatDateTime = (value) => {
     if (!value) return "—";
     const date = new Date(value);
@@ -67,6 +81,9 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: { Authorization: "Bearer " + token },
       });
 
+      if (handleUnauthorized(response)) {
+        return;
+      }
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Error al cargar los datos de la ONG.");
@@ -75,7 +92,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const ong = await response.json();
       if (ong.nombre) {
         nombreOngSpan.textContent = ong.nombre;
-        bienvenidaH2.textContent = `¡Bienvenida, ${ong.nombre}!`;
       }
     } catch (error) {
       console.error(error);
@@ -88,6 +104,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch("../api/get_mascota.php", {
         headers: { Authorization: "Bearer " + token },
       });
+      if (handleUnauthorized(response)) {
+        return;
+      }
       if (!response.ok) {
         throw new Error("No se pudieron cargar las mascotas.");
       }
@@ -118,6 +137,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch("../api/postulaciones.php", {
         headers: { Authorization: "Bearer " + token },
       });
+      if (handleUnauthorized(response)) {
+        return;
+      }
       if (!response.ok) {
         throw new Error("No se pudieron cargar las postulaciones.");
       }
@@ -156,8 +178,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const time = formatDateTime(notif.created_at);
         const unreadClass = notif.leida_at ? "" : " unread";
         return `
-          <div class="notification-item${unreadClass}">
-            <div class="fw-semibold">${title}</div>
+          <div class="notification-item${unreadClass}" data-notif-id="${notif.id}">
+            <div class="notification-header">
+              <div class="fw-semibold">${title}</div>
+              ${notif.leida_at ? "" : "<span class=\"notification-pill\">Nueva</span>"}
+            </div>
             ${body ? `<div class="small text-muted">${body}</div>` : ""}
             <div class="notification-meta">${time}</div>
           </div>
@@ -200,6 +225,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }),
       ]);
 
+      if (handleUnauthorized(countRes) || handleUnauthorized(listRes)) {
+        return;
+      }
       if (countRes.ok) {
         const countData = await countRes.json();
         const unread = countData.unread || 0;
@@ -226,6 +254,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  const marcarNotificaciones = async (ids) => {
+    try {
+      const response = await fetch("../api/notificaciones.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        body: JSON.stringify({ ids }),
+      });
+
+      if (!response.ok) {
+        throw new Error("No se pudieron marcar las notificaciones.");
+      }
+      await fetchNotificaciones();
+    } catch (error) {
+      console.error(error);
+      showToast("No se pudieron marcar las notificaciones.", "danger");
+    }
+  };
+
   markAllNotifBtn.addEventListener("click", async () => {
     try {
       const response = await fetch("../api/notificaciones.php", {
@@ -248,6 +297,20 @@ document.addEventListener("DOMContentLoaded", () => {
       showToast("No se pudieron marcar las notificaciones.", "danger");
     }
   });
+
+  if (notifList) {
+    notifList.addEventListener("click", async (event) => {
+      const item = event.target.closest(".notification-item");
+      if (!item || !item.classList.contains("unread")) {
+        return;
+      }
+      const notifId = item.getAttribute("data-notif-id");
+      if (!notifId) {
+        return;
+      }
+      await marcarNotificaciones([parseInt(notifId, 10)]);
+    });
+  }
 
   fetchOngData();
   fetchMascotasData();

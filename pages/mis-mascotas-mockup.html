@@ -99,6 +99,25 @@
       background: rgba(255, 255, 255, 0.75);
     }
 
+    .notification-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .notification-pill {
+      background: rgba(255, 193, 7, 0.2);
+      border: 1px solid rgba(255, 193, 7, 0.45);
+      border-radius: 999px;
+      color: #b45309;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 0.15rem 0.45rem;
+      text-transform: uppercase;
+    }
+
     .notification-link {
       display: block;
       color: inherit;
@@ -647,9 +666,20 @@
           wrapper.dataset.adopcionId = adopcionId;
         }
 
+        const header = document.createElement("div");
+        header.className = "notification-header";
+
         const title = document.createElement("div");
         title.className = "fw-semibold";
         title.textContent = item.titulo;
+        header.appendChild(title);
+
+        if (!item.leida_at) {
+          const pill = document.createElement("span");
+          pill.className = "notification-pill";
+          pill.textContent = "Nueva";
+          header.appendChild(pill);
+        }
 
         const body = document.createElement("div");
         body.className = "text-muted small";
@@ -659,7 +689,7 @@
         meta.className = "notification-meta";
         meta.textContent = formatDate(item.created_at);
 
-        wrapper.append(title, body, meta);
+        wrapper.append(header, body, meta);
         notifList.appendChild(wrapper);
       });
     };
@@ -693,7 +723,7 @@
         return;
       }
       try {
-        const response = await fetch("../api/notificaciones.php?limit=6&unread=1", {
+        const response = await fetch("../api/notificaciones.php?limit=6", {
           headers: {
             Authorization: "Bearer " + token
           }

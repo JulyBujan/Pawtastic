@@ -7,20 +7,45 @@ $ong_email = $decoded_token->email; // recuperamos el email desde el token
 
 // Obtener el ID de la ONG para seguridad
 // solo al principio porque después lo utilizan todos los casos
-$idOng = null; 
+$idOng = null;
+$actorId = null;
 try {
     $stmt_ong = $conn->prepare("SELECT ong_id FROM usuarios WHERE email = ? AND tipo = 'ong' LIMIT 1");
     $stmt_ong->bind_param("s", $ong_email);
     $stmt_ong->execute();
     $idOng = $stmt_ong->get_result()->fetch_assoc()['ong_id'] ?? null;
+    $stmt_ong->close();
     if (!$idOng) {
         http_response_code(403);
         echo json_encode(["message" => "Usuario de ONG no válido."]);
         exit;
     }
+    $stmt_actor = $conn->prepare("SELECT id FROM usuarios WHERE email = ? LIMIT 1");
+    $stmt_actor->bind_param("s", $ong_email);
+    $stmt_actor->execute();
+    $actorId = $stmt_actor->get_result()->fetch_assoc()['id'] ?? null;
+    $stmt_actor->close();
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(["message" => "Error en el servidor: " . $e->getMessage()]);
+}
+
+function crearNotificacionOng($conn, $idOng, $actorId, $tipo, $titulo, $cuerpo, $entidadTipo, $entidadId, $payload = null) {
+    $stmtOngUsers = $conn->prepare("SELECT id FROM usuarios WHERE tipo = 'ong' AND ong_id = ?");
+    $stmtOngUsers->bind_param("i", $idOng);
+    $stmtOngUsers->execute();
+    $resultOngUsers = $stmtOngUsers->get_result();
+
+    $stmtNotif = $conn->prepare("INSERT INTO notificaciones (usuario_id, actor_id, tipo, titulo, cuerpo, entidad_tipo, entidad_id, payload) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $payloadJson = $payload ? json_encode($payload) : null;
+
+    while ($row = $resultOngUsers->fetch_assoc()) {
+        $ongUserId = (int) $row['id'];
+        $stmtNotif->bind_param("iissssis", $ongUserId, $actorId, $tipo, $titulo, $cuerpo, $entidadTipo, $entidadId, $payloadJson);
+        $stmtNotif->execute();
+    }
+    $stmtNotif->close();
+    $stmtOngUsers->close();
 }
 
 /**
@@ -84,6 +109,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
         $stmt_delete->bind_param("ii", $idMascota, $idOng);
         $stmt_delete->execute();
 
+        $notifTipo = "mascota_archivada";
+        $notifTitulo = "Mascota archivada";
+        $notifCuerpo = "Archivaste una mascota.";
+        crearNotificacionOng($conn, $idOng, $actorId, $notifTipo, $notifTitulo, $notifCuerpo, "mascota", $idMascota, [
+            "mascota_id" => $idMascota
+        ]);
+
         echo json_encode(["message" => "Mascota archivada con éxito."]);
 
     } catch (Exception $e) {
@@ -132,6 +164,13 @@ try {
     $conn->begin_transaction(); // Iniciar transacción
     // --- Diferenciar entre CREAR (INSERT) y EDITAR (UPDATE) ---
     $idMascota = !empty($_POST['id']) ? (int)$_POST['id'] : null;
+    $vacunasPayload = [];
+    if (!empty($_POST['vacunas'])) {
+        $vacunasPayload = json_decode($_POST['vacunas'], true);
+        if (!is_array($vacunasPayload)) {
+            throw new Exception("Formato de vacunas inválido.");
+        }
+    }
 
     if ($idMascota) {
         // --- MODO EDICIÓN (UPDATE) ---
@@ -171,6 +210,13 @@ try {
             throw new Exception("Error al actualizar la mascota en la base de datos.");
         }
 
+        $notifTipo = "mascota_actualizada";
+        $notifTitulo = "Mascota actualizada";
+        $notifCuerpo = "Actualizaste los datos de " . $nombre . ".";
+        crearNotificacionOng($conn, $idOng, $actorId, $notifTipo, $notifTitulo, $notifCuerpo, "mascota", $idMascota, [
+            "mascota_id" => $idMascota
+        ]);
+
         echo json_encode(["message" => "Mascota actualizada con éxito."]);
         $conn->commit(); // Confirmar transacción
 
@@ -192,7 +238,31 @@ try {
             throw new Exception("No se pudo crear la mascota en la base de datos.");
         }
 
-        echo json_encode(["message" => "Mascota cargada con éxito."]);
+        $newMascotaId = $query->insert_id;
+        if ($newMascotaId && !empty($vacunasPayload)) {
+            $stmtVacunas = $conn->prepare("INSERT INTO mascota_vacunas (id_mascota, id_vacuna, fecha_aplicacion) VALUES (?, ?, ?)");
+            foreach ($vacunasPayload as $vacuna) {
+                $vacunaId = isset($vacuna['vacuna_id']) ? (int)$vacuna['vacuna_id'] : 0;
+                $fechaAplicacion = isset($vacuna['fecha_aplicacion']) ? $vacuna['fecha_aplicacion'] : null;
+                if ($vacunaId <= 0 || empty($fechaAplicacion)) {
+                    throw new Exception("Datos de vacunas incompletos.");
+                }
+                $stmtVacunas->bind_param("iis", $newMascotaId, $vacunaId, $fechaAplicacion);
+                if (!$stmtVacunas->execute()) {
+                    throw new Exception("Error al guardar las vacunas.");
+                }
+            }
+            $stmtVacunas->close();
+        }
+
+        $notifTipo = "mascota_creada";
+        $notifTitulo = "Mascota publicada";
+        $notifCuerpo = "Publicaste a " . $nombre . ".";
+        crearNotificacionOng($conn, $idOng, $actorId, $notifTipo, $notifTitulo, $notifCuerpo, "mascota", $newMascotaId, [
+            "mascota_id" => $newMascotaId
+        ]);
+
+        echo json_encode(["message" => "Mascota cargada con éxito.", "id" => $newMascotaId]);
         $conn->commit(); // Confirmar transacción
     }
 } catch (Exception $e) {

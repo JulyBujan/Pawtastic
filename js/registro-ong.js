@@ -34,6 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('estatuto', document.getElementById('ong-estatuto').files[0]);
         formData.append('constancia_cuit', document.getElementById('ong-constancia-cuit').files[0]);
         formData.append('acta_autoridades', document.getElementById('ong-acta-autoridades').files[0]);
+        const logoFile = document.getElementById('ong-logo').files[0];
+        if (logoFile) {
+            formData.append('logo', logoFile);
+        }
 
         try {
             // 3. Enviar a la API

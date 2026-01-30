@@ -38,6 +38,23 @@ $calle = trim($_POST['calle']);
 $numero = trim($_POST['numero']);
 $localidad = trim($_POST['localidad']);
 $barrio = !empty($_POST['barrio']) ? trim($_POST['barrio']) : null;
+$file_paths = [];
+$logo_path = null;
+$has_logo_column = false;
+
+$check_logo = $conn->query("SHOW COLUMNS FROM ONGs LIKE 'logo_url'");
+if ($check_logo && $check_logo->num_rows > 0) {
+    $has_logo_column = true;
+}
+
+// --- Validar logo opcional ---
+if (isset($_FILES['logo']) && $_FILES['logo']['error'] !== UPLOAD_ERR_NO_FILE) {
+    if ($_FILES['logo']['error'] !== UPLOAD_ERR_OK) {
+        http_response_code(400);
+        echo json_encode(["message" => "Hubo un error al subir el logo de la ONG."]);
+        exit;
+    }
+}
 
 // --- Directorio para guardar documentos ---
 $upload_dir = "../documentos_ong/";
@@ -67,8 +84,8 @@ try {
     // Nota: Se asume que la tabla ONGs tiene los campos necesarios.
     // Los campos lat y lon se dejan en 0 temporalmente. Se pueden calcular después.
     $stmt_ong = $conn->prepare(
-        "INSERT INTO ONGs (nombre, razon_social, cuit, road, house_number, city, suburb, fecha_constitucion, lat, lon) 
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 0)"
+        "INSERT INTO ONGs (nombre, razon_social, cuit, road, house_number, city, suburb, fecha_constitucion, lat, lon, logo_url) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 0, NULL)"
     );
     if (!$stmt_ong) {
         throw new Exception("Error al preparar la consulta para insertar ONG: " . $conn->error);
@@ -83,8 +100,41 @@ try {
     }
     $stmt_ong->close();
 
-    // 6. Procesar y guardar archivos
-    $file_paths = [];
+    // 6. Procesar y guardar logo opcional (solo si la columna existe)
+    if ($has_logo_column && isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
+        $logo_dir = "../img/ong_logos/";
+        if (!is_dir($logo_dir)) {
+            if (!mkdir($logo_dir, 0777, true)) {
+                throw new Exception("Error: No se pudo crear el directorio para el logo.");
+            }
+        }
+
+        $logo_file = $_FILES['logo'];
+        $logo_extension = strtolower(pathinfo($logo_file['name'], PATHINFO_EXTENSION));
+        $allowed_extensions = ['jpg', 'jpeg', 'png', 'webp'];
+        if (!in_array($logo_extension, $allowed_extensions, true)) {
+            throw new Exception("Formato de logo inválido. Usá JPG, PNG o WEBP.");
+        }
+
+        $logo_filename = "ong_{$ong_id}_logo_" . uniqid() . "." . $logo_extension;
+        $logo_destination = $logo_dir . $logo_filename;
+
+        if (!move_uploaded_file($logo_file['tmp_name'], $logo_destination)) {
+            throw new Exception("Error al guardar el logo de la ONG.");
+        }
+
+        $logo_path = "img/ong_logos/" . $logo_filename;
+
+        $stmt_logo = $conn->prepare("UPDATE ONGs SET logo_url = ? WHERE id = ?");
+        if (!$stmt_logo) {
+            throw new Exception("Error al preparar la consulta para actualizar el logo: " . $conn->error);
+        }
+        $stmt_logo->bind_param("si", $logo_path, $ong_id);
+        $stmt_logo->execute();
+        $stmt_logo->close();
+    }
+
+    // 7. Procesar y guardar archivos
     foreach ($required_files as $file_key) {
         $file = $_FILES[$file_key];
         // Generar un nombre de archivo único para evitar colisiones
@@ -100,7 +150,7 @@ try {
         }
     }
 
-    // 7. Insertar las rutas de los archivos en `documentacion_ong`
+    // 8. Insertar las rutas de los archivos en `documentacion_ong`
     $stmt_doc = $conn->prepare(
         "INSERT INTO documentacion_ong (ong_id, url_estatuto, url_cuit, url_acta, estado) 
          VALUES (?, ?, ?, ?, 0)" // estado 0 = Pendiente
@@ -118,14 +168,14 @@ try {
     $stmt_doc->execute();
     $stmt_doc->close();
 
-    // 8. Si todo fue bien, confirmar la transacción
+    // 9. Si todo fue bien, confirmar la transacción
     $conn->commit();
 
     http_response_code(201); // 201 Created
     echo json_encode(["message" => "Analizaremos la solicitud y nos comunicaremos en breve."]);
 
 } catch (Exception $e) {
-    // 9. Si algo falla, revertir la transacción
+    // 10. Si algo falla, revertir la transacción
     $conn->rollback();
 
     // Eliminar archivos que se hayan subido para no dejar basura
@@ -135,6 +185,9 @@ try {
                 unlink("../" . $path);
             }
         }
+    }
+    if (!empty($logo_path) && file_exists("../" . $logo_path)) {
+        unlink("../" . $logo_path);
     }
 
     // Determinar el código de respuesta HTTP

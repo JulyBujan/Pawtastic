@@ -11,46 +11,126 @@
   <link rel="icon" href="../img/favicon.ico" type="image/png">
 </head>
 
-<body>
+<body class="mis-mascotas-body d-flex flex-column min-vh-100">
   <!-- NAVBAR ONG -->
-  <nav class="navbar navbar-expand-lg navbar-dark encabezado-azul">
-    <div class="container position-relative">
-      <a class="navbar-brand d-flex align-items-center" href="../index.html">
-        <img src="../img/logo.png" alt="Logo Pawtastic" width="50" height="50" class="me-2 logo-navbar">
-        <span class="text-warning fw-bold">Pawtastic</span>
+  <nav class="navbar navbar-expand-lg navbar-dark nav-app">
+    <div class="container">
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMascotas"
+        aria-controls="navbarMascotas" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand text-warning fw-bold me-3" href="../index.html">
+        <img src="../img/logo.png" alt="Logo Pawtastic" width="40" height="40" class="d-inline-block d-lg-none">
+        <span class="d-none d-lg-inline">Pawtastic</span>
       </a>
-      <div class="position-absolute top-50 start-50 translate-middle">
-        <span class="navbar-text h4 m-0 text-dark fw-bold">MIS MASCOTAS🐾</span>
-      </div>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav align-items-center">
-          <li class="nav-item me-2">
-            <a href="perfil-ong.html" class="btn btn-outline-dark">Inicio</a>
-          </li>
-          <li class="nav-item me-2">
-            <a href="postulaciones.html" class="btn btn-outline-dark">Postulaciones</a>
-          </li>
-          <li class="nav-item me-2">
-            <a href="ver-reportes.html" class="btn btn-outline-dark">Estadisticas</a>
-          </li>
+      <div class="collapse navbar-collapse" id="navbarMascotas">
+        <ul class="navbar-nav align-items-lg-center me-auto">
+          <li class="nav-item"><a class="btn btn-custom-nav me-2" href="./perfil-ong.html">Inicio</a></li>
+          <li class="nav-item"><a class="btn btn-custom-nav me-2" href="./postulaciones.html">Postulaciones</a></li>
+          <li class="nav-item"><a class="btn btn-custom-nav me-2" href="./ver-reportes.html">Reportes</a></li>
           <li class="nav-item">
             <a href="#" class="btn btn-custom-nav" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion">
-              <i class="bi bi-box-arrow-right"></i> Salir
+              <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
             </a>
           </li>
         </ul>
+      </div>
+      <div class="d-flex align-items-center gap-2 ms-auto">
+        <div class="dropdown">
+          <button type="button" class="btn nav-icon position-relative dropdown-toggle" id="notifDropdown"
+            data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notificaciones">
+            <i class="bi bi-bell"></i>
+            <span id="notifBadge"
+              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark nav-badge d-none">0</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end notification-menu shadow" aria-labelledby="notifDropdown">
+            <li class="dropdown-header d-flex justify-content-between align-items-center">
+              <span class="fw-semibold">Notificaciones</span>
+              <button type="button" class="btn btn-sm btn-link p-0 text-decoration-none" id="markAllNotif">Marcar
+                todas</button>
+            </li>
+            <li>
+              <div id="notifList" class="px-3 pb-2 small text-muted">Cargando...</div>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </nav>
 
   <!-- CONTENIDO PRINCIPAL -->
-  <main class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="text-warning fw-bold">Mis Mascotas Publicadas</h2>
+  <main class="container py-4 flex-grow-1">
+    <section class="catalog-hero p-4 p-lg-5 mb-4 text-center">
+      <h2 class="fw-bold text-dark mb-0">
+        Mis mascotas
+        <span class="title-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+            <circle cx="6.8" cy="8.5" r="2.1"></circle>
+            <circle cx="10.6" cy="6.5" r="2.0"></circle>
+            <circle cx="13.4" cy="6.5" r="2.0"></circle>
+            <circle cx="17.2" cy="8.5" r="2.1"></circle>
+            <ellipse cx="12" cy="15.5" rx="5" ry="4"></ellipse>
+          </svg>
+        </span>
+      </h2>
+      <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
+        <span class="status-chip status-active" id="statsActivas"><i class="bi bi-check-circle"></i> Activas: 0</span>
+        <span class="status-chip status-pending" id="statsPendientes"><i class="bi bi-hourglass-split"></i> En revisión: 0</span>
+        <span class="status-chip status-adopted" id="statsAdoptadas"><i class="bi bi-heart-fill"></i> Adoptadas: 0</span>
+      </div>
+    </section>
+
+    <div class="filter-panel mb-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <div class="d-flex flex-wrap align-items-center gap-3">
+          <h3 class="filter-title mb-0">Filtros rápidos</h3>
+          <a href="gestionar-mascota-cards.html" class="btn btn-ong-primary btn-sm">
+            <i class="bi bi-plus-lg me-1"></i>Nueva mascota
+          </a>
+        </div>
+        <button type="button" class="btn btn-link btn-clear-filters p-0" id="clearFilters">Limpiar filtros</button>
+      </div>
+      <div class="row g-3 align-items-center">
+        <div class="col-12 col-lg-6">
+          <div class="input-group filter-field">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control filter-input" id="searchMascotas"
+              placeholder="Buscar por nombre o raza">
+          </div>
+        </div>
+        <div class="col-6 col-lg-3">
+          <div class="input-group filter-field">
+            <span class="input-group-text"><i class="bi bi-tags"></i></span>
+            <select class="form-select filter-select" id="filterTipo">
+              <option value="">Tipo</option>
+              <option value="perro">Perro</option>
+              <option value="gato">Gato</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-6 col-lg-3">
+          <div class="input-group filter-field">
+            <span class="input-group-text"><i class="bi bi-flag"></i></span>
+            <select class="form-select filter-select" id="filterEstado">
+              <option value="">Estado</option>
+              <option value="activa">Activa</option>
+              <option value="en revisión">En revisión</option>
+              <option value="adoptada">Adoptada</option>
+            </select>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div id="contenedorMascotas" class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="row g-4" id="mascotasGrid">
       <!-- Las mascotas se cargarán aquí dinámicamente -->
+    </div>
+
+    <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mt-4 gap-3">
+      <span class="text-muted small" id="paginationInfo"></span>
+      <nav aria-label="Paginado catalogo">
+        <ul class="pagination pagination-modern mb-0" id="pagination"></ul>
+      </nav>
     </div>
   </main>
 
@@ -60,7 +140,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header bg-warning-subtle">
-          <h5 class="modal-title" id="modalCerrarSesionLabel">¿Cerrar sesión?</h5>
+          <h5 class="modal-title" id="modalCerrarSesionLabel">Cerrar sesión?</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
         <div class="modal-body">
@@ -74,51 +154,36 @@
     </div>
   </div>
 
+  <!-- MODAL ELIMINAR MASCOTA -->
+  <div class="modal fade" id="modalEliminarMascota" tabindex="-1" aria-labelledby="modalEliminarMascotaLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-danger-subtle">
+          <h5 class="modal-title" id="modalEliminarMascotaLabel">Eliminar mascota</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          ¿Estás segura de que querés eliminar esta mascota? Esta acción la archivará.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button id="confirmarEliminarMascota" class="btn btn-danger">Sí, eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Contenedor de Toasts -->
   <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
     <!-- Los toasts se insertarán aquí dinámicamente -->
   </div>
 
-  <!-- FOOTER -->
-  <footer class="bg-footer text-dark pt-4 pb-3 mt-5">
-    <div class="container text-center text-md-start">
-      <div class="row">
-        <div class="col-md-4 mb-3 text-center">
-          <h5 class="fw-bold mt-2">Pawtastic</h5>
-          <p class="small">Conectamos corazones con patas. Gracias por elegir adoptar.</p>
-          <a href="../index.html">
-            <img src="../img/logo.png" alt="Logo Pawtastic" style="max-width: 100px; border-radius: 40%;">
-          </a>
-        </div>
-        <div class="col-md-4 mb-3 d-flex flex-column align-items-center">
-          <h5 class="fw-bold text-center">Navegación</h5>
-          <ul class="list-unstyled text-center">
-            <li><a href="https://interfacessistemas3.my.canva.site/manual-de-usuario-pawtastic"
-                class="text-dark text-decoration-none" target="_blank" rel="noopener noreferrer">Manual de Usuario</a>
-            </li>
-            <li><a href="https://drive.google.com/drive/folders/1UiabMGZbGNRz8LPfdU74eroOOLEoH8Xb?usp=sharing"
-                class="text-dark text-decoration-none" target="_blank" rel="noopener noreferrer">Documentación del
-                Proyecto</a></li>
-          </ul>
-        </div>
-        <div class="col-md-4 mb-3 fs-5 text-center text-md-start">
-          <h5 class="fw-bold">Seguinos</h5>
-          <a href="https://www.facebook.com/profile.php?id=61581919419192" class="text-dark me-3"><i
-              class="bi bi-facebook" style="font-size: 2.5rem;"></i></a>
-          <a href="https://www.instagram.com/pawtasticarg/" class="text-dark me-3"><i class="bi bi-instagram"
-              style="font-size: 2.5rem;"></i></a>
-          <a href="https://x.com/PawtasticArg" class="text-dark"><i class="bi bi-x-circle-fill"
-              style="font-size: 2.5rem;"></i></a>
-        </div>
-      </div>
-      <hr class="border-dark">
-      <div class="text-center">
-        <small>&copy; 2025 Pawtastic. Todos los derechos reservados.</small>
-        <br>
-        <a href="./terminosYcondiciones.html" class="text-dark text-decoration-underline small">Términos y
-          Condiciones</a> |
-        <a href="./politicaDeCookies.html" class="text-dark text-decoration-underline small">Política de Cookies</a>
-      </div>
+  <footer class="mini-footer mt-auto">
+    <div class="container text-center">
+      <a href="./terminosYcondiciones.html" class="text-decoration-none">Términos</a>
+      <span class="mx-2">|</span>
+      <a href="./politicaDeCookies.html" class="text-decoration-none">Política</a>
     </div>
   </footer>
 

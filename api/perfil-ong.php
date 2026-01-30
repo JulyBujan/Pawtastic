@@ -28,7 +28,14 @@ try {
     }
 
     // 2. Con el ong_id, obtener el nombre de la ONG desde la tabla 'ONGs'
-    $stmt_ong = $conn->prepare("SELECT nombre FROM ONGs WHERE id = ?");
+    $has_logo = false;
+    $check_logo = $conn->query("SHOW COLUMNS FROM ONGs LIKE 'logo_url'");
+    if ($check_logo && $check_logo->num_rows > 0) {
+        $has_logo = true;
+    }
+
+    $query = $has_logo ? "SELECT nombre, logo_url FROM ONGs WHERE id = ?" : "SELECT nombre FROM ONGs WHERE id = ?";
+    $stmt_ong = $conn->prepare($query);
     $stmt_ong->bind_param("i", $usuario['ong_id']);
     $stmt_ong->execute();
     $ong = $stmt_ong->get_result()->fetch_assoc();
