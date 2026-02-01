@@ -291,7 +291,7 @@ function getMascotasEnEspera($conn, $id_ong) {
             AND date_publicacion IS NOT NULL
         ORDER BY
             date_publicacion ASC
-        LIMIT 5"
+        LIMIT 6"
     );
 
     if (!$stmt) {

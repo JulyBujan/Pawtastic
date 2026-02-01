@@ -10,6 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const reportePersonalizadoContainer = document.getElementById(
     "reporte-personalizado-container"
   );
+  const reportePersonalizadoLoading = document.getElementById(
+    "reporte-personalizado-loading"
+  );
   const adopcionesRapidasContainer = document.getElementById(
     "adopciones-rapidas-container"
   );
@@ -27,6 +30,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const reportMenu = document.getElementById("reportesMenu");
   const reportSections = document.querySelectorAll(".report-section");
   const reportMenuItems = document.querySelectorAll(".report-menu-item");
+  const btnGenerarReporte =
+    formPeriodoPersonalizado?.querySelector("button[type=\"submit\"]") || null;
 
   let viviendaChartManual = null;
   let tipoMascotaChartManual = null;
@@ -38,14 +43,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const showReportSection = (target) => {
     reportSections.forEach((section) => {
-      section.classList.toggle(
-        "d-none",
-        section.dataset.reportSection !== target
-      );
+      const isTarget = section.dataset.reportSection === target;
+      section.classList.toggle("d-none", !isTarget);
+      if (isTarget) {
+        section.classList.remove("report-animate");
+        void section.offsetWidth;
+        section.classList.add("report-animate");
+      }
     });
     reportMenuItems.forEach((item) => {
       item.classList.toggle("active", item.dataset.reportTarget === target);
     });
+    if (target === "zonas" && mapaZonas) {
+      setTimeout(() => {
+        mapaZonas.invalidateSize();
+      }, 120);
+    }
   };
 
   const formatShortDate = (value) => {
@@ -116,6 +129,43 @@ document.addEventListener("DOMContentLoaded", () => {
       const totalPublicadas = sumCantidad(publicaciones30.por_dia);
       kpiPublicacionesMeta.textContent = `Publicadas: ${totalPublicadas}`;
     }
+  };
+
+  const animateCustomReportStats = (container) => {
+    if (!container) return;
+
+    const counters = container.querySelectorAll("[data-count]");
+    counters.forEach((counter) => {
+      const target = Number(counter.dataset.count) || 0;
+      const decimals = Number(counter.dataset.decimals) || 0;
+      const suffix = counter.dataset.suffix || "";
+      const duration = 900;
+      const start = performance.now();
+
+      const step = (now) => {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const currentValue = target * eased;
+        const value =
+          decimals > 0
+            ? currentValue.toFixed(decimals)
+            : Math.round(currentValue);
+        counter.textContent = `${value}${suffix}`;
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        }
+      };
+
+      requestAnimationFrame(step);
+    });
+
+    const bars = container.querySelectorAll(".result-progress-bar");
+    bars.forEach((bar) => {
+      const percent = Number(bar.dataset.progress) || 0;
+      requestAnimationFrame(() => {
+        bar.style.width = `${percent}%`;
+      });
+    });
   };
 
   const renderDashboardCharts = (data30 = {}, data90 = {}) => {
@@ -297,12 +347,56 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  const setCustomReportLoading = (isLoading) => {
+    if (reportePersonalizadoLoading) {
+      reportePersonalizadoLoading.classList.toggle("d-none", !isLoading);
+    }
+
+    if (isLoading) {
+      reportePersonalizadoContainer.classList.add("d-none");
+    }
+
+    const controls = [
+      btnSemana,
+      btnMes,
+      fechaInicioInput,
+      fechaFinInput,
+      btnLimpiarReporte,
+      btnGenerarReporte,
+    ];
+
+    controls.forEach((control) => {
+      if (control) {
+        control.disabled = isLoading;
+      }
+    });
+
+    if (btnGenerarReporte) {
+      btnGenerarReporte.classList.toggle("is-loading", isLoading);
+      const label = btnGenerarReporte.querySelector(".btn-label");
+      if (label) {
+        label.textContent = isLoading ? "Generando..." : "Generar";
+      }
+    }
+
+    if (formPeriodoPersonalizado) {
+      formPeriodoPersonalizado.setAttribute(
+        "aria-busy",
+        isLoading ? "true" : "false"
+      );
+    }
+  };
+
   /**
    * Obtiene los datos del reporte desde la API.
    * @param {string} inicio - Fecha de inicio (YYYY-MM-DD).
    * @param {string} fin - Fecha de fin (YYYY-MM-DD).
    */
+  let customReportInFlight = 0;
+
   const fetchReportePersonalizado = async (inicio, fin) => {
+    customReportInFlight += 1;
+    const requestId = customReportInFlight;
     const token = localStorage.getItem("token");
     if (!token) {
       showToast("Debes iniciar sesión para ver los reportes.", "danger");
@@ -310,23 +404,24 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Al generar un reporte personalizado, solo mostramos el spinner
-    // y ocultamos el contenedor de ese reporte específico. Los demás quedan visibles.
-    const spinner = document.getElementById("loading-spinner");
-    const container = document.getElementById("reporte-personalizado-container");
-
-    spinner.classList.remove("d-none");
-    container.classList.add("d-none");
+    if (loadingSpinner) {
+      loadingSpinner.classList.add("d-none");
+    }
+    setCustomReportLoading(true);
+    const loadingStartedAt = Date.now();
 
     try {
       const url = `/api/reportes.php?fecha_inicio=${inicio}&fecha_fin=${fin}`;
 
       // La petición para el reporte personalizado no necesita 'accion'
-      const response = await fetch(url, {
+      const fetchPromise = fetch(url, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+      const response = await fetchPromise;
 
       const data = await response.json();
       if (!response.ok) {
@@ -346,8 +441,19 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error al obtener el reporte:", error);
       showToast(error.message, "danger");
     } finally {
-      // Ocultamos el spinner al finalizar
-      spinner.classList.add("d-none");
+      const elapsed = Date.now() - loadingStartedAt;
+      const remaining = Math.max(0, 2000 - elapsed);
+      setTimeout(() => {
+        if (requestId === customReportInFlight) {
+          setCustomReportLoading(false);
+          if (reportePersonalizadoContainer) {
+            reportePersonalizadoContainer.classList.remove("d-none");
+            reportePersonalizadoContainer.classList.remove("report-animate");
+            void reportePersonalizadoContainer.offsetWidth;
+            reportePersonalizadoContainer.classList.add("report-animate");
+          }
+        }
+      }, remaining);
     }
   };
 
@@ -459,40 +565,62 @@ document.addEventListener("DOMContentLoaded", () => {
     const adopcionesStatsContainerManual = document.getElementById(
       "adopciones-stats-manual"
     );
+    const iniciadas = Number(stats.iniciadas) || 0;
+    const aprobadas = Number(stats.aprobadas) || 0;
+    const canceladas = Number(stats.canceladas) || 0;
+    const percentOfIniciadas = (value) =>
+      iniciadas > 0 ? Math.round((value / iniciadas) * 100) : 0;
+
+    const inicioDate = new Date(`${inicio}T00:00:00`);
+    const finDate = new Date(`${fin}T00:00:00`);
+    const diffDays = Math.round((finDate - inicioDate) / 86400000) + 1;
+    const diasPeriodo = diffDays > 0 ? diffDays : 1;
+    const promedioDiario = iniciadas / diasPeriodo;
+
     adopcionesStatsContainerManual.innerHTML = `
-            <div class="col-md-3">
-                <div class="card bg-primary text-white h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Iniciadas</h5>
-                        <p class="card-text fs-2 fw-bold">${stats.iniciadas}</p>
-                    </div>
+            <div class="col-md-3 animate-item">
+                <div class="result-card result-card-primary">
+                    <span class="result-icon"><i class="bi bi-play-circle"></i></span>
+                    <span class="result-label">Iniciadas</span>
+                    <span class="result-value" data-count="${iniciadas}">0</span>
+                    <div class="result-progress"><span class="result-progress-bar" data-progress="${iniciadas > 0 ? 100 : 0}"></span></div>
+                    <span class="result-meta">Total del período</span>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card bg-info-subtle text-dark h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Actualizadas</h5>
-                        <p class="card-text fs-2 fw-bold">${stats.actualizadas}</p>
-                    </div>
+            <div class="col-md-3 animate-item">
+                <div class="result-card result-card-info no-progress">
+                    <span class="result-icon"><i class="bi bi-graph-up-arrow"></i></span>
+                    <span class="result-label">Promedio diario</span>
+                    <span class="result-value" data-count="${promedioDiario.toFixed(2)}" data-decimals="2">0</span>
+                    <div class="result-progress"><span class="result-progress-bar" data-progress="0"></span></div>
+                    <span class="result-meta">Postulaciones por día</span>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card bg-success text-white h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Aprobadas</h5>
-                        <p class="card-text fs-2 fw-bold">${stats.aprobadas}</p>
-                    </div>
+            <div class="col-md-3 animate-item">
+                <div class="result-card result-card-success">
+                    <span class="result-icon"><i class="bi bi-check-circle"></i></span>
+                    <span class="result-label">Aprobadas</span>
+                    <span class="result-value" data-count="${aprobadas}">0</span>
+                    <div class="result-progress"><span class="result-progress-bar" data-progress="${percentOfIniciadas(
+                      aprobadas
+                    )}"></span></div>
+                    <span class="result-meta">${percentOfIniciadas(aprobadas)}% de iniciadas</span>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card bg-danger text-white h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Canceladas</h5>
-                        <p class="card-text fs-2 fw-bold">${stats.canceladas}</p>
-                    </div>
+            <div class="col-md-3 animate-item">
+                <div class="result-card result-card-danger">
+                    <span class="result-icon"><i class="bi bi-x-circle"></i></span>
+                    <span class="result-label">Canceladas</span>
+                    <span class="result-value" data-count="${canceladas}">0</span>
+                    <div class="result-progress"><span class="result-progress-bar" data-progress="${percentOfIniciadas(
+                      canceladas
+                    )}"></span></div>
+                    <span class="result-meta">${percentOfIniciadas(canceladas)}% de iniciadas</span>
                 </div>
             </div>
         `;
+
+    animateCustomReportStats(adopcionesStatsContainerManual);
 
     // 2. Renderizar gráficos de perfil de adopción
     const { por_vivienda, por_tipo_mascota } = data.perfil_adopcion;
@@ -570,7 +698,7 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     });
 
-    reportePersonalizadoContainer.classList.remove("d-none");
+    // La visibilidad del contenedor se controla después del tiempo mínimo de loading.
   };
 
   /**
@@ -647,7 +775,7 @@ document.addEventListener("DOMContentLoaded", () => {
           stats[rango.key] !== null ? `${stats[rango.key]} días` : "N/A";
         const li = document.createElement("li");
         li.className =
-          "list-group-item d-flex justify-content-between align-items-center";
+          "list-group-item age-item animate-item d-flex justify-content-between align-items-center";
         li.innerHTML = `${rango.label} <span class="badge bg-${badgeColor} rounded-pill">${dias}</span>`;
         listElement.appendChild(li);
       });
@@ -680,14 +808,15 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // Renderizar la tabla
+    // Renderizar el ranking
     const tablaBody = document.getElementById("tabla-zonas-body");
     if (!tablaBody) return;
 
     tablaBody.innerHTML = ""; // Limpiar contenido
 
     if (data.length === 0) {
-      tablaBody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">No hay datos de adopciones por zona para mostrar.</td></tr>`;
+      tablaBody.innerHTML =
+        `<div class="text-center text-muted">No hay datos de adopciones por zona para mostrar.</div>`;
     } else {
       data.forEach((zona, index) => {
         // Añadir marcador al mapa
@@ -698,15 +827,16 @@ document.addEventListener("DOMContentLoaded", () => {
           );
         }
 
-        // Añadir fila a la tabla
-        const fila = `
-          <tr>
-            <td>${index + 1}</td>
-            <td>${zona.barrio || "No especificado"}</td>
-            <td>${zona.ciudad || "No especificada"}</td>
-            <td><span class="badge bg-warning text-dark">${zona.total_adopciones}</span></td>
-          </tr>`;
-        tablaBody.innerHTML += fila;
+        const item = document.createElement("div");
+        item.className = "zone-item animate-item";
+        item.style.animationDelay = `${index * 0.06}s`;
+        item.innerHTML = `
+          <div class="zone-rank">${index + 1}</div>
+          <div class="zone-name">${zona.barrio || "No especificado"}</div>
+          <div class="zone-city">${zona.ciudad || "No especificada"}</div>
+          <div class="zone-count"><i class="bi bi-heart-fill"></i> ${zona.total_adopciones} adopciones</div>
+        `;
+        tablaBody.appendChild(item);
       });
     }
 
@@ -732,26 +862,32 @@ document.addEventListener("DOMContentLoaded", () => {
     if (data.length === 0) {
       listaContainer.innerHTML = `<p class="text-center text-muted">¡Felicidades! No hay mascotas con largos tiempos de espera.</p>`;
     } else {
-      data.forEach((mascota) => {
+      const topMascotas = data.slice(0, 6);
+      topMascotas.forEach((mascota, index) => {
         const item = document.createElement("a");
         item.href = `ver-mascota.html?id=${mascota.id}`; // Enlace al perfil de la mascota
-        item.className =
-          "list-group-item list-group-item-action d-flex justify-content-between align-items-center";
+        item.className = "waiting-item animate-item";
+        item.style.animationDelay = `${index * 0.06}s`;
 
-        const imagenSrc = mascota.imagen ? `../img/mascotas/${mascota.imagen}` : '../img/default-image.webp';
+        const imagenSrc = mascota.imagen
+          ? `../img/mascotas/${mascota.imagen}`
+          : "../img/default-image.webp";
+        const publicado = mascota.date_publicacion
+          ? new Date(mascota.date_publicacion).toLocaleDateString()
+          : "—";
+        const tipo = mascota.tipo
+          ? mascota.tipo.charAt(0).toUpperCase() + mascota.tipo.slice(1)
+          : "Mascota";
 
         item.innerHTML = `
-          <div class="d-flex align-items-center">
-            <img src="${imagenSrc}" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;" alt="${mascota.nombre}">
-            <div>
-              <h5 class="mb-1">${mascota.nombre}</h5>
-              <small class="text-muted">${mascota.tipo.charAt(0).toUpperCase() + mascota.tipo.slice(1)} - Publicado: ${new Date(mascota.date_publicacion).toLocaleDateString()}</small>
-            </div>
-          </div>
-          <span class="badge bg-danger rounded-pill fs-6">${mascota.dias_en_espera} días esperando</span>
+          <img src="${imagenSrc}" class="waiting-avatar" alt="${mascota.nombre}">
+          <h5 class="waiting-name">${mascota.nombre}</h5>
+          <p class="waiting-meta">${tipo} · Publicado: ${publicado}</p>
+          <span class="waiting-pill-danger"><i class="bi bi-hourglass-split"></i> ${mascota.dias_en_espera} días</span>
         `;
         listaContainer.appendChild(item);
       });
+
     }
 
     mascotasEnEsperaContainer.classList.remove("d-none");
@@ -795,6 +931,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Oculta el contenedor del reporte personalizado
     reportePersonalizadoContainer.classList.add("d-none");
+    setCustomReportLoading(false);
 
     // Asegura que los reportes generales estén visibles
     indicadoresClaveContainer.classList.remove("d-none");
