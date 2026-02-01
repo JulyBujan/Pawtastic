@@ -28,6 +28,248 @@ document.addEventListener("DOMContentLoaded", () => {
   let viviendaChartManual = null;
   let tipoMascotaChartManual = null;
   let mapaZonas = null;
+  let reportLineChart = null;
+  let reportStatusChart = null;
+  let reportTypeChart = null;
+  let reportHousingChart = null;
+
+  const formatShortDate = (value) => {
+    if (!value) return "";
+    const date = new Date(`${value}T00:00:00`);
+    if (Number.isNaN(date.getTime())) return value;
+    return date.toLocaleDateString("es-AR", { day: "2-digit", month: "short" });
+  };
+
+  const sumCantidad = (items) =>
+    (items || []).reduce((acc, item) => acc + (Number(item.cantidad) || 0), 0);
+
+  const updateKpis = (data30 = {}, data90 = {}) => {
+    const kpiPostulaciones = document.getElementById("kpiPostulaciones");
+    const kpiPostulacionesMeta = document.getElementById("kpiPostulacionesMeta");
+    const kpiTiempoPromedio = document.getElementById("kpiTiempoPromedio");
+    const kpiTiempoMeta = document.getElementById("kpiTiempoMeta");
+    const kpiTasaAprobacion = document.getElementById("kpiTasaAprobacion");
+    const kpiTasaMeta = document.getElementById("kpiTasaMeta");
+    const kpiPublicaciones = document.getElementById("kpiPublicaciones");
+    const kpiPublicacionesMeta = document.getElementById("kpiPublicacionesMeta");
+
+    const adopciones30 = data30.adopciones || {};
+    const publicaciones30 = data30.publicaciones || {};
+    const metricas30 = data30.metricas_clave || {};
+    const tiempos = metricas30.tiempo_promedio_adopcion || {};
+
+    if (kpiPostulaciones) {
+      kpiPostulaciones.textContent = adopciones30.iniciadas ?? "--";
+    }
+    if (kpiPostulacionesMeta) {
+      kpiPostulacionesMeta.textContent = `Actualizadas: ${adopciones30.actualizadas ?? 0}`;
+    }
+
+    const perro = tiempos.perro;
+    const gato = tiempos.gato;
+    const tiempoValues = [perro, gato].filter((value) => typeof value === "number");
+    if (kpiTiempoPromedio) {
+      if (tiempoValues.length) {
+        const promedio = tiempoValues.reduce((a, b) => a + b, 0) / tiempoValues.length;
+        kpiTiempoPromedio.textContent = `${promedio.toFixed(1)} días`;
+      } else {
+        kpiTiempoPromedio.textContent = "--";
+      }
+    }
+    if (kpiTiempoMeta) {
+      kpiTiempoMeta.textContent = `Perros ${perro ?? "--"} · Gatos ${gato ?? "--"}`;
+    }
+
+    const tasa = data90.tasa_exito || {};
+    const totalTasa = (tasa.aprobadas || 0) + (tasa.rechazadas || 0);
+    if (kpiTasaAprobacion) {
+      if (totalTasa > 0) {
+        const porcentaje = Math.round((tasa.aprobadas / totalTasa) * 100);
+        kpiTasaAprobacion.textContent = `${porcentaje}%`;
+      } else {
+        kpiTasaAprobacion.textContent = "--";
+      }
+    }
+    if (kpiTasaMeta) {
+      kpiTasaMeta.textContent = `Aprobadas ${tasa.aprobadas ?? 0} · Rechazadas ${tasa.rechazadas ?? 0}`;
+    }
+
+    if (kpiPublicaciones) {
+      kpiPublicaciones.textContent = publicaciones30.con_adopcion_aprobada ?? "--";
+    }
+    if (kpiPublicacionesMeta) {
+      const totalPublicadas = sumCantidad(publicaciones30.por_dia);
+      kpiPublicacionesMeta.textContent = `Publicadas: ${totalPublicadas}`;
+    }
+  };
+
+  const renderDashboardCharts = (data30 = {}, data90 = {}) => {
+    if (typeof Chart === "undefined") {
+      return;
+    }
+
+    const publicaciones = data30.publicaciones?.por_dia || [];
+    const lineCanvas = document.getElementById("reportLineChart");
+    if (lineCanvas) {
+      if (reportLineChart) {
+        reportLineChart.destroy();
+      }
+      reportLineChart = new Chart(lineCanvas, {
+        type: "line",
+        data: {
+          labels: publicaciones.map((item) => formatShortDate(item.fecha)),
+          datasets: [
+            {
+              label: "Publicaciones",
+              data: publicaciones.map((item) => Number(item.cantidad) || 0),
+              borderColor: "#1a94c4",
+              backgroundColor: "rgba(26, 148, 196, 0.2)",
+              tension: 0.35,
+              fill: true,
+              pointRadius: 3,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+          },
+          scales: {
+            y: { grid: { color: "rgba(27, 36, 54, 0.08)" } },
+            x: { grid: { display: false } },
+          },
+        },
+      });
+    }
+
+    const adopciones30 = data30.adopciones || {};
+    const adopciones90 = data90.adopciones || {};
+    const statusCanvas = document.getElementById("reportStatusChart");
+    if (statusCanvas) {
+      if (reportStatusChart) {
+        reportStatusChart.destroy();
+      }
+      reportStatusChart = new Chart(statusCanvas, {
+        type: "bar",
+        data: {
+          labels: ["Iniciadas", "Actualizadas", "Aprobadas", "Canceladas"],
+          datasets: [
+            {
+              label: "Últimos 30 días",
+              data: [
+                adopciones30.iniciadas || 0,
+                adopciones30.actualizadas || 0,
+                adopciones30.aprobadas || 0,
+                adopciones30.canceladas || 0,
+              ],
+              backgroundColor: "rgba(26, 148, 196, 0.75)",
+            },
+            {
+              label: "Últimos 90 días",
+              data: [
+                adopciones90.iniciadas || 0,
+                adopciones90.actualizadas || 0,
+                adopciones90.aprobadas || 0,
+                adopciones90.canceladas || 0,
+              ],
+              backgroundColor: "rgba(148, 163, 184, 0.55)",
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: "bottom" },
+          },
+          scales: {
+            x: { grid: { display: false } },
+            y: { grid: { color: "rgba(27, 36, 54, 0.08)" } },
+          },
+        },
+      });
+    }
+
+    const typeCanvas = document.getElementById("reportTypeChart");
+    if (typeCanvas) {
+      const items = data30.perfil_adopcion?.por_tipo_mascota || [];
+      const labels = items.length
+        ? items.map((item) => item.tipo.charAt(0).toUpperCase() + item.tipo.slice(1))
+        : ["Perros", "Gatos"];
+      const values = items.length
+        ? items.map((item) => Number(item.cantidad) || 0)
+        : [0, 0];
+
+      if (reportTypeChart) {
+        reportTypeChart.destroy();
+      }
+      reportTypeChart = new Chart(typeCanvas, {
+        type: "doughnut",
+        data: {
+          labels,
+          datasets: [
+            {
+              data: values,
+              backgroundColor: ["#f7b84b", "#1a94c4"],
+              borderColor: "#ffffff",
+              borderWidth: 2,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: "bottom" },
+          },
+          cutout: "62%",
+        },
+      });
+    }
+
+    const housingCanvas = document.getElementById("reportHousingChart");
+    if (housingCanvas) {
+      const items = data30.perfil_adopcion?.por_vivienda || [];
+      const topItems = items.slice(0, 6);
+      const labels = topItems.length
+        ? topItems.map((item) => item.tipo_vivienda || "Sin dato")
+        : ["Sin datos"];
+      const values = topItems.length
+        ? topItems.map((item) => Number(item.cantidad) || 0)
+        : [0];
+
+      if (reportHousingChart) {
+        reportHousingChart.destroy();
+      }
+      reportHousingChart = new Chart(housingCanvas, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [
+            {
+              label: "Adopciones",
+              data: values,
+              backgroundColor: "rgba(99, 102, 241, 0.75)",
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: "y",
+          plugins: {
+            legend: { display: false },
+          },
+          scales: {
+            x: { grid: { color: "rgba(27, 36, 54, 0.08)" } },
+            y: { grid: { display: false } },
+          },
+        },
+      });
+    }
+  };
 
   /**
    * Muestra u oculta el spinner de carga.
@@ -117,6 +359,10 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(
           dataIndicadores.message || "Error al cargar indicadores."
         );
+      const data30 = dataIndicadores.ultimos_30_dias || {};
+      const data90 = dataIndicadores.ultimos_90_dias || {};
+      updateKpis(data30, data90);
+      renderDashboardCharts(data30, data90);
       renderizarIndicadoresClave(dataIndicadores);
 
       // Petición para las estadísticas por edad

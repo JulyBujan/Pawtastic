@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const notifList = document.getElementById("notifList");
   const notifDropdown = document.getElementById("notifDropdown");
   const markAllNotif = document.getElementById("markAllNotif");
+  const hasNotifUi = Boolean(notifBadge || notifList || notifDropdown);
 
   const token = localStorage.getItem("token");
 
@@ -335,6 +336,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const fetchUnreadCount = async () => {
+    if (!hasNotifUi) return;
     if (!token) {
       setBadge(0);
       return;
@@ -449,8 +451,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const link = event.target.closest("a[data-page]");
       if (!link) return;
       event.preventDefault();
-      const page = parseInt(link.dataset.page, 10);
-      if (!page || page === currentPage) return;
+      let page = parseInt(link.dataset.page, 10);
+      if (!Number.isFinite(page) || page === currentPage) return;
+      if (page < 1) page = 1;
+      const totalPages = Math.max(1, Math.ceil((filteredMascotas || []).length / pageSize));
+      if (page > totalPages) page = totalPages;
       currentPage = page;
       renderPage();
     });
@@ -518,12 +523,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  fetchUnreadCount();
+  if (hasNotifUi) {
+    fetchUnreadCount();
+  }
   fetchMascotas();
 
-  setInterval(() => {
-    fetchUnreadCount();
-  }, 30000);
+  if (hasNotifUi) {
+    setInterval(() => {
+      fetchUnreadCount();
+    }, 30000);
+  }
 });
 
 async function eliminarMascota(id) {
@@ -555,7 +564,7 @@ async function estimarAdopcion(mascota) {
   if (!modalElement) {
     document.body.insertAdjacentHTML('beforeend', `
       <div class="modal fade" id="${modalElementId}" tabindex="-1" aria-labelledby="predictionModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered prediction-modal">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="predictionModalLabel">Estimación de Adopción</h5>
@@ -624,7 +633,7 @@ async function estimarAdopcion(mascota) {
   };
 
   try {
-    const response = await fetch('https://mlapi.pawtastic.pet/predict', {
+    const response = await fetch('../api/predict.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

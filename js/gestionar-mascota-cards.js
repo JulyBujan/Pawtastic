@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const notifList = document.getElementById("notifList");
   const notifDropdown = document.getElementById("notifDropdown");
   const markAllNotif = document.getElementById("markAllNotif");
+  const hasNotifUi = Boolean(notifBadge || notifList || notifDropdown);
   let notifDropdownOpen = false;
 
   const token = localStorage.getItem("token");
@@ -220,6 +221,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   const fetchUnreadCount = async () => {
+    if (!hasNotifUi) return;
     if (!token) {
       setBadge(0);
       return;
@@ -755,11 +757,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  fetchUnreadCount();
-  setInterval(() => {
+  if (hasNotifUi) {
     fetchUnreadCount();
-    if (notifDropdownOpen) {
-      fetchNotifications();
-    }
-  }, 30000);
+    setInterval(() => {
+      fetchUnreadCount();
+      if (notifDropdownOpen) {
+        fetchNotifications();
+      }
+    }, 30000);
+  }
 });

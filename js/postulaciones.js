@@ -1,5 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const container = document.getElementById("postulaciones-container");
+  const tableCard = document.querySelector(".postulaciones-table-card");
+  const pendientesContainer = document.getElementById("postulaciones-pendientes");
+  const aprobadasContainer = document.getElementById("postulaciones-aprobadas");
+  const rechazadasContainer = document.getElementById("postulaciones-rechazadas");
   const token = localStorage.getItem("token");
   const tipoUsuario = localStorage.getItem("tipo");
   const comentarioModalEl = document.getElementById("modalComentario");
@@ -15,15 +18,43 @@ document.addEventListener("DOMContentLoaded", () => {
   const confirmActionBtn = document.getElementById("confirmActionBtn");
   const confirmActionText = document.getElementById("confirmActionText");
   const confirmActionTitle = document.getElementById("confirmActionTitle");
+  const searchInput = document.getElementById("postulacionesSearch");
+  const statusFilter = document.getElementById("postulacionesStatus");
+  const clearFilters = document.getElementById("postulacionesClear");
+  const statTotal = document.getElementById("statTotal");
+  const statAprobadas = document.getElementById("statAprobadas");
+  const statPendientes = document.getElementById("statPendientes");
+  const statRechazadas = document.getElementById("statRechazadas");
+  const countPendientes = document.getElementById("countPendientes");
+  const countAprobadas = document.getElementById("countAprobadas");
+  const countRechazadas = document.getElementById("countRechazadas");
+  const paginationInfo = {
+    pendientes: document.getElementById("postulacionesPaginationInfoPendientes"),
+    aprobadas: document.getElementById("postulacionesPaginationInfoAprobadas"),
+    rechazadas: document.getElementById("postulacionesPaginationInfoRechazadas"),
+  };
+  const pagination = {
+    pendientes: document.getElementById("postulacionesPaginationPendientes"),
+    aprobadas: document.getElementById("postulacionesPaginationAprobadas"),
+    rechazadas: document.getElementById("postulacionesPaginationRechazadas"),
+  };
   let comentarioAdopcionId = null;
   let confirmAdopcionId = null;
   let confirmStatus = null;
+  let allPostulaciones = [];
+  let filteredPostulaciones = [];
+  const sectionPages = {
+    pendientes: 1,
+    aprobadas: 1,
+    rechazadas: 1,
+  };
+  const pageSize = 5;
 
   const renderState = (title, message, actionHtml = "") => {
-    if (!container) {
+    if (!tableCard) {
       return;
     }
-    container.innerHTML = `
+    tableCard.innerHTML = `
       <div class="bg-white border rounded-4 p-4 shadow-sm text-center">
         <h5 class="fw-bold mb-2">${title}</h5>
         <p class="text-muted mb-3">${message}</p>
@@ -60,7 +91,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const postulaciones = await response.json();
-      renderTabla(postulaciones);
+      allPostulaciones = postulaciones || [];
+      applyFilters();
     } catch (error) {
       console.error("Error:", error);
       if (typeof showToast === "function") {
@@ -74,21 +106,10 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const renderTabla = (postulaciones) => {
-    if (postulaciones.length === 0) {
-      if (typeof showToast === "function") {
-        showToast("Aún no tienes postulaciones.", "info");
-      }
-      renderState(
-        "Sin postulaciones",
-        "Todavía no registras postulaciones. ¡Explora el catálogo y encuentra tu match!"
-      );
-      return;
-    }
-
     let tablaHTML = `
-            <div class="table-container">
-                <table class="table table-striped table-hover">
-                    <thead class="bg-primary text-white">
+            <div class="table-container table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
                         <tr>`;
 
     // Cabeceras dinámicas según el tipo de usuario
@@ -113,19 +134,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
       tablaHTML += `<tr>`;
       if (tipoUsuario === "ong") {
-        tablaHTML += `<td><a href="gestionar-mascota.html?id=${p.mascota_id}">${p.mascota_nombre}</a></td>
-                              <td><a href="usuario.html?id=${p.usuario_id}">${p.usuario_nombre} ${p.usuario_apellido}</a></td>`;
+        tablaHTML += `<td data-label="Mascota"><a href="gestionar-mascota.html?id=${p.mascota_id}">${p.mascota_nombre}</a></td>
+                              <td data-label="Postulante"><a href="usuario.html?id=${p.usuario_id}">${p.usuario_nombre} ${p.usuario_apellido}</a></td>`;
       } else {
-        tablaHTML += `<td><a href="detalle-mascota.html?id=${p.mascota_id}">${p.mascota_nombre}</a></td>
-                              <td>${p.ong_nombre}</td>`;
+        tablaHTML += `<td data-label="Mascota"><a href="detalle-mascota.html?id=${p.mascota_id}">${p.mascota_nombre}</a></td>
+                              <td data-label="ONG Responsable">${p.ong_nombre}</td>`;
       }
 
       // Columnas comunes para ambos tipos de usuario
-      tablaHTML += `<td>${fecha}</td>
-                          <td><span class="badge ${estado.clase}">${
+      tablaHTML += `<td data-label="Fecha">${fecha}</td>
+                          <td data-label="Estado"><span class="badge ${estado.clase}">${
         estado.texto
       }</span></td>
-                          <td>
+                          <td data-label="Comentarios" class="cell-comments">
                             <div class="comentarios-display" style="white-space: pre-wrap; max-height: 100px; overflow-y: auto;">${
                               p.comentarios
                                 ? p.comentarios.replace(
@@ -134,26 +155,24 @@ document.addEventListener("DOMContentLoaded", () => {
                                   )
                                 : "Sin comentarios"
                             }</div>
-                            <button class="btn btn-sm btn-comentar-tabla mt-1 add-comment-btn" data-id="${
+                            <button class="btn btn-action btn-action-outline mt-2 add-comment-btn" data-id="${
                               p.id
-                            }">Comentar</button>
+                            }"><i class="bi bi-chat-dots"></i>Comentar</button>
                           </td>
-                          <td>
+                          <td data-label="Acciones" class="cell-actions">
                             ${
                               tipoUsuario === "ong"
-                                ? `<div class="d-flex gap-2">
-                                     <button class="btn btn-sm btn-success approve-btn" data-id="${
-                                       p.id
-                                     }" ${
-                                    !isPendiente ? "disabled" : ""
-                                  }>Aprobar</button>
-                                     <button class="btn btn-sm btn-danger reject-btn" data-id="${
-                                       p.id
-                                     }" ${
-                                    !isPendiente ? "disabled" : ""
-                                  }>Rechazar</button>
-                                   </div>`
-                                : `<button class="btn btn-sm btn-warning" disabled>Cancelar</button>`
+                                ? isPendiente
+                                  ? `<div class="d-flex flex-wrap gap-2">
+                                       <button class="btn btn-action btn-action-success approve-btn" data-id="${
+                                         p.id
+                                       }"><i class="bi bi-check-circle"></i>Aprobar</button>
+                                       <button class="btn btn-action btn-action-danger reject-btn" data-id="${
+                                         p.id
+                                       }"><i class="bi bi-x-circle"></i>Rechazar</button>
+                                     </div>`
+                                  : `<span class="text-muted small">Sin acciones</span>`
+                                : `<button class="btn btn-action btn-action-warning" disabled><i class="bi bi-clock"></i>Cancelar</button>`
                             }
                           </td>`;
       tablaHTML += `</tr>`;
@@ -162,9 +181,19 @@ document.addEventListener("DOMContentLoaded", () => {
     tablaHTML += `    </tbody>
                 </table>
             </div>`;
-    container.innerHTML = tablaHTML;
+    return tablaHTML;
+  };
 
-    // Attach event listeners to the new buttons
+  const renderEmptySection = (containerEl, message) => {
+    if (!containerEl) return;
+    containerEl.innerHTML = `
+      <div class="text-center text-muted small py-4">
+        <i class="bi bi-info-circle me-1"></i>${message}
+      </div>
+    `;
+  };
+
+  const bindRowActions = () => {
     document.querySelectorAll(".add-comment-btn").forEach((button) => {
       button.addEventListener("click", async (event) => {
         const adopcionId = event.target.dataset.id;
@@ -318,4 +347,209 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   fetchPostulaciones();
+
+  const normalizeText = (value) => {
+    return (value || "")
+      .toString()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+  };
+
+  const updateStats = (postulaciones) => {
+    const total = postulaciones.length;
+    const pendientes = postulaciones.filter((p) => parseInt(p.estado, 10) === 0).length;
+    const aprobadas = postulaciones.filter((p) => parseInt(p.estado, 10) === 1).length;
+    const rechazadas = postulaciones.filter((p) => parseInt(p.estado, 10) === 2).length;
+
+    if (statTotal) statTotal.textContent = total;
+    if (statPendientes) statPendientes.textContent = pendientes;
+    if (statAprobadas) statAprobadas.textContent = aprobadas;
+    if (statRechazadas) statRechazadas.textContent = rechazadas;
+    if (countPendientes) countPendientes.textContent = pendientes;
+    if (countAprobadas) countAprobadas.textContent = aprobadas;
+    if (countRechazadas) countRechazadas.textContent = rechazadas;
+  };
+
+  const applyFilters = () => {
+    const query = normalizeText(searchInput?.value);
+    const status = statusFilter ? statusFilter.value : "";
+    const filtered = allPostulaciones.filter((p) => {
+      const estado = getEstadoTexto(p.estado).texto.toLowerCase();
+      const matchesStatus = !status || estado === status;
+
+      const nombreMascota = normalizeText(p.mascota_nombre);
+      const nombreUsuario = normalizeText(`${p.usuario_nombre || ""} ${p.usuario_apellido || ""}`.trim());
+      const nombreOng = normalizeText(p.ong_nombre);
+      const matchesQuery = !query
+        || nombreMascota.includes(query)
+        || (tipoUsuario === "ong"
+          ? nombreUsuario.includes(query)
+          : nombreOng.includes(query));
+
+      return matchesStatus && matchesQuery;
+    });
+
+    filteredPostulaciones = filtered;
+    sectionPages.pendientes = 1;
+    sectionPages.aprobadas = 1;
+    sectionPages.rechazadas = 1;
+    updateStats(filteredPostulaciones);
+    renderSections();
+  };
+
+  const renderPagination = (sectionKey, totalItems) => {
+    const paginationEl = pagination[sectionKey];
+    const infoEl = paginationInfo[sectionKey];
+    if (!paginationEl) return;
+
+    if (totalItems === 0) {
+      paginationEl.innerHTML = "";
+      if (infoEl) {
+        infoEl.textContent = "Sin postulaciones";
+      }
+      return;
+    }
+
+    const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+    if (sectionPages[sectionKey] > totalPages) {
+      sectionPages[sectionKey] = totalPages;
+    }
+
+    const createPageItem = (page, label, disabled = false, active = false) => {
+      const li = document.createElement("li");
+      li.className = "page-item";
+      if (disabled) li.classList.add("disabled");
+      if (active) li.classList.add("active");
+      const link = document.createElement("a");
+      link.className = "page-link";
+      link.href = "#";
+      link.textContent = label;
+      link.dataset.page = page;
+      link.dataset.section = sectionKey;
+      li.appendChild(link);
+      return li;
+    };
+
+    paginationEl.innerHTML = "";
+    const currentPage = sectionPages[sectionKey];
+    paginationEl.appendChild(
+      createPageItem(currentPage - 1, "Anterior", currentPage === 1)
+    );
+
+    const maxButtons = 5;
+    let start = Math.max(1, currentPage - 2);
+    let end = Math.min(totalPages, start + maxButtons - 1);
+    if (end - start < maxButtons - 1) {
+      start = Math.max(1, end - maxButtons + 1);
+    }
+
+    for (let page = start; page <= end; page += 1) {
+      paginationEl.appendChild(
+        createPageItem(page, String(page), false, page === currentPage)
+      );
+    }
+
+    paginationEl.appendChild(
+      createPageItem(currentPage + 1, "Siguiente", currentPage === totalPages)
+    );
+  };
+
+  const renderSection = (sectionKey, containerEl, items, emptyMessage) => {
+    if (!containerEl) return;
+    if (!items || items.length === 0) {
+      renderEmptySection(containerEl, emptyMessage);
+      renderPagination(sectionKey, 0);
+      return;
+    }
+
+    const total = items.length;
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    if (sectionPages[sectionKey] > totalPages) {
+      sectionPages[sectionKey] = totalPages;
+    }
+    const currentPage = sectionPages[sectionKey];
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = Math.min(startIndex + pageSize, total);
+    const pageItems = items.slice(startIndex, endIndex);
+
+    containerEl.innerHTML = renderTabla(pageItems);
+
+    const infoEl = paginationInfo[sectionKey];
+    if (infoEl) {
+      infoEl.textContent = `Mostrando ${startIndex + 1}-${endIndex} de ${total} postulaciones`;
+    }
+    renderPagination(sectionKey, total);
+  };
+
+  const renderSections = () => {
+    const pendientes = [];
+    const aprobadas = [];
+    const rechazadas = [];
+
+    filteredPostulaciones.forEach((p) => {
+      const estado = parseInt(p.estado, 10);
+      if (estado === 1) {
+        aprobadas.push(p);
+      } else if (estado === 2) {
+        rechazadas.push(p);
+      } else {
+        pendientes.push(p);
+      }
+    });
+
+    renderSection(
+      "pendientes",
+      pendientesContainer,
+      pendientes,
+      "No hay postulaciones pendientes."
+    );
+    renderSection(
+      "aprobadas",
+      aprobadasContainer,
+      aprobadas,
+      "No hay postulaciones aprobadas todavía."
+    );
+    renderSection(
+      "rechazadas",
+      rechazadasContainer,
+      rechazadas,
+      "No hay postulaciones rechazadas."
+    );
+
+    bindRowActions();
+  };
+
+  if (searchInput) {
+    searchInput.addEventListener("input", applyFilters);
+  }
+  if (statusFilter) {
+    statusFilter.addEventListener("change", applyFilters);
+  }
+  if (clearFilters) {
+    clearFilters.addEventListener("click", () => {
+      if (searchInput) searchInput.value = "";
+      if (statusFilter) statusFilter.value = "";
+      applyFilters();
+    });
+  }
+
+  Object.entries(pagination).forEach(([sectionKey, paginationEl]) => {
+    if (!paginationEl) return;
+    paginationEl.addEventListener("click", (event) => {
+      const link = event.target.closest("a[data-page]");
+      if (!link) return;
+      event.preventDefault();
+      const pageItem = link.closest(".page-item");
+      if (pageItem && pageItem.classList.contains("disabled")) {
+        return;
+      }
+      const targetSection = link.dataset.section || sectionKey;
+      let page = parseInt(link.dataset.page, 10);
+      if (!Number.isFinite(page)) return;
+      if (page < 1) page = 1;
+      sectionPages[targetSection] = page;
+      renderSections();
+    });
+  });
 });

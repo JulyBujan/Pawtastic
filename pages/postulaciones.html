@@ -11,31 +11,109 @@
   <link rel="icon" href="../img/favicon.ico" type="image/png" />
 </head>
 
-<body class="bg-light d-flex flex-column min-vh-100">
-  <!-- ENCABEZADO -->
-  <header class="encabezado-azul shadow-sm py-3 sticky-top">
-    <div class="container d-flex justify-content-between align-items-center">
-      <div class="d-flex align-items-center">
-        <img src="../img/logo.png" alt="Logo Pawtastic" width="50" class="me-2 rounded-circle" />
-        <h1 class="h4 text-warning m-0">Pawtastic</h1>
-      </div>
-      <div id="nav-links" class="d-flex gap-2 align-items-center">
-        <!-- Los enlaces se cargarán dinámicamente aquí -->
-        <a href="#" class="btn btn-custom-nav" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion" title="Salir">
-          <i class="bi bi-box-arrow-right"></i> Salir
-        </a>
+<body class="postulaciones-body d-flex flex-column min-vh-100">
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark nav-app">
+    <div class="container">
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarPostulaciones"
+        aria-controls="navbarPostulaciones" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand text-warning fw-bold me-3" href="../index.html">
+        <img src="../img/logo.png" alt="Logo Pawtastic" width="40" height="40" class="d-inline-block d-lg-none">
+        <span class="d-none d-lg-inline">Pawtastic</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarPostulaciones">
+        <ul class="navbar-nav align-items-lg-center ms-auto flex-lg-row gap-2" id="nav-links">
+          <!-- Los enlaces se cargarán dinámicamente aquí -->
+          <li class="nav-item">
+            <a href="#" class="btn btn-custom-nav" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion" title="Salir">
+              <i class="bi bi-box-arrow-right"></i> Salir
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
-  </header>
+  </nav>
 
   <!-- LISTADO DE POSTULACIONES -->
   <main class="container py-5 flex-grow-1">
-    <h2 class="text-center text-warning mb-4 fw-bold">Mis Postulaciones</h2>
-    <div class="row">
-      <div class="col-12" id="postulaciones-container">
-        <!-- La tabla de postulaciones se cargará aquí -->
+    <section class="postulaciones-hero text-center mb-4">
+      <span class="detail-badge">Panel ONG</span>
+      <h2 class="text-warning fw-bold mt-2 mb-1">Mis Postulaciones</h2>
+      <p class="text-muted mb-0">Revisá, comentá y administrá cada postulación desde un solo lugar.</p>
+    </section>
+
+    <section class="postulaciones-summary">
+      <div class="summary-card">
+        <div class="summary-label">Total</div>
+        <div class="summary-value" id="statTotal">0</div>
       </div>
-    </div>
+      <div class="summary-card">
+        <div class="summary-label">Aprobadas</div>
+        <div class="summary-value text-success" id="statAprobadas">0</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Pendientes</div>
+        <div class="summary-value text-warning" id="statPendientes">0</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Rechazadas</div>
+        <div class="summary-value text-danger" id="statRechazadas">0</div>
+      </div>
+    </section>
+
+    <section class="postulaciones-toolbar">
+      <div class="toolbar-input">
+        <i class="bi bi-search"></i>
+        <input id="postulacionesSearch" type="search" class="form-control" placeholder="Buscar por mascota o postulante">
+      </div>
+      <select id="postulacionesStatus" class="form-select">
+        <option value="">Todos los estados</option>
+        <option value="pendiente">Pendiente</option>
+        <option value="aprobada">Aprobada</option>
+        <option value="rechazada">Rechazada</option>
+      </select>
+      <button type="button" class="btn btn-outline-secondary" id="postulacionesClear">Limpiar</button>
+    </section>
+
+    <section class="postulaciones-table-card">
+      <div class="postulaciones-section">
+        <div class="postulaciones-section-header">
+          <h3 class="postulaciones-section-title">En revisión</h3>
+          <span class="badge bg-warning text-dark" id="countPendientes">0</span>
+        </div>
+        <div id="postulaciones-pendientes"></div>
+        <div class="postulaciones-pagination">
+          <span class="text-muted small" id="postulacionesPaginationInfoPendientes"></span>
+          <ul class="pagination pagination-modern mb-0" id="postulacionesPaginationPendientes"></ul>
+        </div>
+      </div>
+
+      <div class="postulaciones-section">
+        <div class="postulaciones-section-header">
+          <h3 class="postulaciones-section-title">Aprobadas</h3>
+          <span class="badge bg-success" id="countAprobadas">0</span>
+        </div>
+        <div id="postulaciones-aprobadas"></div>
+        <div class="postulaciones-pagination">
+          <span class="text-muted small" id="postulacionesPaginationInfoAprobadas"></span>
+          <ul class="pagination pagination-modern mb-0" id="postulacionesPaginationAprobadas"></ul>
+        </div>
+      </div>
+
+      <div class="postulaciones-section">
+        <div class="postulaciones-section-header">
+          <h3 class="postulaciones-section-title">Rechazadas</h3>
+          <span class="badge bg-danger" id="countRechazadas">0</span>
+        </div>
+        <div id="postulaciones-rechazadas"></div>
+        <div class="postulaciones-pagination">
+          <span class="text-muted small" id="postulacionesPaginationInfoRechazadas"></span>
+          <ul class="pagination pagination-modern mb-0" id="postulacionesPaginationRechazadas"></ul>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- MODAL DE CONFIRMACIÓN DE CIERRE DE SESIÓN -->
@@ -102,46 +180,11 @@
     </div>
   </div>
 
-  <!-- FOOTER -->
-  <footer class="bg-footer text-dark pt-4 pb-3 mt-5">
-    <div class="container text-center text-md-start">
-      <div class="row">
-        <div class="col-md-4 mb-3 text-center">
-          <h5 class="fw-bold mt-2">Pawtastic</h5>
-          <p class="small">Conectamos corazones con patas. Gracias por elegir adoptar.</p>
-          <a href="/index.html">
-            <img src="/img/logo.png" alt="Logo Pawtastic" style="max-width: 100px; border-radius: 40%;">
-          </a>
-        </div>
-        <div class="col-md-4 mb-3 d-flex flex-column align-items-center">
-          <h5 class="fw-bold text-center">Navegación</h5>
-          <ul class="list-unstyled text-center">
-            <li><a href="https://interfacessistemas3.my.canva.site/manual-de-usuario-pawtastic"
-                class="text-dark text-decoration-none" target="_blank" rel="noopener noreferrer">Manual de Usuario</a>
-            </li>
-            <li><a href="https://drive.google.com/drive/folders/1UiabMGZbGNRz8LPfdU74eroOOLEoH8Xb?usp=sharing"
-                class="text-dark text-decoration-none" target="_blank" rel="noopener noreferrer">Documentación del
-                Proyecto</a></li>
-          </ul>
-        </div>
-        <div class="col-md-4 mb-3 fs-5 text-center text-md-start">
-          <h5 class="fw-bold">Seguinos</h5>
-          <a href="https://www.facebook.com/profile.php?id=61581919419192" class="text-dark me-3"><i
-              class="bi bi-facebook" style="font-size: 2.5rem;"></i></a>
-          <a href="https://www.instagram.com/pawtasticarg/" class="text-dark me-3"><i class="bi bi-instagram"
-              style="font-size: 2.5rem;"></i></a>
-          <a href="https://x.com/PawtasticArg" class="text-dark"><i class="bi bi-x-circle-fill"
-              style="font-size: 2.5rem;"></i></a>
-        </div>
-      </div>
-      <hr class="border-dark">
-      <div class="text-center">
-        <small>&copy; 2025 Pawtastic. Todos los derechos reservados.</small>
-        <br>
-        <a href="./terminosYcondiciones.html" class="text-dark text-decoration-underline small">Términos y
-          Condiciones</a> |
-        <a href="./politicaDeCookies.html" class="text-dark text-decoration-underline small">Política de Cookies</a>
-      </div>
+  <footer class="mini-footer mt-4">
+    <div class="container text-center">
+      <a href="./terminosYcondiciones.html" class="text-decoration-none">Términos</a>
+      <span class="mx-2">|</span>
+      <a href="./politicaDeCookies.html" class="text-decoration-none">Cookies</a>
     </div>
   </footer>
 
@@ -160,23 +203,24 @@
       const navLinksContainer = document.getElementById('nav-links');
       // Se corrige el selector para que encuentre el botón "Salir" por su función, no por su color.
       const salirButton = navLinksContainer.querySelector('[data-bs-target="#modalCerrarSesion"]');
+      const salirItem = salirButton ? salirButton.closest('li') : null;
 
       let linksHTML = '';
 
       if (tipoUsuario === 'ong') {
         linksHTML = `
-          <a href="perfil-ong.html" class="btn btn-outline-dark">Inicio</a>
-          <a href="mis-mascotas.html" class="btn btn-outline-dark">Mis Mascotas</a>
-          <a href="ver-reportes.html" class="btn btn-outline-dark">Estadisticas</a>
+          <li class="nav-item"><a href="perfil-ong.html" class="btn btn-custom-nav me-lg-2">Inicio</a></li>
+          <li class="nav-item"><a href="mis-mascotas.html" class="btn btn-custom-nav me-lg-2">Mis Mascotas</a></li>
+          <li class="nav-item"><a href="ver-reportes.html" class="btn btn-custom-nav me-lg-2">Reportes</a></li>
         `;
       } else {
         linksHTML = `
-          <a href="catalogo.html" class="btn btn-outline-dark">Catálogo</a>
-          <a href="usuario.html" class="btn btn-outline-dark">Mi Perfil</a>
+          <li class="nav-item"><a href="catalogo.html" class="btn btn-custom-nav me-lg-2">Catálogo</a></li>
+          <li class="nav-item"><a href="usuario.html" class="btn btn-custom-nav me-lg-2">Mi Perfil</a></li>
         `;
       }
-      if (salirButton) {
-        salirButton.insertAdjacentHTML('beforebegin', linksHTML);
+      if (salirItem) {
+        salirItem.insertAdjacentHTML('beforebegin', linksHTML);
       }
 
       document.getElementById("confirmarSalir").addEventListener("click", function () {

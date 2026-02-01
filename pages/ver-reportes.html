@@ -14,28 +14,33 @@
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 
-<body class="bg-light d-flex flex-column min-vh-100">
+<body class="reports-body d-flex flex-column min-vh-100">
   <!-- NAVBAR ONG -->
-  <nav class="navbar navbar-expand-lg navbar-dark encabezado-azul">
+  <nav class="navbar navbar-expand-lg navbar-dark nav-app">
     <div class="container">
-      <a class="navbar-brand d-flex align-items-center" href="../index.html">
-        <img src="../img/logo.png" alt="Logo Pawtastic" width="50" height="50" class="me-2 logo-navbar">
-        <span class="text-warning fw-bold">Pawtastic</span>
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarReportes"
+        aria-controls="navbarReportes" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand text-warning fw-bold me-3" href="../index.html">
+        <img src="../img/logo.png" alt="Logo Pawtastic" width="40" height="40" class="d-inline-block d-lg-none">
+        <span class="d-none d-lg-inline">Pawtastic</span>
       </a>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav align-items-center">
+      <div class="collapse navbar-collapse" id="navbarReportes">
+        <ul class="navbar-nav align-items-lg-center ms-auto">
           <li class="nav-item">
-            <a href="perfil-ong.html" class="btn btn-outline-dark me-2">Inicio</a>
+            <a href="perfil-ong.html" class="btn btn-custom-nav me-2">Inicio</a>
           </li>
           <li class="nav-item">
-            <a href="postulaciones.html" class="btn btn-outline-dark me-2">Postulaciones</a>
+            <a href="postulaciones.html" class="btn btn-custom-nav me-2">Postulaciones</a>
           </li>
           <li class="nav-item">
-            <a href="mis-mascotas.html" class="btn btn-outline-dark me-2">Mis mascotas</a>
+            <a href="mis-mascotas.html" class="btn btn-custom-nav me-2">Mis mascotas</a>
           </li>
           <li class="nav-item">
-            <a href="#" class="btn btn-custom-nav" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion"><i
-                class="bi bi-box-arrow-right"></i> Salir</a>
+            <a href="#" class="btn btn-custom-nav" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion">
+              <i class="bi bi-box-arrow-right"></i> Salir
+            </a>
           </li>
         </ul>
       </div>
@@ -44,7 +49,79 @@
 
   <!-- CONTENIDO PRINCIPAL -->
   <main class="container py-5 flex-grow-1">
-    <h2 class="text-center text-warning mb-4 fw-bold">Reportes de Actividad</h2>
+    <section class="reports-hero">
+      <div>
+        <span class="detail-badge">Panel ONG</span>
+        <h2 class="reports-title">Reportes inteligentes</h2>
+        <p class="reports-subtitle">Visualizá tendencias, tiempos de adopción y actividad con claridad.</p>
+      </div>
+      <div class="reports-hero-tags">
+        <span class="report-tag">Datos reales</span>
+        <span class="report-tag report-tag-outline">Últimos 30 días</span>
+      </div>
+    </section>
+
+    <section class="reports-kpis">
+      <article class="kpi-card">
+        <div class="kpi-label">Postulaciones del mes</div>
+        <div class="kpi-value" id="kpiPostulaciones">--</div>
+        <div class="kpi-meta" id="kpiPostulacionesMeta">Cargando...</div>
+      </article>
+      <article class="kpi-card">
+        <div class="kpi-label">Tiempo promedio de adopción</div>
+        <div class="kpi-value" id="kpiTiempoPromedio">--</div>
+        <div class="kpi-meta" id="kpiTiempoMeta">Cargando...</div>
+      </article>
+      <article class="kpi-card">
+        <div class="kpi-label">Tasa de aprobación</div>
+        <div class="kpi-value" id="kpiTasaAprobacion">--</div>
+        <div class="kpi-meta" id="kpiTasaMeta">Cargando...</div>
+      </article>
+      <article class="kpi-card">
+        <div class="kpi-label">Publicaciones con adopción</div>
+        <div class="kpi-value" id="kpiPublicaciones">--</div>
+        <div class="kpi-meta" id="kpiPublicacionesMeta">Cargando...</div>
+      </article>
+    </section>
+
+    <section class="reports-charts">
+      <article class="report-chart-card">
+        <div class="report-chart-header">
+          <h3>Publicaciones por día</h3>
+          <span class="report-chip">Línea</span>
+        </div>
+        <div class="chart-area">
+          <canvas id="reportLineChart"></canvas>
+        </div>
+      </article>
+      <article class="report-chart-card">
+        <div class="report-chart-header">
+          <h3>Estados de adopción (30 vs 90 días)</h3>
+          <span class="report-chip report-chip-alt">Comparativo</span>
+        </div>
+        <div class="chart-area">
+          <canvas id="reportStatusChart"></canvas>
+        </div>
+      </article>
+      <article class="report-chart-card">
+        <div class="report-chart-header">
+          <h3>Tipo de mascota adoptada</h3>
+          <span class="report-chip report-chip-warm">Donut</span>
+        </div>
+        <div class="chart-area">
+          <canvas id="reportTypeChart"></canvas>
+        </div>
+      </article>
+      <article class="report-chart-card">
+        <div class="report-chart-header">
+          <h3>Tipo de vivienda de adoptantes</h3>
+          <span class="report-chip report-chip-neutral">Barras</span>
+        </div>
+        <div class="chart-area">
+          <canvas id="reportHousingChart"></canvas>
+        </div>
+      </article>
+    </section>
 
     <div id="loading-spinner" class="text-center d-none mt-5">
       <div class="spinner-border text-warning" role="status">
@@ -342,48 +419,6 @@
 
   </main>
 
-  <!-- FOOTER -->
-  <footer class="bg-footer text-dark pt-4 pb-3 mt-5">
-    <div class="container text-center text-md-start">
-      <div class="row">
-        <div class="col-md-4 mb-3 text-center">
-          <h5 class="fw-bold mt-2">Pawtastic</h5>
-          <p class="small">Conectamos corazones con patas. Gracias por elegir adoptar.</p>
-          <a href="/index.html">
-            <img src="/img/logo.png" alt="Logo Pawtastic" style="max-width: 100px; border-radius: 40%;">
-          </a>
-        </div>
-        <div class="col-md-4 mb-3 d-flex flex-column align-items-center">
-          <h5 class="fw-bold text-center">Navegación</h5>
-          <ul class="list-unstyled text-center">
-            <li><a href="https://interfacessistemas3.my.canva.site/manual-de-usuario-pawtastic"
-                class="text-dark text-decoration-none" target="_blank" rel="noopener noreferrer">Manual de Usuario</a>
-            </li>
-            <li><a href="https://drive.google.com/drive/folders/1UiabMGZbGNRz8LPfdU74eroOOLEoH8Xb?usp=sharing"
-                class="text-dark text-decoration-none" target="_blank" rel="noopener noreferrer">Documentación del
-                Proyecto</a></li>
-          </ul>
-        </div>
-        <div class="col-md-4 mb-3 fs-5 text-center text-md-start">
-          <h5 class="fw-bold">Seguinos</h5>
-          <a href="https://www.facebook.com/profile.php?id=61581919419192" class="text-dark me-3"><i
-              class="bi bi-facebook" style="font-size: 2.5rem;"></i></a>
-          <a href="https://www.instagram.com/pawtasticarg/" class="text-dark me-3"><i class="bi bi-instagram"
-              style="font-size: 2.5rem;"></i></a>
-          <a href="https://x.com/PawtasticArg" class="text-dark"><i class="bi bi-x-circle-fill"
-              style="font-size: 2.5rem;"></i></a>
-        </div>
-      </div>
-      <hr class="border-dark">
-      <div class="text-center">
-        <small>&copy; 2025 Pawtastic. Todos los derechos reservados.</small><br>
-        <a href="./terminosYcondiciones.html" class="text-dark text-decoration-underline small">Términos y
-          Condiciones</a> |
-        <a href="./politicaDeCookies.html" class="text-dark text-decoration-underline small">Política de Cookies</a>
-      </div>
-    </div>
-  </footer>
-
   <!-- MODAL SALIR -->
   <div class="modal fade" id="modalCerrarSesion" tabindex="-1" aria-labelledby="modalCerrarSesionLabel"
     aria-hidden="true">
@@ -407,6 +442,14 @@
   <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
     <!-- Los toasts se insertarán aquí dinámicamente -->
   </div>
+
+  <footer class="mini-footer mt-4">
+    <div class="container text-center">
+      <a href="./terminosYcondiciones.html" class="text-decoration-none">Términos</a>
+      <span class="mx-2">|</span>
+      <a href="./politicaDeCookies.html" class="text-decoration-none">Cookies</a>
+    </div>
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
