@@ -49,46 +49,49 @@
 
   <!-- CONTENIDO PRINCIPAL -->
   <main class="container py-5 flex-grow-1">
-    <section class="reports-hero">
-      <div>
-        <span class="detail-badge">Panel ONG</span>
-        <h2 class="reports-title">Reportes inteligentes</h2>
-        <p class="reports-subtitle">Visualizá tendencias, tiempos de adopción y actividad con claridad.</p>
-      </div>
+    <section class="report-section" data-report-section="dashboard">
+      <section class="reports-hero">
+        <div>
+          <span class="detail-badge">Panel ONG</span>
+          <h2 class="reports-title">Reportes inteligentes</h2>
+          <p class="reports-subtitle">Visualizá tendencias, tiempos de adopción y actividad con claridad.</p>
+        </div>
       <div class="reports-hero-tags">
-        <span class="report-tag">Datos reales</span>
+        <button type="button" class="btn btn-report-menu" data-bs-toggle="offcanvas" data-bs-target="#reportesMenu"
+          aria-controls="reportesMenu">
+          <i class="bi bi-list"></i> Secciones
+        </button>
         <span class="report-tag report-tag-outline">Últimos 30 días</span>
       </div>
     </section>
 
-    <section class="reports-kpis">
-      <article class="kpi-card">
-        <div class="kpi-label">Postulaciones del mes</div>
-        <div class="kpi-value" id="kpiPostulaciones">--</div>
-        <div class="kpi-meta" id="kpiPostulacionesMeta">Cargando...</div>
-      </article>
-      <article class="kpi-card">
-        <div class="kpi-label">Tiempo promedio de adopción</div>
-        <div class="kpi-value" id="kpiTiempoPromedio">--</div>
-        <div class="kpi-meta" id="kpiTiempoMeta">Cargando...</div>
-      </article>
-      <article class="kpi-card">
-        <div class="kpi-label">Tasa de aprobación</div>
-        <div class="kpi-value" id="kpiTasaAprobacion">--</div>
-        <div class="kpi-meta" id="kpiTasaMeta">Cargando...</div>
-      </article>
-      <article class="kpi-card">
-        <div class="kpi-label">Publicaciones con adopción</div>
-        <div class="kpi-value" id="kpiPublicaciones">--</div>
-        <div class="kpi-meta" id="kpiPublicacionesMeta">Cargando...</div>
-      </article>
-    </section>
+      <section class="reports-kpis">
+        <article class="kpi-card">
+          <div class="kpi-label">Postulaciones del mes</div>
+          <div class="kpi-value" id="kpiPostulaciones">--</div>
+          <div class="kpi-meta" id="kpiPostulacionesMeta">Cargando...</div>
+        </article>
+        <article class="kpi-card">
+          <div class="kpi-label">Tiempo promedio de adopción</div>
+          <div class="kpi-value" id="kpiTiempoPromedio">--</div>
+          <div class="kpi-meta" id="kpiTiempoMeta">Cargando...</div>
+        </article>
+        <article class="kpi-card">
+          <div class="kpi-label">Tasa de aprobación</div>
+          <div class="kpi-value" id="kpiTasaAprobacion">--</div>
+          <div class="kpi-meta" id="kpiTasaMeta">Cargando...</div>
+        </article>
+        <article class="kpi-card">
+          <div class="kpi-label">Publicaciones con adopción</div>
+          <div class="kpi-value" id="kpiPublicaciones">--</div>
+          <div class="kpi-meta" id="kpiPublicacionesMeta">Cargando...</div>
+        </article>
+      </section>
 
-    <section class="reports-charts">
-      <article class="report-chart-card">
+      <section class="reports-charts">
+        <article class="report-chart-card">
         <div class="report-chart-header">
           <h3>Publicaciones por día</h3>
-          <span class="report-chip">Línea</span>
         </div>
         <div class="chart-area">
           <canvas id="reportLineChart"></canvas>
@@ -97,7 +100,6 @@
       <article class="report-chart-card">
         <div class="report-chart-header">
           <h3>Estados de adopción (30 vs 90 días)</h3>
-          <span class="report-chip report-chip-alt">Comparativo</span>
         </div>
         <div class="chart-area">
           <canvas id="reportStatusChart"></canvas>
@@ -106,7 +108,6 @@
       <article class="report-chart-card">
         <div class="report-chart-header">
           <h3>Tipo de mascota adoptada</h3>
-          <span class="report-chip report-chip-warm">Donut</span>
         </div>
         <div class="chart-area">
           <canvas id="reportTypeChart"></canvas>
@@ -115,23 +116,24 @@
       <article class="report-chart-card">
         <div class="report-chart-header">
           <h3>Tipo de vivienda de adoptantes</h3>
-          <span class="report-chip report-chip-neutral">Barras</span>
         </div>
         <div class="chart-area">
           <canvas id="reportHousingChart"></canvas>
         </div>
-      </article>
+        </article>
+      </section>
+
+      <div id="loading-spinner" class="text-center d-none mt-5">
+        <div class="spinner-border text-warning" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-2">Generando reporte...</p>
+      </div>
     </section>
 
-    <div id="loading-spinner" class="text-center d-none mt-5">
-      <div class="spinner-border text-warning" role="status">
-        <span class="visually-hidden">Cargando...</span>
-      </div>
-      <p class="mt-2">Generando reporte...</p>
-    </div>
-
-    <!-- SECCIÓN DE INDICADORES CLAVE (30 y 90 días) -->
-    <div id="indicadores-clave-container" class="d-none">
+    <section class="report-section d-none" data-report-section="indicadores">
+      <!-- SECCIÓN DE INDICADORES CLAVE (30 y 90 días) -->
+      <div id="indicadores-clave-container" class="d-none">
       <div class="row">
         <!-- Columna 30 días -->
         <div class="col-lg-6 mb-4">
@@ -242,8 +244,12 @@
       </div>
     </div>
 
-    <!-- SECCIÓN ADOPCIONES MÁS RÁPIDAS (POR EDAD) -->
-    <div id="adopciones-rapidas-container" class="d-none">
+      </div>
+    </section>
+
+    <section class="report-section d-none" data-report-section="adopcion-rapida">
+      <!-- SECCIÓN ADOPCIONES MÁS RÁPIDAS (POR EDAD) -->
+      <div id="adopciones-rapidas-container" class="d-none">
       <hr class="my-5">
       <h3 class="text-center text-warning mb-4 fw-bold">¿Qué se Adopta Más Rápido? (Últimos 90 días)</h3>
       <div class="row">
@@ -292,8 +298,12 @@
       </div>
     </div>
 
-    <!-- SECCIÓN ADOPCIONES POR ZONA -->
-    <div id="adopciones-por-zona-container" class="d-none">
+      </div>
+    </section>
+
+    <section class="report-section d-none" data-report-section="zonas">
+      <!-- SECCIÓN ADOPCIONES POR ZONA -->
+      <div id="adopciones-por-zona-container" class="d-none">
       <hr class="my-5">
       <h3 class="text-center text-warning mb-4 fw-bold">¿En Qué Zonas Hay Más Adopciones?</h3>
       <div class="row justify-content-center">
@@ -325,8 +335,12 @@
       </div>
     </div>
 
-    <!-- SECCIÓN MASCOTAS CON MÁS TIEMPO EN ESPERA -->
-    <div id="mascotas-en-espera-container" class="d-none">
+      </div>
+    </section>
+
+    <section class="report-section d-none" data-report-section="espera">
+      <!-- SECCIÓN MASCOTAS CON MÁS TIEMPO EN ESPERA -->
+      <div id="mascotas-en-espera-container" class="d-none">
       <hr class="my-5">
       <h3 class="text-center text-warning mb-4 fw-bold">Mascotas con Más Tiempo en Espera</h3>
       <div class="row justify-content-center">
@@ -347,77 +361,112 @@
       </div>
     </div>
 
-    <hr class="my-5">
-
-    <!-- SECCIÓN DE REPORTE PERSONALIZADO -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-body">
-        <h5 class="card-title">Generar Reporte Personalizado</h5>
-        <div class="row g-3 align-items-end">
-          <div class="col-md-auto">
-            <button id="btn-semana" class="btn btn-outline-dark">Última Semana</button>
-            <button id="btn-mes" class="btn btn-outline-dark">Último Mes</button>
-          </div>
-          <div class="col-md-6">
-            <form id="form-periodo-personalizado" class="row g-3">
-              <div class="col-md">
-                <label for="fecha_inicio_manual" class="form-label">Desde</label>
-                <input type="date" id="fecha_inicio_manual" class="form-control" required>
-              </div>
-              <div class="col-md">
-                <label for="fecha_fin_manual" class="form-label">Hasta</label>
-                <input type="date" id="fecha_fin_manual" class="form-control" required>
-              </div>
-              <div class="col-md-auto d-flex align-items-end">
-                <button type="submit" class="btn btn-dark me-2">Generar</button>
-                <button type="button" id="btn-limpiar-reporte" class="btn btn-outline-secondary">Limpiar</button>
-              </div>
-            </form>
-          </div>
-        </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Contenedor para el Reporte Personalizado (oculto por defecto) -->
-    <div id="reporte-personalizado-container" class="d-none mt-4">
-      <div class="d-flex justify-content-center align-items-center mb-3">
-        <h3 class="text-center mb-0" id="titulo-reporte-personalizado"></h3>
-      </div>
-      <!-- Estadísticas de Adopciones -->
-      <h4 class="text-center mb-3">Adopciones</h4>
-      <div class="row text-center g-3" id="adopciones-stats-manual">
-        <!-- Las tarjetas de estadísticas se insertarán aquí -->
-      </div>
+    <section class="report-section d-none" data-report-section="personalizado">
+      <hr class="my-5">
 
-      <hr class="my-4">
-      <!-- Análisis del Perfil de Adopción -->
-      <h4 class="text-center mb-3">Análisis del Perfil de Adopción</h4>
-      <div class="row g-4">
-        <!-- Gráfico Adopciones por Tipo de Vivienda -->
-        <div class="col-lg-6">
-          <div class="card h-100">
-            <div class="card-header bg-dark text-white">
-              <h5 class="card-title text-center mb-0">Adopciones por Tipo de Vivienda</h5>
+      <!-- SECCIÓN DE REPORTE PERSONALIZADO -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Generar Reporte Personalizado</h5>
+          <div class="row g-3 align-items-end">
+            <div class="col-md-auto">
+              <button id="btn-semana" class="btn btn-outline-dark">Última Semana</button>
+              <button id="btn-mes" class="btn btn-outline-dark">Último Mes</button>
             </div>
-            <div class="card-body">
-              <canvas id="viviendaChart-manual"></canvas>
+            <div class="col-md-6">
+              <form id="form-periodo-personalizado" class="row g-3">
+                <div class="col-md">
+                  <label for="fecha_inicio_manual" class="form-label">Desde</label>
+                  <input type="date" id="fecha_inicio_manual" class="form-control" required>
+                </div>
+                <div class="col-md">
+                  <label for="fecha_fin_manual" class="form-label">Hasta</label>
+                  <input type="date" id="fecha_fin_manual" class="form-control" required>
+                </div>
+                <div class="col-md-auto d-flex align-items-end">
+                  <button type="submit" class="btn btn-dark me-2">Generar</button>
+                  <button type="button" id="btn-limpiar-reporte" class="btn btn-outline-secondary">Limpiar</button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
-        <!-- Gráfico Adopciones por Tipo de Mascota -->
-        <div class="col-lg-6">
-          <div class="card h-100">
-            <div class="card-header bg-dark text-white">
-              <h5 class="card-title text-center mb-0">Adopciones por Tipo de Mascota</h5>
+      </div>
+
+      <!-- Contenedor para el Reporte Personalizado (oculto por defecto) -->
+      <div id="reporte-personalizado-container" class="d-none mt-4">
+        <div class="d-flex justify-content-center align-items-center mb-3">
+          <h3 class="text-center mb-0" id="titulo-reporte-personalizado"></h3>
+        </div>
+        <!-- Estadísticas de Adopciones -->
+        <h4 class="text-center mb-3">Adopciones</h4>
+        <div class="row text-center g-3" id="adopciones-stats-manual">
+          <!-- Las tarjetas de estadísticas se insertarán aquí -->
+        </div>
+
+        <hr class="my-4">
+        <!-- Análisis del Perfil de Adopción -->
+        <h4 class="text-center mb-3">Análisis del Perfil de Adopción</h4>
+        <div class="row g-4">
+          <!-- Gráfico Adopciones por Tipo de Vivienda -->
+          <div class="col-lg-6">
+            <div class="card h-100">
+              <div class="card-header bg-dark text-white">
+                <h5 class="card-title text-center mb-0">Adopciones por Tipo de Vivienda</h5>
+              </div>
+              <div class="card-body">
+                <canvas id="viviendaChart-manual"></canvas>
+              </div>
             </div>
-            <div class="card-body d-flex align-items-center justify-content-center"><canvas
-                id="tipoMascotaChart-manual"></canvas></div>
+          </div>
+          <!-- Gráfico Adopciones por Tipo de Mascota -->
+          <div class="col-lg-6">
+            <div class="card h-100">
+              <div class="card-header bg-dark text-white">
+                <h5 class="card-title text-center mb-0">Adopciones por Tipo de Mascota</h5>
+              </div>
+              <div class="card-body d-flex align-items-center justify-content-center"><canvas
+                  id="tipoMascotaChart-manual"></canvas></div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
   </main>
+
+  <div class="offcanvas offcanvas-end reportes-offcanvas" tabindex="-1" id="reportesMenu"
+    aria-labelledby="reportesMenuLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="reportesMenuLabel">Secciones de reportes</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div class="list-group">
+        <button class="list-group-item list-group-item-action report-menu-item active" data-report-target="dashboard">
+          Resumen general
+        </button>
+        <button class="list-group-item list-group-item-action report-menu-item" data-report-target="indicadores">
+          Indicadores 30/90 días
+        </button>
+        <button class="list-group-item list-group-item-action report-menu-item" data-report-target="adopcion-rapida">
+          Adopción por edad
+        </button>
+        <button class="list-group-item list-group-item-action report-menu-item" data-report-target="zonas">
+          Zonas de adopción
+        </button>
+        <button class="list-group-item list-group-item-action report-menu-item" data-report-target="espera">
+          Mascotas en espera
+        </button>
+        <button class="list-group-item list-group-item-action report-menu-item" data-report-target="personalizado">
+          Reporte personalizado
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- MODAL SALIR -->
   <div class="modal fade" id="modalCerrarSesion" tabindex="-1" aria-labelledby="modalCerrarSesionLabel"

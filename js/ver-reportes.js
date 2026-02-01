@@ -24,6 +24,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const fechaFinInput = document.getElementById("fecha_fin_manual");
   const fechaInicioInput = document.getElementById("fecha_inicio_manual");
   const btnLimpiarReporte = document.getElementById("btn-limpiar-reporte");
+  const reportMenu = document.getElementById("reportesMenu");
+  const reportSections = document.querySelectorAll(".report-section");
+  const reportMenuItems = document.querySelectorAll(".report-menu-item");
 
   let viviendaChartManual = null;
   let tipoMascotaChartManual = null;
@@ -32,6 +35,18 @@ document.addEventListener("DOMContentLoaded", () => {
   let reportStatusChart = null;
   let reportTypeChart = null;
   let reportHousingChart = null;
+
+  const showReportSection = (target) => {
+    reportSections.forEach((section) => {
+      section.classList.toggle(
+        "d-none",
+        section.dataset.reportSection !== target
+      );
+    });
+    reportMenuItems.forEach((item) => {
+      item.classList.toggle("active", item.dataset.reportTarget === target);
+    });
+  };
 
   const formatShortDate = (value) => {
     if (!value) return "";
@@ -786,6 +801,19 @@ document.addEventListener("DOMContentLoaded", () => {
     // (Los otros ya deberían estar visibles, pero esto lo asegura)
   });
 
+  reportMenuItems.forEach((item) => {
+    item.addEventListener("click", () => {
+      const target = item.dataset.reportTarget;
+      if (!target) return;
+      showReportSection(target);
+      if (reportMenu && typeof bootstrap !== "undefined") {
+        const offcanvas = bootstrap.Offcanvas.getOrCreateInstance(reportMenu);
+        offcanvas.hide();
+      }
+    });
+  });
+
   // --- Carga Inicial Automática ---
+  showReportSection("dashboard");
   fetchDatosIniciales(); // Carga los indicadores clave y las stats por edad
 });
