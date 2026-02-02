@@ -185,7 +185,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $inTransaction = true;
 
             // Obtener la postulación para verificar que pertenece a la ONG
-            $stmt_adopcion = $conn->prepare("SELECT a.id_ong, a.id_usuario, a.id_mascota, a.estado, m.nombre AS mascota_nombre FROM adopciones a JOIN mascotas m ON a.id_mascota = m.id WHERE a.id = ?");
+            $stmt_adopcion = $conn->prepare("SELECT a.id_ong, a.id_usuario, a.id_mascota, a.estado, m.nombre AS mascota_nombre, m.estado AS mascota_estado FROM adopciones a JOIN mascotas m ON a.id_mascota = m.id WHERE a.id = ?");
             $stmt_adopcion->bind_param("i", $adopcion_id);
             $stmt_adopcion->execute();
             $adopcion = $stmt_adopcion->get_result()->fetch_assoc();
@@ -208,6 +208,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             }
 
             $estadoAnterior = (int) $adopcion['estado'];
+            $mascotaEstadoActual = (int) ($adopcion['mascota_estado'] ?? 1);
+
+            if ($new_status === 1) {
+                if ($mascotaEstadoActual === 3) {
+                    $conn->rollback();
+                    $inTransaction = false;
+                    http_response_code(409);
+                    echo json_encode(["message" => "No se puede aprobar una postulación de una mascota archivada."]);
+                    exit;
+                }
+
+                $stmtCheckApproved = $conn->prepare("SELECT COUNT(*) AS total FROM adopciones WHERE id_mascota = ? AND estado = 1 AND id != ?");
+                $stmtCheckApproved->bind_param("ii", $adopcion['id_mascota'], $adopcion_id);
+                $stmtCheckApproved->execute();
+                $totalApproved = (int) ($stmtCheckApproved->get_result()->fetch_assoc()['total'] ?? 0);
+                $stmtCheckApproved->close();
+
+                if ($totalApproved > 0) {
+                    $conn->rollback();
+                    $inTransaction = false;
+                    http_response_code(409);
+                    echo json_encode(["message" => "Esta mascota ya tiene una postulación aprobada."]);
+                    exit;
+                }
+            }
+
             $fechaFin = ($new_status === 1 || $new_status === 2) ? date("Y-m-d H:i:s") : null;
             $stmt_update = $conn->prepare("UPDATE adopciones SET estado = ?, fecha_fin = ? WHERE id = ?");
             $stmt_update->bind_param("isi", $new_status, $fechaFin, $adopcion_id);
@@ -215,6 +241,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 throw new Exception("Error al actualizar el estado: " . $conn->error);
             }
             $stmt_update->close();
+
+            if ($new_status === 1) {
+                $stmtRejectOthers = $conn->prepare(
+                    "UPDATE adopciones
+                     SET estado = 2, fecha_fin = ?
+                     WHERE id_mascota = ? AND id != ? AND estado = 0"
+                );
+                $stmtRejectOthers->bind_param("sii", $fechaFin, $adopcion['id_mascota'], $adopcion_id);
+                if (!$stmtRejectOthers->execute()) {
+                    throw new Exception("Error al rechazar postulaciones pendientes: " . $stmtRejectOthers->error);
+                }
+                $stmtRejectOthers->close();
+            }
 
             // Sincronizar estado de la mascota según postulaciones (si no está archivada).
             $mascotaId = (int) $adopcion['id_mascota'];

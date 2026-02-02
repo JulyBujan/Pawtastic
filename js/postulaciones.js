@@ -359,7 +359,11 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const updateStats = (postulaciones) => {
-    const total = postulaciones.length;
+    const total = new Set(
+      postulaciones
+        .map((p) => p.mascota_id)
+        .filter((id) => id !== null && id !== undefined)
+    ).size;
     const pendientes = postulaciones.filter((p) => parseInt(p.estado, 10) === 0).length;
     const aprobadas = postulaciones.filter((p) => parseInt(p.estado, 10) === 1).length;
     const rechazadas = postulaciones.filter((p) => parseInt(p.estado, 10) === 2).length;
