@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const statusFilter = document.getElementById("postulacionesStatus");
   const clearFilters = document.getElementById("postulacionesClear");
   const statTotal = document.getElementById("statTotal");
+  const statPostulaciones = document.getElementById("statPostulaciones");
   const statAprobadas = document.getElementById("statAprobadas");
   const statPendientes = document.getElementById("statPendientes");
   const statRechazadas = document.getElementById("statRechazadas");
@@ -348,7 +349,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  const fetchMascotasTotal = async () => {
+    try {
+      const response = await fetch(
+        "/api/get_mascota.php?include_adoptadas=1&include_archivadas=1",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        return;
+      }
+
+      const mascotas = await response.json();
+      totalMascotas = Array.isArray(mascotas) ? mascotas.length : 0;
+      if (statTotal) statTotal.textContent = totalMascotas;
+    } catch (error) {
+      console.warn("No se pudo obtener el total de mascotas:", error);
+    }
+  };
+
   fetchPostulaciones();
+  fetchMascotasTotal();
 
   const normalizeText = (value) => {
     return (value || "")
@@ -358,23 +383,29 @@ document.addEventListener("DOMContentLoaded", () => {
       .toLowerCase();
   };
 
-  const updateStats = (postulaciones) => {
-    const total = new Set(
-      postulaciones
-        .map((p) => p.mascota_id)
-        .filter((id) => id !== null && id !== undefined)
-    ).size;
-    const pendientes = postulaciones.filter((p) => parseInt(p.estado, 10) === 0).length;
-    const aprobadas = postulaciones.filter((p) => parseInt(p.estado, 10) === 1).length;
-    const rechazadas = postulaciones.filter((p) => parseInt(p.estado, 10) === 2).length;
+  let totalMascotas = null;
 
-    if (statTotal) statTotal.textContent = total;
-    if (statPendientes) statPendientes.textContent = pendientes;
-    if (statAprobadas) statAprobadas.textContent = aprobadas;
-    if (statRechazadas) statRechazadas.textContent = rechazadas;
-    if (countPendientes) countPendientes.textContent = pendientes;
-    if (countAprobadas) countAprobadas.textContent = aprobadas;
-    if (countRechazadas) countRechazadas.textContent = rechazadas;
+  const getCounts = (list) => ({
+    total: list.length,
+    pendientes: list.filter((p) => parseInt(p.estado, 10) === 0).length,
+    aprobadas: list.filter((p) => parseInt(p.estado, 10) === 1).length,
+    rechazadas: list.filter((p) => parseInt(p.estado, 10) === 2).length,
+  });
+
+  const updateStats = (baseList, visibleList) => {
+    const baseCounts = getCounts(baseList);
+    const visibleCounts = getCounts(visibleList);
+
+    if (statTotal) {
+      statTotal.textContent = totalMascotas !== null ? totalMascotas : baseCounts.total;
+    }
+    if (statPostulaciones) statPostulaciones.textContent = baseCounts.total;
+    if (statPendientes) statPendientes.textContent = baseCounts.pendientes;
+    if (statAprobadas) statAprobadas.textContent = baseCounts.aprobadas;
+    if (statRechazadas) statRechazadas.textContent = baseCounts.rechazadas;
+    if (countPendientes) countPendientes.textContent = visibleCounts.pendientes;
+    if (countAprobadas) countAprobadas.textContent = visibleCounts.aprobadas;
+    if (countRechazadas) countRechazadas.textContent = visibleCounts.rechazadas;
   };
 
   const applyFilters = () => {
@@ -400,7 +431,7 @@ document.addEventListener("DOMContentLoaded", () => {
     sectionPages.pendientes = 1;
     sectionPages.aprobadas = 1;
     sectionPages.rechazadas = 1;
-    updateStats(filteredPostulaciones);
+    updateStats(allPostulaciones, filteredPostulaciones);
     renderSections();
   };
 
