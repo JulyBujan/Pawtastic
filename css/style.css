@@ -1741,6 +1741,42 @@ div.card:has(#form-title) {
   margin-bottom: 1.5rem;
 }
 
+.postulaciones-section-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.section-tab {
+  border: 1px solid rgba(27, 36, 54, 0.16);
+  background: #ffffff;
+  border-radius: 999px;
+  padding: 0.4rem 1.1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1b2436;
+  transition: all 0.2s ease;
+}
+
+.section-tab:hover {
+  background: rgba(26, 148, 196, 0.12);
+  border-color: rgba(26, 148, 196, 0.4);
+  color: #0b3b50;
+}
+
+.section-tab.is-active {
+  background: #0e5a7e;
+  color: #ffffff;
+  border-color: #0e5a7e;
+  box-shadow: 0 10px 22px rgba(14, 90, 126, 0.25);
+}
+
+.postulaciones-section.is-hidden {
+  display: none;
+}
+
 .toolbar-input {
   position: relative;
 }
@@ -1791,6 +1827,174 @@ div.card:has(#form-title) {
 
 .postulaciones-table-card td {
   vertical-align: middle;
+}
+
+.postulacion-row {
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.postulacion-row--pending {
+  background: rgba(255, 247, 237, 0.7);
+  box-shadow: inset 4px 0 0 rgba(245, 158, 11, 0.85);
+}
+
+.postulacion-row--pending:hover {
+  background: rgba(255, 237, 213, 0.9);
+}
+
+.estado-subtext {
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  color: #7c8491;
+  font-weight: 600;
+}
+
+.comment-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 0.35rem;
+}
+
+.comentarios-display {
+  max-height: 140px;
+  overflow-y: auto;
+  display: grid;
+  gap: 0.5rem;
+  padding-right: 0.3rem;
+}
+
+.comment-item {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+}
+
+.comment-item-meta {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+
+.comment-item-body {
+  font-size: 0.82rem;
+  color: #1f2937;
+}
+
+.comment-empty {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.status-indicator {
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  line-height: 1;
+  background: rgba(255, 255, 255, 0.65);
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.12);
+}
+
+.status-indicator--pending {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.status-indicator--approved {
+  background: rgba(220, 252, 231, 0.9);
+}
+
+.status-indicator--rejected {
+  background: rgba(254, 226, 226, 0.9);
+}
+
+.status-indicator--unknown {
+  background: rgba(226, 232, 240, 0.9);
+}
+
+.status-icon-spin {
+  animation: statusSpin 2.2s linear infinite;
+}
+
+.status-icon-pop {
+  animation: statusPop 1.8s ease-in-out infinite;
+}
+
+.status-icon-shake {
+  animation: statusShake 2.4s ease-in-out infinite;
+}
+
+@keyframes statusSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes statusPop {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+@keyframes statusShake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-2px);
+  }
+  40%,
+  80% {
+    transform: translateX(2px);
+  }
+}
+
+.comment-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.comment-badge--ok {
+  background: rgba(14, 165, 233, 0.15);
+  color: #0369a1;
+}
+
+.comment-badge--empty {
+  background: rgba(148, 163, 184, 0.18);
+  color: #64748b;
+}
+
+.comment-preview {
+  font-size: 0.78rem;
+  color: #475569;
 }
 
 .postulaciones-section {
@@ -1949,9 +2153,75 @@ div.card:has(#form-title) {
     width: 100%;
   }
 
-.postulaciones-table-card td.cell-actions {
-  flex-direction: column;
+  .postulaciones-table-card td.cell-actions {
+    flex-direction: column;
+  }
 }
+
+@media (max-width: 768px) {
+  .postulaciones-cards {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .postulacion-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid rgba(27, 36, 54, 0.12);
+    padding: 1rem;
+    box-shadow: 0 12px 24px rgba(27, 36, 54, 0.08);
+  }
+
+  .postulacion-card--pending {
+    border-left: 4px solid rgba(245, 158, 11, 0.85);
+    background: rgba(255, 247, 237, 0.75);
+  }
+
+  .postulacion-card-header {
+    display: grid;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .postulacion-card-title {
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .postulacion-card-sub {
+    font-size: 0.8rem;
+    color: #6b7280;
+  }
+
+  .postulacion-card-body {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .postulacion-card-row {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .postulacion-card-row .label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #94a3b8;
+    font-weight: 700;
+  }
+
+  .postulacion-card-row .value {
+    font-size: 0.9rem;
+    color: #1f2937;
+  }
+
+  .postulacion-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.8rem;
+  }
 }
 
 /* === REPORTES MODERNOS === */
@@ -3319,7 +3589,7 @@ div.card:has(#form-title) {
 
 .ong-stats {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.5rem;
   margin-bottom: 1.5rem;
 }

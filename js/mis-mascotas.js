@@ -25,6 +25,10 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentPage = 1;
   const pageSize = 8;
   let mascotaToDelete = null;
+  const params = new URLSearchParams(window.location.search);
+  const initialQuery = (params.get("q") || "").trim();
+  const initialTipo = (params.get("tipo") || "").trim().toLowerCase();
+  const initialEstado = (params.get("estado") || "").trim().toLowerCase();
 
   if (!token) {
     if (mascotasGrid) {
@@ -247,6 +251,25 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
+  const setInitialFilters = () => {
+    if (searchInput && initialQuery) {
+      searchInput.value = initialQuery;
+    }
+    if (filterTipo && initialTipo) {
+      const allowedTipos = ["perro", "gato"];
+      if (allowedTipos.includes(initialTipo)) {
+        filterTipo.value = initialTipo;
+      }
+    }
+    if (filterEstado && initialEstado) {
+      const normalized = initialEstado.replace("-", " ");
+      const allowedEstados = ["activa", "en revisión", "adoptada", "archivada"];
+      if (allowedEstados.includes(normalized)) {
+        filterEstado.value = normalized;
+      }
+    }
+  };
+
   const fetchMascotas = async () => {
     try {
       const response = await fetch("../api/get_mascota.php?include_adoptadas=1", {
@@ -260,9 +283,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const data = await response.json();
       mascotasData = Array.isArray(data) ? data : [];
-      filteredMascotas = mascotasData;
       updateStats();
-      renderPage();
+      setInitialFilters();
+      applyFilters();
     } catch (error) {
       if (mascotasGrid) {
         mascotasGrid.innerHTML = `<div class="col-12"><p class="text-center text-danger">${error.message}</p></div>`;

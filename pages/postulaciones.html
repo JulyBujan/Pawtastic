@@ -81,8 +81,20 @@
       <button type="button" class="btn btn-outline-secondary" id="postulacionesClear">Limpiar</button>
     </section>
 
+    <section class="postulaciones-section-tabs" aria-label="Navegación por secciones">
+      <button type="button" class="section-tab is-active" data-section-tab="pendientes">
+        En revisión
+      </button>
+      <button type="button" class="section-tab" data-section-tab="aprobadas">
+        Aprobadas
+      </button>
+      <button type="button" class="section-tab" data-section-tab="rechazadas">
+        Rechazadas
+      </button>
+    </section>
+
     <section class="postulaciones-table-card">
-      <div class="postulaciones-section">
+      <div class="postulaciones-section" data-section="pendientes">
         <div class="postulaciones-section-header">
           <h3 class="postulaciones-section-title">En revisión</h3>
           <span class="badge bg-warning text-dark" id="countPendientes">0</span>
@@ -94,7 +106,7 @@
         </div>
       </div>
 
-      <div class="postulaciones-section">
+      <div class="postulaciones-section" data-section="aprobadas">
         <div class="postulaciones-section-header">
           <h3 class="postulaciones-section-title">Aprobadas</h3>
           <span class="badge bg-success" id="countAprobadas">0</span>
@@ -106,7 +118,7 @@
         </div>
       </div>
 
-      <div class="postulaciones-section">
+      <div class="postulaciones-section" data-section="rechazadas">
         <div class="postulaciones-section-header">
           <h3 class="postulaciones-section-title">Rechazadas</h3>
           <span class="badge bg-danger" id="countRechazadas">0</span>

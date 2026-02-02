@@ -29,6 +29,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const countPendientes = document.getElementById("countPendientes");
   const countAprobadas = document.getElementById("countAprobadas");
   const countRechazadas = document.getElementById("countRechazadas");
+  const sectionTabs = document.querySelectorAll("[data-section-tab]");
+  const sections = document.querySelectorAll(".postulaciones-section");
   const paginationInfo = {
     pendientes: document.getElementById("postulacionesPaginationInfoPendientes"),
     aprobadas: document.getElementById("postulacionesPaginationInfoAprobadas"),
@@ -50,6 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     rechazadas: 1,
   };
   const pageSize = 5;
+  let activeSection = "pendientes";
 
   const renderState = (title, message, actionHtml = "") => {
     if (!tableCard) {
@@ -107,6 +110,10 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const renderTabla = (postulaciones) => {
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    if (isMobile) {
+      return renderCards(postulaciones);
+    }
     let tablaHTML = `
             <div class="table-container table-responsive">
                 <table class="table table-hover align-middle">
@@ -133,8 +140,45 @@ document.addEventListener("DOMContentLoaded", () => {
       const fecha = new Date(p.fecha_inicio).toLocaleDateString();
       const fechaCierre = p.fecha_fin ? new Date(p.fecha_fin).toLocaleDateString() : "—";
       const isPendiente = parseInt(p.estado) === 0;
+      const fechaInicio = p.fecha_inicio ? new Date(p.fecha_inicio) : null;
+      const diasEnRevision = fechaInicio
+        ? Math.max(0, Math.floor((Date.now() - fechaInicio.getTime()) / 86400000))
+        : null;
+      const diasLabel = diasEnRevision !== null
+        ? `${diasEnRevision} día${diasEnRevision === 1 ? "" : "s"}`
+        : "";
+      const estadoExtra = isPendiente && diasLabel
+        ? `<div class="estado-subtext">En revisión · ${diasLabel}</div>`
+        : "";
+      const comentariosRaw = (p.comentarios || "").trim();
+      const comentariosParts = comentariosRaw ? comentariosRaw.split(/\n---\n/) : [];
+      const comentariosCount = comentariosParts.length;
+      const comentarioBadge = comentariosCount
+        ? `<span class="comment-badge comment-badge--ok"><i class="bi bi-chat-dots"></i>${comentariosCount} comentario${comentariosCount === 1 ? "" : "s"}</span>`
+        : `<span class="comment-badge comment-badge--empty"><i class="bi bi-chat"></i>Sin comentarios</span>`;
+      const comentarioMetaHtml = `<div class="comment-meta">${comentarioBadge}</div>`;
+      const formatCommentItem = (texto) => {
+        const trimmed = (texto || "").trim();
+        if (!trimmed) return "";
+        const match = trimmed.match(/^\[(.*?)\]:\s*([\s\S]*)$/);
+        const meta = match ? match[1] : "";
+        const body = match ? match[2] : trimmed;
+        const metaDisplay = meta
+          ? meta.split(" - ").slice(-1)[0].trim() || meta.trim()
+          : "";
+        const bodyHtml = body.replace(/\n/g, "<br>");
+        return `
+          <div class="comment-item">
+            ${metaDisplay ? `<div class="comment-item-meta">${metaDisplay}</div>` : ""}
+            <div class="comment-item-body">${bodyHtml}</div>
+          </div>
+        `;
+      };
+      const comentariosHtml = comentariosParts.length
+        ? comentariosParts.map(formatCommentItem).join("")
+        : '<span class="comment-empty">Todavía no hay comentarios.</span>';
 
-      tablaHTML += `<tr>`;
+      tablaHTML += `<tr class="postulacion-row${isPendiente ? " postulacion-row--pending" : ""}">`;
       if (tipoUsuario === "ong") {
         tablaHTML += `<td data-label="Mascota"><a href="gestionar-mascota.html?id=${p.mascota_id}">${p.mascota_nombre}</a></td>
                               <td data-label="Postulante"><a href="usuario.html?id=${p.usuario_id}">${p.usuario_nombre} ${p.usuario_apellido}</a></td>`;
@@ -146,18 +190,14 @@ document.addEventListener("DOMContentLoaded", () => {
       // Columnas comunes para ambos tipos de usuario
       tablaHTML += `<td data-label="Inicio">${fecha}</td>
                           <td data-label="Cierre">${fechaCierre}</td>
-                          <td data-label="Estado"><span class="badge ${estado.clase}">${
-        estado.texto
-      }</span></td>
+                          <td data-label="Estado"><span class="badge status-badge ${estado.clase}">${
+        estado.emoji
+          ? `<span class="status-indicator status-indicator--${estado.indicator} ${estado.anim}" aria-hidden="true">${estado.emoji}</span>${estado.texto}`
+          : estado.texto
+      }</span>${estadoExtra}</td>
                           <td data-label="Comentarios" class="cell-comments">
-                            <div class="comentarios-display" style="white-space: pre-wrap; max-height: 100px; overflow-y: auto;">${
-                              p.comentarios
-                                ? p.comentarios.replace(
-                                    /\n---\n/g,
-                                    '<hr class="my-1">'
-                                  )
-                                : "Sin comentarios"
-                            }</div>
+                            ${comentarioMetaHtml}
+                            <div class="comentarios-display">${comentariosHtml}</div>
                             <button class="btn btn-action btn-action-outline mt-2 add-comment-btn" data-id="${
                               p.id
                             }"><i class="bi bi-chat-dots"></i>Comentar</button>
@@ -185,6 +225,104 @@ document.addEventListener("DOMContentLoaded", () => {
                 </table>
             </div>`;
     return tablaHTML;
+  };
+
+  const renderCards = (postulaciones) => {
+    const cards = postulaciones.map((p) => {
+      const estado = getEstadoTexto(p.estado);
+      const fecha = new Date(p.fecha_inicio).toLocaleDateString();
+      const fechaCierre = p.fecha_fin ? new Date(p.fecha_fin).toLocaleDateString() : "—";
+      const isPendiente = parseInt(p.estado, 10) === 0;
+      const fechaInicio = p.fecha_inicio ? new Date(p.fecha_inicio) : null;
+      const diasEnRevision = fechaInicio
+        ? Math.max(0, Math.floor((Date.now() - fechaInicio.getTime()) / 86400000))
+        : null;
+      const diasLabel = diasEnRevision !== null
+        ? `${diasEnRevision} día${diasEnRevision === 1 ? "" : "s"}`
+        : "";
+      const estadoExtra = isPendiente && diasLabel
+        ? `<div class="estado-subtext">En revisión · ${diasLabel}</div>`
+        : "";
+      const comentariosRaw = (p.comentarios || "").trim();
+      const comentariosParts = comentariosRaw ? comentariosRaw.split(/\n---\n/) : [];
+      const comentariosCount = comentariosParts.length;
+      const comentarioBadge = comentariosCount
+        ? `<span class="comment-badge comment-badge--ok"><i class="bi bi-chat-dots"></i>${comentariosCount} comentario${comentariosCount === 1 ? "" : "s"}</span>`
+        : `<span class="comment-badge comment-badge--empty"><i class="bi bi-chat"></i>Sin comentarios</span>`;
+      const formatCommentItem = (texto) => {
+        const trimmed = (texto || "").trim();
+        if (!trimmed) return "";
+        const match = trimmed.match(/^\[(.*?)\]:\s*([\s\S]*)$/);
+        const meta = match ? match[1] : "";
+        const body = match ? match[2] : trimmed;
+        const metaDisplay = meta
+          ? meta.split(" - ").slice(-1)[0].trim() || meta.trim()
+          : "";
+        const bodyHtml = body.replace(/\n/g, "<br>");
+        return `
+          <div class="comment-item">
+            ${metaDisplay ? `<div class="comment-item-meta">${metaDisplay}</div>` : ""}
+            <div class="comment-item-body">${bodyHtml}</div>
+          </div>
+        `;
+      };
+      const comentariosHtml = comentariosParts.length
+        ? comentariosParts.map(formatCommentItem).join("")
+        : '<span class="comment-empty">Todavía no hay comentarios.</span>';
+      const comentarioMetaHtml = `<div class="comment-meta">${comentarioBadge}</div>`;
+      const accionesHtml = tipoUsuario === "ong"
+        ? isPendiente
+          ? `<div class="d-flex flex-wrap gap-2">
+               <button class="btn btn-action btn-action-success approve-btn" data-id="${p.id}"><i class="bi bi-check-circle"></i>Aprobar</button>
+               <button class="btn btn-action btn-action-danger reject-btn" data-id="${p.id}"><i class="bi bi-x-circle"></i>Rechazar</button>
+             </div>`
+          : `<span class="text-muted small">Sin acciones</span>`
+        : `<button class="btn btn-action btn-action-warning" disabled><i class="bi bi-clock"></i>Cancelar</button>`;
+
+      const headerLeft = tipoUsuario === "ong"
+        ? `<a href="gestionar-mascota.html?id=${p.mascota_id}">${p.mascota_nombre}</a>`
+        : `<a href="detalle-mascota.html?id=${p.mascota_id}">${p.mascota_nombre}</a>`;
+      const headerRight = tipoUsuario === "ong"
+        ? `<span class="text-muted">Postulante: <a href="usuario.html?id=${p.usuario_id}">${p.usuario_nombre} ${p.usuario_apellido}</a></span>`
+        : `<span class="text-muted">ONG: ${p.ong_nombre}</span>`;
+
+      return `
+        <article class="postulacion-card${isPendiente ? " postulacion-card--pending" : ""}">
+          <div class="postulacion-card-header">
+            <div class="postulacion-card-title">${headerLeft}</div>
+            <div class="postulacion-card-sub">${headerRight}</div>
+          </div>
+          <div class="postulacion-card-body">
+            <div class="postulacion-card-row">
+              <span class="label">Estado</span>
+              <span class="value"><span class="badge status-badge ${estado.clase}">${
+        estado.emoji
+          ? `<span class="status-indicator status-indicator--${estado.indicator} ${estado.anim}" aria-hidden="true">${estado.emoji}</span>${estado.texto}`
+          : estado.texto
+      }</span>${estadoExtra}</span>
+            </div>
+            <div class="postulacion-card-row">
+              <span class="label">Inicio</span>
+              <span class="value">${fecha}</span>
+            </div>
+            <div class="postulacion-card-row">
+              <span class="label">Cierre</span>
+              <span class="value">${fechaCierre}</span>
+            </div>
+            <div class="postulacion-card-row">
+              <span class="label">Comentarios</span>
+              <span class="value">
+                ${comentarioMetaHtml}
+                <div class="comentarios-display">${comentariosHtml}</div>
+              </span>
+            </div>
+          </div>
+          <div class="postulacion-card-actions">${accionesHtml}</div>
+        </article>
+      `;
+    });
+
+    return `<div class="postulaciones-cards">${cards.join("")}</div>`;
   };
 
   const renderEmptySection = (containerEl, message) => {
@@ -339,15 +477,41 @@ document.addEventListener("DOMContentLoaded", () => {
   const getEstadoTexto = (estado) => {
     switch (parseInt(estado)) {
       case 0:
-        return { texto: "Pendiente", clase: "bg-warning text-dark" };
+        return {
+          texto: "Pendiente",
+          clase: "bg-warning text-dark",
+          emoji: "⏳",
+          indicator: "pending",
+          anim: "status-icon-spin",
+        };
       case 1:
-        return { texto: "Aprobada", clase: "bg-success" };
+        return {
+          texto: "Aprobada",
+          clase: "bg-success",
+          emoji: "✅",
+          indicator: "approved",
+          anim: "status-icon-pop",
+        };
       case 2:
-        return { texto: "Rechazada", clase: "bg-danger" };
+        return {
+          texto: "Rechazada",
+          clase: "bg-danger",
+          emoji: "❌",
+          indicator: "rejected",
+          anim: "status-icon-shake",
+        };
       default:
-        return { texto: "Desconocido", clase: "bg-secondary" };
+        return {
+          texto: "Desconocido",
+          clase: "bg-secondary",
+          emoji: "❓",
+          indicator: "unknown",
+          anim: "",
+        };
     }
   };
+
+  let totalMascotas = null;
 
   const fetchMascotasTotal = async () => {
     try {
@@ -382,8 +546,6 @@ document.addEventListener("DOMContentLoaded", () => {
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase();
   };
-
-  let totalMascotas = null;
 
   const getCounts = (list) => ({
     total: list.length,
@@ -555,6 +717,17 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     bindRowActions();
+    updateSectionVisibility();
+  };
+
+  const updateSectionVisibility = () => {
+    sections.forEach((section) => {
+      const key = section.dataset.section;
+      section.classList.toggle("is-hidden", key !== activeSection);
+    });
+    sectionTabs.forEach((tab) => {
+      tab.classList.toggle("is-active", tab.dataset.sectionTab === activeSection);
+    });
   };
 
   if (searchInput) {
@@ -570,6 +743,15 @@ document.addEventListener("DOMContentLoaded", () => {
       applyFilters();
     });
   }
+
+  sectionTabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const target = tab.dataset.sectionTab;
+      if (!target) return;
+      activeSection = target;
+      updateSectionVisibility();
+    });
+  });
 
   Object.entries(pagination).forEach(([sectionKey, paginationEl]) => {
     if (!paginationEl) return;

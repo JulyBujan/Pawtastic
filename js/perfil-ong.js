@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const nombreOngSpan = document.getElementById("nombreOng");
   const bienvenidaH2 = document.getElementById("bienvenidaOng");
   const totalMascotasEl = document.getElementById("totalMascotas");
+  const totalMascotasActivasEl = document.getElementById("totalMascotasActivas");
   const ultimaMascotaUpdateEl = document.getElementById("ultimaMascotaUpdate");
   const totalPostulacionesEl = document.getElementById("totalPostulaciones");
   const ultimaPostulacionUpdateEl = document.getElementById("ultimaPostulacionUpdate");
@@ -101,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const fetchMascotasData = async () => {
     try {
-      const response = await fetch("../api/get_mascota.php", {
+      const response = await fetch("../api/get_mascota.php?include_adoptadas=1&include_archivadas=1", {
         headers: { Authorization: "Bearer " + token },
       });
       if (handleUnauthorized(response)) {
@@ -112,7 +113,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       const mascotas = await response.json();
       const total = Array.isArray(mascotas) ? mascotas.length : 0;
+      const activas = Array.isArray(mascotas)
+        ? mascotas.filter((m) => parseInt(m.estado, 10) === 1).length
+        : 0;
       totalMascotasEl.textContent = total;
+      if (totalMascotasActivasEl) {
+        totalMascotasActivasEl.textContent = activas;
+      }
 
       if (total > 0) {
         const fechas = mascotas
@@ -128,6 +135,9 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       console.error(error);
       totalMascotasEl.textContent = "0";
+      if (totalMascotasActivasEl) {
+        totalMascotasActivasEl.textContent = "0";
+      }
       ultimaMascotaUpdateEl.textContent = "Última actualización: —";
     }
   };

@@ -185,7 +185,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $inTransaction = true;
 
             // Obtener la postulación para verificar que pertenece a la ONG
-            $stmt_adopcion = $conn->prepare("SELECT a.id_ong, a.id_usuario, a.id_mascota, a.estado, m.nombre AS mascota_nombre, m.estado AS mascota_estado FROM adopciones a JOIN mascotas m ON a.id_mascota = m.id WHERE a.id = ?");
+            $stmt_adopcion = $conn->prepare("SELECT a.id_ong, a.id_usuario, a.id_mascota, a.estado, a.comentarios, m.nombre AS mascota_nombre, m.estado AS mascota_estado FROM adopciones a JOIN mascotas m ON a.id_mascota = m.id WHERE a.id = ?");
             $stmt_adopcion->bind_param("i", $adopcion_id);
             $stmt_adopcion->execute();
             $adopcion = $stmt_adopcion->get_result()->fetch_assoc();
@@ -241,6 +241,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 throw new Exception("Error al actualizar el estado: " . $conn->error);
             }
             $stmt_update->close();
+
+            if (($new_status === 1 || $new_status === 2) && empty(trim($adopcion['comentarios'] ?? ''))) {
+                $autoComentario = $new_status === 1
+                    ? "Postulación aprobada. Nos contactaremos para coordinar los próximos pasos."
+                    : "Postulación rechazada. Gracias por postularte.";
+                $fechaComentario = date("d/m/Y H:i");
+                $comentarioFinal = "[" . $fechaComentario . " - ONG]: " . $autoComentario;
+
+                $stmtComentario = $conn->prepare("UPDATE adopciones SET comentarios = ? WHERE id = ?");
+                $stmtComentario->bind_param("si", $comentarioFinal, $adopcion_id);
+                if (!$stmtComentario->execute()) {
+                    throw new Exception("Error al actualizar el comentario automático: " . $stmtComentario->error);
+                }
+                $stmtComentario->close();
+            }
 
             if ($new_status === 1) {
                 $stmtRejectOthers = $conn->prepare(
