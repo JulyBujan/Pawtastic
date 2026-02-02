@@ -352,6 +352,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const adopcionId = event.target.dataset.id;
         confirmAdopcionId = adopcionId;
         confirmStatus = 1;
+        if (confirmModalEl) {
+          confirmModalEl.dataset.action = "approve";
+        }
         if (confirmActionTitle) {
           confirmActionTitle.textContent = "Aprobar postulación";
         }
@@ -372,6 +375,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const adopcionId = event.target.dataset.id;
         confirmAdopcionId = adopcionId;
         confirmStatus = 2;
+        if (confirmModalEl) {
+          confirmModalEl.dataset.action = "reject";
+        }
         if (confirmActionTitle) {
           confirmActionTitle.textContent = "Rechazar postulación";
         }
