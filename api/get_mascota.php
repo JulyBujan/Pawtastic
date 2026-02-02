@@ -73,6 +73,7 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 
         // 3. Traer mascotas de esa ONG (por defecto excluye adoptadas)
         $include_adoptadas = isset($_GET['include_adoptadas']) && $_GET['include_adoptadas'] === '1';
+        $include_archivadas = isset($_GET['include_archivadas']) && $_GET['include_archivadas'] === '1';
         $query = "SELECT id, nombre, tipo, edad, sexo, tamaño, descripcion, imagen, id_ong, 
                          vacunado, esterilizado, chip, apto_ninos, apto_mascotas, estado,
                          energia, sociabilidad, presencia, estilov, date_publicacion,
@@ -82,7 +83,19 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
         if (!$include_adoptadas) {
             $query .= " AND estado != 2";
         }
-        $query .= " ORDER BY id DESC";
+        if (!$include_archivadas) {
+            $query .= " AND estado != 3";
+        }
+        $query .= " ORDER BY
+                    CASE
+                        WHEN estado = 1 THEN 1
+                        WHEN estado = 0 THEN 2
+                        WHEN estado = 2 THEN 3
+                        WHEN estado = 3 THEN 4
+                        ELSE 5
+                    END,
+                    date_publicacion DESC,
+                    id DESC";
 
         $stmt = $conn->prepare($query);
         $stmt->bind_param("i", $idOng);

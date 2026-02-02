@@ -70,6 +70,14 @@ try {
 
     $adopcionId = $conn->insert_id;
 
+    // Marcar mascota como en revisión si estaba activa
+    $stmtMascota = $conn->prepare("UPDATE mascotas SET estado = 0, date_update = NOW() WHERE id = ? AND estado = 1");
+    $stmtMascota->bind_param("i", $idMascota);
+    if (!$stmtMascota->execute()) {
+        throw new Exception("Error al actualizar el estado de la mascota: " . $stmtMascota->error);
+    }
+    $stmtMascota->close();
+
     $eventoTipo = "postulacion_creada";
     $eventoDetalle = "Nueva postulacion para " . $mascotaNombre;
     $eventoMeta = json_encode([

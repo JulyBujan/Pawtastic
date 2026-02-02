@@ -191,9 +191,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     }
     
     try {
-        // Actualizar el estado de la mascota a '2' (eliminado lógicamente)
+        // Actualizar el estado de la mascota a '3' (archivada)
         // Se verifica que la mascota pertenezca a la ONG que realiza la petición
-        $stmt_delete = $conn->prepare("UPDATE mascotas SET estado = 2 WHERE id = ? AND id_ong = ?");
+        $stmt_delete = $conn->prepare("UPDATE mascotas SET estado = 3 WHERE id = ? AND id_ong = ?");
         $stmt_delete->bind_param("ii", $idMascota, $idOng);
         $stmt_delete->execute();
 

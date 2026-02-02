@@ -1430,6 +1430,12 @@ div.card:has(#form-title) {
   border-color: rgba(26, 148, 196, 0.4);
 }
 
+.status-archived {
+  color: #4b5563;
+  background: rgba(148, 163, 184, 0.2);
+  border-color: rgba(148, 163, 184, 0.4);
+}
+
 .title-icon {
   display: inline-flex;
   align-items: center;
@@ -1560,6 +1566,12 @@ div.card:has(#form-title) {
   color: #1b4f6d;
   background: rgba(26, 148, 196, 0.18);
   border-color: rgba(26, 148, 196, 0.45);
+}
+
+.pet-badge.status-archived {
+  color: #4b5563;
+  background: rgba(148, 163, 184, 0.2);
+  border-color: rgba(148, 163, 184, 0.45);
 }
 
 .pet-meta {

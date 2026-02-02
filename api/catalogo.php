@@ -8,8 +8,8 @@ $edad = isset($_GET['edad']) ? $_GET['edad'] : '';
 $tamano = isset($_GET['tamano']) ? $_GET['tamano'] : '';
 
 // Construir la consulta SQL base, incluyendo el filtro por estado
-// Solo se muestran mascotas disponibles para adopción (estado = 0)
-$query = "SELECT id, nombre, tipo, edad, sexo, tamaño, descripcion, imagen FROM mascotas WHERE estado = 0";
+// Solo se muestran mascotas activas/publicadas (estado = 1)
+$query = "SELECT id, nombre, tipo, edad, sexo, tamaño, descripcion, imagen FROM mascotas WHERE estado = 1";
 
 $params = [];
 $types = "";

@@ -39,6 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (value === 1) return "Activa";
     if (value === 0) return "En revisión";
     if (value === 2) return "Adoptada";
+    if (value === 3) return "Archivada";
     return "Activa";
   };
 
@@ -53,6 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (label === "Activa") return "status-active";
     if (label === "En revisión") return "status-pending";
     if (label === "Adoptada") return "status-adopted";
+    if (label === "Archivada") return "status-archived";
     return "status-active";
   };
 

@@ -216,17 +216,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             }
             $stmt_update->close();
 
-            // Si se aprueba, marcar mascota como adoptada. Si se revierte desde aprobada, volver a disponible.
-            if ($new_status === 1) {
-                $stmtMascota = $conn->prepare("UPDATE mascotas SET estado = 2, date_update = NOW() WHERE id = ?");
-                $stmtMascota->bind_param("i", $adopcion['id_mascota']);
-                if (!$stmtMascota->execute()) {
-                    throw new Exception("Error al actualizar el estado de la mascota: " . $stmtMascota->error);
+            // Sincronizar estado de la mascota según postulaciones (si no está archivada).
+            $mascotaId = (int) $adopcion['id_mascota'];
+            $stmtMascotaEstado = $conn->prepare("SELECT estado FROM mascotas WHERE id = ?");
+            $stmtMascotaEstado->bind_param("i", $mascotaId);
+            $stmtMascotaEstado->execute();
+            $mascotaEstadoRow = $stmtMascotaEstado->get_result()->fetch_assoc();
+            $stmtMascotaEstado->close();
+
+            $estadoMascotaActual = isset($mascotaEstadoRow['estado']) ? (int) $mascotaEstadoRow['estado'] : 1;
+            if ($estadoMascotaActual !== 3) {
+                $stmtCounts = $conn->prepare(
+                    "SELECT
+                        SUM(CASE WHEN estado = 1 THEN 1 ELSE 0 END) AS aprobadas,
+                        SUM(CASE WHEN estado = 0 THEN 1 ELSE 0 END) AS pendientes
+                     FROM adopciones
+                     WHERE id_mascota = ?"
+                );
+                $stmtCounts->bind_param("i", $mascotaId);
+                $stmtCounts->execute();
+                $counts = $stmtCounts->get_result()->fetch_assoc();
+                $stmtCounts->close();
+
+                $aprobadas = (int) ($counts['aprobadas'] ?? 0);
+                $pendientes = (int) ($counts['pendientes'] ?? 0);
+
+                if ($aprobadas > 0) {
+                    $nuevoEstadoMascota = 2;
+                } elseif ($pendientes > 0) {
+                    $nuevoEstadoMascota = 0;
+                } else {
+                    $nuevoEstadoMascota = 1;
                 }
-                $stmtMascota->close();
-            } elseif ($estadoAnterior === 1 && $new_status !== 1) {
-                $stmtMascota = $conn->prepare("UPDATE mascotas SET estado = 1, date_update = NOW() WHERE id = ?");
-                $stmtMascota->bind_param("i", $adopcion['id_mascota']);
+
+                $stmtMascota = $conn->prepare("UPDATE mascotas SET estado = ?, date_update = NOW() WHERE id = ?");
+                $stmtMascota->bind_param("ii", $nuevoEstadoMascota, $mascotaId);
                 if (!$stmtMascota->execute()) {
                     throw new Exception("Error al actualizar el estado de la mascota: " . $stmtMascota->error);
                 }

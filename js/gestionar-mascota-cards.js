@@ -70,6 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const MAX_EXTRA_FOTOS = 3;
   let extraPreviewUrls = [];
+  let extraSelectedFiles = [];
 
   const resolveImageUrl = (value) => {
     if (!value) {
@@ -538,13 +539,32 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (extraFotosInput) {
     extraFotosInput.addEventListener("change", () => {
       const files = Array.from(extraFotosInput.files || []);
-      if (files.length > MAX_EXTRA_FOTOS) {
-        showToast(`Podés subir hasta ${MAX_EXTRA_FOTOS} fotos adicionales.`, "warning");
-        extraFotosInput.value = "";
-        renderExtraFiles([]);
+      if (files.length === 0) {
         return;
       }
-      renderExtraFiles(files);
+      const combined = [...extraSelectedFiles, ...files];
+      const unique = [];
+      const seen = new Set();
+      combined.forEach((file) => {
+        const key = `${file.name}-${file.size}-${file.lastModified}`;
+        if (seen.has(key)) {
+          return;
+        }
+        seen.add(key);
+        unique.push(file);
+      });
+
+      if (unique.length > MAX_EXTRA_FOTOS) {
+        showToast(`Podés subir hasta ${MAX_EXTRA_FOTOS} fotos adicionales.`, "warning");
+        extraSelectedFiles = unique.slice(0, MAX_EXTRA_FOTOS);
+      } else {
+        extraSelectedFiles = unique;
+      }
+
+      const dataTransfer = new DataTransfer();
+      extraSelectedFiles.forEach((file) => dataTransfer.items.add(file));
+      extraFotosInput.files = dataTransfer.files;
+      renderExtraFiles(extraSelectedFiles);
     });
   }
 
