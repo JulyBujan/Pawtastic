@@ -71,12 +71,20 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
             exit;
         }
 
-        // 3. Traer mascotas de esa ONG que no estén archivadas (estado != 2)
-        $stmt = $conn->prepare("SELECT id, nombre, tipo, edad, sexo, tamaño, descripcion, imagen, id_ong, 
-                                       vacunado, esterilizado, chip, apto_ninos, apto_mascotas, estado,
-                                       energia, sociabilidad, presencia, estilov, date_publicacion,
-                                       breed, color
-                                FROM mascotas WHERE id_ong = ? AND estado != 2 ORDER BY id DESC");
+        // 3. Traer mascotas de esa ONG (por defecto excluye adoptadas)
+        $include_adoptadas = isset($_GET['include_adoptadas']) && $_GET['include_adoptadas'] === '1';
+        $query = "SELECT id, nombre, tipo, edad, sexo, tamaño, descripcion, imagen, id_ong, 
+                         vacunado, esterilizado, chip, apto_ninos, apto_mascotas, estado,
+                         energia, sociabilidad, presencia, estilov, date_publicacion,
+                         breed, color
+                  FROM mascotas
+                  WHERE id_ong = ?";
+        if (!$include_adoptadas) {
+            $query .= " AND estado != 2";
+        }
+        $query .= " ORDER BY id DESC";
+
+        $stmt = $conn->prepare($query);
         $stmt->bind_param("i", $idOng);
         $stmt->execute();
         $mascotas = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);

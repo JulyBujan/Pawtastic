@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Jan 26, 2026 at 02:51 AM
+-- Generation Time: Feb 02, 2026 at 12:46 AM
 -- Server version: 8.4.8
 -- PHP Version: 8.3.30
 
@@ -202,7 +202,17 @@ INSERT INTO `adopciones` (`id`, `id_usuario`, `id_mascota`, `id_ong`, `comentari
 (78, 17, 48, 1, NULL, 1, '2026-01-21 10:15:00', '2026-01-30 10:15:00', '2026-01-30 10:15:00'),
 (79, 18, 49, 1, NULL, 2, '2026-01-22 11:20:00', '2026-01-23 11:20:00', '2026-01-23 11:20:00'),
 (80, 19, 50, 1, NULL, 1, '2026-01-23 13:10:00', '2026-01-31 13:10:00', '2026-01-31 13:10:00'),
-(81, 20, 51, 1, NULL, 1, '2026-01-24 09:50:00', '2026-01-31 09:50:00', '2026-01-31 09:50:00');
+(81, 20, 51, 1, NULL, 1, '2026-01-24 09:50:00', '2026-01-31 09:50:00', '2026-01-31 09:50:00'),
+(82, 1, 83, 1, NULL, 1, '2026-01-10 10:00:00', '2026-01-15 10:00:00', '2026-01-15 10:00:00'),
+(83, 2, 84, 1, NULL, 1, '2026-01-11 12:00:00', '2026-01-18 12:00:00', '2026-01-18 12:00:00'),
+(84, 3, 85, 1, NULL, 1, '2026-01-12 09:30:00', '2026-01-19 09:30:00', '2026-01-19 09:30:00'),
+(85, 4, 86, 1, NULL, 1, '2026-01-13 12:15:00', '2026-01-20 12:15:00', '2026-01-20 12:15:00'),
+(86, 5, 87, 1, NULL, 1, '2026-01-14 10:45:00', '2026-01-21 10:45:00', '2026-01-21 10:45:00'),
+(87, 6, 88, 1, NULL, 1, '2026-01-15 09:00:00', '2026-01-22 09:00:00', '2026-01-22 09:00:00'),
+(88, 7, 89, 1, NULL, 1, '2026-01-16 14:20:00', '2026-01-23 14:20:00', '2026-01-23 14:20:00'),
+(89, 8, 90, 1, NULL, 1, '2026-01-17 16:05:00', '2026-01-24 16:05:00', '2026-01-24 16:05:00'),
+(90, 9, 91, 1, NULL, 1, '2026-01-18 13:10:00', '2026-01-25 13:10:00', '2026-01-25 13:10:00'),
+(91, 10, 92, 1, NULL, 1, '2026-01-19 10:30:00', '2026-01-26 10:30:00', '2026-01-26 10:30:00');
 
 -- --------------------------------------------------------
 
@@ -222,40 +232,16 @@ CREATE TABLE `adopcion_eventos` (
   `metadata` json DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
 --
--- Table structure for table `notificaciones`
+-- Dumping data for table `adopcion_eventos`
 --
 
-CREATE TABLE `notificaciones` (
-  `id` int NOT NULL,
-  `usuario_id` int NOT NULL,
-  `actor_id` int DEFAULT NULL,
-  `tipo` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `titulo` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `cuerpo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `entidad_tipo` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `entidad_id` int DEFAULT NULL,
-  `leida_at` timestamp NULL DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `payload` json DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `usuario_notificacion_preferencias`
---
-
-CREATE TABLE `usuario_notificacion_preferencias` (
-  `id` int NOT NULL,
-  `usuario_id` int NOT NULL,
-  `tipo` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `habilitado` tinyint NOT NULL DEFAULT '1',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+INSERT INTO `adopcion_eventos` (`id`, `adopcion_id`, `actor_id`, `tipo`, `estado_anterior`, `estado_nuevo`, `detalle`, `created_at`, `metadata`) VALUES
+(1, 27, 11, 'postulacion_creada', NULL, 0, 'Nueva postulacion generada para pruebas.', '2026-01-26 03:21:52', '{\"seed\": true}'),
+(2, 27, 11, 'comentario_agregado', NULL, NULL, 'Comentario de prueba para la ONG.', '2026-01-26 03:21:52', '{\"seed\": true, \"comentario\": \"Comentario de prueba para la ONG.\"}'),
+(3, 27, 11, 'estado_actualizado', 0, 1, 'Estado actualizado a Aprobada (prueba).', '2026-01-26 03:21:52', '{\"seed\": true, \"estado_nuevo\": 1, \"estado_anterior\": 0}'),
+(4, 62, 10, 'postulacion_creada', NULL, 0, 'Nueva postulacion para Elora', '2026-01-30 03:06:58', '{\"ong_id\": 1, \"mascota_id\": \"70\"}'),
+(5, 20, 10, 'comentario_agregado', NULL, NULL, 'Golfo no es recomendable para vivir en casas donde haya otras mascotas.', '2026-01-30 21:06:42', '{\"comentario\": \"Golfo no es recomendable para vivir en casas donde haya otras mascotas.\"}');
 
 -- --------------------------------------------------------
 
@@ -274,6 +260,13 @@ CREATE TABLE `documentacion_ong` (
   `fecha_revision` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `documentacion_ong`
+--
+
+INSERT INTO `documentacion_ong` (`id`, `ong_id`, `url_estatuto`, `url_cuit`, `url_acta`, `estado`, `fecha_subida`, `fecha_revision`) VALUES
+(1, 7, 'documentos_ong/ong_7_estatuto_6978237c3908c.pdf', 'documentos_ong/ong_7_constancia_cuit_6978237c3915f.pdf', 'documentos_ong/ong_7_acta_autoridades_6978237c391bc.pdf', 0, '2026-01-27 02:31:24', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -286,6 +279,15 @@ CREATE TABLE `ImagenesMascota` (
   `url_imagen` varchar(255) NOT NULL,
   `descripcion` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `ImagenesMascota`
+--
+
+INSERT INTO `ImagenesMascota` (`id`, `mascota_id`, `url_imagen`, `descripcion`) VALUES
+(1, 70, 'mascota_extra_697c1a0522749_cat-1853372_1280.jpg', NULL),
+(2, 70, 'mascota_extra_697c1a660f244_cat-5618328_1280.jpg', NULL),
+(3, 70, 'mascota_extra_697c1a9017c52_cat-468232_1280.jpg', NULL);
 
 -- --------------------------------------------------------
 
@@ -386,7 +388,17 @@ INSERT INTO `mascotas` (`id`, `id_ong`, `nombre`, `tipo`, `edad`, `sexo`, `tama�
 (79, 1, 'Milo', 'perro', 20, 'Macho', 'Pequeño', 'si', 'no', 'no', 1, 1, 'Cachorro inquieto que busca un hogar con energia.', NULL, NULL, 'mascota_6918199d16f8d_Coco.jpg', 3, 3, 2, 3, 0, '2026-01-26 16:00:00', '2026-01-26 16:00:00'),
 (80, 1, 'Lina', 'gato', 44, 'Hembra', 'Mediano', 'si', 'si', 'no', 1, 1, 'Gatita tranquila, le gusta observar y ser mimada.', NULL, NULL, 'mascota_6918196ed133a_Pinina.jpg', 1, 2, 2, 1, 0, '2026-01-27 11:35:00', '2026-01-27 11:35:00'),
 (81, 1, 'Brisa', 'perro', 62, 'Hembra', 'Mediano', 'si', 'si', 'no', 1, 1, 'Muy companera, ideal para caminatas diarias.', NULL, NULL, 'mascota_69181fb6c0f99_perro3.jpg', 2, 2, 2, 2, 1, '2026-01-28 13:50:00', '2026-01-28 13:50:00'),
-(82, 1, 'Tita', 'gato', 8, 'Hembra', 'Pequeño', 'si', 'no', 'no', 1, 1, 'Juguetona y curiosa, aprende rapido el arenero.', NULL, NULL, 'mascota_69181fdf0e613_gato1.jpg', 3, 2, 2, 1, 1, '2026-01-29 10:05:00', '2026-01-29 10:05:00');
+(82, 1, 'Tita', 'gato', 8, 'Hembra', 'Pequeño', 'si', 'no', 'no', 1, 1, 'Juguetona y curiosa, aprende rapido el arenero.', NULL, NULL, 'mascota_69181fdf0e613_gato1.jpg', 3, 2, 2, 1, 1, '2026-01-29 10:05:00', '2026-01-29 10:05:00'),
+(83, 1, 'Brownie', 'perro', 24, 'Macho', 'Mediano', 'si', 'si', 'no', 1, 1, 'Dulce y tranquilo, ideal para paseos cortos y mimos.', NULL, NULL, 'mascota_69181b1ae1242_Rocky.jpg', 2, 2, 2, 2, 1, '2026-01-02 10:00:00', '2026-01-02 10:00:00'),
+(84, 1, 'Kiara', 'gato', 18, 'Hembra', 'Mediano', 'si', 'si', 'no', 1, 1, 'Curiosa y mimosa, se adapta rapido a nuevos hogares.', NULL, NULL, 'mascota_69181aef295c8_Milanesa.jpg', 2, 2, 2, 2, 1, '2026-01-03 11:00:00', '2026-01-03 11:00:00'),
+(85, 1, 'Nube', 'perro', 36, 'Hembra', 'Grande', 'si', 'no', 'no', 1, 1, 'Companera fiel, muy obediente y sociable.', NULL, NULL, 'mascota_69181c9e3e104_Gordo.jpg', 2, 3, 2, 2, 1, '2026-01-04 09:30:00', '2026-01-04 09:30:00'),
+(86, 1, 'Lola', 'gato', 30, 'Hembra', 'Mediano', 'si', 'si', 'si', 1, 1, 'Gatita tranquila, le gustan las siestas al sol.', NULL, NULL, 'mascota_69181a12c831c_Luna.jpg', 1, 2, 1, 1, 1, '2026-01-05 12:15:00', '2026-01-05 12:15:00'),
+(87, 1, 'Paco', 'perro', 48, 'Macho', 'Grande', 'si', 'si', 'no', 1, 1, 'Activo y jugueton, ideal para familias con patio.', NULL, NULL, 'mascota_69181df274756_Golfo.jpg', 3, 3, 2, 3, 1, '2026-01-06 10:45:00', '2026-01-06 10:45:00'),
+(88, 1, 'Mora', 'gato', 22, 'Hembra', 'Mediano', 'si', 'si', 'no', 1, 1, 'Elegante y curiosa, muy companera.', NULL, NULL, 'mascota_69181fdf0e613_gato1.jpg', 2, 2, 2, 2, 1, '2026-01-07 09:00:00', '2026-01-07 09:00:00'),
+(89, 1, 'Dante', 'perro', 60, 'Macho', 'Mediano', 'si', 'no', 'no', 1, 1, 'Muy carinoso, perfecto para acompanarte en caminatas.', NULL, NULL, 'mascota_69181fb6c0f99_perro3.jpg', 2, 2, 2, 2, 1, '2026-01-08 14:20:00', '2026-01-08 14:20:00'),
+(90, 1, 'Tiza', 'gato', 14, 'Hembra', 'Mediano', 'si', 'si', 'no', 1, 1, 'Juguetona y sociable, se adapta rapido.', NULL, NULL, 'mascota_691e40e63db75_Batman.jpg', 3, 2, 2, 2, 1, '2026-01-09 16:05:00', '2026-01-09 16:05:00'),
+(91, 1, 'Rita', 'perro', 30, 'Hembra', 'Mediano', 'si', 'si', 'si', 1, 1, 'Le encanta jugar y aprender trucos nuevos.', NULL, NULL, 'mascota_69181cd21c389_Ringo.jpg', 3, 3, 2, 3, 1, '2026-01-10 13:10:00', '2026-01-10 13:10:00'),
+(92, 1, 'Sasha', 'gato', 26, 'Hembra', 'Mediano', 'si', 'si', 'no', 1, 1, 'Cariñosa y observadora, ideal para hogar tranquilo.', NULL, NULL, 'mascota_69181d7b9dcc8_Sol.jpg', 1, 2, 1, 1, 1, '2026-01-11 10:30:00', '2026-01-11 10:30:00');
 
 -- --------------------------------------------------------
 
@@ -408,18 +420,65 @@ INSERT INTO `mascota_vacunas` (`id_mascota`, `id_vacuna`, `fecha_aplicacion`) VA
 (36, 1, '2020-12-23'),
 (37, 1, '2023-04-01'),
 (40, 1, '2020-05-23'),
+(72, 3, '2026-01-11'),
 (36, 7, '2020-12-23'),
 (37, 7, '2023-04-01'),
 (38, 7, '2022-08-19'),
 (40, 7, '2020-05-23'),
+(69, 7, '2022-06-29'),
 (36, 8, '2022-12-23'),
 (38, 8, '2023-08-19'),
 (40, 8, '2022-05-23'),
 (13, 9, '2019-12-08'),
 (66, 9, '2023-01-18'),
+(13, 10, '2025-11-13'),
 (13, 10, '2026-01-13'),
+(60, 10, '2025-11-15'),
 (60, 10, '2026-01-15'),
-(13, 11, '2023-06-04');
+(70, 10, '2026-01-07'),
+(13, 11, '2023-06-04'),
+(68, 11, '2026-01-29');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notificaciones`
+--
+
+CREATE TABLE `notificaciones` (
+  `id` int NOT NULL,
+  `usuario_id` int NOT NULL,
+  `actor_id` int DEFAULT NULL,
+  `tipo` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `titulo` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `cuerpo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `entidad_tipo` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `entidad_id` int DEFAULT NULL,
+  `leida_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `payload` json DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `notificaciones`
+--
+
+INSERT INTO `notificaciones` (`id`, `usuario_id`, `actor_id`, `tipo`, `titulo`, `cuerpo`, `entidad_tipo`, `entidad_id`, `leida_at`, `created_at`, `payload`) VALUES
+(1, 10, 11, 'postulacion_creada', 'Nueva postulacion', 'Nueva postulacion para una mascota.', 'adopcion', 27, '2026-01-27 19:26:29', '2026-01-26 01:21:52', '{\"mascota_id\": 47, \"adopcion_id\": 27}'),
+(2, 10, 11, 'comentario_agregado', 'Nuevo comentario', 'Se agrego un comentario en una postulacion.', 'adopcion', 27, '2026-01-27 19:26:26', '2026-01-26 02:36:52', '{\"mascota_id\": 47, \"adopcion_id\": 27}'),
+(3, 10, 11, 'estado_actualizado', 'Estado actualizado', 'Una postulacion fue aprobada (prueba).', 'adopcion', 27, '2026-01-26 03:11:52', '2026-01-26 03:01:52', '{\"mascota_id\": 47, \"adopcion_id\": 27, \"estado_nuevo\": 1}'),
+(4, 10, 10, 'mascota_creada', 'Mascota publicada', 'Publicaste a Buddy.', 'mascota', 72, '2026-01-27 19:37:39', '2026-01-27 19:37:16', '{\"mascota_id\": 72}'),
+(5, 10, 10, 'vacuna_agregada', 'Vacuna agregada', 'Agregaste Antirábica de gatos a Elora.', 'mascota', 70, '2026-01-30 01:28:40', '2026-01-30 01:27:02', '{\"vacuna_id\": \"10\", \"mascota_id\": \"70\"}'),
+(6, 10, 10, 'mascota_actualizada', 'Mascota actualizada', 'Actualizaste los datos de Elora.', 'mascota', 70, '2026-01-30 01:28:56', '2026-01-30 01:27:17', '{\"mascota_id\": 70}'),
+(7, 10, 10, 'vacuna_agregada', 'Vacuna agregada', 'Agregaste Rabia (Primera dosis) a Daisy.', 'mascota', 69, '2026-01-30 01:41:37', '2026-01-30 01:41:01', '{\"vacuna_id\": \"7\", \"mascota_id\": \"69\"}'),
+(8, 10, 10, 'mascota_actualizada', 'Mascota actualizada', 'Actualizaste los datos de Daisy.', 'mascota', 69, '2026-01-30 01:41:27', '2026-01-30 01:41:09', '{\"mascota_id\": 69}'),
+(9, 10, 10, 'vacuna_agregada', 'Vacuna agregada', 'Agregaste Leucemia felina a Jesus.', 'mascota', 68, '2026-01-30 01:47:31', '2026-01-30 01:47:17', '{\"vacuna_id\": \"11\", \"mascota_id\": \"68\"}'),
+(10, 10, 10, 'mascota_actualizada', 'Mascota actualizada', 'Actualizaste los datos de Jesus.', 'mascota', 68, '2026-01-30 01:47:29', '2026-01-30 01:47:19', '{\"mascota_id\": 68}'),
+(11, 10, 10, 'mascota_actualizada', 'Mascota actualizada', 'Actualizaste los datos de Elora.', 'mascota', 70, '2026-02-02 00:37:40', '2026-01-30 02:40:05', '{\"mascota_id\": 70}'),
+(12, 10, 10, 'mascota_actualizada', 'Mascota actualizada', 'Actualizaste los datos de Elora.', 'mascota', 70, '2026-02-02 00:37:35', '2026-01-30 02:41:42', '{\"mascota_id\": 70}'),
+(13, 10, 10, 'mascota_actualizada', 'Mascota actualizada', 'Actualizaste los datos de Elora.', 'mascota', 70, '2026-01-30 03:15:12', '2026-01-30 02:42:24', '{\"mascota_id\": 70}'),
+(14, 10, 10, 'postulacion_creada', 'Nueva postulacion', 'Nueva postulacion para Elora.', 'adopcion', 62, '2026-01-30 03:15:09', '2026-01-30 03:06:58', '{\"mascota_id\": \"70\", \"adopcion_id\": 62}'),
+(15, 7, 10, 'comentario_agregado', 'Nuevo comentario', 'Nuevo comentario en la postulacion de Golfo.', 'adopcion', 20, NULL, '2026-01-30 21:06:42', '{\"mascota_id\": 39, \"adopcion_id\": \"20\"}');
 
 -- --------------------------------------------------------
 
@@ -430,7 +489,6 @@ INSERT INTO `mascota_vacunas` (`id_mascota`, `id_vacuna`, `fecha_aplicacion`) VA
 CREATE TABLE `ONGs` (
   `id` int NOT NULL,
   `nombre` varchar(150) NOT NULL,
-  `logo_url` varchar(255) DEFAULT NULL,
   `razon_social` varchar(255) DEFAULT NULL,
   `cuit` varchar(13) DEFAULT NULL,
   `lat` float NOT NULL DEFAULT '-31',
@@ -452,7 +510,8 @@ INSERT INTO `ONGs` (`id`, `nombre`, `razon_social`, `cuit`, `lat`, `lon`, `city`
 (1, 'Patitas de perro', 'Fundación Patita de Perro', '30-12345678-1', -31.3847, -64.227, 'Cordoba', 'Cerro de las rosas', 'Mariano Larra', 3350, NULL, NULL, '2026-01-03 09:49:51'),
 (2, 'Huellas', 'Huellas Asociación Civil', '30-87654321-2', -31.4188, -64.1735, 'Cordoba', 'Barrio Gral. Paz', 'Rosario de Sta. Fe', 650, NULL, NULL, '2026-01-03 09:59:46'),
 (3, 'Fundación Garra', 'Grupo de asistencia,rescate y readaptación animal', '30-11223344-3', -31.3776, -64.2058, 'Cordoba', 'San Martin Anexo', 'Av. Monseñor Pablo Cabrera', 2926, NULL, NULL, '2026-01-03 10:19:11'),
-(6, 'Asociación Protectora de Animales Sarmiento', 'Centro de Castraciones Sarmiento', '30-11223345-7', -31.4201, -64.1501, 'Cordoba', 'Barrio San Vicente', 'Sgto. Cabral', 1031, NULL, NULL, '2026-01-03 10:16:02');
+(6, 'Asociación Protectora de Animales Sarmiento', 'Centro de Castraciones Sarmiento', '30-11223345-7', -31.4201, -64.1501, 'Cordoba', 'Barrio San Vicente', 'Sgto. Cabral', 1031, NULL, NULL, '2026-01-03 10:16:02'),
+(7, 'Patitas Felices', 'Patitas Sociedad Anonima', '30-12345377-3', 0, 0, 'Cordoba', 'cordoba', 'Siempre viva', 3665, NULL, '2026-01-22 00:00:00', '2026-01-27 02:31:24');
 
 -- --------------------------------------------------------
 
@@ -521,6 +580,21 @@ INSERT INTO `usuarios` (`id`, `email`, `password`, `tipo`, `ong_id`, `nombre`, `
 (20, 'valentina.diaz@test.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Valentina', 'Diaz', NULL, NULL, '3510000020', NULL, '1992-09-30', 'Femenino', -31.41, -64.2, 'Córdoba', NULL, NULL, 0, NULL, 'Departamento', 1, 'Intermedia', 1, 1, 1, 1, '2026-01-13 23:44:52', '2025-12-19 00:00:00', 1, NULL),
 (21, 'diego.ruiz@test.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', 'usuario', NULL, 'Diego', 'Ruiz', NULL, NULL, '3510000021', NULL, '1985-07-12', 'Masculino', -31.37, -64.25, 'Córdoba', NULL, NULL, 0, NULL, 'Casa con patio', 2, 'Avanzada', 2, 3, 2, 3, '2026-01-13 23:44:52', '2026-01-04 00:00:00', 1, NULL),
 (22, 'jonathanary7@gmail.com', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', 'usuario', NULL, 'jonathan', 'ary', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, '2026-01-20 00:58:12', '2026-01-20 00:58:12', 1, '6d19fa215d18479c9c7a18fb7e56abe668b1371499a54e4320734be870b63efd');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `usuario_notificacion_preferencias`
+--
+
+CREATE TABLE `usuario_notificacion_preferencias` (
+  `id` int NOT NULL,
+  `usuario_id` int NOT NULL,
+  `tipo` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `habilitado` tinyint NOT NULL DEFAULT '1',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -605,7 +679,7 @@ ALTER TABLE `notificaciones`
   ADD PRIMARY KEY (`id`),
   ADD KEY `usuario_id` (`usuario_id`),
   ADD KEY `actor_id` (`actor_id`),
-  ADD KEY `idx_notif_user_unread` (`usuario_id`, `leida_at`, `created_at`);
+  ADD KEY `idx_notif_user_unread` (`usuario_id`,`leida_at`,`created_at`);
 
 --
 -- Indexes for table `ONGs`
@@ -615,19 +689,19 @@ ALTER TABLE `ONGs`
   ADD UNIQUE KEY `cuit` (`cuit`);
 
 --
--- Indexes for table `usuario_notificacion_preferencias`
---
-ALTER TABLE `usuario_notificacion_preferencias`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uniq_usuario_tipo` (`usuario_id`, `tipo`);
-
---
 -- Indexes for table `usuarios`
 --
 ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email_unico` (`email`),
   ADD KEY `ong_id` (`ong_id`);
+
+--
+-- Indexes for table `usuario_notificacion_preferencias`
+--
+ALTER TABLE `usuario_notificacion_preferencias`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_usuario_tipo` (`usuario_id`,`tipo`);
 
 --
 -- Indexes for table `vacunas`
@@ -643,55 +717,55 @@ ALTER TABLE `vacunas`
 -- AUTO_INCREMENT for table `adopciones`
 --
 ALTER TABLE `adopciones`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=92;
 
 --
 -- AUTO_INCREMENT for table `adopcion_eventos`
 --
 ALTER TABLE `adopcion_eventos`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `documentacion_ong`
 --
 ALTER TABLE `documentacion_ong`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `ImagenesMascota`
 --
 ALTER TABLE `ImagenesMascota`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `mascotas`
 --
 ALTER TABLE `mascotas`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
-
---
--- AUTO_INCREMENT for table `ONGs`
---
-ALTER TABLE `ONGs`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=93;
 
 --
 -- AUTO_INCREMENT for table `notificaciones`
 --
 ALTER TABLE `notificaciones`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
--- AUTO_INCREMENT for table `usuario_notificacion_preferencias`
+-- AUTO_INCREMENT for table `ONGs`
 --
-ALTER TABLE `usuario_notificacion_preferencias`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+ALTER TABLE `ONGs`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `usuarios`
 --
 ALTER TABLE `usuarios`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+
+--
+-- AUTO_INCREMENT for table `usuario_notificacion_preferencias`
+--
+ALTER TABLE `usuario_notificacion_preferencias`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `vacunas`

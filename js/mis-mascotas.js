@@ -247,7 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const fetchMascotas = async () => {
     try {
-      const response = await fetch("../api/get_mascota.php", {
+      const response = await fetch("../api/get_mascota.php?include_adoptadas=1", {
         headers: { Authorization: "Bearer " + token },
       });
 

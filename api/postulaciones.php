@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         if ($user_tipo === 'ong') {
             // Si es una ONG, trae todas las postulaciones a sus mascotas
             $id_ong = $usuario['ong_id'];
-            $query = "SELECT a.id, m.id AS mascota_id, m.nombre AS mascota_nombre, u.id AS usuario_id, u.nombre AS usuario_nombre, u.apellido AS usuario_apellido, a.estado, a.fecha_inicio, a.comentarios 
+            $query = "SELECT a.id, m.id AS mascota_id, m.nombre AS mascota_nombre, u.id AS usuario_id, u.nombre AS usuario_nombre, u.apellido AS usuario_apellido, a.estado, a.fecha_inicio, a.fecha_fin, a.comentarios 
                       FROM adopciones a
                       JOIN mascotas m ON a.id_mascota = m.id
                       JOIN usuarios u ON a.id_usuario = u.id
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         } elseif ($user_tipo === 'usuario') {
             // Si es un usuario, trae solo sus propias postulaciones
             $id_usuario = $usuario['id']; // ID del usuario que postula
-            $query = "SELECT a.id, m.id AS mascota_id, m.nombre AS mascota_nombre, o.nombre AS ong_nombre, a.estado, a.fecha_inicio, a.comentarios 
+            $query = "SELECT a.id, m.id AS mascota_id, m.nombre AS mascota_nombre, o.nombre AS ong_nombre, a.estado, a.fecha_inicio, a.fecha_fin, a.comentarios 
                       FROM adopciones a
                       JOIN mascotas m ON a.id_mascota = m.id
                       JOIN ONGs o ON a.id_ong = o.id
@@ -208,18 +208,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             }
 
             $estadoAnterior = (int) $adopcion['estado'];
-            $stmt_update = $conn->prepare("UPDATE adopciones SET estado = ? WHERE id = ?");
-            $stmt_update->bind_param("ii", $new_status, $adopcion_id);
+            $fechaFin = ($new_status === 1 || $new_status === 2) ? date("Y-m-d H:i:s") : null;
+            $stmt_update = $conn->prepare("UPDATE adopciones SET estado = ?, fecha_fin = ? WHERE id = ?");
+            $stmt_update->bind_param("isi", $new_status, $fechaFin, $adopcion_id);
             if (!$stmt_update->execute()) {
                 throw new Exception("Error al actualizar el estado: " . $conn->error);
             }
             $stmt_update->close();
 
+            // Si se aprueba, marcar mascota como adoptada. Si se revierte desde aprobada, volver a disponible.
+            if ($new_status === 1) {
+                $stmtMascota = $conn->prepare("UPDATE mascotas SET estado = 2, date_update = NOW() WHERE id = ?");
+                $stmtMascota->bind_param("i", $adopcion['id_mascota']);
+                if (!$stmtMascota->execute()) {
+                    throw new Exception("Error al actualizar el estado de la mascota: " . $stmtMascota->error);
+                }
+                $stmtMascota->close();
+            } elseif ($estadoAnterior === 1 && $new_status !== 1) {
+                $stmtMascota = $conn->prepare("UPDATE mascotas SET estado = 1, date_update = NOW() WHERE id = ?");
+                $stmtMascota->bind_param("i", $adopcion['id_mascota']);
+                if (!$stmtMascota->execute()) {
+                    throw new Exception("Error al actualizar el estado de la mascota: " . $stmtMascota->error);
+                }
+                $stmtMascota->close();
+            }
+
             $eventoTipo = "estado_actualizado";
             $eventoDetalle = "Estado actualizado";
             $eventoMeta = json_encode([
                 "estado_anterior" => $estadoAnterior,
-                "estado_nuevo" => $new_status
+                "estado_nuevo" => $new_status,
+                "fecha_fin" => $fechaFin
             ]);
             $stmtEvento = $conn->prepare("INSERT INTO adopcion_eventos (adopcion_id, actor_id, tipo, estado_anterior, estado_nuevo, detalle, metadata) VALUES (?, ?, ?, ?, ?, ?, ?)");
             $stmtEvento->bind_param("iisiiss", $adopcion_id, $usuario_data['id'], $eventoTipo, $estadoAnterior, $new_status, $eventoDetalle, $eventoMeta);
@@ -236,7 +255,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $estadoTexto = $estadoLabels[$new_status] ?? "Actualizada";
             $notifTipo = "estado_actualizado";
             $notifTitulo = "Estado actualizado";
-            $notifCuerpo = "Tu postulacion para " . $adopcion['mascota_nombre'] . " fue " . $estadoTexto . ".";
+            $fechaCierreTexto = $fechaFin ? (" el " . date("d/m/Y H:i")) : "";
+            $notifCuerpo = "Tu postulacion para " . $adopcion['mascota_nombre'] . " fue " . $estadoTexto . $fechaCierreTexto . ".";
             $notifEntidadTipo = "adopcion";
             $notifEntidadId = $adopcion_id;
             $notifPayload = json_encode([

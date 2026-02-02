@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Cabeceras comunes
-    tablaHTML += `<th>Fecha</th><th>Estado</th><th>Comentarios</th><th>Acciones</th>`;
+    tablaHTML += `<th>Inicio</th><th>Cierre</th><th>Estado</th><th>Comentarios</th><th>Acciones</th>`;
 
     tablaHTML += `      </tr>
                           </thead>
@@ -130,6 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
     postulaciones.forEach((p) => {
       const estado = getEstadoTexto(p.estado);
       const fecha = new Date(p.fecha_inicio).toLocaleDateString();
+      const fechaCierre = p.fecha_fin ? new Date(p.fecha_fin).toLocaleDateString() : "—";
       const isPendiente = parseInt(p.estado) === 0;
 
       tablaHTML += `<tr>`;
@@ -142,7 +143,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // Columnas comunes para ambos tipos de usuario
-      tablaHTML += `<td data-label="Fecha">${fecha}</td>
+      tablaHTML += `<td data-label="Inicio">${fecha}</td>
+                          <td data-label="Cierre">${fechaCierre}</td>
                           <td data-label="Estado"><span class="badge ${estado.clase}">${
         estado.texto
       }</span></td>
