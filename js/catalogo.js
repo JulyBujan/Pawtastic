@@ -3,6 +3,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnCompatibilidad = document.getElementById('btn-compatibilidad');
     const filtrosForm = document.getElementById('filtros-form');
     const btnCercania = document.getElementById('btn-cercania');
+    const catalogPagination = document.getElementById('catalogPagination');
+    const catalogPrev = document.getElementById('catalogPrev');
+    const catalogNext = document.getElementById('catalogNext');
+    const catalogPageInfo = document.getElementById('catalogPageInfo');
+    const pageSize = 9;
+    const urlParams = new URLSearchParams(window.location.search);
+    let initialPage = parseInt(urlParams.get('page'), 10);
+    let hasInitialPage = Number.isFinite(initialPage) && initialPage > 0;
+    let currentPage = 1;
+    let currentMascotas = [];
+    let currentMode = { compatibilidad: false, cercania: false };
 
     // --- FUNCIONES ---
 
@@ -53,26 +64,68 @@ document.addEventListener('DOMContentLoaded', () => {
                 descripcionModificada = `<strong class="text-info"><i class="bi bi-geo-alt-fill"></i> A ${mascota.distancia_km} km de ti</strong><br>${mascota.descripcion}`;
             }
 
+            const pageQuery = `&page=${currentPage}`;
             const actionButton = isLoggedIn
-                ? `<a href="detalle-mascota.html?id=${mascota.id}" class="btn btn-dark">Ver más</a>`
-                : `<button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#modalLoginRequired">Ver más</button>`;
+                ? `<a href="detalle-mascota.html?id=${mascota.id}${pageQuery}" class="btn btn-dark btn-sm">
+                      <i class="bi bi-eye me-2"></i>Ver perfil
+                   </a>`
+                : `<button type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#modalLoginRequired">
+                      <i class="bi bi-eye me-2"></i>Ver perfil
+                   </button>`;
+
+            const metaItems = [];
+            if (mascota.tipo) {
+                metaItems.push(`<span><i class="bi bi-tag"></i> ${mascota.tipo}</span>`);
+            }
+            const tamanoMascota = mascota['tamaño'] || mascota.tamano;
+            if (tamanoMascota) {
+                metaItems.push(`<span><i class="bi bi-arrows-angle-expand"></i> ${tamanoMascota}</span>`);
+            }
+            if (mascota.sexo) {
+                metaItems.push(`<span><i class="bi bi-gender-ambiguous"></i> ${mascota.sexo}</span>`);
+            }
+            const metaHtml = metaItems.length ? `<div class="pet-meta mb-3">${metaItems.join('')}</div>` : '';
 
             const card = `
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        <img src="${mascota.imagen ? '/img/mascotas/' + mascota.imagen : '/img/mascotas/default.jpg'}" class="card-img-top catalog-card-img" alt="Foto de ${mascota.nombre}">
-                        <div class="card-body">
-                            <h5 class="card-title">${mascota.nombre}</h5>
-                            <p class="card-text">${descripcionModificada}</p>
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <article class="pet-card h-100">
+                        <div class="pet-image">
+                            <img src="${mascota.imagen ? '/img/mascotas/' + mascota.imagen : '/img/mascotas/default.jpg'}" class="pet-photo" alt="Foto de ${mascota.nombre}">
+                            <span class="pet-badge status-active">Disponible</span>
                         </div>
-                        <div class="card-footer bg-transparent border-0 text-end pb-3">
-                            ${actionButton}
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="fw-bold">${mascota.nombre}</h5>
+                            <p class="pet-summary mb-3">${descripcionModificada}</p>
+                            ${metaHtml}
+                            <div class="d-flex flex-wrap gap-2 pet-actions justify-content-center mt-auto">
+                                ${actionButton}
+                            </div>
                         </div>
-                    </div>
+                    </article>
                 </div>
             `;
             mascotasContainer.insertAdjacentHTML('beforeend', card);
         });
+    };
+
+    const updatePagination = () => {
+        if (!catalogPagination || !catalogPrev || !catalogNext || !catalogPageInfo) {
+            return;
+        }
+        const totalPages = Math.max(1, Math.ceil(currentMascotas.length / pageSize));
+        if (currentPage > totalPages) currentPage = totalPages;
+        const showPagination = currentMascotas.length > pageSize;
+        catalogPagination.classList.toggle('d-none', !showPagination);
+        catalogPrev.disabled = currentPage <= 1;
+        catalogNext.disabled = currentPage >= totalPages;
+        catalogPageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
+    };
+
+    const renderPage = () => {
+        const start = (currentPage - 1) * pageSize;
+        const pageItems = currentMascotas.slice(start, start + pageSize);
+        renderizarMascotas(pageItems, currentMode.compatibilidad, currentMode.cercania);
+        updatePagination();
     };
 
     /**
@@ -102,7 +155,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            renderizarMascotas(data, true); // true para indicar que es por compatibilidad
+            currentMascotas = Array.isArray(data) ? data : [];
+            currentMode = { compatibilidad: true, cercania: false };
+            currentPage = 1;
+            renderPage();
             resetearFiltros(); // Reiniciamos los filtros visualmente
 
         } catch (error) {
@@ -143,7 +199,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            renderizarMascotas(data, false, true); // true para indicar que es por cercanía
+            currentMascotas = Array.isArray(data) ? data : [];
+            currentMode = { compatibilidad: false, cercania: true };
+            currentPage = 1;
+            renderPage();
             resetearFiltros(); // Reiniciamos los filtros visualmente
 
         } catch (error) {
@@ -178,9 +237,20 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(url);
             const mascotas = await response.json();
-            renderizarMascotas(mascotas);
+            currentMascotas = Array.isArray(mascotas) ? mascotas : [];
+            currentMode = { compatibilidad: false, cercania: false };
+            if (hasInitialPage) {
+                currentPage = initialPage;
+                hasInitialPage = false;
+            } else {
+                currentPage = 1;
+            }
+            renderPage();
         } catch (error) {
             console.error('Error al cargar mascotas:', error);
+            currentMascotas = [];
+            currentPage = 1;
+            updatePagination();
             mascotasContainer.innerHTML = `<div class="col-12"><p class="text-center text-danger">No se pudieron cargar las mascotas. Intente más tarde.</p></div>`;
         }
     };
@@ -197,6 +267,31 @@ document.addEventListener('DOMContentLoaded', () => {
         cargarMascotasDefault(formData);
     });
 
+    const clearFiltersButton = document.getElementById('clearFilters');
+    clearFiltersButton?.addEventListener('click', () => {
+        resetearFiltros();
+        cargarMascotasDefault();
+    });
+
     // Carga inicial de mascotas
     cargarMascotasDefault();
+
+    if (catalogPrev) {
+        catalogPrev.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage -= 1;
+                renderPage();
+            }
+        });
+    }
+
+    if (catalogNext) {
+        catalogNext.addEventListener('click', () => {
+            const totalPages = Math.max(1, Math.ceil(currentMascotas.length / pageSize));
+            if (currentPage < totalPages) {
+                currentPage += 1;
+                renderPage();
+            }
+        });
+    }
 });

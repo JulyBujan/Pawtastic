@@ -28,8 +28,8 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto align-items-lg-center">
           <li class="nav-item">
-            <a href="./mis-mascotas.html" class="btn btn-custom-nav">
-              <i class="bi bi-arrow-left"></i> Volver a mis mascotas
+            <a href="./catalogo.html" class="btn btn-custom-nav" id="detalleBackLink">
+              <i class="bi bi-arrow-left"></i> Volver al catálogo
             </a>
           </li>
         </ul>
@@ -143,6 +143,31 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="../js/toast.js"></script>
   <script src="../js/detalle.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const tipoUsuario = localStorage.getItem("tipo");
+      const backLink = document.getElementById("detalleBackLink");
+      if (!backLink) return;
+      const params = new URLSearchParams(window.location.search);
+      if (tipoUsuario === "ong") {
+        params.delete("id");
+        let queryString = params.toString();
+        if (!queryString) {
+          const storedPage = parseInt(sessionStorage.getItem("pawtasticMascotasPage"), 10);
+          if (Number.isFinite(storedPage) && storedPage > 0) {
+            queryString = `page=${storedPage}`;
+          }
+        }
+        backLink.href = queryString ? `./mis-mascotas.html?${queryString}` : "./mis-mascotas.html";
+        backLink.innerHTML = '<i class="bi bi-arrow-left"></i> Volver a mis mascotas';
+      } else {
+        const page = parseInt(params.get("page"), 10);
+        const pageParam = Number.isFinite(page) && page > 0 ? `?page=${page}` : "";
+        backLink.href = `./catalogo.html${pageParam}`;
+        backLink.innerHTML = '<i class="bi bi-arrow-left"></i> Volver al catálogo';
+      }
+    });
+  </script>
 </body>
 
 </html>

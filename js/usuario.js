@@ -3,13 +3,150 @@ document.addEventListener('DOMContentLoaded', () => {
     const validarDireccionBtn = document.getElementById('validar-direccion-btn');
     const perfilFoto = document.getElementById('perfilfoto');
     const fotoInput = document.getElementById('foto-input');
+    const stepButtons = Array.from(document.querySelectorAll('.profile-step-btn'));
+    const steps = Array.from(document.querySelectorAll('.profile-step'));
+    const prevStepBtn = document.getElementById('profilePrev');
+    const nextStepBtn = document.getElementById('profileNext');
+    const stepInfo = document.getElementById('profilePageInfo');
+    const progressBar = document.getElementById('profileProgressBar');
+    const progressText = document.getElementById('profileProgressText');
+    const actionButtons = document.getElementById('user-action-buttons');
+    const urlParams = new URLSearchParams(window.location.search);
+    const isReadonly = urlParams.has('id');
+    const defaultPhoto = perfilFoto?.dataset.defaultSrc || '../img/fotoJW.jpg?v=2';
+    let currentStep = 0;
 
+    steps.forEach((step, index) => {
+        if (!step.dataset.step) {
+            step.dataset.step = `${index}`;
+        }
+    });
+
+    stepButtons.forEach((button, index) => {
+        if (!button.dataset.step) {
+            button.dataset.step = `${index}`;
+        }
+    });
+
+    const setStep = (nextStep) => {
+        if (!steps.length) return;
+        const totalSteps = steps.length;
+        const clampedStep = Math.max(0, Math.min(totalSteps - 1, nextStep));
+        currentStep = clampedStep;
+
+        steps.forEach(step => {
+            step.classList.toggle('is-active', parseInt(step.dataset.step, 10) === currentStep);
+        });
+
+        stepButtons.forEach(btn => {
+            const isActive = parseInt(btn.dataset.step, 10) === currentStep;
+            btn.classList.toggle('is-active', isActive);
+            btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+
+        if (stepInfo) {
+            stepInfo.textContent = `Paso ${currentStep + 1} de ${totalSteps}`;
+        }
+
+        if (prevStepBtn) prevStepBtn.disabled = currentStep === 0;
+        if (nextStepBtn) nextStepBtn.disabled = currentStep === totalSteps - 1;
+
+        if (actionButtons) {
+            if (isReadonly) {
+                actionButtons.style.display = 'none';
+            } else {
+                actionButtons.style.display = currentStep === totalSteps - 1 ? 'flex' : 'none';
+            }
+        }
+    };
+
+    const isFieldFilled = (id, options = {}) => {
+        const field = document.getElementById(id);
+        if (!field) return true;
+        const value = `${field.value ?? ''}`.trim();
+        if (options.disallowZero) {
+            return value !== '' && value !== '0';
+        }
+        return value !== '';
+    };
+
+    const updateProgress = () => {
+        const sections = [
+            {
+                key: 'personal',
+                fields: [
+                    { id: 'nombre' },
+                    { id: 'apellido' },
+                    { id: 'telefono' },
+                    { id: 'tipo_documento' },
+                    { id: 'documento' }
+                ]
+            },
+            {
+                key: 'direccion',
+                fields: [
+                    { id: 'city' },
+                    { id: 'road' },
+                    { id: 'house_number' }
+                ]
+            },
+            {
+                key: 'hogar',
+                fields: [
+                    { id: 'fecha_nacimiento' },
+                    { id: 'sexo' },
+                    { id: 'tipo_casa' },
+                    { id: 'otras_mascotas' }
+                ]
+            },
+            {
+                key: 'personalidad',
+                fields: [
+                    { id: 'energia', options: { disallowZero: true } },
+                    { id: 'sociabilidad', options: { disallowZero: true } },
+                    { id: 'presencia', options: { disallowZero: true } },
+                    { id: 'estilov', options: { disallowZero: true } }
+                ]
+            }
+        ];
+
+        let completed = 0;
+
+        sections.forEach(section => {
+            const isComplete = section.fields.every(field =>
+                isFieldFilled(field.id, field.options || {})
+            );
+            if (isComplete) {
+                completed += 1;
+            }
+
+            const item = document.querySelector(`.profile-check-item[data-section="${section.key}"]`);
+            if (item) {
+                item.classList.toggle('is-complete', isComplete);
+                const status = item.querySelector('.profile-check-status');
+                if (status) {
+                    status.textContent = isComplete ? 'Completo' : 'Pendiente';
+                }
+            }
+        });
+
+        const total = sections.length || 1;
+        const percent = Math.round((completed / total) * 100);
+
+        if (progressBar) {
+            progressBar.style.width = `${percent}%`;
+            progressBar.setAttribute('aria-valuenow', `${percent}`);
+        }
+
+        if (progressText) {
+            progressText.textContent = `${percent}% completo`;
+        }
+    };
 
     /**
      * Carga los datos del usuario desde la API y los muestra en el formulario.
      */
     const fetchUsuario = async () => {
-        const urlParams = new URLSearchParams(window.location.search);
         const userId = urlParams.get('id'); // ID del usuario a visualizar (si existe)
 
         const token = localStorage.getItem('token');
@@ -50,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('fecha_nacimiento').value = usuario.fecha_nacimiento || '';
             document.getElementById('sexo').value = usuario.sexo || '';
             document.getElementById('tipo_casa').value = usuario.tipo_casa || '';
-            document.getElementById('otras_mascotas').value = usuario.otras_mascotas || '';
+            document.getElementById('otras_mascotas').value = usuario.otras_mascotas ?? 0;
             document.getElementById('experiencia').value = usuario.experiencia || '';
             document.getElementById('energia').value = usuario.energia || 0;
             document.getElementById('sociabilidad').value = usuario.sociabilidad || 0;
@@ -63,22 +200,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 perfilFoto.src = usuario.foto_perfil_url + '?t=' + new Date().getTime();
             } else {
                 // Si no hay foto, usamos la imagen por defecto. La ruta es relativa a la página.
-                perfilFoto.src = '../img/pdefault.jpg';
+                perfilFoto.src = defaultPhoto;
             }
 
             // Si estamos viendo el perfil de otro usuario (como ONG), deshabilitamos el formulario.
             if (userId) {
-                Array.from(perfilForm.elements).forEach(element => {
-                    element.disabled = true;
+                const formFields = perfilForm.querySelectorAll('input, select, textarea');
+                formFields.forEach(field => {
+                    field.disabled = true;
                 });
+                if (validarDireccionBtn) {
+                    validarDireccionBtn.disabled = true;
+                }
                 perfilFoto.style.cursor = 'default'; // Quitar el cursor de "clic"
 
-                // Ocultar los botones de acción del usuario
-                const actionButtons = document.getElementById('user-action-buttons');
                 if (actionButtons) {
                     actionButtons.style.display = 'none';
                 }
             }
+
+            updateProgress();
 
         } catch (error) {
             console.error('Error al cargar el perfil:', error);
@@ -128,7 +269,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Event listener para el clic en la foto de perfil
     perfilFoto.addEventListener('click', () => {
         // Solo permitir cambiar la foto si no se está viendo el perfil de otro usuario
-        const urlParams = new URLSearchParams(window.location.search);
         if (!urlParams.has('id')) {
             fotoInput.click();
         }
@@ -285,6 +425,37 @@ document.addEventListener('DOMContentLoaded', () => {
     // Event listener para el botón de validar dirección
     validarDireccionBtn.addEventListener('click', handleValidarDireccion);
 
+    stepButtons.forEach(button => {
+        button.addEventListener('click', (event) => {
+            event.preventDefault();
+            const targetStep = parseInt(button.dataset.step, 10);
+            if (!Number.isNaN(targetStep)) {
+                setStep(targetStep);
+            }
+        });
+    });
+
+    if (prevStepBtn) {
+        prevStepBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            setStep(currentStep - 1);
+        });
+    }
+
+    if (nextStepBtn) {
+        nextStepBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            setStep(currentStep + 1);
+        });
+    }
+
+    if (perfilForm) {
+        perfilForm.addEventListener('input', updateProgress);
+        perfilForm.addEventListener('change', updateProgress);
+    }
+
     // Carga inicial de los datos del usuario al entrar a la página.
     fetchUsuario();
+    setStep(currentStep);
+    updateProgress();
 });

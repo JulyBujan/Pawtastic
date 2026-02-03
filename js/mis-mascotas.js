@@ -29,6 +29,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const initialQuery = (params.get("q") || "").trim();
   const initialTipo = (params.get("tipo") || "").trim().toLowerCase();
   const initialEstado = (params.get("estado") || "").trim().toLowerCase();
+  const urlPage = parseInt(params.get("page"), 10);
+  const returnFlag = sessionStorage.getItem("pawtasticMascotasReturn") === "1";
+  const storedPage = parseInt(sessionStorage.getItem("pawtasticMascotasPage"), 10);
+  const initialPage =
+    Number.isFinite(urlPage) && urlPage > 0
+      ? urlPage
+      : returnFlag && Number.isFinite(storedPage) && storedPage > 0
+        ? storedPage
+        : 1;
+  let hasInitialPage = Number.isFinite(initialPage) && initialPage > 0;
+  if (Number.isFinite(urlPage) && urlPage > 0) {
+    sessionStorage.setItem("pawtasticMascotasPage", String(urlPage));
+  }
 
   if (!token) {
     if (mascotasGrid) {
@@ -136,8 +149,39 @@ document.addEventListener("DOMContentLoaded", () => {
       return matchesQuery && matchesTipo && matchesEstado;
     });
 
-    currentPage = 1;
+    if (hasInitialPage) {
+      currentPage = initialPage;
+      hasInitialPage = false;
+    } else {
+      currentPage = 1;
+    }
+    if (returnFlag) {
+      sessionStorage.removeItem("pawtasticMascotasReturn");
+      sessionStorage.removeItem("pawtasticMascotasPage");
+      sessionStorage.removeItem("pawtasticMascotasQuery");
+    }
     renderPage();
+  };
+
+  const buildReturnQuery = () => {
+    const queryParams = new URLSearchParams();
+    if (currentPage > 1) {
+      queryParams.set("page", String(currentPage));
+    }
+    const query = (searchInput?.value || "").trim();
+    if (query) {
+      queryParams.set("q", query);
+    }
+    const tipo = (filterTipo?.value || "").trim();
+    if (tipo) {
+      queryParams.set("tipo", tipo);
+    }
+    const estado = (filterEstado?.value || "").trim();
+    if (estado) {
+      queryParams.set("estado", estado);
+    }
+    const queryString = queryParams.toString();
+    return queryString ? `&${queryString}` : "";
   };
 
   const renderPagination = (totalItems) => {
@@ -193,6 +237,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const total = filteredMascotas.length;
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    if (currentPage > totalPages) {
+      currentPage = totalPages;
+    }
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = Math.min(startIndex + pageSize, total);
     const pageItems = filteredMascotas.slice(startIndex, endIndex);
@@ -220,10 +268,10 @@ document.addEventListener("DOMContentLoaded", () => {
               <p class="pet-summary mb-3">${sexoTexto}, ${edadTexto}, <span class="pet-highlight">energía ${energiaTexto}</span>.</p>
               <div class="pet-meta mb-3">${metaHtml}</div>
               <div class="d-flex flex-wrap gap-2 pet-actions justify-content-center">
-                <a class="btn btn-outline-secondary btn-sm btn-icon" href="gestionar-mascota-cards.html?id=${mascota.id}" data-bs-toggle="tooltip" title="Editar">
+                <a class="btn btn-outline-secondary btn-sm btn-icon" href="gestionar-mascota-cards.html?id=${mascota.id}${buildReturnQuery()}" data-bs-toggle="tooltip" title="Editar">
                   <i class="bi bi-pencil"></i>
                 </a>
-                <a class="btn btn-dark btn-sm btn-icon" href="detalle-mascota.html?id=${mascota.id}" data-bs-toggle="tooltip" title="Ver perfil">
+                <a class="btn btn-dark btn-sm btn-icon" href="detalle-mascota.html?id=${mascota.id}${buildReturnQuery()}" data-bs-toggle="tooltip" title="Ver perfil">
                   <i class="bi bi-eye"></i>
                 </a>
                 <button class="btn btn-outline-info btn-sm btn-icon" data-action="estimar" data-id="${mascota.id}" data-bs-toggle="tooltip" title="Estimar adopción">
@@ -482,6 +530,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const totalPages = Math.max(1, Math.ceil((filteredMascotas || []).length / pageSize));
       if (page > totalPages) page = totalPages;
       currentPage = page;
+      sessionStorage.setItem("pawtasticMascotasPage", String(currentPage));
       renderPage();
     });
   }

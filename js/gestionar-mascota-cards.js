@@ -2,6 +2,34 @@ document.addEventListener("DOMContentLoaded", async () => {
   const params = new URLSearchParams(window.location.search);
   const idMascota = params.get("id");
   const formMascota = document.getElementById("form-mascota-cards");
+  const returnParams = new URLSearchParams();
+  const returnPage = parseInt(params.get("page"), 10);
+  const returnQuery = (params.get("q") || "").trim();
+  const returnTipo = (params.get("tipo") || "").trim();
+  const returnEstado = (params.get("estado") || "").trim();
+  if (Number.isFinite(returnPage) && returnPage > 0) {
+    returnParams.set("page", String(returnPage));
+  }
+  if (returnQuery) {
+    returnParams.set("q", returnQuery);
+  }
+  if (returnTipo) {
+    returnParams.set("tipo", returnTipo);
+  }
+  if (returnEstado) {
+    returnParams.set("estado", returnEstado);
+  }
+  const returnQueryString = returnParams.toString();
+  const returnUrl = returnQueryString ? `mis-mascotas.html?${returnQueryString}` : "mis-mascotas.html";
+  const storeReturnState = () => {
+    sessionStorage.setItem("pawtasticMascotasReturn", "1");
+    if (Number.isFinite(returnPage) && returnPage > 0) {
+      sessionStorage.setItem("pawtasticMascotasPage", String(returnPage));
+    }
+    if (returnQueryString) {
+      sessionStorage.setItem("pawtasticMascotasQuery", returnQueryString);
+    }
+  };
 
   const edadAnosInput = document.getElementById("edad_anos");
   const edadMesesInput = document.getElementById("edad_meses");
@@ -653,14 +681,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (error) {
       console.error(error);
       showToast(error.message, "danger");
-      window.location.href = "mis-mascotas.html";
+      storeReturnState();
+      window.location.href = returnUrl;
     }
   }
 
   if (cancelBtn) {
     cancelBtn.addEventListener("click", (event) => {
       event.preventDefault();
-      window.location.href = "mis-mascotas.html";
+      storeReturnState();
+      window.location.href = returnUrl;
     });
   }
 
@@ -766,7 +796,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         showToast(result.message, "success");
         formMascota.reset();
         setTimeout(() => {
-          window.location.href = "mis-mascotas.html";
+          storeReturnState();
+          window.location.href = returnUrl;
         }, 1500);
       } else {
         throw new Error(result.message || "Ocurrió un error desconocido.");

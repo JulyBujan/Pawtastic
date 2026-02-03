@@ -4,241 +4,284 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Consejos para nuevos adoptantes - Pawtastic</title>
+  <title>Consejos para nuevos adoptantes | Pawtastic</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="icon" href="../img/favicon.ico" type="image/png">
   <link rel="stylesheet" href="../css/style.css">
-
-  <style>
-    /* Fondo general de la página */
-    body {
-      background-color: #e0f7ff;
-      /* celeste pastel */
-      color: black;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    /* Tarjetas de consejos */
-    .advice-card {
-      background-color: #ffe5c2;
-      /* naranja clarito */
-      color: black;
-      border-radius: 1rem;
-      padding: 1.5rem;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s ease, transform 0.3s ease;
-    }
-
-    /* Hover: naranja fuerte */
-    .advice-card:hover {
-      background-color: #f7931e;
-      transform: translateY(-4px);
-      color: black;
-    }
-
-    /* Título dentro de tarjeta */
-    .advice-card h4 {
-      color: black;
-    }
-  </style>
-
-
 </head>
 
-<body>
-
+<body class="advice-body d-flex flex-column min-vh-100">
   <!-- NAVBAR -->
-  <nav class="navbar navbar-expand-lg navbar-dark">
+  <nav class="navbar navbar-expand-lg navbar-dark nav-app">
     <div class="container">
-      <a class="navbar-brand d-flex align-items-center" href="../index.html">
-        <img src="../img/logo.png" alt="Logo Pawtastic" width="50" height="50" class="me-2 logo-navbar">
-        <span class="text-warning fw-bold">Pawtastic</span>
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarConsejos"
+        aria-controls="navbarConsejos" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav align-items-center ms-auto">
+      <a class="navbar-brand text-warning fw-bold me-3" href="../index.html">
+        <img src="../img/logo.png" alt="Logo Pawtastic" width="40" height="40" class="d-inline-block d-lg-none">
+        <span class="d-none d-lg-inline">Pawtastic</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarConsejos">
+        <ul class="navbar-nav align-items-lg-center ms-auto flex-lg-row gap-2" id="nav-links">
           <li class="nav-item">
-            <a class="btn btn-custom-nav me-2" href="../index.html"><i class="bi bi-arrow-left"></i> Volver</a>
-          </li>
-          <li class="nav-item">
-            <a class="btn btn-custom-nav me-2" href="./login.html">Ingresar</a>
-          </li>
-          <li class="nav-item">
-            <a class="btn btn-custom-nav" href="./registro.html">Registrate</a>
+            <a href="#" class="btn btn-custom-nav" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion"
+              title="Salir">
+              <i class="bi bi-box-arrow-right"></i> Salir
+            </a>
           </li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <!-- CONTENIDO -->
-  <section class="py-5 text-center">
-    <div class="container">
-      <h2 class="mb-4 text-warning fw-bold">Consejos para nuevos adoptantes 🐾</h2>
-      <p class="text-muted mb-5">
-        Adoptar es un acto de amor y compromiso. Esta guía paso a paso te ayudará a prepararte antes, durante y después
-        de la adopción.
-      </p>
-
-      <!-- CARD GRID -->
-      <div class="row g-4 text-start">
-
-        <!-- 1. Compromiso -->
-        <div class="col-md-6">
-          <div class="advice-card h-100">
-            <h4><i class="bi bi-heart-fill text-warning me-2"></i>La decisión es para siempre (Compromiso)</h4>
-            <ul class="list-unstyled">
-              <li class="mb-2"><input type="checkbox" class="form-check-input me-2"><strong>Es un miembro más de la
-                  familia:</strong> Recordá que una mascota vive entre 12 y 15 años o más. Es una responsabilidad a
-                largo plazo que impacta tu vida familiar, económica y de viajes.</li>
-              <li class="mb-2"><input type="checkbox" class="form-check-input me-2"><strong>Evaluá tu estilo de
-                  vida:</strong> ¿Tenés el tiempo, espacio y recursos necesarios? ¿Quién lo cuidará si viajás o te
-                enfermás?</li>
-              <li><input type="checkbox" class="form-check-input me-2"><strong>Preparación familiar:</strong> Si hay
-                niños o personas mayores, explicales las reglas de interacción y cuidado antes de que llegue la mascota.
-              </li>
-            </ul>
-          </div>
+  <main class="container py-5 flex-grow-1">
+    <section class="advice-hero text-center mb-4">
+      <div class="advice-hero-card animate-in">
+        <span class="advice-kicker">Guía para adoptar</span>
+        <h2 class="advice-title">Consejos para nuevos adoptantes</h2>
+        <p class="advice-lead">
+          Adoptar es un acto de amor y compromiso. Esta guía paso a paso te ayuda a preparar tu hogar, acompañar la
+          adaptación y cuidar a tu nuevo compañero.
+        </p>
+        <div class="advice-meta animate-in" style="--delay: 0.1s;">
+          <div class="advice-meta-item"><i class="bi bi-check2-circle"></i>6 pasos clave</div>
+          <div class="advice-meta-item"><i class="bi bi-clipboard"></i>Checklist editable</div>
+          <div class="advice-meta-item"><i class="bi bi-heart"></i>Adopción responsable</div>
         </div>
+      </div>
+    </section>
 
-        <!-- 2. Preparación del hogar -->
-        <div class="col-md-6">
-          <div class="advice-card h-100">
-            <h4><i class="bi bi-house-heart-fill text-warning me-2"></i>Antes de la llegada (Preparación del hogar)</h4>
-            <ul class="list-unstyled">
-              <li class="mb-2"><input type="checkbox" class="form-check-input me-2"><strong>El rincón seguro:</strong>
-                Prepará un lugar tranquilo y cómodo con cama, mantita y juguetes donde tu mascota pueda descansar y
-                sentirse protegida.</li>
-              <li class="mb-2"><input type="checkbox" class="form-check-input me-2"><strong>A prueba de
-                  mascotas:</strong>
-                <ul>
-                  <li><em>Perros:</em> Guardá objetos pequeños, productos de limpieza, plantas tóxicas y cables.</li>
-                  <li><em>Gatos:</em> Asegurá ventanas y balcones (usá mallas) y evitá objetos frágiles.</li>
-                </ul>
-              </li>
-              <li><input type="checkbox" class="form-check-input me-2"><strong>Kit esencial:</strong> Comida, platos,
-                bebedero, collar con chapa, correa, arenero y piedritas si es gato.</li>
-            </ul>
+    <section class="row g-4">
+      <div class="col-lg-6">
+        <article class="advice-card animate-in" style="--delay: 0.05s;">
+          <div class="advice-card-header">
+            <span class="advice-icon"><i class="bi bi-heart-fill"></i></span>
+            <div>
+              <h4>La decisión es para siempre</h4>
+              <p>Compromiso y preparación familiar.</p>
+            </div>
           </div>
-        </div>
+          <ul class="advice-list list-unstyled">
+            <li><input type="checkbox" class="form-check-input"><strong>Es un miembro más de la familia:</strong>
+              Recordá que una mascota vive entre 12 y 15 años o más. Es una responsabilidad a largo plazo.</li>
+            <li><input type="checkbox" class="form-check-input"><strong>Evaluá tu estilo de vida:</strong> ¿Tenés
+              tiempo, espacio y recursos? ¿Quién la cuidará si viajás?</li>
+            <li><input type="checkbox" class="form-check-input"><strong>Preparación familiar:</strong> Si hay niños o
+              personas mayores, conversen reglas de interacción antes de la llegada.</li>
+          </ul>
+        </article>
+      </div>
 
-        <!-- 3. Adaptación -->
-        <div class="col-md-6">
-          <div class="advice-card h-100">
-            <h4><i class="bi bi-hourglass-split text-warning me-2"></i>Los primeros días (Adaptación)</h4>
-            <ul class="list-unstyled">
-              <li class="mb-2"><input type="checkbox" class="form-check-input me-2"><strong>Sé paciente y
-                  tranquilo:</strong> Es un cambio enorme. Puede estar asustada o nerviosa. Dale tiempo para adaptarse.
-              </li>
-              <li class="mb-2"><input type="checkbox" class="form-check-input me-2"><strong>Rutinas claras:</strong>
-                Establecé horarios fijos para comida, paseos y juego. La rutina da seguridad.</li>
-              <li class="mb-2"><input type="checkbox" class="form-check-input me-2"><strong>Primeros contactos:</strong>
-                <ul>
-                  <li><em>Perros:</em> Paseos tranquilos al inicio, sin muchas visitas.</li>
-                  <li><em>Gatos:</em> Mantenelo en una habitación pequeña al principio y ampliá el espacio gradualmente.
-                  </li>
-                </ul>
-              </li>
-              <li><input type="checkbox" class="form-check-input me-2"><strong>Supervisión:</strong> No dejes sola a la
-                mascota con niños pequeños u otras mascotas sin vigilancia.</li>
-            </ul>
+      <div class="col-lg-6">
+        <article class="advice-card animate-in" style="--delay: 0.1s;">
+          <div class="advice-card-header">
+            <span class="advice-icon"><i class="bi bi-house-heart-fill"></i></span>
+            <div>
+              <h4>Antes de la llegada</h4>
+              <p>Prepará tu casa para recibir a tu mascota.</p>
+            </div>
           </div>
-        </div>
+          <ul class="advice-list list-unstyled">
+            <li><input type="checkbox" class="form-check-input"><strong>Rincón seguro:</strong> Prepará un lugar cómodo
+              con cama, mantita y juguetes.</li>
+            <li><input type="checkbox" class="form-check-input"><strong>A prueba de mascotas:</strong>
+              <ul>
+                <li><em>Perros:</em> Guardá objetos pequeños, productos de limpieza, plantas tóxicas y cables.</li>
+                <li><em>Gatos:</em> Asegurá ventanas y balcones (usá mallas) y evitá objetos frágiles.</li>
+              </ul>
+            </li>
+            <li><input type="checkbox" class="form-check-input"><strong>Kit esencial:</strong> Comida, platos, bebedero,
+              collar con chapa, correa y arenero si es gato.</li>
+          </ul>
+        </article>
+      </div>
 
-        <!-- 4. Salud y bienestar -->
-        <div class="col-md-6">
-          <div class="advice-card h-100">
-            <h4><i class="bi bi-hospital-fill text-warning me-2"></i>Salud y bienestar (Cuidado permanente)</h4>
-            <ul class="list-unstyled">
-              <li class="mb-2"><input type="checkbox" class="form-check-input me-2"><strong>Veterinario:</strong> Visitá
-                al veterinario en la primera semana para chequeo, vacunas y desparasitación.</li>
-              <li class="mb-2"><input type="checkbox"
-                  class="form-check-input me-2"><strong>Castración/Esterilización:</strong> Fundamental para evitar
-                sobrepoblación. Las ONGs suelen entregar con compromiso de castración.</li>
-              <li><input type="checkbox" class="form-check-input me-2"><strong>Identificación:</strong> Collar con
-                chapita o microchip (consultá a la ONG) para recuperarlo si se pierde.</li>
-            </ul>
+      <div class="col-lg-6">
+        <article class="advice-card animate-in" style="--delay: 0.15s;">
+          <div class="advice-card-header">
+            <span class="advice-icon"><i class="bi bi-hourglass-split"></i></span>
+            <div>
+              <h4>Los primeros días</h4>
+              <p>Paciencia, rutina y acompañamiento.</p>
+            </div>
           </div>
-        </div>
+          <ul class="advice-list list-unstyled">
+            <li><input type="checkbox" class="form-check-input"><strong>Sé paciente:</strong> Es un cambio enorme para
+              la mascota. Dale tiempo para adaptarse.</li>
+            <li><input type="checkbox" class="form-check-input"><strong>Rutinas claras:</strong> Establecé horarios de
+              comida, paseos y juego para dar seguridad.</li>
+            <li><input type="checkbox" class="form-check-input"><strong>Primeros contactos:</strong>
+              <ul>
+                <li><em>Perros:</em> Paseos tranquilos al inicio, sin muchas visitas.</li>
+                <li><em>Gatos:</em> Mantenelo en una habitación pequeña al principio y ampliá el espacio gradualmente.</li>
+              </ul>
+            </li>
+            <li><input type="checkbox" class="form-check-input"><strong>Supervisión:</strong> No dejes sola a la mascota
+              con niños pequeños u otras mascotas sin vigilancia.</li>
+          </ul>
+        </article>
+      </div>
 
-        <!-- 5. Comportamiento -->
-        <div class="col-md-6">
-          <div class="advice-card h-100">
-            <h4><i class="bi bi-emoji-smile-fill text-warning me-2"></i>Comportamiento y educación</h4>
-            <ul class="list-unstyled">
-              <li class="mb-2"><input type="checkbox" class="form-check-input me-2"><strong>Refuerzo positivo:</strong>
-                Usá premios, caricias y palabras amables. Nunca el castigo físico.</li>
-              <li class="mb-2"><input type="checkbox" class="form-check-input me-2"><strong>Socialización
-                  (perros):</strong> Permití que conozca personas, otros perros y sonidos de forma positiva.</li>
-              <li><input type="checkbox" class="form-check-input me-2"><strong>Adiós a los malos hábitos:</strong> Si
-                hay comportamientos no deseados, buscá la causa y consultá a un educador canino o felino.</li>
-            </ul>
+      <div class="col-lg-6">
+        <article class="advice-card animate-in" style="--delay: 0.2s;">
+          <div class="advice-card-header">
+            <span class="advice-icon"><i class="bi bi-hospital-fill"></i></span>
+            <div>
+              <h4>Salud y bienestar</h4>
+              <p>Cuidados permanentes para una vida feliz.</p>
+            </div>
           </div>
-        </div>
+          <ul class="advice-list list-unstyled">
+            <li><input type="checkbox" class="form-check-input"><strong>Veterinario:</strong> Hacé un chequeo en la
+              primera semana para vacunas y desparasitación.</li>
+            <li><input type="checkbox" class="form-check-input"><strong>Castración/Esterilización:</strong> Fundamental
+              para evitar sobrepoblación. Consultá con la ONG.</li>
+            <li><input type="checkbox" class="form-check-input"><strong>Identificación:</strong> Collar con chapita o
+              microchip para recuperarla si se pierde.</li>
+          </ul>
+        </article>
+      </div>
 
-        <!-- 6. Contacto ONG -->
-        <div class="col-md-6">
-          <div class="advice-card h-100">
-            <h4><i class="bi bi-chat-heart-fill text-warning me-2"></i>Contacto con la ONG / Seguimiento</h4>
-            <ul class="list-unstyled">
-              <li class="mb-2"><input type="checkbox" class="form-check-input me-2"><strong>No estás sola/o:</strong> La
-                ONG está disponible para consultas, especialmente durante la adaptación.</li>
-              <li><input type="checkbox" class="form-check-input me-2"><strong>Seguimiento de adopción:</strong> La ONG
-                realizará contacto o visitas para asegurarse de que todo va bien ❤️.</li>
-            </ul>
+      <div class="col-lg-6">
+        <article class="advice-card animate-in" style="--delay: 0.25s;">
+          <div class="advice-card-header">
+            <span class="advice-icon"><i class="bi bi-emoji-smile-fill"></i></span>
+            <div>
+              <h4>Comportamiento y educación</h4>
+              <p>Refuerzo positivo y socialización.</p>
+            </div>
           </div>
-        </div>
+          <ul class="advice-list list-unstyled">
+            <li><input type="checkbox" class="form-check-input"><strong>Refuerzo positivo:</strong> Usá premios,
+              caricias y palabras amables. Nunca castigo físico.</li>
+            <li><input type="checkbox" class="form-check-input"><strong>Socialización:</strong> Permití que conozca
+              personas, otros animales y sonidos de forma positiva.</li>
+            <li><input type="checkbox" class="form-check-input"><strong>Ayuda profesional:</strong> Si hay conductas
+              difíciles, consultá a un educador canino o felino.</li>
+          </ul>
+        </article>
+      </div>
 
+      <div class="col-lg-6">
+        <article class="advice-card animate-in" style="--delay: 0.3s;">
+          <div class="advice-card-header">
+            <span class="advice-icon"><i class="bi bi-chat-heart-fill"></i></span>
+            <div>
+              <h4>Contacto con la ONG</h4>
+              <p>Seguimiento y apoyo durante la adopción.</p>
+            </div>
+          </div>
+          <ul class="advice-list list-unstyled">
+            <li><input type="checkbox" class="form-check-input"><strong>No estás sola/o:</strong> La ONG está disponible
+              para consultas, especialmente durante la adaptación.</li>
+            <li><input type="checkbox" class="form-check-input"><strong>Seguimiento:</strong> Habrá contacto o visitas
+              para asegurar que todo va bien ❤️.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="advice-cta animate-in" style="--delay: 0.1s;">
+      <div>
+        <h5>¿Listos para conocer a tu nuevo compañero?</h5>
+        <p>Explorá el catálogo y encontrá un match compatible con tu estilo de vida.</p>
+      </div>
+      <a href="catalogo.html" class="btn btn-advice-primary">Ir al catálogo</a>
+    </section>
+  </main>
+
+  <!-- MODAL CERRAR SESIÓN -->
+  <div class="modal fade" id="modalCerrarSesion" tabindex="-1" aria-labelledby="modalCerrarSesionLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-warning-subtle">
+          <h5 class="modal-title" id="modalCerrarSesionLabel">¿Cerrar sesión?</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          ¿Estás segura de que querés salir del sitio?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button id="confirmarSalir" class="btn btn-danger">Sí, salir</button>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
 
   <!-- FOOTER -->
-  <footer class="bg-footer text-dark pt-4 pb-3 mt-3">
-    <div class="container text-center text-md-start">
-      <div class="row">
-        <div class="col-md-4 mb-3 text-center">
-          <h5 class="fw-bold mt-2">Pawtastic</h5>
-          <p class="small">Conectamos corazones con patas. Gracias por elegir adoptar.</p>
-          <a href="../index.html">
-            <img src="../img/logo.png" alt="Logo Pawtastic" style="max-width: 100px; border-radius: 40%;">
-          </a>
-        </div>
-        <div class="col-md-4 mb-3 d-flex flex-column align-items-center">
-          <h5 class="fw-bold text-center">Navegación</h5>
-          <ul class="list-unstyled text-center">
-            <li><a href="https://interfacessistemas3.my.canva.site/manual-de-usuario-pawtastic"
-                class="text-dark text-decoration-none" target="_blank" rel="noopener noreferrer">Manual de Usuario</a>
-            </li>
-            <li><a href="https://drive.google.com/drive/folders/1UiabMGZbGNRz8LPfdU74eroOOLEoH8Xb?usp=sharing"
-                class="text-dark text-decoration-none" target="_blank" rel="noopener noreferrer">Documentación del
-                Proyecto</a></li>
-          </ul>
-        </div>
-        <div class="col-md-4 mb-3 fs-5">
-          <h5 class="fw-bold">Seguinos</h5>
-          <a href="https://www.facebook.com/profile.php?id=61581919419192" class="text-dark me-3"><i
-              class="bi bi-facebook" style="font-size: 2.5rem;"></i></a>
-          <a href="https://www.instagram.com/pawtasticarg/" class="text-dark me-3"><i class="bi bi-instagram"
-              style="font-size: 2.5rem;"></i></a>
-          <a href="https://x.com/PawtasticArg" class="text-dark"><i class="bi bi-x-circle-fill"
-              style="font-size: 2.5rem;"></i></a>
-        </div>
-      </div>
-      <hr class="border-dark">
-      <div class="text-center">
-        <small>&copy; 2025 Pawtastic. Todos los derechos reservados.</small><br>
-        <a href="./terminosYcondiciones.html" class="text-dark text-decoration-underline small">Términos y
-          Condiciones</a> |
-        <a href="./politicaDeCookies.html" class="text-dark text-decoration-underline small">Política de Cookies</a>
-      </div>
+  <footer class="login-footer">
+    <div class="container text-center">
+      <a href="./terminosYcondiciones.html">Términos</a>
+      <span class="footer-divider">|</span>
+      <a href="./politicaDeCookies.html">Cookies</a>
     </div>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('token');
+      const tipoUsuario = localStorage.getItem('tipo');
+      const navLinksContainer = document.getElementById('nav-links');
+      const salirButton = navLinksContainer
+        ? navLinksContainer.querySelector('[data-bs-target="#modalCerrarSesion"]')
+        : null;
+      const salirItem = salirButton ? salirButton.closest('li') : null;
+      let linksHTML = '';
+
+      if (!token) {
+        linksHTML = `
+          <li class="nav-item"><a href="login.html" class="btn btn-custom-nav">Ingresar</a></li>
+          <li class="nav-item"><a href="registro.html" class="btn btn-custom-nav">Registrarme</a></li>
+        `;
+        if (salirItem) {
+          salirItem.remove();
+        }
+      } else if (tipoUsuario === 'ong') {
+        linksHTML = `
+          <li class="nav-item"><a href="perfil-ong.html" class="btn btn-custom-nav">Inicio</a></li>
+          <li class="nav-item"><a href="mis-mascotas.html" class="btn btn-custom-nav">Mis Mascotas</a></li>
+          <li class="nav-item"><a href="postulaciones.html" class="btn btn-custom-nav">Postulaciones</a></li>
+        `;
+      } else if (tipoUsuario === 'admin') {
+        linksHTML = `
+          <li class="nav-item"><a href="perfil-admin.html" class="btn btn-custom-nav">Panel</a></li>
+        `;
+      } else {
+        linksHTML = `
+          <li class="nav-item"><a href="perfil-usuario.html" class="btn btn-custom-nav">Inicio</a></li>
+          <li class="nav-item"><a href="catalogo.html" class="btn btn-custom-nav">Catálogo</a></li>
+          <li class="nav-item"><a href="postulaciones.html" class="btn btn-custom-nav">Mis postulaciones</a></li>
+        `;
+      }
+
+      if (navLinksContainer) {
+        if (salirItem) {
+          salirItem.insertAdjacentHTML('beforebegin', linksHTML);
+        } else {
+          navLinksContainer.insertAdjacentHTML('afterbegin', linksHTML);
+        }
+      }
+
+      const confirmarSalir = document.getElementById("confirmarSalir");
+      if (confirmarSalir) {
+        confirmarSalir.addEventListener("click", () => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("tipo");
+          window.location.href = "../index.html";
+        });
+      }
+    });
+  </script>
 </body>
 
 </html>

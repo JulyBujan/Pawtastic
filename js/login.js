@@ -48,14 +48,14 @@ document.addEventListener('DOMContentLoaded', function () {
           showToast("Inicio de sesión exitoso 🎉", "success");
 
           // Redirigir según el tipo de usuario
-        if (data.tipo === 'admin') {
+          if (data.tipo === 'admin') {
             window.location.href = "perfil-admin.html"; // Redirigir a perfil de admin
-        } else if (data.tipo === 'ong') {
+          } else if (data.tipo === 'ong') {
             window.location.href = "perfil-ong.html"; // Redirigir a perfil de ONG
-        } else {
-            window.location.href = "catalogo.html"; // Redirigir a perfil de usuario normal
-        }
-        
+          } else {
+            window.location.href = "perfil-usuario.html"; // Redirigir a perfil de usuario normal
+          }
+
         } else {
           showToast(data.message || "Error en las credenciales.", "danger");
         }

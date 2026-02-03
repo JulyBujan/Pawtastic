@@ -4,54 +4,96 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Preguntas Frecuentes - Pawtastic</title>
+  <title>Preguntas Frecuentes | Pawtastic</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="icon" href="../img/favicon.ico" type="image/png">
   <link rel="stylesheet" href="../css/style.css">
-  
 </head>
 
-<body class="bg-light">
-
+<body class="faq-body d-flex flex-column min-vh-100">
   <!-- NAVBAR -->
-  <nav class="navbar navbar-expand-lg navbar-dark">
+  <nav class="navbar navbar-expand-lg navbar-dark nav-app">
     <div class="container">
-      <a class="navbar-brand d-flex align-items-center" href="../index.html">
-        <img src="../img/logo.png" alt="Logo Pawtastic" width="50" height="50" class="me-2 logo-navbar">
-        <span class="text-warning fw-bold">Pawtastic</span>
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarFaq"
+        aria-controls="navbarFaq" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="../index.html">Inicio</a></li>
-          <li class="nav-item"><a class="nav-link" href="./login.html">Ingresar</a></li>
-          <li class="nav-item"><a class="nav-link" href="./error404.html">Nosotros</a></li>
+      <a class="navbar-brand text-warning fw-bold me-3" href="../index.html">
+        <img src="../img/logo.png" alt="Logo Pawtastic" width="40" height="40" class="d-inline-block d-lg-none">
+        <span class="d-none d-lg-inline">Pawtastic</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarFaq">
+        <ul class="navbar-nav align-items-lg-center ms-auto flex-lg-row gap-2" id="nav-links">
           <li class="nav-item">
-            <a href="#" class="nav-link text-danger fw-bold" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion">
-              <i class="bi bi-box-arrow-right me-1"></i>Salir
+            <a href="#" class="btn btn-custom-nav" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion"
+              title="Salir">
+              <i class="bi bi-box-arrow-right"></i> Salir
             </a>
+          </li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <!-- CONTENIDO -->
-  <section class="py-5 text-center">
-    <div class="container">
-      <h2 class="mb-4 text-warning fw-bold">Preguntas Frecuentes 🐾</h2>
-      <p class="text-muted mb-5">
-        En esta sección encontrarás las respuestas a las dudas más comunes sobre adopciones, procesos y registros de
-        ONGs.
-      </p>
+  <main class="container py-5 flex-grow-1">
+    <section class="faq-hero text-center mb-4">
+      <div class="faq-hero-card animate-in">
+        <span class="faq-kicker">Centro de ayuda</span>
+        <h2 class="faq-title">Preguntas frecuentes</h2>
+        <p class="faq-lead">
+          Todo lo que necesitás saber sobre adopciones, ONGs y el uso de Pawtastic en un solo lugar.
+        </p>
+        <div class="faq-meta animate-in" style="--delay: 0.1s;">
+          <div class="faq-meta-item">
+            <i class="bi bi-chat-dots"></i>
+            30 preguntas
+          </div>
+          <div class="faq-meta-item">
+            <i class="bi bi-grid"></i>
+            7 secciones
+          </div>
+          <div class="faq-meta-item">
+            <i class="bi bi-compass"></i>
+            Navegá con flechas o pestañas
+          </div>
+        </div>
+      </div>
+    </section>
 
-      <!-- SECCIÓN ADOPCIONES -->
-      <div class="faq-card mb-5 faq-section text-start">
-        <h4><i class="bi bi-question-circle-fill text-warning me-2"></i>Sobre adopciones</h4>
+    <section class="faq-section-tabs animate-in" style="--delay: 0.15s;" aria-label="Navegación por secciones">
+      <button type="button" class="faq-tab is-active" data-faq-tab="0" aria-controls="faq-section-0"
+        aria-selected="true">Adopciones</button>
+      <button type="button" class="faq-tab" data-faq-tab="1" aria-controls="faq-section-1"
+        aria-selected="false">ONGs</button>
+      <button type="button" class="faq-tab" data-faq-tab="2" aria-controls="faq-section-2"
+        aria-selected="false">Mascotas</button>
+      <button type="button" class="faq-tab" data-faq-tab="3" aria-controls="faq-section-3"
+        aria-selected="false">Proceso</button>
+      <button type="button" class="faq-tab" data-faq-tab="4" aria-controls="faq-section-4"
+        aria-selected="false">Ubicación</button>
+      <button type="button" class="faq-tab" data-faq-tab="5" aria-controls="faq-section-5"
+        aria-selected="false">Otras</button>
+      <button type="button" class="faq-tab" data-faq-tab="6" aria-controls="faq-section-6"
+        aria-selected="false">Extras</button>
+    </section>
 
-        <div class="accordion" id="faqAdopciones">
+    <section class="faq-sections">
+      <div class="faq-section-card animate-in" id="faq-section-0" data-faq-title="Adopciones">
+        <div class="faq-section-header">
+          <div>
+            <span class="faq-section-kicker">Adopciones</span>
+            <h4><i class="bi bi-question-circle-fill text-warning me-2"></i>Sobre adopciones</h4>
+            <p>Lo esencial para empezar a adoptar con confianza.</p>
+          </div>
+          <span class="faq-section-badge">4 preguntas</span>
+        </div>
+        <div class="accordion faq-accordion" id="faqAdopciones">
           <div class="accordion-item">
             <h2 class="accordion-header" id="faq1">
               <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
@@ -121,11 +163,16 @@
         </div>
       </div>
 
-      <!-- SECCIÓN ONGs -->
-      <div class="faq-card faq-section text-start">
-        <h4><i class="bi bi-people-fill text-warning me-2"></i>Guía para ONGs y refugios</h4>
-
-        <div class="accordion" id="faqOngs">
+      <div class="faq-section-card animate-in is-hidden" id="faq-section-1" data-faq-title="ONGs">
+        <div class="faq-section-header">
+          <div>
+            <span class="faq-section-kicker">ONGs y refugios</span>
+            <h4><i class="bi bi-people-fill text-warning me-2"></i>Guía para ONGs y refugios</h4>
+            <p>Información clave para organizaciones que quieren sumarse.</p>
+          </div>
+          <span class="faq-section-badge">4 preguntas</span>
+        </div>
+        <div class="accordion faq-accordion" id="faqOngs">
           <div class="accordion-item">
             <h2 class="accordion-header" id="faq5">
               <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5">
@@ -202,11 +249,16 @@
         </div>
       </div>
 
-      <!-- SECCIÓN MASCOTAS -->
-      <div class="faq-card mb-5 faq-section text-start">
-        <h4><i class="bi bi-heart-fill text-warning me-2"></i>Mascotas en adopción</h4>
-
-        <div class="accordion" id="faqMascotas">
+      <div class="faq-section-card animate-in is-hidden" id="faq-section-2" data-faq-title="Mascotas">
+        <div class="faq-section-header">
+          <div>
+            <span class="faq-section-kicker">Mascotas</span>
+            <h4><i class="bi bi-heart-fill text-warning me-2"></i>Mascotas en adopción</h4>
+            <p>Conocé cómo filtrar, elegir y encontrar tu match.</p>
+          </div>
+          <span class="faq-section-badge">6 preguntas</span>
+        </div>
+        <div class="accordion faq-accordion" id="faqMascotas">
           <div class="accordion-item">
             <h2 class="accordion-header" id="faq9">
               <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse9">
@@ -295,11 +347,16 @@
         </div>
       </div>
 
-      <!-- SECCIÓN PROCESO -->
-      <div class="faq-card mb-5 faq-section text-start">
-        <h4><i class="bi bi-clipboard-heart text-warning me-2"></i>Proceso de adopción</h4>
-
-        <div class="accordion" id="faqProceso">
+      <div class="faq-section-card animate-in is-hidden" id="faq-section-3" data-faq-title="Proceso">
+        <div class="faq-section-header">
+          <div>
+            <span class="faq-section-kicker">Proceso</span>
+            <h4><i class="bi bi-clipboard-heart text-warning me-2"></i>Proceso de adopción</h4>
+            <p>Pasos y tiempos para concretar una adopción.</p>
+          </div>
+          <span class="faq-section-badge">5 preguntas</span>
+        </div>
+        <div class="accordion faq-accordion" id="faqProceso">
           <div class="accordion-item">
             <h2 class="accordion-header" id="faq15">
               <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse15">
@@ -374,11 +431,16 @@
         </div>
       </div>
 
-      <!-- SECCIÓN UBICACIÓN -->
-      <div class="faq-card mb-5 faq-section text-start">
-        <h4><i class="bi bi-geo-alt-fill text-warning me-2"></i>Ubicación y filtros</h4>
-
-        <div class="accordion" id="faqUbicacion">
+      <div class="faq-section-card animate-in is-hidden" id="faq-section-4" data-faq-title="Ubicación">
+        <div class="faq-section-header">
+          <div>
+            <span class="faq-section-kicker">Ubicación</span>
+            <h4><i class="bi bi-geo-alt-fill text-warning me-2"></i>Ubicación y filtros</h4>
+            <p>Cómo encontrar mascotas cercanas y ajustar la búsqueda.</p>
+          </div>
+          <span class="faq-section-badge">3 preguntas</span>
+        </div>
+        <div class="accordion faq-accordion" id="faqUbicacion">
           <div class="accordion-item">
             <h2 class="accordion-header" id="faq20">
               <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse20">
@@ -423,11 +485,16 @@
         </div>
       </div>
 
-      <!-- SECCIÓN OTRAS PREGUNTAS -->
-      <div class="faq-card mb-5 faq-section text-start">
-        <h4><i class="bi bi-chat-dots-fill text-warning me-2"></i>Otras preguntas útiles</h4>
-
-        <div class="accordion" id="faqOtras">
+      <div class="faq-section-card animate-in is-hidden" id="faq-section-5" data-faq-title="Otras">
+        <div class="faq-section-header">
+          <div>
+            <span class="faq-section-kicker">Otras preguntas</span>
+            <h4><i class="bi bi-chat-dots-fill text-warning me-2"></i>Otras preguntas útiles</h4>
+            <p>Información adicional para acompañarte en el proceso.</p>
+          </div>
+          <span class="faq-section-badge">5 preguntas</span>
+        </div>
+        <div class="accordion faq-accordion" id="faqOtras">
           <div class="accordion-item">
             <h2 class="accordion-header" id="faq23">
               <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse23">
@@ -500,11 +567,16 @@
         </div>
       </div>
 
-      <!-- SECCIÓN EXTRAS -->
-      <div class="faq-card mb-5 faq-section text-start">
-        <h4><i class="bi bi-stars text-warning me-2"></i>Extras del chatbot</h4>
-
-        <div class="accordion" id="faqExtras">
+      <div class="faq-section-card animate-in is-hidden" id="faq-section-6" data-faq-title="Extras">
+        <div class="faq-section-header">
+          <div>
+            <span class="faq-section-kicker">Extras</span>
+            <h4><i class="bi bi-stars text-warning me-2"></i>Extras del chatbot</h4>
+            <p>Respuestas rápidas para recomendaciones inteligentes.</p>
+          </div>
+          <span class="faq-section-badge">3 preguntas</span>
+        </div>
+        <div class="accordion faq-accordion" id="faqExtras">
           <div class="accordion-item">
             <h2 class="accordion-header" id="faq28">
               <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse28">
@@ -550,80 +622,168 @@
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- FOOTER -->
-  <footer class="bg-footer text-dark pt-4 pb-3 mt-3">
-    <div class="container text-center text-md-start">
-      <div class="row">
-        <div class="col-md-4 mb-3 text-center">
-          <h5 class="fw-bold mt-2">Pawtastic</h5>
-          <p class="small">Conectamos corazones con patas. Gracias por elegir adoptar.</p>
-          <a href="../index.html">
-            <img src="../img/logo.png" alt="Logo Pawtastic" style="max-width: 100px; border-radius: 40%;">
-          </a>
-        </div>
-        <div class="col-md-4 mb-3 d-flex flex-column align-items-center">
-          <h5 class="fw-bold text-center">Navegación</h5>
-          <ul class="list-unstyled text-center">
-            <li><a href="../index.html" class="text-dark text-decoration-none">Inicio</a></li>
-            <li><a href="./login.html" class="text-dark text-decoration-none">Ingresar</a></li>
-            <li><a href="./error404.html" class="text-dark text-decoration-none">Nosotros</a></li>
-          </ul>
-        </div>
-        <div class="col-md-4 mb-3 fs-5">
-          <h5 class="fw-bold">Seguinos</h5>
-          <a href="./error404.html" class="text-dark me-3"><i class="bi bi-facebook" style="font-size: 2.5rem;"></i></a>
-          <a href="./error404.html" class="text-dark me-3"><i class="bi bi-instagram"
-              style="font-size: 2.5rem;"></i></a>
-          <a href="./error404.html" class="text-dark"><i class="bi bi-x-circle-fill" style="font-size: 2.5rem;"></i></a>
-        </div>
-      </div>
-      <hr class="border-dark">
-      <div class="text-center">
-        <small>&copy; 2025 Pawtastic. Todos los derechos reservados.</small><br>
-        <a href="./terminosYcondiciones.html" class="text-dark text-decoration-underline small">Términos y
-          Condiciones</a> |
-        <a href="./politicaDeCookies.html" class="text-dark text-decoration-underline small">Política de Cookies</a>
-      </div>
+    <div class="faq-pagination animate-in" style="--delay: 0.2s;">
+      <button type="button" class="btn btn-outline-secondary" id="faqPrev">
+        <i class="bi bi-arrow-left"></i> Anterior
+      </button>
+      <span class="faq-page-info" id="faqPageInfo" aria-live="polite">Sección 1 de 7</span>
+      <button type="button" class="btn btn-outline-secondary" id="faqNext">
+        Siguiente <i class="bi bi-arrow-right"></i>
+      </button>
     </div>
-  </footer>
+
+    <div class="faq-help animate-in" style="--delay: 0.25s;">
+      <div>
+        <h5>¿No encontraste tu respuesta?</h5>
+        <p>Escribinos a <strong>pawtasticarg@gmail.com</strong> y te ayudamos a resolver tu consulta.</p>
+      </div>
+      <a href="catalogo.html" class="btn btn-faq-primary">Ir al catálogo</a>
+    </div>
+  </main>
+
   <!-- MODAL CERRAR SESIÓN -->
   <div class="modal fade" id="modalCerrarSesion" tabindex="-1" aria-labelledby="modalCerrarSesionLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title fw-bold text-danger" id="modalCerrarSesionLabel">
-            <i class="bi bi-box-arrow-right me-2"></i>¿Cerrar sesión?
-          </h5>
+        <div class="modal-header bg-warning-subtle">
+          <h5 class="modal-title" id="modalCerrarSesionLabel">¿Cerrar sesión?</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
         <div class="modal-body">
-          ¿Estás segura/o de que querés salir de tu cuenta?
-          Se eliminarán los datos de sesión guardados.
+          ¿Estás segura de que querés salir del sitio?
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-danger" id="confirmarSalir">Salir</button>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button id="confirmarSalir" class="btn btn-danger">Sí, salir</button>
         </div>
       </div>
     </div>
   </div>
 
- <script>
-  document.getElementById("confirmarSalir").addEventListener("click", function () {
-    localStorage.removeItem("token");
-    localStorage.removeItem("tipo");
-    window.location.href = "../index.html";
-  });
-</script>
+  <!-- FOOTER -->
+  <footer class="login-footer">
+    <div class="container text-center">
+      <a href="./terminosYcondiciones.html">Términos</a>
+      <span class="footer-divider">|</span>
+      <a href="./politicaDeCookies.html">Cookies</a>
+    </div>
+  </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('token');
+      const tipoUsuario = localStorage.getItem('tipo');
+      const navLinksContainer = document.getElementById('nav-links');
+      const salirButton = navLinksContainer
+        ? navLinksContainer.querySelector('[data-bs-target="#modalCerrarSesion"]')
+        : null;
+      const salirItem = salirButton ? salirButton.closest('li') : null;
+      let linksHTML = '';
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+      if (!token) {
+        linksHTML = `
+          <li class="nav-item"><a href="login.html" class="btn btn-custom-nav">Ingresar</a></li>
+          <li class="nav-item"><a href="registro.html" class="btn btn-custom-nav">Registrarme</a></li>
+        `;
+        if (salirItem) {
+          salirItem.remove();
+        }
+      } else if (tipoUsuario === 'ong') {
+        linksHTML = `
+          <li class="nav-item"><a href="perfil-ong.html" class="btn btn-custom-nav">Inicio</a></li>
+          <li class="nav-item"><a href="mis-mascotas.html" class="btn btn-custom-nav">Mis Mascotas</a></li>
+          <li class="nav-item"><a href="postulaciones.html" class="btn btn-custom-nav">Postulaciones</a></li>
+        `;
+      } else if (tipoUsuario === 'admin') {
+        linksHTML = `
+          <li class="nav-item"><a href="perfil-admin.html" class="btn btn-custom-nav">Panel</a></li>
+        `;
+      } else {
+        linksHTML = `
+          <li class="nav-item"><a href="perfil-usuario.html" class="btn btn-custom-nav">Inicio</a></li>
+          <li class="nav-item"><a href="catalogo.html" class="btn btn-custom-nav">Catálogo</a></li>
+          <li class="nav-item"><a href="postulaciones.html" class="btn btn-custom-nav">Mis postulaciones</a></li>
+        `;
+      }
 
-  
+      if (navLinksContainer) {
+        if (salirItem) {
+          salirItem.insertAdjacentHTML('beforebegin', linksHTML);
+        } else {
+          navLinksContainer.insertAdjacentHTML('afterbegin', linksHTML);
+        }
+      }
+
+      const confirmarSalir = document.getElementById("confirmarSalir");
+      if (confirmarSalir) {
+        confirmarSalir.addEventListener("click", () => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("tipo");
+          window.location.href = "../index.html";
+        });
+      }
+
+      const sections = Array.from(document.querySelectorAll('.faq-section-card'));
+      const tabs = Array.from(document.querySelectorAll('.faq-tab'));
+      const prevBtn = document.getElementById('faqPrev');
+      const nextBtn = document.getElementById('faqNext');
+      const pageInfo = document.getElementById('faqPageInfo');
+      let activeIndex = 0;
+
+      const setActiveSection = (index) => {
+        if (!sections.length) return;
+        activeIndex = Math.max(0, Math.min(index, sections.length - 1));
+
+        sections.forEach((section, idx) => {
+          section.classList.toggle('is-hidden', idx !== activeIndex);
+        });
+
+        tabs.forEach((tab, idx) => {
+          const isActive = idx === activeIndex;
+          tab.classList.toggle('is-active', isActive);
+          tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+          tab.tabIndex = isActive ? 0 : -1;
+        });
+
+        if (pageInfo) {
+          pageInfo.textContent = `Sección ${activeIndex + 1} de ${sections.length}`;
+        }
+
+        if (prevBtn) prevBtn.disabled = activeIndex === 0;
+        if (nextBtn) nextBtn.disabled = activeIndex === sections.length - 1;
+
+        sections[activeIndex].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      };
+
+      tabs.forEach((tab, idx) => {
+        tab.addEventListener('click', () => setActiveSection(idx));
+        tab.addEventListener('keydown', (event) => {
+          if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            setActiveSection(idx + 1);
+          }
+          if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            setActiveSection(idx - 1);
+          }
+        });
+      });
+
+      if (prevBtn) {
+        prevBtn.addEventListener('click', () => setActiveSection(activeIndex - 1));
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener('click', () => setActiveSection(activeIndex + 1));
+      }
+
+      setActiveSection(0);
+    });
+  </script>
 </body>
 
 </html>

@@ -5,209 +5,286 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Perfil | Pawtastic</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
   <link rel="icon" href="../img/favicon.ico" type="image/png">
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 
-<body>
+<body class="usuario-profile-body d-flex flex-column min-vh-100">
   <!-- NAVBAR PERFIL -->
-  <nav class="navbar navbar-expand-lg navbar-dark encabezado-azul">
-    <div class="container position-relative">
-      <!-- Logo izquierdo -->
-      <a class="navbar-brand d-flex align-items-center" href="../index.html">
-        <img src="../img/logo.png" alt="Logo Pawtastic" width="50" height="50" class="me-2 logo-navbar">
-        <span class="text-warning fw-bold">Pawtastic</span>
-      </a>
-
-      <!-- PERFIL CENTRADO -->
-      <div class="position-absolute top-50 start-50 translate-middle">
-        <span class="navbar-text h4 m-0 text-dark fw-bold">
-          PERFIL🐾 <i class="bi bi-paw-fill text-warning ms-1"></i><i class="bi bi-paw-fill text-warning ms-1"></i>
-        </span>
-      </div>
-
-
-      <!-- Menú derecho -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+  <nav class="navbar navbar-expand-lg navbar-dark nav-app">
+    <div class="container">
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarUsuario"
+        aria-controls="navbarUsuario" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <div id="nav-links" class="d-flex gap-2 align-items-center">
-          <!-- Los enlaces se cargarán dinámicamente aquí -->
-          <a href="#" class="btn btn-custom-nav" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion"
-            title="Salir">
-            <i class="bi bi-box-arrow-right me-1"></i>Salir
-          </a>
-        </div>
+      <a class="navbar-brand text-warning fw-bold me-3" href="../index.html">
+        <img src="../img/logo.png" alt="Logo Pawtastic" width="40" height="40" class="d-inline-block d-lg-none">
+        <span class="d-none d-lg-inline">Pawtastic</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarUsuario">
+        <ul class="navbar-nav align-items-lg-center ms-auto flex-lg-row gap-2" id="nav-links">
+          <li class="nav-item">
+            <a href="#" class="btn btn-custom-nav" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion"
+              title="Salir">
+              <i class="bi bi-box-arrow-right"></i> Salir
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
   </nav>
 
-
   <!-- CONTENIDO PRINCIPAL -->
-  <main class="container py-5">
-    <div class="card mx-auto shadow-lg" style="max-width: 600px;">
-      <div class="card-body">
-        <form id="perfil-form">
-          <!-- FOTO PERFIL -->
-          <div class="text-center mb-4">
-            <img src="../img/pdefault.jpg" alt="Foto de perfil" id='perfilfoto' class="rounded-circle"
-              style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #f7931e; cursor: pointer;"
-              title="Haz clic para cambiar tu foto">
-            <input type="file" id="foto-input" name="foto_perfil" accept="image/*" style="display: none;">
-          </div>
+  <main class="container py-5 flex-grow-1">
+    <section class="profile-hero text-center mb-4">
+      <span class="profile-kicker">Mi perfil</span>
+      <h2 class="profile-title">Completá tu información</h2>
+      <p class="profile-lead">
+        Tu perfil ayuda a las ONGs a conocer tu contexto y a encontrar la mascota ideal para vos.
+      </p>
+    </section>
 
-          <!-- INFO DEL PERFIL -->
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label for="nombre" class="form-label">Nombre</label>
-              <input type="text" class="form-control" id="nombre" name="nombre">
-            </div>
-            <div class="col-md-6">
-              <label for="apellido" class="form-label">Apellido</label>
-              <input type="text" class="form-control" id="apellido" name="apellido">
-            </div>
-            <div class="col-12">
-              <label for="telefono" class="form-label">Teléfono</label>
-              <input type="text" class="form-control" id="telefono" name="telefono">
-            </div>
-            <div class="col-md-5">
-              <label for="tipo_documento" class="form-label">Tipo de documento</label>
-              <select class="form-select" id="tipo_documento" name="tipo_documento">
-                <option value="" selected disabled>Seleccionar...</option>
-                <option value="0">DNI</option>
-                <option value="1">Pasaporte</option>
-              </select>
-              <div class="invalid-feedback">
-                Por favor, selecciona un tipo de documento.
-              </div>
-            </div>
-            <div class="col-md-7">
-              <label for="documento" class="form-label">Número de Documento</label>
-              <input type="text" class="form-control" id="documento" name="documento">
-              <div class="invalid-feedback">
-                Por favor, ingresa un número de documento válido.
-              </div>
-            </div>
-            <div class="col-12">
-              <label for="city" class="form-label">Localidad</label>
-              <input type="text" class="form-control" id="city" name="city">
-              <div class="invalid-feedback">
-                Por favor, ingresa tu localidad.
-              </div>
-            </div>
-            <div class="col-md-7">
-              <label for="road" class="form-label">Calle</label>
-              <input type="text" class="form-control" id="road" name="road">
-              <div class="invalid-feedback">
-                Por favor, ingresa el nombre de la calle.
-              </div>
-            </div>
-            <div class="col-md-2"><label for="house_number" class="form-label">Nro</label><input type="text"
-                class="form-control" id="house_number" name="house_number">
-              <div class="invalid-feedback">Nro.</div>
-            </div>
-            <div class="col-md-3"><label for="departamento" class="form-label">Depto</label><input type="text"
-                class="form-control" id="departamento" name="departamento"></div>
-            <!-- Campo oculto para suburb -->
-            <div class="col-12 text-end">
-              <button type="button" class="btn btn-outline-secondary btn-sm" id="validar-direccion-btn">Validar
-                Dirección</button>
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div class="profile-card">
+          <form id="perfil-form">
+            <div class="profile-photo-block">
+              <img src="../img/fotoJW.jpg?v=2" data-default-src="../img/fotoJW.jpg?v=2" alt="Foto de perfil"
+                id="perfilfoto" class="profile-photo" title="Haz clic para cambiar tu foto">
+              <input type="file" id="foto-input" name="foto_perfil" accept="image/*" hidden>
+              <span class="profile-photo-hint">Tocá la foto para actualizarla.</span>
             </div>
 
-            <div class="col-md-6">
-              <label for="fecha_nacimiento" class="form-label">Nacimiento</label>
-              <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento">
+            <div class="profile-stepper" role="tablist" aria-label="Secciones del perfil">
+              <button type="button" class="profile-step-btn is-active" data-step="0" role="tab"
+                aria-selected="true">Datos</button>
+              <button type="button" class="profile-step-btn" data-step="1" role="tab" aria-selected="false">Dirección</button>
+              <button type="button" class="profile-step-btn" data-step="2" role="tab" aria-selected="false">Hogar</button>
+              <button type="button" class="profile-step-btn" data-step="3" role="tab" aria-selected="false">Personalidad</button>
             </div>
-            <div class="col-md-6">
-              <label for="sexo" class="form-label">Sexo</label>
-              <select class="form-select" id="sexo" name="sexo">
-                <option value="" selected disabled>Seleccionar...</option>
-                <option value="Masculino">Masculino</option>
-                <option value="Femenino">Femenino</option>
-                <option value="Otro">Otro</option>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <label for="tipo_casa" class="form-label">Tipo de casa</label>
-              <select class="form-select" id="tipo_casa" name="tipo_casa">
-                <option value="" selected disabled>Seleccionar...</option>
-                <option value="Casa con patio">Casa con patio</option>
-                <option value="Casa sin patio">Casa sin patio</option>
-                <option value="Departamento">Departamento</option>
-                <option value="Finca/Campo">Finca/Campo</option>
-              </select>
-            </div>
-            <div class="col-12">
-              <label for="otras_mascotas" class="form-label">Otras mascotas</label>
-              <select class="form-select" id="otras_mascotas" name="otras_mascotas">
-                <option value="0" selected>No tiene</option>
-                <option value="1">Tiene perros</option>
-                <option value="2">Tiene gatos</option>
-                <option value="3">Tiene perros y gatos</option>
-                <option value="4">Tiene otras especies</option>
-              </select>
-            </div>
-            <div class="col-12">
-              <label for="experiencia" class="form-label">Experiencia</label>
-              <textarea class="form-control" id="experiencia" name="experiencia" rows="2"></textarea>
-            </div>
-          </div>
 
-          <!-- PERSONALIDAD -->
-          <hr class="my-4">
-          <hr>
-          <h5 class="text-center text-warning mb-3"><i class="bi bi-stars"></i> Personalidad</h5>
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label for="energia" class="form-label">Nivel de energía</label>
-              <select id="energia" name="energia" class="form-select">
-                <option value="0" disabled>Seleccionar...</option>
-                <option value="1">Bajo</option>
-                <option value="2">Medio</option>
-                <option value="3">Alto</option>
-              </select>
+            <div class="profile-step is-active" data-step="0">
+              <div class="profile-section">
+                <div class="profile-section-title"><i class="bi bi-person"></i>Datos personales</div>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="nombre" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="apellido" class="form-label">Apellido</label>
+                    <input type="text" class="form-control" id="apellido" name="apellido">
+                  </div>
+                  <div class="col-12">
+                    <label for="telefono" class="form-label">Teléfono</label>
+                    <input type="text" class="form-control" id="telefono" name="telefono">
+                  </div>
+                  <div class="col-md-5">
+                    <label for="tipo_documento" class="form-label">Tipo de documento</label>
+                    <select class="form-select" id="tipo_documento" name="tipo_documento">
+                      <option value="" selected disabled>Seleccionar...</option>
+                      <option value="0">DNI</option>
+                      <option value="1">Pasaporte</option>
+                    </select>
+                    <div class="invalid-feedback">
+                      Por favor, selecciona un tipo de documento.
+                    </div>
+                  </div>
+                  <div class="col-md-7">
+                    <label for="documento" class="form-label">Número de Documento</label>
+                    <input type="text" class="form-control" id="documento" name="documento">
+                    <div class="invalid-feedback">
+                      Por favor, ingresa un número de documento válido.
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="col-md-6">
-              <label for="sociabilidad" class="form-label">Sociabilidad</label>
-              <select id="sociabilidad" name="sociabilidad" class="form-select">
-                <option value="0" disabled>Seleccionar...</option>
-                <option value="1">Bajo</option>
-                <option value="2">Medio</option>
-                <option value="3">Alto</option>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <label for="presencia" class="form-label">Presencia</label>
-              <select id="presencia" name="presencia" class="form-select">
-                <option value="0" disabled>Seleccionar...</option>
-                <option value="1">Ausente</option>
-                <option value="2">Mixto</option>
-                <option value="3">Presente</option>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <label for="estilov" class="form-label">Estilo de vida</label>
-              <select id="estilov" name="estilov" class="form-select">
-                <option value="0" disabled>Seleccionar...</option>
-                <option value="1">Interior</option>
-                <option value="2">Mixto</option>
-                <option value="3">Exterior</option>
-              </select>
-            </div>
-          </div>
 
-          <!-- BOTONES -->
-          <div class="mt-4 d-flex justify-content-between" id="user-action-buttons">
-            <button type="submit" class="btn btn-dark">Actualizar</button>
-            <a href="catalogo.html" class="btn btn-outline-secondary">Cancelar</a>
+            <div class="profile-step" data-step="1">
+              <div class="profile-section">
+                <div class="profile-section-title"><i class="bi bi-geo-alt"></i>Dirección</div>
+                <div class="row g-3">
+                  <div class="col-12">
+                    <label for="city" class="form-label">Localidad</label>
+                    <input type="text" class="form-control" id="city" name="city">
+                    <div class="invalid-feedback">Por favor, ingresa tu localidad.</div>
+                  </div>
+                  <div class="col-md-7">
+                    <label for="road" class="form-label">Calle</label>
+                    <input type="text" class="form-control" id="road" name="road">
+                    <div class="invalid-feedback">Por favor, ingresa el nombre de la calle.</div>
+                  </div>
+                  <div class="col-md-2">
+                    <label for="house_number" class="form-label">Nro</label>
+                    <input type="text" class="form-control" id="house_number" name="house_number">
+                    <div class="invalid-feedback">Nro.</div>
+                  </div>
+                  <div class="col-md-3">
+                    <label for="departamento" class="form-label">Depto</label>
+                    <input type="text" class="form-control" id="departamento" name="departamento">
+                  </div>
+                  <div class="col-12 text-end">
+                    <button type="button" class="btn btn-profile-outline btn-sm" id="validar-direccion-btn">
+                      Validar dirección
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="profile-step" data-step="2">
+              <div class="profile-section">
+                <div class="profile-section-title"><i class="bi bi-house-heart"></i>Hogar y experiencia</div>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="fecha_nacimiento" class="form-label">Nacimiento</label>
+                    <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="sexo" class="form-label">Sexo</label>
+                    <select class="form-select" id="sexo" name="sexo">
+                      <option value="" selected disabled>Seleccionar...</option>
+                      <option value="Masculino">Masculino</option>
+                      <option value="Femenino">Femenino</option>
+                      <option value="Otro">Otro</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="tipo_casa" class="form-label">Tipo de casa</label>
+                    <select class="form-select" id="tipo_casa" name="tipo_casa">
+                      <option value="" selected disabled>Seleccionar...</option>
+                      <option value="Casa con patio">Casa con patio</option>
+                      <option value="Casa sin patio">Casa sin patio</option>
+                      <option value="Departamento">Departamento</option>
+                      <option value="Finca/Campo">Finca/Campo</option>
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <label for="otras_mascotas" class="form-label">Otras mascotas</label>
+                    <select class="form-select" id="otras_mascotas" name="otras_mascotas">
+                      <option value="0" selected>No tiene</option>
+                      <option value="1">Tiene perros</option>
+                      <option value="2">Tiene gatos</option>
+                      <option value="3">Tiene perros y gatos</option>
+                      <option value="4">Tiene otras especies</option>
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <label for="experiencia" class="form-label">Experiencia</label>
+                    <textarea class="form-control" id="experiencia" name="experiencia" rows="2"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="profile-step" data-step="3">
+              <div class="profile-section">
+                <div class="profile-section-title"><i class="bi bi-stars"></i>Personalidad</div>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="energia" class="form-label">Nivel de energía</label>
+                    <select id="energia" name="energia" class="form-select">
+                      <option value="0" disabled>Seleccionar...</option>
+                      <option value="1">Bajo</option>
+                      <option value="2">Medio</option>
+                      <option value="3">Alto</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="sociabilidad" class="form-label">Sociabilidad</label>
+                    <select id="sociabilidad" name="sociabilidad" class="form-select">
+                      <option value="0" disabled>Seleccionar...</option>
+                      <option value="1">Bajo</option>
+                      <option value="2">Medio</option>
+                      <option value="3">Alto</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="presencia" class="form-label">Presencia</label>
+                    <select id="presencia" name="presencia" class="form-select">
+                      <option value="0" disabled>Seleccionar...</option>
+                      <option value="1">Ausente</option>
+                      <option value="2">Mixto</option>
+                      <option value="3">Presente</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="estilov" class="form-label">Estilo de vida</label>
+                    <select id="estilov" name="estilov" class="form-select">
+                      <option value="0" disabled>Seleccionar...</option>
+                      <option value="1">Interior</option>
+                      <option value="2">Mixto</option>
+                      <option value="3">Exterior</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="profile-pagination">
+              <button type="button" class="btn btn-profile-outline" id="profilePrev">
+                <i class="bi bi-arrow-left"></i> Anterior
+              </button>
+              <span class="profile-page-info" id="profilePageInfo">Paso 1 de 4</span>
+              <button type="button" class="btn btn-profile-outline" id="profileNext">
+                Siguiente <i class="bi bi-arrow-right"></i>
+              </button>
+            </div>
+
+            <div class="profile-actions" id="user-action-buttons">
+              <button type="submit" class="btn btn-profile-primary">Actualizar</button>
+              <a href="catalogo.html" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <aside class="profile-sidebar">
+          <div class="profile-side-card">
+            <div class="profile-side-header">
+              <h5>Estado del perfil</h5>
+              <span class="profile-progress-text" id="profileProgressText">0% completo</span>
+            </div>
+            <div class="profile-progress">
+              <div class="profile-progress-bar" id="profileProgressBar"></div>
+            </div>
+            <ul class="profile-checklist">
+              <li class="profile-check-item" data-section="personal">
+                <span>Datos personales</span>
+                <span class="profile-check-status">Pendiente</span>
+              </li>
+              <li class="profile-check-item" data-section="direccion">
+                <span>Dirección</span>
+                <span class="profile-check-status">Pendiente</span>
+              </li>
+              <li class="profile-check-item" data-section="hogar">
+                <span>Hogar y experiencia</span>
+                <span class="profile-check-status">Pendiente</span>
+              </li>
+              <li class="profile-check-item" data-section="personalidad">
+                <span>Personalidad</span>
+                <span class="profile-check-status">Pendiente</span>
+              </li>
+            </ul>
+            <div class="profile-side-tip">
+              <i class="bi bi-lightbulb"></i>
+              Completá los campos clave para recibir mejores recomendaciones.
+            </div>
           </div>
-        </form>
+        </aside>
       </div>
     </div>
   </main>
+
   <!-- MODAL DE CONFIRMACIÓN DE CIERRE DE SESIÓN -->
   <div class="modal fade" id="modalCerrarSesion" tabindex="-1" aria-labelledby="modalCerrarSesionLabel"
     aria-hidden="true">
@@ -234,88 +311,72 @@
   </div>
 
   <!-- FOOTER -->
-  <footer class="bg-footer text-dark pt-4 pb-3 mt-5">
-    <div class="container text-center text-md-start">
-      <div class="row">
-        <div class="col-md-4 mb-3 text-center">
-          <h5 class="fw-bold mt-2">Pawtastic</h5>
-          <p class="small">Conectamos corazones con patas. Gracias por elegir adoptar.</p>
-          <a href="/index.html">
-            <img src="/img/logo.png" alt="Logo Pawtastic" style="max-width: 100px; border-radius: 40%;">
-          </a>
-        </div>
-        <div class="col-md-4 mb-3 d-flex flex-column align-items-center">
-          <h5 class="fw-bold text-center">Navegación</h5>
-          <ul class="list-unstyled text-center">
-            <li><a href="https://interfacessistemas3.my.canva.site/manual-de-usuario-pawtastic"
-                class="text-dark text-decoration-none" target="_blank" rel="noopener noreferrer">Manual de Usuario</a>
-            </li>
-            <li><a href="https://drive.google.com/drive/folders/1UiabMGZbGNRz8LPfdU74eroOOLEoH8Xb?usp=sharing"
-                class="text-dark text-decoration-none" target="_blank" rel="noopener noreferrer">Documentación del
-                Proyecto</a></li>
-          </ul>
-        </div>
-        <div class="col-md-4 mb-3 fs-5 text-center text-md-start">
-          <h5 class="fw-bold">Seguinos</h5>
-          <a href="https://www.facebook.com/profile.php?id=61581919419192" class="text-dark me-3"><i
-              class="bi bi-facebook" style="font-size: 2.5rem;"></i></a>
-          <a href="https://www.instagram.com/pawtasticarg/" class="text-dark me-3"><i class="bi bi-instagram"
-              style="font-size: 2.5rem;"></i></a>
-          <a href="https://x.com/PawtasticArg" class="text-dark"><i class="bi bi-x-circle-fill"
-              style="font-size: 2.5rem;"></i></a>
-        </div>
-      </div>
-      <hr class="border-dark">
-      <div class="text-center">
-        <small>&copy; 2025 Pawtastic. Todos los derechos reservados.</small>
-        <br>
-        <a href="/pages/terminosYcondiciones.html" class="text-dark text-decoration-underline small">Términos y
-          Condiciones</a> |
-        <a href="/pages/politicaDeCookies.html" class="text-dark text-decoration-underline small">Política de
-          Cookies</a>
-      </div>
+  <footer class="login-footer">
+    <div class="container text-center">
+      <a href="./terminosYcondiciones.html">Términos</a>
+      <span class="footer-divider">|</span>
+      <a href="./politicaDeCookies.html">Cookies</a>
     </div>
   </footer>
-
-  <script>
-    document.getElementById("confirmarSalir").addEventListener("click", function () {
-      localStorage.removeItem("token");
-      localStorage.removeItem("tipo");
-      window.location.href = "/index.html";
-    });
-  </script>
-  <script>
-    // Lógica para el botón de salir y el enlace de perfil dinámico
-    document.addEventListener('DOMContentLoaded', () => {
-      const tipoUsuario = localStorage.getItem('tipo');
-      const navLinksContainer = document.getElementById('nav-links');
-      const salirButton = navLinksContainer.querySelector('.btn-custom-nav');
-
-      let linksHTML = '';
-
-      if (tipoUsuario === 'ong') {
-        linksHTML = `
-          <a href="perfil-ong.html" class="btn btn-outline-dark">Inicio</a>
-          <a href="mis-mascotas.html" class="btn btn-outline-dark">Mis Mascotas</a>
-          <a href="ver-reportes.html" class="btn btn-outline-dark">Estadisticas</a>
-        `;
-      } else { // 'usuario' o cualquier otro caso
-        linksHTML = `
-          <a href="catalogo.html" class="btn btn-outline-dark">Catálogo</a>
-          <a href="postulaciones.html" class="btn btn-outline-dark">Mis postulaciones</a>
-        `;
-      }
-
-      // Insertar los enlaces antes del botón de salir
-      salirButton.insertAdjacentHTML('beforebegin', linksHTML);
-    });
-  </script>
-
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../js/toast.js"></script>
   <script src="../js/usuario.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('token');
+      const tipoUsuario = localStorage.getItem('tipo');
+      const navLinksContainer = document.getElementById('nav-links');
+      const salirButton = navLinksContainer
+        ? navLinksContainer.querySelector('[data-bs-target="#modalCerrarSesion"]')
+        : null;
+      const salirItem = salirButton ? salirButton.closest('li') : null;
+      let linksHTML = '';
 
+      if (!token) {
+        linksHTML = `
+          <li class="nav-item"><a href="login.html" class="btn btn-custom-nav">Ingresar</a></li>
+          <li class="nav-item"><a href="registro.html" class="btn btn-custom-nav">Registrarme</a></li>
+        `;
+        if (salirItem) {
+          salirItem.remove();
+        }
+      } else if (tipoUsuario === 'ong') {
+        linksHTML = `
+          <li class="nav-item"><a href="perfil-ong.html" class="btn btn-custom-nav">Inicio</a></li>
+          <li class="nav-item"><a href="mis-mascotas.html" class="btn btn-custom-nav">Mis Mascotas</a></li>
+          <li class="nav-item"><a href="postulaciones.html" class="btn btn-custom-nav">Postulaciones</a></li>
+        `;
+      } else if (tipoUsuario === 'admin') {
+        linksHTML = `
+          <li class="nav-item"><a href="perfil-admin.html" class="btn btn-custom-nav">Panel</a></li>
+        `;
+      } else {
+        linksHTML = `
+          <li class="nav-item"><a href="perfil-usuario.html" class="btn btn-custom-nav">Inicio</a></li>
+          <li class="nav-item"><a href="catalogo.html" class="btn btn-custom-nav">Catálogo</a></li>
+          <li class="nav-item"><a href="postulaciones.html" class="btn btn-custom-nav">Mis postulaciones</a></li>
+        `;
+      }
+
+      if (navLinksContainer) {
+        if (salirItem) {
+          salirItem.insertAdjacentHTML('beforebegin', linksHTML);
+        } else {
+          navLinksContainer.insertAdjacentHTML('afterbegin', linksHTML);
+        }
+      }
+
+      const confirmarSalir = document.getElementById("confirmarSalir");
+      if (confirmarSalir) {
+        confirmarSalir.addEventListener("click", () => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("tipo");
+          window.location.href = "/index.html";
+        });
+      }
+    });
+  </script>
 </body>
 
 </html>

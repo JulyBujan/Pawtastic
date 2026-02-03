@@ -79,6 +79,38 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  const updateLabelsForUsuario = () => {
+    if (tipoUsuario !== "usuario") {
+      return;
+    }
+    const summaryLabel = document
+      .getElementById("statAprobadas")
+      ?.closest(".summary-card")
+      ?.querySelector(".summary-label");
+    if (summaryLabel) {
+      summaryLabel.textContent = "Adoptadas";
+    }
+
+    const optionAprobada = document.querySelector('#postulacionesStatus option[value="aprobada"]');
+    if (optionAprobada) {
+      optionAprobada.textContent = "Adoptada";
+    }
+
+    const tabAprobadas = document.querySelector('[data-section-tab="aprobadas"]');
+    if (tabAprobadas) {
+      tabAprobadas.textContent = "Adoptadas";
+    }
+
+    const sectionTitle = document.querySelector(
+      '[data-section="aprobadas"] .postulaciones-section-title'
+    );
+    if (sectionTitle) {
+      sectionTitle.textContent = "Adoptadas";
+    }
+  };
+
+  updateLabelsForUsuario();
+
   const fetchPostulaciones = async () => {
     try {
       const response = await fetch("/api/postulaciones.php", {
@@ -180,10 +212,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
       tablaHTML += `<tr class="postulacion-row${isPendiente ? " postulacion-row--pending" : ""}">`;
       if (tipoUsuario === "ong") {
-        tablaHTML += `<td data-label="Mascota"><a href="gestionar-mascota.html?id=${p.mascota_id}">${p.mascota_nombre}</a></td>
+        tablaHTML += `<td data-label="Mascota">
+                        <div class="postulacion-pet">
+                          <a href="detalle-mascota.html?id=${p.mascota_id}">${p.mascota_nombre}</a>
+                          <a href="detalle-mascota.html?id=${p.mascota_id}" class="btn btn-action btn-action-outline">Ver perfil</a>
+                        </div>
+                      </td>
                               <td data-label="Postulante"><a href="usuario.html?id=${p.usuario_id}">${p.usuario_nombre} ${p.usuario_apellido}</a></td>`;
       } else {
-        tablaHTML += `<td data-label="Mascota"><a href="detalle-mascota.html?id=${p.mascota_id}">${p.mascota_nombre}</a></td>
+        tablaHTML += `<td data-label="Mascota">
+                        <div class="postulacion-pet">
+                          <a href="detalle-mascota.html?id=${p.mascota_id}">${p.mascota_nombre}</a>
+                          <a href="detalle-mascota.html?id=${p.mascota_id}" class="btn btn-action btn-action-outline">Ver perfil</a>
+                        </div>
+                      </td>
                               <td data-label="ONG Responsable">${p.ong_nombre}</td>`;
       }
 
@@ -280,8 +322,14 @@ document.addEventListener("DOMContentLoaded", () => {
         : `<button class="btn btn-action btn-action-warning" disabled><i class="bi bi-clock"></i>Cancelar</button>`;
 
       const headerLeft = tipoUsuario === "ong"
-        ? `<a href="gestionar-mascota.html?id=${p.mascota_id}">${p.mascota_nombre}</a>`
-        : `<a href="detalle-mascota.html?id=${p.mascota_id}">${p.mascota_nombre}</a>`;
+        ? `<div class="postulacion-pet">
+             <a href="detalle-mascota.html?id=${p.mascota_id}">${p.mascota_nombre}</a>
+             <a href="detalle-mascota.html?id=${p.mascota_id}" class="btn btn-action btn-action-outline">Ver perfil</a>
+           </div>`
+        : `<div class="postulacion-pet">
+             <a href="detalle-mascota.html?id=${p.mascota_id}">${p.mascota_nombre}</a>
+             <a href="detalle-mascota.html?id=${p.mascota_id}" class="btn btn-action btn-action-outline">Ver perfil</a>
+           </div>`;
       const headerRight = tipoUsuario === "ong"
         ? `<span class="text-muted">Postulante: <a href="usuario.html?id=${p.usuario_id}">${p.usuario_nombre} ${p.usuario_apellido}</a></span>`
         : `<span class="text-muted">ONG: ${p.ong_nombre}</span>`;
@@ -485,6 +533,7 @@ document.addEventListener("DOMContentLoaded", () => {
       case 0:
         return {
           texto: "Pendiente",
+          filtro: "pendiente",
           clase: "bg-warning text-dark",
           emoji: "⏳",
           indicator: "pending",
@@ -492,7 +541,8 @@ document.addEventListener("DOMContentLoaded", () => {
         };
       case 1:
         return {
-          texto: "Aprobada",
+          texto: tipoUsuario === "usuario" ? "Adoptada" : "Aprobada",
+          filtro: "aprobada",
           clase: "bg-success",
           emoji: "✅",
           indicator: "approved",
@@ -501,6 +551,7 @@ document.addEventListener("DOMContentLoaded", () => {
       case 2:
         return {
           texto: "Rechazada",
+          filtro: "rechazada",
           clase: "bg-danger",
           emoji: "❌",
           indicator: "rejected",
@@ -509,6 +560,7 @@ document.addEventListener("DOMContentLoaded", () => {
       default:
         return {
           texto: "Desconocido",
+          filtro: "desconocido",
           clase: "bg-secondary",
           emoji: "❓",
           indicator: "unknown",
@@ -580,7 +632,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const query = normalizeText(searchInput?.value);
     const status = statusFilter ? statusFilter.value : "";
     const filtered = allPostulaciones.filter((p) => {
-      const estado = getEstadoTexto(p.estado).texto.toLowerCase();
+      const estadoObj = getEstadoTexto(p.estado);
+      const estado = (estadoObj.filtro || estadoObj.texto).toLowerCase();
       const matchesStatus = !status || estado === status;
 
       const nombreMascota = normalizeText(p.mascota_nombre);
