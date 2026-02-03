@@ -16,7 +16,7 @@ if (!is_array($payload) || empty($payload)) {
     exit;
 }
 
-$mlUrl = "https://mlapi.pawtastic.pet/predict";
+$mlUrl = getenv('ML_API_URL') ?: "http://mlapi:8000/predict";
 // Evitar que warnings de red rompan la respuesta JSON.
 $previousHandler = set_error_handler(function () {
     return true;

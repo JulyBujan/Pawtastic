@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const catalogPrev = document.getElementById('catalogPrev');
     const catalogNext = document.getElementById('catalogNext');
     const catalogPageInfo = document.getElementById('catalogPageInfo');
+    const catalogModeNotice = document.getElementById('catalogModeNotice');
+    const matchFilters = document.getElementById('matchFilters');
+    const matchFilterButtons = matchFilters ? Array.from(matchFilters.querySelectorAll('button[data-range]')) : [];
     const pageSize = 9;
     const urlParams = new URLSearchParams(window.location.search);
     let initialPage = parseInt(urlParams.get('page'), 10);
@@ -14,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentPage = 1;
     let currentMascotas = [];
     let currentMode = { compatibilidad: false, cercania: false };
+    let matchRange = null;
     const userType = localStorage.getItem('tipo');
     const isUser = Boolean(localStorage.getItem('token')) && userType === 'usuario';
 
@@ -289,13 +293,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const updatePagination = () => {
+    const updatePagination = (totalItems = currentMascotas.length) => {
         if (!catalogPagination || !catalogPrev || !catalogNext || !catalogPageInfo) {
             return;
         }
-        const totalPages = Math.max(1, Math.ceil(currentMascotas.length / pageSize));
+        const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
         if (currentPage > totalPages) currentPage = totalPages;
-        const showPagination = currentMascotas.length > pageSize;
+        const showPagination = totalItems > pageSize;
         catalogPagination.classList.toggle('d-none', !showPagination);
         catalogPrev.disabled = currentPage <= 1;
         catalogNext.disabled = currentPage >= totalPages;
@@ -303,10 +307,91 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderPage = () => {
+        const visibleMascotas = getVisibleMascotas();
+        const totalPages = Math.max(1, Math.ceil(visibleMascotas.length / pageSize));
+        if (currentPage > totalPages) currentPage = totalPages;
         const start = (currentPage - 1) * pageSize;
-        const pageItems = currentMascotas.slice(start, start + pageSize);
+        const pageItems = visibleMascotas.slice(start, start + pageSize);
         renderizarMascotas(pageItems, currentMode.compatibilidad, currentMode.cercania);
-        updatePagination();
+        updateModeNotice();
+        updatePagination(visibleMascotas.length);
+    };
+
+    const getVisibleMascotas = () => {
+        if (!currentMode.compatibilidad || !matchRange) {
+            return currentMascotas;
+        }
+
+        return currentMascotas.filter((mascota) => {
+            const value = parseInt(mascota.compatibilidad, 10);
+            if (!Number.isFinite(value)) {
+                return false;
+            }
+            return value >= matchRange.min && value <= matchRange.max;
+        });
+    };
+
+    const setMatchRange = (rangeValue) => {
+        if (!rangeValue) {
+            matchRange = null;
+            matchFilterButtons.forEach((btn) => btn.classList.remove('is-active'));
+            return;
+        }
+
+        if (matchRange && matchRange.key === rangeValue) {
+            matchRange = null;
+            matchFilterButtons.forEach((btn) => btn.classList.remove('is-active'));
+            return;
+        }
+
+        const [min, max] = rangeValue.split('-').map((num) => parseInt(num, 10));
+        matchRange = {
+            key: rangeValue,
+            min: Number.isFinite(min) ? min : 0,
+            max: Number.isFinite(max) ? max : 100
+        };
+        matchFilterButtons.forEach((btn) => {
+            btn.classList.toggle('is-active', btn.dataset.range === rangeValue);
+        });
+    };
+
+    const updateModeNotice = () => {
+        if (!catalogModeNotice) return;
+
+        if (currentMode.compatibilidad) {
+            catalogModeNotice.classList.remove('d-none');
+            catalogModeNotice.innerHTML = `
+              <span class="catalog-mode__badge catalog-mode__badge--match">
+                <i class="bi bi-heart-fill"></i> Match activo
+              </span>
+              <span>Ordenado por compatibilidad (de mayor a menor).</span>
+              <span class="catalog-mode__note">Recomendaciones generadas por modelo predictivo.</span>
+            `;
+            if (matchFilters) {
+                matchFilters.classList.remove('d-none');
+            }
+            return;
+        }
+
+        if (currentMode.cercania) {
+            catalogModeNotice.classList.remove('d-none');
+            catalogModeNotice.innerHTML = `
+              <span class="catalog-mode__badge catalog-mode__badge--distance">
+                <i class="bi bi-geo-alt-fill"></i> Cercanía activa
+              </span>
+              <span>Ordenado por distancia (más cercanas primero).</span>
+            `;
+            if (matchFilters) {
+                matchFilters.classList.add('d-none');
+            }
+            return;
+        }
+
+        catalogModeNotice.classList.add('d-none');
+        catalogModeNotice.innerHTML = '';
+        if (matchFilters) {
+            matchFilters.classList.add('d-none');
+        }
     };
 
     /**
@@ -339,6 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentMascotas = Array.isArray(data) ? data : [];
             currentMode = { compatibilidad: true, cercania: false };
             currentPage = 1;
+            setMatchRange(null);
             renderPage();
             resetearFiltros(); // Reiniciamos los filtros visualmente
 
@@ -383,6 +469,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentMascotas = Array.isArray(data) ? data : [];
             currentMode = { compatibilidad: false, cercania: true };
             currentPage = 1;
+            setMatchRange(null);
             renderPage();
             resetearFiltros(); // Reiniciamos los filtros visualmente
 
@@ -420,6 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const mascotas = await response.json();
             currentMascotas = Array.isArray(mascotas) ? mascotas : [];
             currentMode = { compatibilidad: false, cercania: false };
+            setMatchRange(null);
             if (hasInitialPage) {
                 currentPage = initialPage;
                 hasInitialPage = false;
@@ -452,6 +540,14 @@ document.addEventListener('DOMContentLoaded', () => {
     clearFiltersButton?.addEventListener('click', () => {
         resetearFiltros();
         cargarMascotasDefault();
+    });
+
+    matchFilters?.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-range]');
+        if (!button) return;
+        setMatchRange(button.dataset.range);
+        currentPage = 1;
+        renderPage();
     });
 
     // Carga inicial de mascotas

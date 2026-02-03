@@ -639,16 +639,24 @@ async function estimarAdopcion(mascota) {
     document.body.insertAdjacentHTML('beforeend', `
       <div class="modal fade" id="${modalElementId}" tabindex="-1" aria-labelledby="predictionModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered prediction-modal">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="predictionModalLabel">Estimación de Adopción</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <div class="modal-content prediction-modal__content">
+            <div class="modal-header prediction-modal__header">
+              <div class="prediction-header">
+                <div class="prediction-header__main">
+                  <span class="prediction-signal" aria-hidden="true"></span>
+                  <h5 class="modal-title" id="predictionModalLabel">Estimación de adopción</h5>
+                </div>
+                <div class="prediction-header__right">
+                  <div class="prediction-header__meta" id="predictionHeaderMeta"></div>
+                  <button type="button" class="btn-close prediction-modal__close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+              </div>
             </div>
             <div class="modal-body" id="predictionModalBody">
               <p>Cargando estimación...</p>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              <button type="button" class="btn btn-secondary prediction-modal__cta" data-bs-dismiss="modal">Cerrar</button>
             </div>
           </div>
         </div>
@@ -658,9 +666,29 @@ async function estimarAdopcion(mascota) {
   }
 
   const modalBody = document.getElementById('predictionModalBody');
+  const modalLabel = document.getElementById('predictionModalLabel');
+  const modalHeaderMeta = document.getElementById('predictionHeaderMeta');
   const predictionModal = new bootstrap.Modal(modalElement);
+  const explainId = `${modalElementId}-explain`;
 
-  modalBody.innerHTML = '<div class="d-flex justify-content-center align-items-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div><strong class="ms-3">Calculando...</strong></div>';
+  if (modalLabel) {
+    modalLabel.textContent = 'Estimación de adopción';
+  }
+  if (modalHeaderMeta) {
+    modalHeaderMeta.textContent = '';
+  }
+
+  modalBody.innerHTML = `
+    <div class="prediction-loading">
+      <div class="prediction-loader" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+      <div>
+        <p class="prediction-loading__title">Analizando datos</p>
+        <p class="prediction-loading__subtitle">Conectando con el motor ML...</p>
+      </div>
+    </div>
+  `;
   predictionModal.show();
 
   const animaltype = mascota.tipo.toLowerCase() === 'perro' ? 1 : 0;
@@ -706,6 +734,27 @@ async function estimarAdopcion(mascota) {
     color
   };
 
+  const formatPercentage = (value) => {
+    if (value === null || value === undefined) {
+      return null;
+    }
+
+    let numeric = value;
+    if (typeof numeric === 'string') {
+      numeric = parseFloat(numeric.replace('%', '').trim());
+    }
+
+    if (Number.isNaN(numeric)) {
+      return null;
+    }
+
+    if (numeric <= 1) {
+      numeric = numeric * 100;
+    }
+
+    return Math.round(numeric);
+  };
+
   try {
     const response = await fetch('../api/predict.php', {
       method: 'POST',
@@ -732,45 +781,88 @@ async function estimarAdopcion(mascota) {
 
     let probabilidadesHTML = '';
     if (prediction.probabilidades_temporales) {
-      probabilidadesHTML += '<li class="list-group-item"><h6 class="mb-1 mt-2 text-center">Probabilidades Temporales</h6></li>';
+      probabilidadesHTML += '<div class="prediction-section-title">Probabilidades de adopción por ventana</div>';
       for (const key in prediction.probabilidades_temporales) {
         const label = key.replace(/_/g, ' ').replace('adopcion en menos de ', '').replace(' dias', ' días');
         const formattedLabel = label.charAt(0).toUpperCase() + label.slice(1);
+        const labelText = `Probabilidad de adopción antes de ${formattedLabel}:`;
+        const percentValue = formatPercentage(prediction.probabilidades_temporales[key]);
+        const displayValue = percentValue !== null ? `${percentValue}%` : prediction.probabilidades_temporales[key];
+        const widthValue = percentValue !== null ? `${Math.min(percentValue, 100)}%` : '0%';
 
         probabilidadesHTML += `
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            ${formattedLabel}: <span class="badge bg-secondary rounded-pill">${prediction.probabilidades_temporales[key]}</span>
-          </li>`;
+          <div class="prediction-prob-row">
+            <span class="prediction-prob-label">${labelText}</span>
+            <div class="prediction-bar" role="img" aria-label="${labelText} ${displayValue}">
+              <span style="width: ${widthValue};"></span>
+            </div>
+            <span class="prediction-percent">${displayValue}</span>
+          </div>
+        `;
       }
     }
 
+    if (modalLabel) {
+      modalLabel.textContent = `Estimación para ${mascota.nombre}`;
+    }
+    if (modalHeaderMeta) {
+      modalHeaderMeta.innerHTML = '';
+      const metaLabel = document.createElement('span');
+      metaLabel.className = 'prediction-header__label';
+      metaLabel.textContent = 'Días estimados hasta adopción';
+      const metaValue = document.createElement('span');
+      metaValue.className = 'prediction-header__value';
+      metaValue.textContent = `${diasRestantes}`;
+      modalHeaderMeta.append(metaLabel, metaValue);
+    }
+
     modalBody.innerHTML = `
-      <h6 class="card-title text-center mb-3">Resultados para: <strong>${mascota.nombre}</strong></h6>
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          Días estimados restantes:
-          <span class="badge bg-primary rounded-pill fs-6">${diasRestantes}</span>
-        </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          Rango de adopción:
-          <span class="badge bg-info text-dark rounded-pill">${prediction.rango_estimado}</span>
-        </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          Confianza del modelo:
-          <span class="badge bg-success rounded-pill">${prediction.confianza_modelo}</span>
-        </li>
-        <li class="list-group-item">
-          <small class="text-muted">
-            La estimación original fue de ${prediction.dias_estimados} días. Han pasado ${diasPasados} día(s) desde su publicación.
-          </small>
-        </li>
-        ${probabilidadesHTML}
-      </ul>
-      <div class="bg-light border rounded-3 p-3 mt-3">
-        <small><i class="bi bi-info-circle-fill"></i> Esta es una estimación basada en un modelo de Machine Learning y no garantiza el tiempo real de adopción.</small>
+      <div class="prediction-metrics">
+        <div class="prediction-metric">
+          <span class="prediction-metric__label">Período estimado de adopción</span>
+          <span class="prediction-metric__value">${prediction.rango_estimado}</span>
+        </div>
+        <div class="prediction-metric">
+          <span class="prediction-metric__label">Seguridad de la estimación</span>
+          <span class="prediction-metric__value">${prediction.confianza_modelo}</span>
+        </div>
+        <div class="prediction-metric">
+          <span class="prediction-metric__label">Días desde publicación</span>
+          <span class="prediction-metric__value">${diasPasados}</span>
+        </div>
+      </div>
+
+      <button class="prediction-explain-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#${explainId}" aria-expanded="false" aria-controls="${explainId}">
+        <i class="bi bi-question-circle-fill"></i>
+        ¿Cómo se calcula?
+      </button>
+      <div class="collapse prediction-explain" id="${explainId}">
+        <div class="prediction-explain__body">
+          <p>La estimación usa patrones aprendidos del conjunto de entrenamiento del modelo, comparando atributos básicos de la mascota.</p>
+          <ul>
+            <li>Tipo de animal (perro/gato)</li>
+            <li>Sexo</li>
+            <li>Tamaño</li>
+            <li>Raza</li>
+            <li>Color</li>
+          </ul>
+          <p>El resultado es una guía aproximada y puede variar en la práctica.</p>
+        </div>
+      </div>
+
+      ${probabilidadesHTML}
+
+      <div class="prediction-note">
+        <i class="bi bi-info-circle-fill"></i>
+        Estimación orientativa: no garantiza el resultado real.
       </div>
     `;
   } catch (error) {
-    modalBody.innerHTML = `<p class="text-danger">${error.message}</p>`;
+    modalBody.innerHTML = `
+      <div class="prediction-error">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        ${error.message}
+      </div>
+    `;
   }
 }

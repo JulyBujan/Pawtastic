@@ -126,6 +126,16 @@
       </form>
     </section>
 
+    <div class="catalog-mode d-none" id="catalogModeNotice" aria-live="polite"></div>
+    <div class="catalog-match-filters d-none" id="matchFilters" aria-label="Rangos de compatibilidad">
+      <span class="match-filters-label">Filtrar por compatibilidad:</span>
+      <button type="button" class="match-filter-chip" data-range="80-100">100–80%</button>
+      <button type="button" class="match-filter-chip" data-range="60-79">79–60%</button>
+      <button type="button" class="match-filter-chip" data-range="40-59">59–40%</button>
+      <button type="button" class="match-filter-chip" data-range="20-39">39–20%</button>
+      <button type="button" class="match-filter-chip" data-range="0-19">&lt;20%</button>
+    </div>
+
     <div class="row g-4" id="mascotas-container">
       <!-- Las mascotas se cargarán aquí dinámicamente -->
     </div>
