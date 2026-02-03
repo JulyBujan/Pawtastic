@@ -9,7 +9,7 @@ $tamano = isset($_GET['tamano']) ? $_GET['tamano'] : '';
 
 // Construir la consulta SQL base, incluyendo el filtro por estado
 // Solo se muestran mascotas activas/publicadas (estado = 1)
-$query = "SELECT id, nombre, tipo, edad, sexo, tamaño, descripcion, imagen FROM mascotas WHERE estado = 1";
+$query = "SELECT id, nombre, tipo, edad, sexo, tamaño, descripcion, imagen, vacunado, esterilizado, apto_ninos FROM mascotas WHERE estado = 1";
 
 $params = [];
 $types = "";

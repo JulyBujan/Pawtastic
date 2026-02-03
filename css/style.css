@@ -1393,7 +1393,7 @@ div.card:has(#form-title) {
   --card-shadow: 0 18px 45px rgba(27, 36, 54, 0.12);
   background: var(--catalog-bg);
   color: #1b2436;
-  font-family: "Manrope", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .catalogo-body h1,
@@ -1402,7 +1402,7 @@ div.card:has(#form-title) {
 .catalogo-body h4,
 .catalogo-body h5,
 .catalogo-body h6 {
-  font-family: "Space Grotesk", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .catalogo-body .catalog-hero {
@@ -1543,10 +1543,28 @@ div.card:has(#form-title) {
   border-radius: 18px;
   background: var(--card-surface);
   box-shadow: var(--card-shadow);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.catalogo-body .pet-card .card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+  text-align: center;
+}
+
+.catalogo-body .pet-card h5 {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1.25rem;
+  margin-bottom: 0.4rem;
 }
 
 .catalogo-body .pet-actions {
   text-align: center;
+  margin-top: auto;
 }
 
 .catalogo-body .pet-actions .btn {
@@ -1567,30 +1585,37 @@ div.card:has(#form-title) {
 }
 
 .catalogo-body .pet-summary {
-  margin-top: 0.6rem;
+  margin-top: 0;
   line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  min-height: 4.2em;
+  display: block;
+  overflow: visible;
+  min-height: 0;
+  margin-bottom: 0.75rem !important;
 }
 
 .catalogo-body .pet-meta {
   justify-content: center;
   text-align: center;
+  min-height: 0;
+  gap: 1rem;
+  margin-bottom: 0.75rem !important;
 }
 
 .catalogo-body .pet-meta span {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.25rem 0.7rem;
-  border-radius: 999px;
-  background: rgba(26, 148, 196, 0.1);
-  border: 1px solid rgba(26, 148, 196, 0.3);
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
   font-weight: 600;
-  font-size: 0.78rem;
+  font-size: 0.85rem;
+  color: #5a6b7a;
+}
+
+.catalogo-body .pet-meta .pet-meta-empty {
+  visibility: hidden;
 }
 
 @media (max-width: 768px) {
@@ -4463,7 +4488,7 @@ div.card:has(#form-title) {
   --user-accent-dark: #135c47;
   --user-soft: #eef7f3;
   --user-ink: #1b2436;
-  background: radial-gradient(circle at top, #f5faf7 0%, #e4f0ea 45%, #d8e8e0 100%);
+  background: radial-gradient(circle at top, #e3efe8 0%, #c6d8cf 45%, #b5c7be 100%);
   color: var(--user-ink);
   font-family: "Manrope", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -4483,9 +4508,10 @@ div.card:has(#form-title) {
 }
 
 .user-card {
-  background: #ffffff;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdfc 100%);
   border-radius: 28px;
-  box-shadow: 0 28px 60px rgba(27, 36, 54, 0.18);
+  border: 1px solid rgba(17, 24, 39, 0.18);
+  box-shadow: 0 30px 70px rgba(27, 36, 54, 0.28);
   padding: 2.5rem;
   width: min(980px, 100%);
   position: relative;
@@ -4499,7 +4525,7 @@ div.card:has(#form-title) {
   height: 280px;
   right: -140px;
   top: -140px;
-  background: radial-gradient(circle, rgba(31, 125, 98, 0.18), rgba(31, 125, 98, 0));
+  background: radial-gradient(circle, rgba(31, 125, 98, 0.32), rgba(31, 125, 98, 0));
   pointer-events: none;
 }
 
@@ -4510,7 +4536,9 @@ div.card:has(#form-title) {
 }
 
 .user-banner {
-  background: linear-gradient(120deg, #fef7ec 0%, #eef9f4 100%);
+  background: linear-gradient(120deg, rgba(255, 239, 214, 0.98) 0%, rgba(214, 241, 230, 0.98) 100%);
+  border: 1px solid rgba(31, 125, 98, 0.3);
+  box-shadow: 0 18px 36px rgba(27, 36, 54, 0.16);
   border-radius: 18px;
   padding: 1.5rem;
   display: flex;
@@ -4519,7 +4547,6 @@ div.card:has(#form-title) {
   justify-content: center;
   gap: 0.6rem;
   text-align: center;
-  box-shadow: inset 0 0 0 1px rgba(27, 36, 54, 0.05);
   margin-bottom: 1.5rem;
 }
 
@@ -4599,6 +4626,11 @@ div.card:has(#form-title) {
   align-items: center;
   gap: 0.6rem;
   margin-bottom: 1.5rem;
+  background: linear-gradient(180deg, #ffffff 0%, #f2f6f4 100%);
+  border-radius: 18px;
+  padding: 1.2rem;
+  border: 1px solid rgba(27, 36, 54, 0.16);
+  box-shadow: 0 16px 34px rgba(27, 36, 54, 0.16);
 }
 
 .user-resources-title {
@@ -4617,8 +4649,8 @@ div.card:has(#form-title) {
 }
 
 .btn-user-chip {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(247, 147, 30, 0.5);
+  background: #ffffff;
+  border: 1px solid rgba(247, 147, 30, 0.9);
   border-radius: 999px;
   color: var(--user-ink);
   font-weight: 600;
@@ -4693,11 +4725,21 @@ div.card:has(#form-title) {
 }
 
 .user-stat-card {
-  background: var(--user-soft);
+  background: linear-gradient(180deg, #ffffff 0%, #f1f6f3 100%);
   border-radius: 18px;
   padding: 1.5rem;
-  border: 1px solid rgba(27, 36, 54, 0.08);
-  box-shadow: 0 16px 30px rgba(27, 36, 54, 0.12);
+  border: 1px solid rgba(27, 36, 54, 0.2);
+  box-shadow: 0 18px 34px rgba(27, 36, 54, 0.18);
+  position: relative;
+}
+
+.user-stat-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-top: 4px solid rgba(31, 125, 98, 0.75);
+  border-radius: 18px;
+  pointer-events: none;
 }
 
 .user-dashboard .stat-number {
@@ -4715,10 +4757,11 @@ div.card:has(#form-title) {
 }
 
 .user-activity {
-  background: #f7f4ee;
+  background: linear-gradient(180deg, #ffffff 0%, #f9f1e6 100%);
   border-radius: 18px;
   padding: 1.25rem 1.5rem;
-  border: 1px solid rgba(27, 36, 54, 0.08);
+  border: 1px solid rgba(27, 36, 54, 0.18);
+  box-shadow: 0 18px 34px rgba(27, 36, 54, 0.16);
 }
 
 .user-activity h5 {

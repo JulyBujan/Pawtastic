@@ -44,6 +44,22 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {boolean} porCompatibilidad - Flag para saber si se debe mostrar la compatibilidad.
      * @param {boolean} porCercania - Flag para saber si se debe mostrar la distancia.
      */
+    const formatEdad = (mesesTotal) => {
+        const total = parseInt(mesesTotal, 10);
+        if (!Number.isFinite(total) || total < 0) return '';
+        if (total === 0) return 'Recién nacido';
+        const anos = Math.floor(total / 12);
+        const meses = total % 12;
+        const partes = [];
+        if (anos > 0) {
+            partes.push(`${anos} año${anos === 1 ? '' : 's'}`);
+        }
+        if (meses > 0) {
+            partes.push(`${meses} mes${meses === 1 ? '' : 'es'}`);
+        }
+        return partes.join(' y ');
+    };
+
     const renderizarMascotas = (mascotas, porCompatibilidad = false, porCercania = false) => {
         const isLoggedIn = Boolean(localStorage.getItem('token'));
         mascotasContainer.innerHTML = ''; // Limpiar contenedor
@@ -53,15 +69,153 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const duplicateImageGroups = {
+            "mascota_698129b418a4d_perro8.jpg": "69027d273f723_beagle-adulto.jpg",
+            "schnauzer-5232202_1280.jpg": "mascota_691354641c4af_schnauzer-5232202_1280.jpg",
+            "mascota_697ffd82be073_havanese-dog-9486395_1280.jpg": "mascota_69790b5e06779_havanese-dog-9486395_1280.jpg",
+            "mascota_6981257fb5baa_gato6.jpg": "mascota_697c08f4f1f9d_gato6.jpg",
+            "mascota_6981254d67ffb_perro4.jpg": "mascota_697c0c35263b3_Amorina.jpg",
+            "mascota_6981261508a45_gato5.jpg": "mascota_697c0da7794d9_gato5.jpg",
+            "mascota_extra_697c1a9017c52_cat-468232_1280.jpg": "mascota_6980f32ea7fe8_cat-468232_1280.jpg",
+            "mascota_69812b9279f20_Thor.jpg": "mascota_698127371de86_Thor.jpg",
+            "mascota_extra_69812ae1bea86_cat-179611_1280.jpg": "mascota_69812ae1bd4e9_cat-179611_1280.jpg",
+            "mascota_extra_6980f2eb3b5f9_cat-1853372_1280.jpg": "mascota_extra_697c1a0522749_cat-1853372_1280.jpg",
+            "mascota_extra_6980f32ea8716_cat-1853372_1280.jpg": "mascota_extra_697c1a0522749_cat-1853372_1280.jpg",
+            "mascota_extra_6980f2eb3b869_cat-5618328_1280.jpg": "mascota_extra_697c1a660f244_cat-5618328_1280.jpg",
+            "mascota_extra_6980f32ea8a63_cat-5618328_1280.jpg": "mascota_extra_697c1a660f244_cat-5618328_1280.jpg"
+        };
+
+        const getImageGroupKey = (filename) => duplicateImageGroups[filename] || filename;
+
+        const fallbackImages = {
+            perro: [
+                '69027d273f723_beagle-adulto.jpg',
+                'mascota_6902850151c60_rhodesian-perro-adulto.jpg',
+                'mascota_691354641c4af_schnauzer-5232202_1280.jpg',
+                'mascota_6913748c2ed81_perro6.jpg',
+                'mascota_691374e478000_perro7.jpg',
+                'mascota_69137509c440d_perro1.jpg',
+                'mascota_69790b5e06779_havanese-dog-9486395_1280.jpg',
+                'mascota_697ffd82be073_havanese-dog-9486395_1280.jpg',
+                'mascota_6980eb6111046_puppy-345334_1280.jpg',
+                'mascota_6981254d67ffb_perro4.jpg',
+                'mascota_698125e9d7829_perro5.jpg',
+                'mascota_698129b418a4d_perro8.jpg',
+                'mascota_69812b4c17837_perro3.jpg',
+                'mascota_extra_697ffd82bf286_dog-9502812_1280.jpg',
+                'mascota_extra_697ffd82bf4cd_dogs-9482501_1280.jpg',
+                'mascota_extra_697ffd82bf6c3_dogs-9491588_1280.jpg',
+                'schnauzer-5232202_1280.jpg'
+            ],
+            gato: [
+                'cat-4098058_1280.jpg',
+                'mascota_6913757bc4b24_gato2.jpg',
+                'mascota_691648fe7ec85_black-cat-2680541_1280.jpg',
+                'mascota_697c08f4f1f9d_gato6.jpg',
+                'mascota_697c0da7794d9_gato5.jpg',
+                'mascota_6980ea76d21fe_cat-9476898_1280.jpg',
+                'mascota_6980f32ea7fe8_cat-468232_1280.jpg',
+                'mascota_698124f18bf87_gato4.jpg',
+                'mascota_6981257fb5baa_gato6.jpg',
+                'mascota_6981261508a45_gato5.jpg',
+                'mascota_69812ae1bd4e9_cat-179611_1280.jpg',
+                'mascota_extra_697c1a0522749_cat-1853372_1280.jpg',
+                'mascota_extra_697c1a660f244_cat-5618328_1280.jpg',
+                'mascota_extra_697c1a9017c52_cat-468232_1280.jpg',
+                'mascota_extra_6980ea76d40cd_cat-9476900_1280.jpg',
+                'mascota_extra_6980ea76d43ce_cat-9476901_1280.jpg',
+                'mascota_extra_6980f2eb3b5f9_cat-1853372_1280.jpg',
+                'mascota_extra_6980f2eb3b869_cat-5618328_1280.jpg',
+                'mascota_extra_6980f32ea8716_cat-1853372_1280.jpg',
+                'mascota_extra_6980f32ea8a63_cat-5618328_1280.jpg',
+                'mascota_extra_69812ae1be7ae_cat-179608_1280.jpg',
+                'mascota_extra_69812ae1bea86_cat-179611_1280.jpg'
+            ],
+            otros: [
+                'Amorina2.jpeg',
+                'Tere4.jpeg',
+                'mascota_697913eca493b_german-longhaired-pointer-782498_1280.jpg',
+                'mascota_697c0c35263b3_Amorina.jpg',
+                'mascota_698125b7b61b1_Milu.jpg',
+                'mascota_698127371de86_Thor.jpg',
+                'mascota_698127853f4b6_Cleo.jpg',
+                'mascota_6981290594430_Balto.jpg',
+                'mascota_698129397e550_Gigi.jpg',
+                'mascota_698129d9e47ea_Mimi.jpg',
+                'mascota_69812b71d68e3_Daisy.jpg',
+                'mascota_69812b9279f20_Thor.jpg',
+                'mascota_extra_6980ea76d3e09_brown-9476891_1280.jpg',
+                'mascota_extra_69812ae1be026_animal-6591125_1280.jpg'
+            ]
+        };
+
+        const imageCounts = (currentMascotas || []).reduce((acc, item) => {
+            if (item.imagen) {
+                const key = getImageGroupKey(item.imagen);
+                acc[key] = (acc[key] || 0) + 1;
+            }
+            return acc;
+        }, {});
+
+        const usedGroups = new Set(Object.keys(imageCounts));
+
+        const createPool = (list) => {
+            const uniqueGroups = new Set();
+            return list.filter((name) => {
+                const key = getImageGroupKey(name);
+                if (usedGroups.has(key)) {
+                    return false;
+                }
+                if (uniqueGroups.has(key)) {
+                    return false;
+                }
+                uniqueGroups.add(key);
+                return true;
+            });
+        };
+
+        const pool = {
+            perro: createPool(fallbackImages.perro),
+            gato: createPool(fallbackImages.gato),
+            otros: createPool(fallbackImages.otros)
+        };
+
+        const pickFallback = (list, seed) => {
+            if (!list || list.length === 0) {
+                return '/img/mascotas/default.jpg';
+            }
+            const index = Number.isFinite(seed)
+                ? Math.abs(seed) % list.length
+                : Math.floor(Math.random() * list.length);
+            const [chosen] = list.splice(index, 1);
+            return `/img/mascotas/${chosen}`;
+        };
+
+        const getFallbackImage = (tipo, seed) => {
+            const normalized = (tipo || '').toLowerCase();
+            if (normalized.includes('gato')) return pickFallback(pool.gato, seed);
+            if (normalized.includes('perro')) return pickFallback(pool.perro, seed);
+            return pickFallback(pool.otros, seed);
+        };
+
+        const seenImages = new Set();
+
         mascotas.forEach(mascota => {
-            let descripcionModificada = mascota.descripcion;
+            const tamanoMascota = mascota['tamaño'] || mascota.tamano;
+            const edadTexto = formatEdad(mascota.edad);
+            const sexoTexto = mascota.sexo || '';
+            const summaryBase = [sexoTexto, edadTexto].filter(Boolean).join(', ');
+            const summaryText = summaryBase
+                ? `${summaryBase}${tamanoMascota ? `, <span class="pet-highlight">${tamanoMascota}</span>` : ''}.`
+                : (mascota.descripcion || '');
+            let descripcionModificada = summaryText;
             
             if (porCompatibilidad && mascota.compatibilidad) {
-                descripcionModificada = `<strong class="text-warning">Compatibilidad: ${mascota.compatibilidad}%</strong><br>${mascota.descripcion}`;
+                descripcionModificada = `<strong class="text-warning">Compatibilidad: ${mascota.compatibilidad}%</strong><br>${summaryText}`;
             }
 
             if (porCercania && mascota.distancia_km) {
-                descripcionModificada = `<strong class="text-info"><i class="bi bi-geo-alt-fill"></i> A ${mascota.distancia_km} km de ti</strong><br>${mascota.descripcion}`;
+                descripcionModificada = `<strong class="text-info"><i class="bi bi-geo-alt-fill"></i> A ${mascota.distancia_km} km de ti</strong><br>${summaryText}`;
             }
 
             const pageQuery = `&page=${currentPage}`;
@@ -74,30 +228,47 @@ document.addEventListener('DOMContentLoaded', () => {
                    </button>`;
 
             const metaItems = [];
-            if (mascota.tipo) {
-                metaItems.push(`<span><i class="bi bi-tag"></i> ${mascota.tipo}</span>`);
+            if (String(mascota.vacunado || '').toLowerCase() === 'si') {
+                metaItems.push(`<span><i class="bi bi-shield-check"></i> Vacunado</span>`);
             }
-            const tamanoMascota = mascota['tamaño'] || mascota.tamano;
-            if (tamanoMascota) {
-                metaItems.push(`<span><i class="bi bi-arrows-angle-expand"></i> ${tamanoMascota}</span>`);
+            if (String(mascota.esterilizado || '').toLowerCase() === 'si') {
+                metaItems.push(`<span><i class="bi bi-heart"></i> Esterilizado</span>`);
             }
-            if (mascota.sexo) {
-                metaItems.push(`<span><i class="bi bi-gender-ambiguous"></i> ${mascota.sexo}</span>`);
+            if (parseInt(mascota.apto_ninos, 10) === 1) {
+                metaItems.push(`<span><i class="bi bi-emoji-smile"></i> Apto niños</span>`);
             }
-            const metaHtml = metaItems.length ? `<div class="pet-meta mb-3">${metaItems.join('')}</div>` : '';
+            if (metaItems.length === 0) {
+                metaItems.push(`<span><i class="bi bi-info-circle"></i> Sin datos</span>`);
+            }
+            const metaContent = metaItems.length ? metaItems.join('') : '<span class="pet-meta-empty">—</span>';
+            const metaHtml = `<div class="pet-meta mb-3">${metaContent}</div>`;
+
+            const mascotaSeed = parseInt(mascota.id, 10);
+            const fallbackImage = getFallbackImage(mascota.tipo, mascotaSeed);
+            const hasImagen = Boolean(mascota.imagen);
+            const imageKey = hasImagen ? getImageGroupKey(mascota.imagen) : null;
+            const isDuplicate = hasImagen && imageCounts[imageKey] > 1;
+            const useOriginal = hasImagen && (!isDuplicate || !seenImages.has(imageKey));
+            const imageSrc = useOriginal
+                ? `/img/mascotas/${mascota.imagen}`
+                : fallbackImage;
+
+            if (useOriginal) {
+                seenImages.add(imageKey);
+            }
 
             const card = `
                 <div class="col-12 col-sm-6 col-lg-4">
                     <article class="pet-card h-100">
                         <div class="pet-image">
-                            <img src="${mascota.imagen ? '/img/mascotas/' + mascota.imagen : '/img/mascotas/default.jpg'}" class="pet-photo" alt="Foto de ${mascota.nombre}">
+                            <img src="${imageSrc}" class="pet-photo" alt="Foto de ${mascota.nombre}" onerror="this.onerror=null;this.src='${fallbackImage}';">
                             <span class="pet-badge status-active">Disponible</span>
                         </div>
-                        <div class="card-body d-flex flex-column">
+                        <div class="card-body">
                             <h5 class="fw-bold">${mascota.nombre}</h5>
                             <p class="pet-summary mb-3">${descripcionModificada}</p>
                             ${metaHtml}
-                            <div class="d-flex flex-wrap gap-2 pet-actions justify-content-center mt-auto">
+                            <div class="d-flex flex-wrap gap-2 pet-actions justify-content-center">
                                 ${actionButton}
                             </div>
                         </div>
