@@ -351,14 +351,28 @@ document.addEventListener("DOMContentLoaded", () => {
     setText("mascota-sociabilidad", getSociabilidad(parseInt(mascota.sociabilidad)));
     setText("mascota-presencia", getPresencia(parseInt(mascota.presencia)));
     setText("mascota-estilo-vida", getEstiloVida(parseInt(mascota.estilov)));
+    const estadoValue = parseInt(mascota.estado, 10);
     let estadoLabel = "En revisión";
-    if (parseInt(mascota.estado, 10) === 0) {
+    if (estadoValue === 1) {
       estadoLabel = "Activa";
-    } else if (parseInt(mascota.estado, 10) === 2) {
+    } else if (estadoValue === 2) {
       estadoLabel = "Adoptada";
+    } else if (estadoValue === 3) {
+      estadoLabel = "Archivada";
     }
     setText("mascota-estado", estadoLabel);
     setText("mascota-ong", mascota.ong_nombre || "ONG Desconocida");
+
+    const tipoUsuario = localStorage.getItem("tipo");
+    const postularSection = document.getElementById("postular-section");
+    const postularBtn = document.getElementById("postular-btn");
+    const puedePostular = tipoUsuario === "usuario" && estadoValue === 1;
+    if (postularSection) {
+      postularSection.classList.toggle("d-none", !puedePostular);
+    }
+    if (postularBtn) {
+      postularBtn.disabled = !puedePostular;
+    }
 
     const chipEdad = document.getElementById("chip-edad");
     if (chipEdad) {
@@ -441,13 +455,15 @@ document.addEventListener("DOMContentLoaded", () => {
     postularBtn.addEventListener("click", async (e) => {
       e.preventDefault();
       const token = localStorage.getItem("token");
+      const tipoUsuario = localStorage.getItem("tipo");
 
-      if (!token) {
+      if (!token || tipoUsuario !== "usuario") {
         window.location.href = "./login.html";
         return;
       }
 
       try {
+        postularBtn.disabled = true;
         const response = await fetch("../api/postular.php", {
           method: "POST",
           headers: {
@@ -467,9 +483,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         showToast(data.message, "success");
+        postularBtn.textContent = "Postulado";
       } catch (error) {
         console.error("Error en la postulación:", error);
         showToast(error.message, "danger");
+        postularBtn.disabled = false;
       }
     });
   }

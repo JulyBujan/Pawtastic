@@ -33,18 +33,24 @@ try {
         exit;
     }
 
-    // Obtener id_ong y nombre de la mascota
-    $stmtMascota = $conn->prepare("SELECT id_ong, nombre FROM mascotas WHERE id = ?");
+    // Obtener id_ong, nombre y estado de la mascota
+    $stmtMascota = $conn->prepare("SELECT id_ong, nombre, estado FROM mascotas WHERE id = ?");
     $stmtMascota->bind_param("i", $idMascota);
     $stmtMascota->execute();
     $resultMascota = $stmtMascota->get_result();
     $mascota = $resultMascota->fetch_assoc();
     $idOng = $mascota['id_ong'] ?? null;
     $mascotaNombre = $mascota['nombre'] ?? 'Mascota';
+    $mascotaEstado = isset($mascota['estado']) ? (int) $mascota['estado'] : null;
 
     if (!$idOng) {
         http_response_code(404);
         echo json_encode(["message" => "No se encontró la mascota o no tiene una ONG asociada."]);
+        exit;
+    }
+    if ($mascotaEstado !== 1) {
+        http_response_code(409);
+        echo json_encode(["message" => "La mascota no está disponible para postulación."]);
         exit;
     }
 
@@ -70,14 +76,6 @@ try {
 
     $adopcionId = $conn->insert_id;
 
-    // Marcar mascota como en revisión si estaba activa
-    $stmtMascota = $conn->prepare("UPDATE mascotas SET estado = 0, date_update = NOW() WHERE id = ? AND estado = 1");
-    $stmtMascota->bind_param("i", $idMascota);
-    if (!$stmtMascota->execute()) {
-        throw new Exception("Error al actualizar el estado de la mascota: " . $stmtMascota->error);
-    }
-    $stmtMascota->close();
-
     $eventoTipo = "postulacion_creada";
     $eventoDetalle = "Nueva postulacion para " . $mascotaNombre;
     $eventoMeta = json_encode([
@@ -97,7 +95,7 @@ try {
 
     $notifTipo = "postulacion_creada";
     $notifTitulo = "Nueva postulacion";
-    $notifCuerpo = "Nueva postulacion para " . $mascotaNombre . ".";
+    $notifCuerpo = "Nueva postulacion para " . $mascotaNombre . ". La ONG revisará todas las solicitudes.";
     $notifEntidadTipo = "adopcion";
     $notifEntidadId = $adopcionId;
     $notifPayload = json_encode([

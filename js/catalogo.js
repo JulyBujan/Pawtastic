@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentPage = 1;
     let currentMascotas = [];
     let currentMode = { compatibilidad: false, cercania: false };
+    const userType = localStorage.getItem('tipo');
+    const isUser = Boolean(localStorage.getItem('token')) && userType === 'usuario';
 
     // --- FUNCIONES ---
 
@@ -226,6 +228,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 : `<button type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#modalLoginRequired">
                       <i class="bi bi-eye me-2"></i>Ver perfil
                    </button>`;
+            const estadoValue = mascota.estado !== undefined ? parseInt(mascota.estado, 10) : 1;
+            const puedePostular = isUser && estadoValue === 1;
+            const postularButton = puedePostular
+                ? `<button type="button" class="btn btn-outline-secondary btn-sm" data-action="postular" data-id="${mascota.id}">
+                      <i class="bi bi-check2-circle me-2"></i>Postularme
+                   </button>`
+                : '';
 
             const metaItems = [];
             if (String(mascota.vacunado || '').toLowerCase() === 'si') {
@@ -270,6 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             ${metaHtml}
                             <div class="d-flex flex-wrap gap-2 pet-actions justify-content-center">
                                 ${actionButton}
+                                ${postularButton}
                             </div>
                         </div>
                     </article>
@@ -462,6 +472,42 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentPage < totalPages) {
                 currentPage += 1;
                 renderPage();
+            }
+        });
+    }
+
+    if (mascotasContainer) {
+        mascotasContainer.addEventListener('click', async (event) => {
+            const button = event.target.closest('button[data-action="postular"]');
+            if (!button) return;
+            event.preventDefault();
+            const token = localStorage.getItem('token');
+            if (!token || localStorage.getItem('tipo') !== 'usuario') {
+                window.location.href = 'login.html';
+                return;
+            }
+            const mascotaId = button.dataset.id;
+            if (!mascotaId) return;
+
+            try {
+                button.disabled = true;
+                const response = await fetch('/api/postular.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ id_mascota: mascotaId })
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.message || 'Error al postularse');
+                }
+                showToast(data.message, 'success');
+                button.textContent = 'Postulado';
+            } catch (error) {
+                showToast(error.message, 'danger');
+                button.disabled = false;
             }
         });
     }
