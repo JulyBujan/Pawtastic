@@ -53,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   const pageSize = 5;
   let activeSection = "pendientes";
+  const highlightAdopcionId = new URLSearchParams(window.location.search).get("adopcion");
 
   const renderState = (title, message, actionHtml = "") => {
     if (!tableCard) {
@@ -128,6 +129,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const postulaciones = await response.json();
       allPostulaciones = postulaciones || [];
+      if (highlightAdopcionId) {
+        const target = allPostulaciones.find((item) => String(item.id) === String(highlightAdopcionId));
+        if (target) {
+          const estadoTarget = parseInt(target.estado, 10);
+          if (estadoTarget === 1) {
+            activeSection = "aprobadas";
+          } else if (estadoTarget === 2) {
+            activeSection = "rechazadas";
+          } else {
+            activeSection = "pendientes";
+          }
+        }
+      }
       applyFilters();
     } catch (error) {
       console.error("Error:", error);
@@ -182,6 +196,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const estadoExtra = isPendiente && diasLabel
         ? `<div class="estado-subtext">En revisión · ${diasLabel}</div>`
         : "";
+      const pendingMessage = tipoUsuario === "usuario" && isPendiente
+        ? '<div class="estado-subtext">Estamos procesando tu solicitud. La ONG te contactará.</div>'
+        : "";
       const comentariosRaw = (p.comentarios || "").trim();
       const comentariosParts = comentariosRaw ? comentariosRaw.split(/\n---\n/) : [];
       const comentariosCount = comentariosParts.length;
@@ -210,7 +227,10 @@ document.addEventListener("DOMContentLoaded", () => {
         ? comentariosParts.map(formatCommentItem).join("")
         : '<span class="comment-empty">Todavía no hay comentarios.</span>';
 
-      tablaHTML += `<tr class="postulacion-row${isPendiente ? " postulacion-row--pending" : ""}">`;
+      const highlightClass = highlightAdopcionId && String(p.id) === String(highlightAdopcionId)
+        ? " postulacion-row--highlight"
+        : "";
+      tablaHTML += `<tr class="postulacion-row${isPendiente ? " postulacion-row--pending" : ""}${highlightClass}">`;
       if (tipoUsuario === "ong") {
         tablaHTML += `<td data-label="Mascota">
                         <div class="postulacion-pet">
@@ -236,7 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
         estado.emoji
           ? `<span class="status-indicator status-indicator--${estado.indicator} ${estado.anim}" aria-hidden="true">${estado.emoji}</span>${estado.texto}`
           : estado.texto
-      }</span>${estadoExtra}</td>
+      }</span>${estadoExtra}${pendingMessage}</td>
                           <td data-label="Comentarios" class="cell-comments">
                             ${comentarioMetaHtml}
                             <div class="comentarios-display">${comentariosHtml}</div>
@@ -284,6 +304,9 @@ document.addEventListener("DOMContentLoaded", () => {
         : "";
       const estadoExtra = isPendiente && diasLabel
         ? `<div class="estado-subtext">En revisión · ${diasLabel}</div>`
+        : "";
+      const pendingMessage = tipoUsuario === "usuario" && isPendiente
+        ? '<div class="estado-subtext">Estamos procesando tu solicitud. La ONG te contactará.</div>'
         : "";
       const comentariosRaw = (p.comentarios || "").trim();
       const comentariosParts = comentariosRaw ? comentariosRaw.split(/\n---\n/) : [];
@@ -334,8 +357,11 @@ document.addEventListener("DOMContentLoaded", () => {
         ? `<span class="text-muted">Postulante: <a href="usuario.html?id=${p.usuario_id}">${p.usuario_nombre} ${p.usuario_apellido}</a></span>`
         : `<span class="text-muted">ONG: ${p.ong_nombre}</span>`;
 
+      const highlightClass = highlightAdopcionId && String(p.id) === String(highlightAdopcionId)
+        ? " postulacion-card--highlight"
+        : "";
       return `
-        <article class="postulacion-card${isPendiente ? " postulacion-card--pending" : ""}">
+        <article class="postulacion-card${isPendiente ? " postulacion-card--pending" : ""}${highlightClass}">
           <div class="postulacion-card-header">
             <div class="postulacion-card-title">${headerLeft}</div>
             <div class="postulacion-card-sub">${headerRight}</div>
@@ -347,7 +373,7 @@ document.addEventListener("DOMContentLoaded", () => {
         estado.emoji
           ? `<span class="status-indicator status-indicator--${estado.indicator} ${estado.anim}" aria-hidden="true">${estado.emoji}</span>${estado.texto}`
           : estado.texto
-      }</span>${estadoExtra}</span>
+      }</span>${estadoExtra}${pendingMessage}</span>
             </div>
             <div class="postulacion-card-row">
               <span class="label">Inicio</span>
@@ -787,6 +813,14 @@ document.addEventListener("DOMContentLoaded", () => {
     sectionTabs.forEach((tab) => {
       tab.classList.toggle("is-active", tab.dataset.sectionTab === activeSection);
     });
+    if (highlightAdopcionId) {
+      const target = document.querySelector(
+        ".postulacion-row--highlight, .postulacion-card--highlight"
+      );
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
   };
 
   if (searchInput) {

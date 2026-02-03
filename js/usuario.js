@@ -413,6 +413,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 showToast('Perfil actualizado con éxito.', 'success');
+                if (typeof setStep === 'function') {
+                    setStep(0);
+                }
+                if (stepButtons && stepButtons[0]) {
+                    stepButtons[0].classList.add('is-highlight');
+                    setTimeout(() => {
+                        stepButtons[0].classList.remove('is-highlight');
+                    }, 1400);
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
                 throw new Error(result.message || 'No se pudo actualizar el perfil.');
             }

@@ -199,14 +199,37 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const html = notificaciones.slice(0, 3).map((notif) => {
+    const filtered = notificaciones.filter((notif) => {
+      const type = (notif.tipo || "").toLowerCase();
+      return type.includes("comentario") || type.includes("estado_actualizado");
+    });
+
+    if (filtered.length === 0) {
+      actividadList.innerHTML = '<li class="activity-item text-muted">Sin actividad reciente.</li>';
+      return;
+    }
+
+    const html = filtered.slice(0, 3).map((notif) => {
       const icon = getIconForNotif(notif.tipo);
       const texto = escapeHtml(notif.cuerpo || notif.titulo || "Actividad");
       const time = formatDateTime(notif.created_at);
+      let payload = notif.payload;
+      if (typeof payload === "string") {
+        try {
+          payload = JSON.parse(payload);
+        } catch (error) {
+          payload = null;
+        }
+      }
+      const adopcionId = payload?.adopcion_id;
+      const link = adopcionId ? `postulaciones.html?adopcion=${adopcionId}` : "postulaciones.html";
+      const unreadClass = notif.leida_at ? "" : " is-unread";
       return `
         <li class="activity-item">
-          <span><i class="bi ${icon} text-warning me-2"></i>${texto}</span>
-          <span class="activity-time">${time}</span>
+          <a href="${link}" class="activity-link${unreadClass}" data-notif-id="${notif.id}">
+            <span><i class="bi ${icon} text-warning me-2"></i>${texto}</span>
+            <span class="activity-time">${time}</span>
+          </a>
         </li>
       `;
     });
@@ -324,6 +347,16 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!notifId) {
         return;
       }
+      await marcarNotificaciones([parseInt(notifId, 10)]);
+    });
+  }
+
+  if (actividadList) {
+    actividadList.addEventListener("click", async (event) => {
+      const link = event.target.closest(".activity-link");
+      if (!link) return;
+      const notifId = link.getAttribute("data-notif-id");
+      if (!notifId) return;
       await marcarNotificaciones([parseInt(notifId, 10)]);
     });
   }
