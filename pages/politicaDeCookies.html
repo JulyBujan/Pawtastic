@@ -9,48 +9,28 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="icon" href="../img/favicon.ico" type="image/png">
   <link rel="stylesheet" href="../css/style.css">
-  <style>
-    body {
-      background-color: #e0f7ff;
-      /* Fondo celeste pastel */
-    }
-
-    .legal-content {
-      background-color: white;
-      padding: 2.5rem;
-      border-radius: 1rem;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    }
-
-    .legal-content h3 {
-      color: var(--azul-banner);
-      margin-top: 1.5rem;
-      border-bottom: 2px solid var(--naranja-logo);
-      padding-bottom: 0.5rem;
-    }
-  </style>
 </head>
 
-<body>
+<body class="legal-body">
 
   <!-- NAVBAR -->
-  <nav class="navbar navbar-expand-lg navbar-dark">
+  <nav class="navbar navbar-expand-lg navbar-dark nav-app">
     <div class="container">
-      <a class="navbar-brand d-flex align-items-center" href="../index.html">
-        <img src="../img/logo.png" alt="Logo Pawtastic" width="50" height="50" class="me-2 logo-navbar">
-        <span class="text-warning fw-bold">Pawtastic</span>
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarLegal"
+        aria-controls="navbarLegal" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav align-items-center ms-auto">
+      <a class="navbar-brand text-warning fw-bold me-3" href="../index.html">
+        <img src="../img/logo.png" alt="Logo Pawtastic" width="40" height="40" class="d-inline-block d-lg-none">
+        <span class="d-none d-lg-inline">Pawtastic</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarLegal">
+        <ul class="navbar-nav align-items-lg-center ms-auto gap-2" id="nav-links-legal">
           <li class="nav-item">
-            <a class="btn btn-custom-nav me-2" href="./login.html">Ingresá</a>
-          </li>
-          <li class="nav-item"><a class="btn btn-custom-nav" href="./registro.html">Registrate</a></li>
-          <li class="nav-item ms-2">
-            <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion">Salir</a>
+            <a href="#" class="btn btn-custom-nav" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion"
+              title="Salir">
+              <i class="bi bi-box-arrow-right"></i> Salir
+            </a>
           </li>
         </ul>
       </div>
@@ -58,54 +38,94 @@
   </nav>
 
   <!-- CONTENIDO -->
-  <main class="container py-5">
-    <div class="legal-content">
-      <h2 class="text-center fw-bold text-warning mb-4">Política de Cookies</h2>
-      <p class="text-muted text-center">Última actualización: 25 de Octubre de 2025</p>
+  <main class="container legal-page">
+    <section class="legal-hero">
+      <div>
+        <span class="legal-kicker">Privacidad</span>
+        <h1 class="legal-title">Política de cookies</h1>
+        <p class="legal-lead">Usamos cookies para que la plataforma sea más cómoda, rápida y segura. Acá te contamos qué
+          datos guardamos y cómo podés gestionarlos.</p>
+        <div class="legal-meta">
+          <i class="bi bi-calendar3"></i>
+          Última actualización: 4 de febrero de 2026
+        </div>
+      </div>
+      <div class="legal-hero-card">
+        <h2>En pocas palabras</h2>
+        <ul class="legal-list">
+          <li><i class="bi bi-check-circle"></i><span>Las cookies esenciales permiten que el sitio funcione.</span></li>
+          <li><i class="bi bi-check-circle"></i><span>Las preferencias guardan filtros y opciones de uso.</span></li>
+          <li><i class="bi bi-check-circle"></i><span>Las analíticas son anónimas y nos ayudan a mejorar.</span></li>
+        </ul>
+      </div>
+    </section>
 
-      <p>Este sitio web, Pawtastic, utiliza cookies para mejorar la experiencia del usuario. A continuación, explicamos
-        qué son, qué tipos utilizamos y cómo puede gestionarlas.</p>
+    <section class="legal-grid">
+      <div class="legal-card">
+        <h3>Tipos de cookies</h3>
+        <ul class="legal-list">
+          <li><i class="bi bi-shield-lock"></i><span>Esenciales: permiten iniciar sesión y mantener tu sesión activa.</span>
+          </li>
+          <li><i class="bi bi-sliders"></i><span>Preferencias: recuerdan filtros y ajustes.</span></li>
+          <li><i class="bi bi-graph-up"></i><span>Analíticas: mejoran el rendimiento de Pawtastic.</span></li>
+        </ul>
+      </div>
+      <div class="legal-card">
+        <h3>Ir directo a</h3>
+        <div class="legal-anchor-list">
+          <a href="#que-son"><i class="bi bi-chevron-right"></i>Qué son las cookies</a>
+          <a href="#tipos"><i class="bi bi-chevron-right"></i>Tipos que usamos</a>
+          <a href="#gestion"><i class="bi bi-chevron-right"></i>Cómo gestionarlas</a>
+          <a href="#cambios"><i class="bi bi-chevron-right"></i>Actualizaciones</a>
+        </div>
+      </div>
+    </section>
 
-      <h3>1. ¿Qué son las cookies?</h3>
-      <p>Una cookie es un pequeño archivo de texto que un sitio web almacena en su navegador cuando lo visita. Permite
-        que el sitio recuerde información sobre su visita, como su idioma de preferencia o los datos de inicio de
-        sesión, lo que puede facilitar su próxima visita y hacer que el sitio le resulte más útil.</p>
+    <section class="legal-content">
+      <article class="legal-section" id="que-son">
+        <h3>1. ¿Qué son las cookies?</h3>
+        <p>Una cookie es un pequeño archivo de texto que un sitio web almacena en tu navegador cuando lo visitás.
+          Permite que el sitio recuerde información sobre la visita, como idioma de preferencia o datos de inicio de
+          sesión, para que la próxima experiencia sea más ágil.</p>
+      </article>
 
-      <h3>2. ¿Qué tipos de cookies utilizamos?</h3>
-      <ul>
-        <li><strong>Cookies Esenciales:</strong> Son estrictamente necesarias para el funcionamiento del sitio. Por
-          ejemplo, las que gestionan la sesión de un usuario registrado. Sin ellas, el sitio no funcionaría
-          correctamente.</li>
-        <li><strong>Cookies de Preferencias:</strong> Permiten recordar información que cambia el aspecto o el
-          comportamiento del sitio, como las preferencias de filtros en el catálogo de mascotas.</li>
-        <li><strong>Cookies de Rendimiento y Análisis:</strong> Nos ayudan a entender cómo interactúan los visitantes
-          con el sitio web, recopilando información de forma anónima. Utilizamos estos datos para mejorar la
-          funcionalidad y el rendimiento de Pawtastic.</li>
-      </ul>
+      <article class="legal-section" id="tipos">
+        <h3>2. ¿Qué tipos de cookies utilizamos?</h3>
+        <ul>
+          <li><strong>Cookies esenciales:</strong> son estrictamente necesarias para el funcionamiento del sitio. Por
+            ejemplo, las que gestionan la sesión de un usuario registrado.</li>
+          <li><strong>Cookies de preferencias:</strong> permiten recordar información que cambia el aspecto o el
+            comportamiento del sitio, como preferencias de filtros en el catálogo de mascotas.</li>
+          <li><strong>Cookies de rendimiento y análisis:</strong> nos ayudan a entender cómo interactúan los visitantes
+            con la web, recopilando información de forma anónima para mejorar la experiencia.</li>
+        </ul>
+      </article>
 
-      <h3>3. Gestión de Cookies</h3>
-      <p>Usted puede permitir, bloquear o eliminar las cookies instaladas en su equipo mediante la configuración de las
-        opciones del navegador instalado en su ordenador. Sin embargo, si deshabilita las cookies esenciales, es posible
-        que algunas partes del sitio no funcionen correctamente.</p>
-      <ul>
-        <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer">Google
-            Chrome</a></li>
-        <li><a
-            href="https://support.mozilla.org/es/kb/habilitar-y-deshabilitar-cookies-sitios-web-rastrear-preferencias"
-            target="_blank" rel="noopener noreferrer">Mozilla Firefox</a></li>
-        <li><a
-            href="https://support.microsoft.com/es-es/windows/eliminar-y-administrar-cookies-168dab11-0753-043d-7c16-ede5947fc64d"
-            target="_blank" rel="noopener noreferrer">Internet Explorer / Edge</a></li>
-        <li><a href="https://support.apple.com/es-es/guide/safari/sfri11471/mac" target="_blank"
-            rel="noopener noreferrer">Safari</a></li>
-      </ul>
+      <article class="legal-section" id="gestion">
+        <h3>3. Gestión de cookies</h3>
+        <p>Podés permitir, bloquear o eliminar las cookies instaladas en tu equipo mediante la configuración del
+          navegador. Si deshabilitás las cookies esenciales, es posible que algunas partes del sitio no funcionen de
+          manera correcta.</p>
+        <ul>
+          <li><a href="https://support.google.com/chrome/answer/95647" target="_blank"
+              rel="noopener noreferrer">Google Chrome</a></li>
+          <li><a
+              href="https://support.mozilla.org/es/kb/habilitar-y-deshabilitar-cookies-sitios-web-rastrear-preferencias"
+              target="_blank" rel="noopener noreferrer">Mozilla Firefox</a></li>
+          <li><a
+              href="https://support.microsoft.com/es-es/windows/eliminar-y-administrar-cookies-168dab11-0753-043d-7c16-ede5947fc64d"
+              target="_blank" rel="noopener noreferrer">Internet Explorer / Edge</a></li>
+          <li><a href="https://support.apple.com/es-es/guide/safari/sfri11471/mac" target="_blank"
+              rel="noopener noreferrer">Safari</a></li>
+        </ul>
+      </article>
 
-      <h3>4. Cambios en la Política de Cookies</h3>
-      <p>Podemos actualizar la Política de Cookies de nuestro sitio web, por lo que le recomendamos revisar esta
-        política cada vez que acceda a nuestro sitio con el objetivo de estar adecuadamente informado sobre cómo y para
-        qué usamos las cookies.</p>
-
-    </div>
+      <article class="legal-section" id="cambios">
+        <h3>4. Cambios en la política de cookies</h3>
+        <p>Podemos actualizar esta política cuando ajustemos el funcionamiento del sitio. Te recomendamos revisarla
+          cada vez que accedas a Pawtastic para mantenerte informado sobre cómo y para qué usamos las cookies.</p>
+      </article>
+    </section>
   </main>
 
   <!-- MODAL CERRAR SESIÓN -->
@@ -161,19 +181,66 @@
       <hr class="border-dark">
       <div class="text-center">
         <small>&copy; 2025 Pawtastic. Todos los derechos reservados.</small><br>
-        <a href="./terminosYcondiciones.html" class="text-dark text-decoration-underline small">Términos y
-          Condiciones</a> |
-        <a href="./politicaDeCookies.html" class="text-dark text-decoration-underline small">Política de Cookies</a>
+        <a href="./terminosYcondiciones.html" class="text-dark text-decoration-underline small">Términos y condiciones</a> |
+        <a href="./politicaDeCookies.html" class="text-dark text-decoration-underline small">Política de cookies</a>
       </div>
     </div>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    document.getElementById("confirmarSalir").addEventListener("click", function () {
-      localStorage.removeItem("token");
-      localStorage.removeItem("tipo");
-      window.location.href = "../index.html";
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('token');
+      const tipoUsuario = localStorage.getItem('tipo');
+      const navLinksContainer = document.getElementById('nav-links-legal');
+      const salirButton = navLinksContainer
+        ? navLinksContainer.querySelector('[data-bs-target="#modalCerrarSesion"]')
+        : null;
+      const salirItem = salirButton ? salirButton.closest('li') : null;
+      let linksHTML = '';
+
+      if (!token) {
+        linksHTML = `
+          <li class="nav-item"><a href="login.html" class="btn btn-custom-nav">Ingresar</a></li>
+          <li class="nav-item"><a href="registro.html" class="btn btn-custom-nav">Registrarme</a></li>
+        `;
+        if (salirItem) {
+          salirItem.remove();
+        }
+      } else if (tipoUsuario === 'ong') {
+        linksHTML = `
+          <li class="nav-item"><a href="perfil-ong.html" class="btn btn-custom-nav">Inicio</a></li>
+          <li class="nav-item"><a href="mis-mascotas.html" class="btn btn-custom-nav">Mis Mascotas</a></li>
+          <li class="nav-item"><a href="postulaciones.html" class="btn btn-custom-nav">Postulaciones</a></li>
+        `;
+      } else if (tipoUsuario === 'admin') {
+        linksHTML = `
+          <li class="nav-item"><a href="perfil-admin.html" class="btn btn-custom-nav">Panel</a></li>
+        `;
+      } else {
+        linksHTML = `
+          <li class="nav-item"><a href="perfil-usuario.html" class="btn btn-custom-nav">Inicio</a></li>
+          <li class="nav-item"><a href="postulaciones.html" class="btn btn-custom-nav">Mis postulaciones</a></li>
+          <li class="nav-item"><a href="usuario.html" class="btn btn-custom-nav">Mi perfil</a></li>
+        `;
+      }
+
+      if (navLinksContainer) {
+        if (salirItem) {
+          salirItem.insertAdjacentHTML('beforebegin', linksHTML);
+        } else {
+          navLinksContainer.insertAdjacentHTML('afterbegin', linksHTML);
+        }
+      }
+
+      const confirmarSalir = document.getElementById("confirmarSalir");
+      if (confirmarSalir) {
+        confirmarSalir.addEventListener("click", () => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("tipo");
+          window.location.href = "/index.html";
+        });
+      }
     });
   </script>
 </body>

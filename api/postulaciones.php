@@ -134,8 +134,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $stmtEvento->close();
 
             $notifTipo = "comentario_agregado";
-            $notifTitulo = "Nuevo comentario";
-            $notifCuerpo = "Nuevo comentario en la postulacion de " . $mascotaNombre . ".";
+            if ($user_tipo === 'ong') {
+                $notifTitulo = "Comentario de la ONG";
+                $notifCuerpo = "Recibiste un comentario de la ONG sobre tu postulación de " . $mascotaNombre . ".";
+            } else {
+                $notifTitulo = "Comentario del adoptante";
+                $notifCuerpo = "El adoptante dejó un comentario sobre la postulación de " . $mascotaNombre . ".";
+            }
             $notifEntidadTipo = "adopcion";
             $notifEntidadId = $adopcion_id;
             $notifPayload = json_encode([

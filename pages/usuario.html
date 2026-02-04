@@ -82,9 +82,18 @@
                     <label for="apellido" class="form-label">Apellido</label>
                     <input type="text" class="form-control" id="apellido" name="apellido">
                   </div>
-                  <div class="col-12">
-                    <label for="telefono" class="form-label">Teléfono</label>
-                    <input type="text" class="form-control" id="telefono" name="telefono">
+                  <div class="col-md-6">
+                    <label for="fecha_nacimiento" class="form-label">Nacimiento</label>
+                    <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="sexo" class="form-label">Sexo</label>
+                    <select class="form-select" id="sexo" name="sexo">
+                      <option value="" selected disabled>Seleccionar...</option>
+                      <option value="Masculino">Masculino</option>
+                      <option value="Femenino">Femenino</option>
+                      <option value="Otro">Otro</option>
+                    </select>
                   </div>
                   <div class="col-md-5">
                     <label for="tipo_documento" class="form-label">Tipo de documento</label>
@@ -103,6 +112,10 @@
                     <div class="invalid-feedback">
                       Por favor, ingresa un número de documento válido.
                     </div>
+                  </div>
+                  <div class="col-12">
+                    <label for="telefono" class="form-label">Teléfono</label>
+                    <input type="text" class="form-control" id="telefono" name="telefono">
                   </div>
                 </div>
               </div>
@@ -144,19 +157,6 @@
               <div class="profile-section">
                 <div class="profile-section-title"><i class="bi bi-house-heart"></i>Hogar y experiencia</div>
                 <div class="row g-3">
-                  <div class="col-md-6">
-                    <label for="fecha_nacimiento" class="form-label">Nacimiento</label>
-                    <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento">
-                  </div>
-                  <div class="col-md-6">
-                    <label for="sexo" class="form-label">Sexo</label>
-                    <select class="form-select" id="sexo" name="sexo">
-                      <option value="" selected disabled>Seleccionar...</option>
-                      <option value="Masculino">Masculino</option>
-                      <option value="Femenino">Femenino</option>
-                      <option value="Otro">Otro</option>
-                    </select>
-                  </div>
                   <div class="col-md-6">
                     <label for="tipo_casa" class="form-label">Tipo de casa</label>
                     <select class="form-select" id="tipo_casa" name="tipo_casa">
@@ -313,9 +313,9 @@
   <!-- FOOTER -->
   <footer class="login-footer">
     <div class="container text-center">
-      <a href="./terminosYcondiciones.html">Términos</a>
+      <a href="./terminosYcondiciones.html">Términos y condiciones</a>
       <span class="footer-divider">|</span>
-      <a href="./politicaDeCookies.html">Cookies</a>
+      <a href="./politicaDeCookies.html">Política de cookies</a>
     </div>
   </footer>
 

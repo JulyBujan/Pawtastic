@@ -9,48 +9,28 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="icon" href="../img/favicon.ico" type="image/png">
   <link rel="stylesheet" href="../css/style.css">
-  <style>
-    body {
-      background-color: #e0f7ff;
-      /* Fondo celeste pastel */
-    }
-
-    .legal-content {
-      background-color: white;
-      padding: 2.5rem;
-      border-radius: 1rem;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    }
-
-    .legal-content h3 {
-      color: var(--azul-banner);
-      margin-top: 1.5rem;
-      border-bottom: 2px solid var(--naranja-logo);
-      padding-bottom: 0.5rem;
-    }
-  </style>
 </head>
 
-<body>
+<body class="legal-body">
 
   <!-- NAVBAR -->
-  <nav class="navbar navbar-expand-lg navbar-dark">
+  <nav class="navbar navbar-expand-lg navbar-dark nav-app">
     <div class="container">
-      <a class="navbar-brand d-flex align-items-center" href="../index.html">
-        <img src="../img/logo.png" alt="Logo Pawtastic" width="50" height="50" class="me-2 logo-navbar">
-        <span class="text-warning fw-bold">Pawtastic</span>
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarLegal"
+        aria-controls="navbarLegal" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav align-items-center ms-auto">
+      <a class="navbar-brand text-warning fw-bold me-3" href="../index.html">
+        <img src="../img/logo.png" alt="Logo Pawtastic" width="40" height="40" class="d-inline-block d-lg-none">
+        <span class="d-none d-lg-inline">Pawtastic</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarLegal">
+        <ul class="navbar-nav align-items-lg-center ms-auto gap-2" id="nav-links-legal">
           <li class="nav-item">
-            <a class="btn btn-custom-nav me-2" href="./login.html">Ingresá</a>
-          </li>
-          <li class="nav-item"><a class="btn btn-custom-nav" href="./registro.html">Registrate</a></li>
-          <li class="nav-item ms-2">
-            <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion">Salir</a>
+            <a href="#" class="btn btn-custom-nav" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion"
+              title="Salir">
+              <i class="bi bi-box-arrow-right"></i> Salir
+            </a>
           </li>
         </ul>
       </div>
@@ -58,52 +38,104 @@
   </nav>
 
   <!-- CONTENIDO -->
-  <main class="container py-5">
-    <div class="legal-content">
-      <h2 class="text-center fw-bold text-warning mb-4">Términos y Condiciones de Uso</h2>
-      <p class="text-muted text-center">Última actualización: 25 de Octubre de 2025</p>
+  <main class="container legal-page">
+    <section class="legal-hero">
+      <div>
+        <span class="legal-kicker">Legal</span>
+        <h1 class="legal-title">Términos y condiciones de uso</h1>
+        <p class="legal-lead">Estas condiciones explican cómo funciona Pawtastic y qué esperamos de cada persona que
+          participa. Si usás la plataforma, asumimos que estás de acuerdo con este marco.</p>
+        <div class="legal-meta">
+          <i class="bi bi-calendar3"></i>
+          Última actualización: 4 de febrero de 2026
+        </div>
+      </div>
+      <div class="legal-hero-card">
+        <h2>Resumen rápido</h2>
+        <ul class="legal-list">
+          <li><i class="bi bi-check-circle"></i><span>Pawtastic conecta adoptantes con ONGs, pero no decide ni aprueba
+              adopciones.</span></li>
+          <li><i class="bi bi-check-circle"></i><span>La información publicada debe ser clara y actualizada.</span></li>
+          <li><i class="bi bi-check-circle"></i><span>La ONG tiene la decisión final en cada proceso.</span></li>
+        </ul>
+      </div>
+    </section>
 
-      <p>Bienvenido a Pawtastic. Al utilizar nuestro sitio web, usted acepta cumplir y estar sujeto a los siguientes
-        términos y condiciones. Por favor, léalos atentamente.</p>
+    <section class="legal-grid">
+      <div class="legal-card">
+        <h3>Lo esencial para usar Pawtastic</h3>
+        <ul class="legal-list">
+          <li><i class="bi bi-shield-check"></i><span>Adopción responsable y transparente.</span></li>
+          <li><i class="bi bi-people"></i><span>Respeto entre adoptantes, ONGs y comunidad.</span></li>
+          <li><i class="bi bi-lightning-charge"></i><span>Actualización constante de datos y estados.</span></li>
+        </ul>
+      </div>
+      <div class="legal-card">
+        <h3>Ir directo a</h3>
+        <div class="legal-anchor-list">
+          <a href="#aceptacion"><i class="bi bi-chevron-right"></i>Aceptación de los términos</a>
+          <a href="#rol"><i class="bi bi-chevron-right"></i>Rol de Pawtastic</a>
+          <a href="#usuario"><i class="bi bi-chevron-right"></i>Obligaciones del adoptante</a>
+          <a href="#ong"><i class="bi bi-chevron-right"></i>Obligaciones de la ONG</a>
+          <a href="#responsabilidad"><i class="bi bi-chevron-right"></i>Limitación de responsabilidad</a>
+        </div>
+      </div>
+    </section>
 
-      <h3>1. Aceptación de los Términos</h3>
-      <p>Pawtastic es una plataforma que conecta a organizaciones no gubernamentales (ONGs) y refugios de animales con
-        personas interesadas en adoptar mascotas. Al registrarse y utilizar nuestros servicios, usted confirma que ha
-        leído, entendido y aceptado estos términos.</p>
+    <section class="legal-content">
+      <article class="legal-section" id="aceptacion">
+        <h3>1. Aceptación de los términos</h3>
+        <p>Pawtastic es una plataforma que conecta a organizaciones no gubernamentales (ONGs) y refugios de animales con
+          personas interesadas en adoptar mascotas. Al registrarte y utilizar nuestros servicios, confirmás que leíste,
+          entendiste y aceptás estos términos.</p>
+      </article>
 
-      <h3>2. Rol de Pawtastic</h3>
-      <p>Pawtastic actúa únicamente como un intermediario. No somos parte del proceso de adopción, el cual es gestionado
-        en su totalidad por la ONG correspondiente. No nos responsabilizamos por el estado de salud, comportamiento o
-        cualquier otra característica de las mascotas publicadas, ni por los acuerdos entre el adoptante y la ONG.</p>
+      <article class="legal-section" id="rol">
+        <h3>2. Rol de Pawtastic</h3>
+        <p>Pawtastic actúa únicamente como un intermediario. No somos parte del proceso de adopción, el cual es
+          gestionado en su totalidad por la ONG correspondiente. No nos responsabilizamos por el estado de salud,
+          comportamiento u otras características de las mascotas publicadas, ni por los acuerdos entre el adoptante y
+          la ONG.</p>
+      </article>
 
-      <h3>3. Obligaciones del Usuario Adoptante</h3>
-      <ul>
-        <li>Proporcionar información veraz y actualizada en su perfil.</li>
-        <li>Comprometerse a un proceso de adopción responsable, cumpliendo con los requisitos de la ONG.</li>
-        <li>Entender que la decisión final de la adopción recae exclusivamente en la ONG.</li>
-      </ul>
+      <article class="legal-section" id="usuario">
+        <h3>3. Obligaciones del usuario adoptante</h3>
+        <ul>
+          <li>Proporcionar información veraz y actualizada en su perfil.</li>
+          <li>Comprometerse con un proceso de adopción responsable, cumpliendo los requisitos de la ONG.</li>
+          <li>Entender que la decisión final de la adopción recae exclusivamente en la ONG.</li>
+        </ul>
+      </article>
 
-      <h3>4. Obligaciones de la ONG</h3>
-      <ul>
-        <li>Proporcionar información precisa sobre las mascotas publicadas.</li>
-        <li>Gestionar las postulaciones de manera ética y transparente.</li>
-        <li>Realizar un seguimiento post-adopción para garantizar el bienestar del animal.</li>
-      </ul>
+      <article class="legal-section" id="ong">
+        <h3>4. Obligaciones de la ONG</h3>
+        <ul>
+          <li>Proporcionar información precisa sobre las mascotas publicadas.</li>
+          <li>Gestionar las postulaciones de manera ética y transparente.</li>
+          <li>Realizar un seguimiento post-adopción para garantizar el bienestar del animal.</li>
+        </ul>
+      </article>
 
-      <h3>5. Propiedad Intelectual</h3>
-      <p>El contenido de este sitio web, incluyendo logos, textos y diseño, es propiedad de Pawtastic y está protegido
-        por las leyes de propiedad intelectual. No está permitida su reproducción sin nuestro consentimiento explícito.
-      </p>
+      <article class="legal-section" id="propiedad">
+        <h3>5. Propiedad intelectual</h3>
+        <p>El contenido de este sitio web, incluyendo logos, textos y diseño, es propiedad de Pawtastic y está protegido
+          por las leyes de propiedad intelectual. No está permitida su reproducción sin nuestro consentimiento
+          explícito.</p>
+      </article>
 
-      <h3>6. Limitación de Responsabilidad</h3>
-      <p>Pawtastic no será responsable por daños directos o indirectos que surjan del uso de esta plataforma,
-        incluyendo, entre otros, disputas entre usuarios y ONGs o problemas relacionados con las mascotas adoptadas.</p>
+      <article class="legal-section" id="responsabilidad">
+        <h3>6. Limitación de responsabilidad</h3>
+        <p>Pawtastic no será responsable por daños directos o indirectos que surjan del uso de esta plataforma,
+          incluyendo, entre otros, disputas entre usuarios y ONGs o problemas relacionados con las mascotas
+          adoptadas.</p>
+      </article>
 
-      <h3>7. Modificaciones</h3>
-      <p>Nos reservamos el derecho de modificar estos términos y condiciones en cualquier momento. Las modificaciones
-        serán efectivas al ser publicadas en el sitio. Se recomienda revisar esta página periódicamente.</p>
-
-    </div>
+      <article class="legal-section" id="modificaciones">
+        <h3>7. Modificaciones</h3>
+        <p>Nos reservamos el derecho de modificar estos términos y condiciones en cualquier momento. Las modificaciones
+          serán efectivas al ser publicadas en el sitio. Se recomienda revisar esta página periódicamente.</p>
+      </article>
+    </section>
   </main>
 
   <!-- MODAL CERRAR SESIÓN -->
@@ -159,19 +191,66 @@
       <hr class="border-dark">
       <div class="text-center">
         <small>&copy; 2025 Pawtastic. Todos los derechos reservados.</small><br>
-        <a href="./terminosYcondiciones.html" class="text-dark text-decoration-underline small">Términos y
-          Condiciones</a> |
-        <a href="./politicaDeCookies.html" class="text-dark text-decoration-underline small">Política de Cookies</a>
+        <a href="./terminosYcondiciones.html" class="text-dark text-decoration-underline small">Términos y condiciones</a> |
+        <a href="./politicaDeCookies.html" class="text-dark text-decoration-underline small">Política de cookies</a>
       </div>
     </div>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    document.getElementById("confirmarSalir").addEventListener("click", function () {
-      localStorage.removeItem("token");
-      localStorage.removeItem("tipo");
-      window.location.href = "../index.html";
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('token');
+      const tipoUsuario = localStorage.getItem('tipo');
+      const navLinksContainer = document.getElementById('nav-links-legal');
+      const salirButton = navLinksContainer
+        ? navLinksContainer.querySelector('[data-bs-target="#modalCerrarSesion"]')
+        : null;
+      const salirItem = salirButton ? salirButton.closest('li') : null;
+      let linksHTML = '';
+
+      if (!token) {
+        linksHTML = `
+          <li class="nav-item"><a href="login.html" class="btn btn-custom-nav">Ingresar</a></li>
+          <li class="nav-item"><a href="registro.html" class="btn btn-custom-nav">Registrarme</a></li>
+        `;
+        if (salirItem) {
+          salirItem.remove();
+        }
+      } else if (tipoUsuario === 'ong') {
+        linksHTML = `
+          <li class="nav-item"><a href="perfil-ong.html" class="btn btn-custom-nav">Inicio</a></li>
+          <li class="nav-item"><a href="mis-mascotas.html" class="btn btn-custom-nav">Mis Mascotas</a></li>
+          <li class="nav-item"><a href="postulaciones.html" class="btn btn-custom-nav">Postulaciones</a></li>
+        `;
+      } else if (tipoUsuario === 'admin') {
+        linksHTML = `
+          <li class="nav-item"><a href="perfil-admin.html" class="btn btn-custom-nav">Panel</a></li>
+        `;
+      } else {
+        linksHTML = `
+          <li class="nav-item"><a href="perfil-usuario.html" class="btn btn-custom-nav">Inicio</a></li>
+          <li class="nav-item"><a href="postulaciones.html" class="btn btn-custom-nav">Mis postulaciones</a></li>
+          <li class="nav-item"><a href="usuario.html" class="btn btn-custom-nav">Mi perfil</a></li>
+        `;
+      }
+
+      if (navLinksContainer) {
+        if (salirItem) {
+          salirItem.insertAdjacentHTML('beforebegin', linksHTML);
+        } else {
+          navLinksContainer.insertAdjacentHTML('afterbegin', linksHTML);
+        }
+      }
+
+      const confirmarSalir = document.getElementById("confirmarSalir");
+      if (confirmarSalir) {
+        confirmarSalir.addEventListener("click", () => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("tipo");
+          window.location.href = "/index.html";
+        });
+      }
     });
   </script>
 </body>

@@ -102,7 +102,7 @@
       </article>
       <article class="report-chart-card animate-item">
         <div class="report-chart-header">
-          <h3>Estados de adopción (30 vs 90 días)</h3>
+          <h3>Estados de adopción (30 vs 60 días)</h3>
         </div>
         <div class="chart-area">
           <canvas id="reportStatusChart"></canvas>
@@ -137,13 +137,13 @@
     <section class="report-section d-none" data-report-section="indicadores">
       <div class="report-section-header">
         <h3 class="report-section-title">Indicadores clave</h3>
-        <p class="report-section-subtitle">Comparativos de los últimos 30 y 90 días.</p>
+        <p class="report-section-subtitle">Comparativos de los últimos 30 y 60 días.</p>
         <button type="button" class="btn btn-report-menu" data-bs-toggle="offcanvas" data-bs-target="#reportesMenu"
           aria-controls="reportesMenu">
           <i class="bi bi-list"></i> Volver al menú
         </button>
       </div>
-      <!-- SECCIÓN DE INDICADORES CLAVE (30 y 90 días) -->
+      <!-- SECCIÓN DE INDICADORES CLAVE (30 y 60 días) -->
       <div id="indicadores-clave-container" class="d-none">
         <div class="indicators-grid">
           <article class="indicator-card animate-item" data-period="30">
@@ -184,18 +184,24 @@
                 <div class="indicator-metric indicator-metric-positive">
                   <span class="metric-label"><i class="bi bi-check-circle"></i> Aprobadas</span>
                   <div class="metric-value" id="tasa-aprobadas-30">--%</div>
+                  <div class="metric-bar">
+                    <span class="metric-bar-fill" id="tasa-aprobadas-30-bar"></span>
+                  </div>
                 </div>
                 <div class="indicator-metric indicator-metric-negative">
                   <span class="metric-label"><i class="bi bi-x-circle"></i> Rechazadas</span>
                   <div class="metric-value" id="tasa-rechazadas-30">--%</div>
+                  <div class="metric-bar">
+                    <span class="metric-bar-fill" id="tasa-rechazadas-30-bar"></span>
+                  </div>
                 </div>
               </div>
             </div>
           </article>
 
-          <article class="indicator-card animate-item" data-period="90">
+          <article class="indicator-card animate-item" data-period="60">
             <div class="indicator-card-header">
-              <span class="indicator-pill indicator-pill-alt">Últimos 90 días</span>
+              <span class="indicator-pill indicator-pill-alt">Últimos 60 días</span>
               <h4>Resumen del período</h4>
             </div>
             <div class="indicator-block">
@@ -231,10 +237,16 @@
                 <div class="indicator-metric indicator-metric-positive">
                   <span class="metric-label"><i class="bi bi-check-circle"></i> Aprobadas</span>
                   <div class="metric-value" id="tasa-aprobadas-90">--%</div>
+                  <div class="metric-bar">
+                    <span class="metric-bar-fill" id="tasa-aprobadas-90-bar"></span>
+                  </div>
                 </div>
                 <div class="indicator-metric indicator-metric-negative">
                   <span class="metric-label"><i class="bi bi-x-circle"></i> Rechazadas</span>
                   <div class="metric-value" id="tasa-rechazadas-90">--%</div>
+                  <div class="metric-bar">
+                    <span class="metric-bar-fill" id="tasa-rechazadas-90-bar"></span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -246,7 +258,7 @@
     <section class="report-section d-none" data-report-section="adopcion-rapida">
       <div class="report-section-header">
         <h3 class="report-section-title">Adopción más rápida</h3>
-        <p class="report-section-subtitle">Tiempos promedio por edad y especie (últimos 90 días).</p>
+        <p class="report-section-subtitle">Tiempos promedio por edad y especie (últimos 60 días).</p>
         <button type="button" class="btn btn-report-menu" data-bs-toggle="offcanvas" data-bs-target="#reportesMenu"
           aria-controls="reportesMenu">
           <i class="bi bi-list"></i> Volver al menú
@@ -463,7 +475,7 @@
         <button class="list-group-item list-group-item-action report-menu-item" data-report-target="indicadores">
           <span class="menu-icon"><i class="bi bi-graph-up"></i></span>
           <span class="menu-text">
-            <span class="menu-title">Indicadores 30/90 días</span>
+            <span class="menu-title">Indicadores 30/60 días</span>
             <span class="menu-subtitle">Comparativos clave</span>
           </span>
         </button>
@@ -525,9 +537,9 @@
 
   <footer class="mini-footer mt-4">
     <div class="container text-center">
-      <a href="./terminosYcondiciones.html" class="text-decoration-none">Términos</a>
+      <a href="./terminosYcondiciones.html" class="text-decoration-none">Términos y condiciones</a>
       <span class="mx-2">|</span>
-      <a href="./politicaDeCookies.html" class="text-decoration-none">Cookies</a>
+      <a href="./politicaDeCookies.html" class="text-decoration-none">Política de cookies</a>
     </div>
   </footer>
 

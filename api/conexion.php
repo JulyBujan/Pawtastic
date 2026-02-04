@@ -11,4 +11,9 @@ if ($conn->connect_error) {
     http_response_code(500);
     die("Error de conexión: " . $conn->connect_error);
 }
+
+if (!$conn->set_charset("utf8mb4")) {
+    http_response_code(500);
+    die("Error al configurar el charset: " . $conn->error);
+}
 ?>

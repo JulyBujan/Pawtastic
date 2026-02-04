@@ -50,6 +50,34 @@ document.addEventListener("DOMContentLoaded", () => {
     personalizadoRango: null,
   };
 
+  const animateIndicatorBar = (bar, percent) => {
+    if (!bar) return;
+    const safeValue = Number.isFinite(percent)
+      ? Math.max(0, Math.min(100, Number(percent)))
+      : null;
+    bar.style.width = "0%";
+    if (safeValue === null) return;
+    bar.getAnimations().forEach((animation) => animation.cancel());
+    requestAnimationFrame(() => {
+      const animation = bar.animate(
+        [{ width: "0%" }, { width: `${safeValue}%` }],
+        { duration: 3200, easing: "ease-out", fill: "forwards" }
+      );
+      animation.onfinish = () => {
+        bar.style.width = `${safeValue}%`;
+      };
+    });
+  };
+
+  const rerunIndicatorBars = () => {
+    document.querySelectorAll(".metric-bar-fill").forEach((bar) => {
+      const value = Number(bar.dataset.progress);
+      if (Number.isFinite(value)) {
+        animateIndicatorBar(bar, value);
+      }
+    });
+  };
+
   const showReportSection = (target) => {
     reportSections.forEach((section) => {
       const isTarget = section.dataset.reportSection === target;
@@ -67,6 +95,9 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => {
         mapaZonas.invalidateSize();
       }, 120);
+    }
+    if (target === "indicadores" && reportSnapshot.indicadores) {
+      setTimeout(() => rerunIndicatorBars(), 180);
     }
   };
 
@@ -157,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const finLabel = new Date(`${fin}T00:00:00`).toLocaleDateString("es-AR");
       addLine(`Reporte personalizado: ${inicioLabel} → ${finLabel}`, 10, 6, true);
     } else {
-      addLine("Reporte general: últimos 30 y 90 días", 10, 6, true);
+    addLine("Reporte general: últimos 30 y 60 días", 10, 6, true);
     }
 
     addSection("KPIs (últimos 30 días)");
@@ -167,13 +198,13 @@ document.addEventListener("DOMContentLoaded", () => {
     addLine(`Detalle: Perros ${formatValue(perro, " días")} · Gatos ${formatValue(gato, " días")}`);
     addLine(`Publicaciones con adopción: ${formatValue(publicaciones30.con_adopcion_aprobada)}`);
 
-    addSection("Tasa de éxito (últimos 90 días)");
+    addSection("Tasa de éxito (últimos 60 días)");
     addLine(`Aprobadas: ${formatValue(tasa.aprobadas)}`);
     addLine(`Rechazadas: ${formatValue(tasa.rechazadas)}`);
     addLine(`Porcentaje aprobación: ${formatValue(porcentajeAprobadas, "%")}`);
 
     if (reportSnapshot.adopcionEdad) {
-      addSection("Adopción por edad (últimos 90 días)");
+      addSection("Adopción por edad (últimos 60 días)");
       const { perros, gatos } = reportSnapshot.adopcionEdad;
       const formatEdad = (label, value) =>
         `${label}: ${value !== null && value !== undefined ? `${value} días` : "N/A"}`;
@@ -421,7 +452,7 @@ document.addEventListener("DOMContentLoaded", () => {
               backgroundColor: "rgba(26, 148, 196, 0.75)",
             },
             {
-              label: "Últimos 90 días",
+              label: "Últimos 60 días",
               data: [
                 adopciones90.iniciadas || 0,
                 adopciones90.actualizadas || 0,
@@ -897,8 +928,8 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   /**
-   * Renderiza los indicadores clave de 30 y 90 días.
-   * @param {object} data - La respuesta de la API con los bloques de 30 y 90 días.
+   * Renderiza los indicadores clave de 30 y 60 días.
+   * @param {object} data - La respuesta de la API con los bloques de 30 y 60 días.
    */
   const renderizarIndicadoresClave = (data) => {
     // PRUEBA DE DEPURACIÓN: Mostramos en la consola los datos que llegan.
@@ -929,8 +960,18 @@ document.addEventListener("DOMContentLoaded", () => {
       total30 > 0 ? Math.round((rechazadas30 / total30) * 100) : 0;
     document.getElementById("tasa-aprobadas-30").textContent = `${porcientoAprobadas30}%`;
     document.getElementById("tasa-rechazadas-30").textContent = `${porcientoRechazadas30}%`;
+    const barAprobadas30 = document.getElementById("tasa-aprobadas-30-bar");
+    const barRechazadas30 = document.getElementById("tasa-rechazadas-30-bar");
+    if (barAprobadas30) {
+      barAprobadas30.dataset.progress = porcientoAprobadas30;
+      animateIndicatorBar(barAprobadas30, porcientoAprobadas30);
+    }
+    if (barRechazadas30) {
+      barRechazadas30.dataset.progress = porcientoRechazadas30;
+      animateIndicatorBar(barRechazadas30, porcientoRechazadas30);
+    }
 
-    // --- Calcular y mostrar Tasa de Éxito para 90 días ---
+    // --- Calcular y mostrar Tasa de Éxito para 60 días ---
     const tasaExito90 = data.ultimos_90_dias.tasa_exito || {};
     const aprobadas90 = tasaExito90.aprobadas ?? 0;
     const rechazadas90 = tasaExito90.rechazadas ?? 0;
@@ -941,8 +982,19 @@ document.addEventListener("DOMContentLoaded", () => {
       total90 > 0 ? Math.round((rechazadas90 / total90) * 100) : 0;
     document.getElementById("tasa-aprobadas-90").textContent = `${porcientoAprobadas90}%`;
     document.getElementById("tasa-rechazadas-90").textContent = `${porcientoRechazadas90}%`;
+    const barAprobadas90 = document.getElementById("tasa-aprobadas-90-bar");
+    const barRechazadas90 = document.getElementById("tasa-rechazadas-90-bar");
+    if (barAprobadas90) {
+      barAprobadas90.dataset.progress = porcientoAprobadas90;
+      animateIndicatorBar(barAprobadas90, porcientoAprobadas90);
+    }
+    if (barRechazadas90) {
+      barRechazadas90.dataset.progress = porcientoRechazadas90;
+      animateIndicatorBar(barRechazadas90, porcientoRechazadas90);
+    }
 
     indicadoresClaveContainer.classList.remove("d-none");
+    rerunIndicatorBars();
   };
 
   /**
@@ -1057,6 +1109,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (data.length === 0) {
       listaContainer.innerHTML = `<p class="text-center text-muted">¡Felicidades! No hay mascotas con largos tiempos de espera.</p>`;
     } else {
+      const fallbackImagesByName = {
+        buddy: "mascota_extra_697ffd82bf286_dog-9502812_1280.jpg",
+        zoe: "mascota_extra_6980ea76d40cd_cat-9476900_1280.jpg",
+        jesus: "mascota_extra_69812ae1be026_animal-6591125_1280.jpg",
+      };
       const topMascotas = data.slice(0, 6);
       topMascotas.forEach((mascota, index) => {
         const item = document.createElement("a");
@@ -1064,9 +1121,25 @@ document.addEventListener("DOMContentLoaded", () => {
         item.className = "waiting-item animate-item";
         item.style.animationDelay = `${index * 0.06}s`;
 
-        const imagenSrc = mascota.imagen
-          ? `../img/mascotas/${mascota.imagen}`
-          : "../img/default-image.webp";
+        const normalizedName = (mascota.nombre || "")
+          .trim()
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+        const fallbackKey = Object.keys(fallbackImagesByName).find((key) =>
+          normalizedName.includes(key)
+        );
+        const fallbackImage = fallbackKey ? fallbackImagesByName[fallbackKey] : null;
+        const imagenFile = (mascota.imagen || "").trim();
+        const isMissingImage =
+          !imagenFile || imagenFile.toLowerCase().includes("default-image");
+        const imagenSrc = fallbackImage
+          ? `../img/mascotas/${fallbackImage}`
+          : !isMissingImage
+          ? imagenFile.includes("/")
+            ? imagenFile
+            : `../img/mascotas/${imagenFile}`
+          : "../img/mascotas/default.jpg";
         const publicado = mascota.date_publicacion
           ? new Date(mascota.date_publicacion).toLocaleDateString()
           : "—";
