@@ -39,7 +39,7 @@
   <!-- LISTADO DE POSTULACIONES -->
   <main class="container py-5 flex-grow-1">
     <section class="postulaciones-hero text-center mb-4">
-      <span class="detail-badge">Panel ONG</span>
+      <span class="detail-badge">Panel de postulaciones</span>
       <h2 class="text-warning fw-bold mt-2 mb-1">Mis Postulaciones</h2>
       <p class="text-muted mb-0">Revisá, comentá y administrá cada postulación desde un solo lugar.</p>
     </section>
@@ -58,7 +58,7 @@
         <div class="summary-value text-success" id="statAprobadas">0</div>
       </div>
       <div class="summary-card">
-        <div class="summary-label">Pendientes</div>
+        <div class="summary-label">En revisión</div>
         <div class="summary-value text-warning" id="statPendientes">0</div>
       </div>
       <div class="summary-card">
@@ -74,7 +74,7 @@
       </div>
       <select id="postulacionesStatus" class="form-select">
         <option value="">Todos los estados</option>
-        <option value="pendiente">Pendiente</option>
+        <option value="pendiente">En revisión</option>
         <option value="aprobada">Aprobada</option>
         <option value="rechazada">Rechazada</option>
       </select>
@@ -247,6 +247,8 @@
       });
     });
   </script>
+  <script src="../js/role-theme.js"></script>
+
 </body>
 
 </html>

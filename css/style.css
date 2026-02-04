@@ -2114,7 +2114,7 @@ div.card:has(#form-title) {
 
 /* === PERFIL USUARIO (FORMULARIO) === */
 .usuario-profile-body {
-  background: radial-gradient(circle at top, #f7f4ee 0%, #edf3f8 45%, #e6edf4 100%);
+  background: radial-gradient(circle at top, #e3efe8 0%, #c6d8cf 45%, #b5c7be 100%);
   color: #1b2436;
   font-family: "Manrope", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -2469,6 +2469,7 @@ div.card:has(#form-title) {
     position: static;
   }
 }
+
 
 .mis-mascotas-body {
   --catalog-bg: radial-gradient(circle at top, #f7f4ee 0%, #ece7dd 45%, #e2ddcf 100%);
@@ -3566,7 +3567,7 @@ div.card:has(#form-title) {
 
 /* === REPORTES MODERNOS === */
 .reports-body {
-  background: radial-gradient(circle at top, #f8f4ee 0%, #efe8dd 45%, #e7dfd2 100%);
+  background: linear-gradient(180deg, #b7d8f0 0%, #dcecf8 100%);
 }
 
 .reports-hero {
@@ -3592,7 +3593,7 @@ div.card:has(#form-title) {
 
 .reports-subtitle {
   margin: 0;
-  color: #6b7682;
+  color: #415166;
 }
 
 .reports-hero-tags {
@@ -3620,7 +3621,7 @@ div.card:has(#form-title) {
 }
 
 .report-section-subtitle {
-  color: #6b7682;
+  color: #415166;
   margin: 0;
 }
 
@@ -3629,14 +3630,14 @@ div.card:has(#form-title) {
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 700;
-  background: rgba(26, 148, 196, 0.12);
-  color: #1a94c4;
+  background: rgba(26, 148, 196, 0.08);
+  color: #607188;
 }
 
 .report-tag-outline {
-  background: transparent;
-  border: 1px solid rgba(26, 148, 196, 0.35);
-  color: #1b2436;
+  background: rgba(27, 36, 54, 0.06);
+  border: 1px dashed rgba(27, 36, 54, 0.28);
+  color: #4b5b6b;
 }
 
 .btn-report-menu {
@@ -3799,8 +3800,8 @@ div.card:has(#form-title) {
   background: #ffffff;
   border-radius: 16px;
   padding: 1rem 1.2rem;
-  border: 1px solid rgba(27, 36, 54, 0.08);
-  box-shadow: 0 12px 24px rgba(27, 36, 54, 0.06);
+  border: 1px solid rgba(27, 36, 54, 0.18);
+  box-shadow: 0 16px 32px rgba(27, 36, 54, 0.12);
   text-align: center;
 }
 
@@ -3821,7 +3822,7 @@ div.card:has(#form-title) {
 
 .kpi-meta {
   font-size: 0.85rem;
-  color: #6b7682;
+  color: #4b5b6b;
 }
 
 .kpi-positive {
@@ -3918,20 +3919,21 @@ div.card:has(#form-title) {
   flex-shrink: 0;
 }
 
-.bi-hourglass-split {
+.indicator-icon-animate {
   display: inline-block;
-  animation: hourglassFlip 2.6s ease-in-out infinite;
+  animation: heartBounce 1.8s ease-in-out infinite;
 }
 
-@keyframes hourglassFlip {
-  0% {
-    transform: rotate(0deg);
+@keyframes heartBounce {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
   }
   45% {
-    transform: rotate(180deg);
+    transform: translateY(-3px) scale(1.08);
   }
-  100% {
-    transform: rotate(360deg);
+  70% {
+    transform: translateY(1px) scale(0.98);
   }
 }
 
@@ -4004,8 +4006,19 @@ div.card:has(#form-title) {
   background: #ffffff;
   border-radius: 18px;
   padding: 1rem 1.2rem 1.3rem;
-  border: 1px solid rgba(27, 36, 54, 0.08);
-  box-shadow: 0 16px 28px rgba(27, 36, 54, 0.08);
+  border: 1px solid rgba(27, 36, 54, 0.16);
+  box-shadow: 0 18px 36px rgba(27, 36, 54, 0.14);
+}
+
+.reports-body .indicator-card,
+.reports-body .zones-rankings,
+.reports-body .zones-map-card,
+.reports-body .waiting-card,
+.reports-body .custom-report-card,
+.reports-body .report-loading-card,
+.reports-body .result-card {
+  border: 1px solid rgba(27, 36, 54, 0.16);
+  box-shadow: 0 18px 36px rgba(27, 36, 54, 0.12);
 }
 
 .report-chart-header {
@@ -6656,4 +6669,18 @@ div.card:has(#form-title) {
     transform: none !important;
     opacity: 1 !important;
   }
+}
+
+/* === THEMING POR ROL === */
+body.role-usuario {
+  background: radial-gradient(circle at top, #e3efe8 0%, #c6d8cf 45%, #b5c7be 100%);
+}
+
+body.role-ong {
+  background: linear-gradient(180deg, #b7d8f0 0%, #dcecf8 100%);
+}
+
+body.role-ong.mis-mascotas-body,
+body.role-ong.reports-body {
+  background: linear-gradient(180deg, #b7d8f0 0%, #dcecf8 100%);
 }

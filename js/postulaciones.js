@@ -80,7 +80,36 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  const updateLabelsForUsuario = () => {
+  const updateLabelsByRole = () => {
+    const heroBadge = document.querySelector(".postulaciones-hero .detail-badge");
+    const heroSubtitle = document.querySelector(".postulaciones-hero p");
+    const searchPlaceholder = document.getElementById("postulacionesSearch");
+    const labelPendientes = document
+      .getElementById("statPendientes")
+      ?.closest(".summary-card")
+      ?.querySelector(".summary-label");
+
+    if (heroBadge) {
+      heroBadge.textContent = tipoUsuario === "ong" ? "Panel ONG" : "Panel Usuario";
+    }
+    const heroTitle = document.querySelector(".postulaciones-hero h2");
+    if (heroTitle) {
+      heroTitle.textContent = tipoUsuario === "ong" ? "Postulaciones recibidas" : "Mis Postulaciones";
+    }
+    if (heroSubtitle) {
+      heroSubtitle.textContent = tipoUsuario === "ong"
+        ? "Revisá, comentá y administrá cada postulación desde un solo lugar."
+        : "Revisá el estado de tus postulaciones y los comentarios de la ONG.";
+    }
+    if (searchPlaceholder) {
+      searchPlaceholder.placeholder = tipoUsuario === "ong"
+        ? "Buscar por mascota o postulante"
+        : "Buscar por nombre de la mascota";
+    }
+    if (labelPendientes) {
+      labelPendientes.textContent = "En revisión";
+    }
+
     if (tipoUsuario !== "usuario") {
       return;
     }
@@ -110,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  updateLabelsForUsuario();
+  updateLabelsByRole();
 
   const fetchPostulaciones = async () => {
     try {
@@ -558,7 +587,7 @@ document.addEventListener("DOMContentLoaded", () => {
     switch (parseInt(estado)) {
       case 0:
         return {
-          texto: "Pendiente",
+          texto: "En revisión",
           filtro: "pendiente",
           clase: "bg-warning text-dark",
           emoji: "⏳",
@@ -786,13 +815,15 @@ document.addEventListener("DOMContentLoaded", () => {
       "pendientes",
       pendientesContainer,
       pendientes,
-      "No hay postulaciones pendientes."
+      "No hay postulaciones en revisión."
     );
     renderSection(
       "aprobadas",
       aprobadasContainer,
       aprobadas,
-      "No hay postulaciones aprobadas todavía."
+      tipoUsuario === "usuario"
+        ? "No hay postulaciones adoptadas todavía."
+        : "No hay postulaciones aprobadas todavía."
     );
     renderSection(
       "rechazadas",

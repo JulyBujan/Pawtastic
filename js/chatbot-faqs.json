@@ -559,5 +559,371 @@
       "edad",
       "adulto responsable"
     ]
+  },
+  {
+    "question": "¿Cómo publico una mascota como ONG?",
+    "answer": "Desde tu perfil ONG hacé clic en “Nueva mascota”, completá los datos y guardá. Luego la vas a ver en “Mis mascotas” y, si está Activa, aparece en el catálogo.",
+    "audience": "ong",
+    "keywords": [
+      "publicar",
+      "nueva mascota",
+      "cargar",
+      "subir",
+      "ong"
+    ]
+  },
+  {
+    "question": "¿Cómo edito o elimino una mascota?",
+    "answer": "Entrá a “Mis mascotas” y usá los botones de editar o eliminar en la tarjeta de la mascota. Los cambios se aplican al guardar.",
+    "audience": "ong",
+    "keywords": [
+      "editar",
+      "eliminar",
+      "modificar",
+      "mis mascotas"
+    ]
+  },
+  {
+    "question": "¿Cómo reviso las postulaciones?",
+    "answer": "Podés ver las solicitudes desde “Postulaciones” en el perfil ONG. Ahí se listan las postulaciones y su estado.",
+    "audience": "ong",
+    "keywords": [
+      "postulaciones",
+      "solicitudes",
+      "revisar",
+      "ong"
+    ]
+  },
+  {
+    "question": "¿Cómo cambio el estado de una mascota?",
+    "answer": "En “Mis mascotas” abrí la edición y seleccioná el estado (Activa, En revisión, Adoptada o Archivada) y guardá.",
+    "audience": "ong",
+    "keywords": [
+      "estado",
+      "activa",
+      "adoptada",
+      "revision",
+      "archivada"
+    ]
+  },
+  {
+    "question": "¿Dónde veo los reportes de la ONG?",
+    "answer": "Desde el perfil ONG hacé clic en “Ver reportes” para acceder a métricas y gráficos.",
+    "audience": "ong",
+    "keywords": [
+      "reportes",
+      "estadisticas",
+      "metricas"
+    ]
+  },
+  {
+    "question": "¿Tengo que validar la documentación de la ONG?",
+    "answer": "Sí, al registrarte completás la información y la documentación requerida. El equipo valida esos datos antes de activar la cuenta.",
+    "audience": "ong",
+    "keywords": [
+      "documentacion",
+      "validar",
+      "registro ong",
+      "verificacion"
+    ]
+  },
+  {
+    "question": "¿Cómo puedo adoptar un animal?",
+    "answer": "En Pawtastic podés adoptar perros y gatos. Creás tu perfil, buscás en el catálogo, te postulás y la ONG revisa tu solicitud.",
+    "audience": "usuario",
+    "keywords": [
+      "adoptar",
+      "adopcion",
+      "animal",
+      "postularme"
+    ]
+  },
+  {
+    "question": "¿Cómo puedo adoptar un pato?",
+    "answer": "Por ahora Pawtastic está enfocado en perros y gatos. Para adoptar un pato, te recomendamos contactar refugios o ONGs especializadas en tu zona.",
+    "audience": "usuario",
+    "keywords": [
+      "pato",
+      "adoptar pato"
+    ]
+  },
+  {
+    "question": "¿Cómo puedo adoptar un canario?",
+    "answer": "Por ahora Pawtastic está enfocado en perros y gatos. Para adoptar un canario, te recomendamos contactar refugios o ONGs especializadas en aves.",
+    "audience": "usuario",
+    "keywords": [
+      "canario",
+      "ave",
+      "adoptar canario"
+    ]
+  },
+  {
+    "question": "¿Cómo puedo adoptar una tortuga?",
+    "answer": "Por ahora Pawtastic está enfocado en perros y gatos. Para adoptar una tortuga, te recomendamos contactar refugios o ONGs especializadas.",
+    "audience": "usuario",
+    "keywords": [
+      "tortuga",
+      "reptil",
+      "adoptar tortuga"
+    ]
+  },
+  {
+    "question": "¿Puedo dar en adopción mi gato?",
+    "answer": "Actualmente Pawtastic publica mascotas a través de ONGs. Si necesitás dar en adopción tu gato, te recomendamos contactar una ONG o refugio local para que te asesoren.",
+    "audience": "usuario",
+    "keywords": [
+      "dar en adopcion",
+      "dar en adopción",
+      "gato",
+      "entregar"
+    ]
+  },
+  {
+    "question": "¿Puedo dar en adopción mi perro?",
+    "answer": "Actualmente Pawtastic publica mascotas a través de ONGs. Si necesitás dar en adopción tu perro, contactá una ONG o refugio local para recibir ayuda.",
+    "audience": "usuario",
+    "keywords": [
+      "dar en adopcion",
+      "dar en adopción",
+      "perro",
+      "entregar"
+    ]
+  },
+  {
+    "question": "¿Puedo dar en adopción mi pato?",
+    "answer": "Pawtastic publica principalmente perros y gatos mediante ONGs. Para dar en adopción un pato, te recomendamos contactar organizaciones especializadas en tu zona.",
+    "audience": "usuario",
+    "keywords": [
+      "dar en adopcion",
+      "dar en adopción",
+      "pato",
+      "entregar"
+    ]
+  },
+  {
+    "question": "¿Puedo dar en adopción mi pájaro?",
+    "answer": "Pawtastic publica principalmente perros y gatos mediante ONGs. Para dar en adopción un pájaro, te recomendamos contactar organizaciones especializadas en aves.",
+    "audience": "usuario",
+    "keywords": [
+      "dar en adopcion",
+      "dar en adopción",
+      "pajaro",
+      "pájaro",
+      "ave",
+      "entregar"
+    ]
+  },
+  {
+    "question": "¿Dónde adoptar en mi país?",
+    "answer": "Podés usar el catálogo de Pawtastic y, si validaste tu dirección, el filtro de cercanía. También podés contactar ONGs locales en tu ciudad.",
+    "audience": "usuario",
+    "keywords": [
+      "donde adoptar",
+      "donde",
+      "pais",
+      "ciudad"
+    ]
+  },
+  {
+    "question": "¿Dónde dar en adopción?",
+    "answer": "Lo ideal es contactar una ONG o refugio de tu zona para que te orienten y acompañen el proceso.",
+    "audience": "usuario",
+    "keywords": [
+      "donde dar en adopcion",
+      "donde dar en adopción",
+      "refugio",
+      "ong"
+    ]
+  },
+  {
+    "question": "¿Dónde hay una veterinaria?",
+    "answer": "Pawtastic no lista veterinarias. Podés consultar a la ONG o buscar una veterinaria cercana en tu zona.",
+    "audience": "usuario",
+    "keywords": [
+      "veterinaria",
+      "vet",
+      "veterinario"
+    ]
+  },
+  {
+    "question": "¿Qué comen los animales adoptados?",
+    "answer": "Depende de la especie, la edad y la salud de cada mascota. La ONG te indica la dieta recomendada y, si tenés dudas, consultá a un veterinario.",
+    "audience": "usuario",
+    "keywords": [
+      "comen",
+      "alimentacion",
+      "alimento",
+      "dieta"
+    ]
+  },
+  {
+    "question": "¿Yo puedo adoptar?",
+    "answer": "En general sí, si sos mayor de edad y podés brindar un hogar responsable. Cada ONG puede tener requisitos específicos.",
+    "audience": "usuario",
+    "keywords": [
+      "puedo adoptar",
+      "requisitos",
+      "edad"
+    ]
+  },
+  {
+    "question": "¿Cuánto sale adoptar una mascota?",
+    "answer": "La adopción es gratuita. Algunas ONGs pueden solicitar una contribución voluntaria para gastos veterinarios.",
+    "audience": "usuario",
+    "keywords": [
+      "cuanto sale",
+      "costo",
+      "precio",
+      "pagar"
+    ]
+  },
+  {
+    "question": "¿Cuánto sale adoptar un gato?",
+    "answer": "La adopción es gratuita. Algunas ONGs pueden solicitar una contribución voluntaria para gastos veterinarios.",
+    "audience": "usuario",
+    "keywords": [
+      "cuanto sale",
+      "gato",
+      "costo",
+      "precio"
+    ]
+  },
+  {
+    "question": "¿Cuánto sale adoptar un perro?",
+    "answer": "La adopción es gratuita. Algunas ONGs pueden solicitar una contribución voluntaria para gastos veterinarios.",
+    "audience": "usuario",
+    "keywords": [
+      "cuanto sale",
+      "perro",
+      "costo",
+      "precio"
+    ]
+  },
+  {
+    "question": "¿Son malos los animales adoptados?",
+    "answer": "No. Las mascotas adoptadas pueden venir con historias distintas, pero con paciencia y amor se adaptan muy bien. La ONG te acompaña en el proceso.",
+    "audience": "usuario",
+    "keywords": [
+      "malos",
+      "agresivo",
+      "problematicos"
+    ]
+  },
+  {
+    "question": "¿Son buenos los animales adoptados?",
+    "answer": "Sí, la mayoría se adapta muy bien cuando recibe cuidado y tiempo. La ONG te ayuda a encontrar la mascota adecuada para vos.",
+    "audience": "usuario",
+    "keywords": [
+      "buenos",
+      "buen comportamiento",
+      "dociles"
+    ]
+  },
+  {
+    "question": "¿Puedo devolver mi mascota?",
+    "answer": "Si tenés dificultades, contactá a la ONG. No abandones a la mascota; la ONG te va a orientar sobre los pasos a seguir.",
+    "audience": "usuario",
+    "keywords": [
+      "devolver",
+      "arrepiento",
+      "devolucion",
+      "mascota"
+    ]
+  },
+  {
+    "question": "¿Puedo devolver el perro?",
+    "answer": "Si tenés dificultades, contactá a la ONG. No abandones al perro; la ONG te va a orientar sobre los pasos a seguir.",
+    "audience": "usuario",
+    "keywords": [
+      "devolver",
+      "perro",
+      "arrepiento"
+    ]
+  },
+  {
+    "question": "¿Puedo devolver el gato?",
+    "answer": "Si tenés dificultades, contactá a la ONG. No abandones al gato; la ONG te va a orientar sobre los pasos a seguir.",
+    "audience": "usuario",
+    "keywords": [
+      "devolver",
+      "gato",
+      "arrepiento"
+    ]
+  },
+  {
+    "question": "¿Puedo devolver mi animal?",
+    "answer": "Si tenés dificultades, contactá a la ONG. No abandones a la mascota; la ONG te va a orientar sobre los pasos a seguir.",
+    "audience": "usuario",
+    "keywords": [
+      "devolver",
+      "animal",
+      "arrepiento"
+    ]
+  },
+  {
+    "question": "¿Dónde lo puedo devolver?",
+    "answer": "Siempre contactá a la ONG con la que hiciste la adopción. Ellos te van a indicar cómo proceder.",
+    "audience": "usuario",
+    "keywords": [
+      "donde devolver",
+      "devolucion",
+      "ong"
+    ]
+  },
+  {
+    "question": "¿Tienen un perro negro?",
+    "answer": "En el catálogo podés ver fotos y descripciones. No hay filtro por color, así que te recomendamos revisar las tarjetas y consultar a la ONG si te interesa alguno.",
+    "audience": "usuario",
+    "keywords": [
+      "perro negro",
+      "negro"
+    ]
+  },
+  {
+    "question": "¿Tienen un perro blanco?",
+    "answer": "En el catálogo podés ver fotos y descripciones. No hay filtro por color, así que te recomendamos revisar las tarjetas y consultar a la ONG si te interesa alguno.",
+    "audience": "usuario",
+    "keywords": [
+      "perro blanco",
+      "blanco"
+    ]
+  },
+  {
+    "question": "¿Tienen rottweiler?",
+    "answer": "Podés revisar el catálogo y las descripciones. No hay filtro por raza, así que si te interesa una raza específica, consultá a la ONG desde el perfil de la mascota.",
+    "audience": "usuario",
+    "keywords": [
+      "rottweiler",
+      "rowailer"
+    ]
+  },
+  {
+    "question": "¿Tienen pitbull?",
+    "answer": "Podés revisar el catálogo y las descripciones. No hay filtro por raza, así que si te interesa una raza específica, consultá a la ONG desde el perfil de la mascota.",
+    "audience": "usuario",
+    "keywords": [
+      "pitbull",
+      "pibul"
+    ]
+  },
+  {
+    "question": "¿Tienen caniche?",
+    "answer": "Podés revisar el catálogo y las descripciones. No hay filtro por raza, así que si te interesa una raza específica, consultá a la ONG desde el perfil de la mascota.",
+    "audience": "usuario",
+    "keywords": [
+      "caniche",
+      "caniches"
+    ]
+  },
+  {
+    "question": "¿Tienen aves?",
+    "answer": "Actualmente Pawtastic está enfocado en perros y gatos. Si alguna ONG publica aves, aparecerán en el catálogo, pero no es lo habitual.",
+    "audience": "usuario",
+    "keywords": [
+      "aves",
+      "pajaros",
+      "pájaros",
+      "canario"
+    ]
   }
 ]

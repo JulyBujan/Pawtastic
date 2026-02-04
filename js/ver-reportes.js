@@ -32,6 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const reportMenuItems = document.querySelectorAll(".report-menu-item");
   const btnGenerarReporte =
     formPeriodoPersonalizado?.querySelector("button[type=\"submit\"]") || null;
+  const exportButtons = document.querySelectorAll(".btn-export-pdf");
 
   let viviendaChartManual = null;
   let tipoMascotaChartManual = null;
@@ -40,6 +41,14 @@ document.addEventListener("DOMContentLoaded", () => {
   let reportStatusChart = null;
   let reportTypeChart = null;
   let reportHousingChart = null;
+  const reportSnapshot = {
+    indicadores: null,
+    adopcionEdad: null,
+    adopcionZona: null,
+    mascotasEspera: null,
+    personalizado: null,
+    personalizadoRango: null,
+  };
 
   const showReportSection = (target) => {
     reportSections.forEach((section) => {
@@ -58,6 +67,186 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => {
         mapaZonas.invalidateSize();
       }, 120);
+    }
+  };
+
+  const exportActiveReportToPdf = () => {
+    if (!window.jspdf?.jsPDF) {
+      if (typeof showToast === "function") {
+        showToast("No se pudo cargar el exportador PDF.", "danger");
+      }
+      return;
+    }
+
+    if (!reportSnapshot.indicadores) {
+      if (typeof showToast === "function") {
+        showToast("Primero cargá los datos del reporte.", "warning");
+      }
+      return;
+    }
+
+    const activeButton = document.activeElement;
+    const exportButton = activeButton?.closest(".btn-export-pdf");
+    if (exportButton) {
+      exportButton.classList.add("is-loading");
+      exportButton.disabled = true;
+    }
+
+    if (typeof showToast === "function") {
+      showToast("Generando PDF... ⏳", "info");
+    }
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const margin = 14;
+    let cursorY = 16;
+
+    const addLine = (text, size = 11, gap = 6, bold = false) => {
+      pdf.setFont("helvetica", bold ? "bold" : "normal");
+      pdf.setFontSize(size);
+      const lines = pdf.splitTextToSize(String(text), pageWidth - margin * 2);
+      lines.forEach((line) => {
+        if (cursorY > 285) {
+          pdf.addPage();
+          cursorY = 16;
+        }
+        pdf.text(line, margin, cursorY);
+        cursorY += gap;
+      });
+    };
+
+    const addSection = (title) => {
+      cursorY += 2;
+      addLine(title, 12, 7, true);
+      cursorY += 1;
+    };
+
+    const formatValue = (value, suffix = "") =>
+      value === null || value === undefined || value === "" ? "--" : `${value}${suffix}`;
+
+    const dataIndicadores = reportSnapshot.indicadores || {};
+    const data30 = dataIndicadores.ultimos_30_dias || {};
+    const data90 = dataIndicadores.ultimos_90_dias || {};
+    const adopciones30 = data30.adopciones || {};
+    const publicaciones30 = data30.publicaciones || {};
+    const metricas30 = data30.metricas_clave || {};
+    const tiempos = metricas30.tiempo_promedio_adopcion || {};
+
+    const perro = tiempos.perro;
+    const gato = tiempos.gato;
+    const tiempoValues = [perro, gato].filter((value) => typeof value === "number");
+    const promedioTiempo =
+      tiempoValues.length > 0
+        ? (tiempoValues.reduce((a, b) => a + b, 0) / tiempoValues.length).toFixed(1)
+        : "--";
+
+    const tasa = data90.tasa_exito || {};
+    const totalTasa = (tasa.aprobadas || 0) + (tasa.rechazadas || 0);
+    const porcentajeAprobadas =
+      totalTasa > 0 ? Math.round((tasa.aprobadas / totalTasa) * 100) : "--";
+
+    const date = new Date();
+    addLine("Reporte ONG · Pawtastic", 14, 8, true);
+    addLine(`Fecha: ${date.toLocaleDateString("es-AR")}`, 10, 6);
+
+    if (reportSnapshot.personalizado && reportSnapshot.personalizadoRango) {
+      const inicio = reportSnapshot.personalizadoRango.inicio;
+      const fin = reportSnapshot.personalizadoRango.fin;
+      const inicioLabel = new Date(`${inicio}T00:00:00`).toLocaleDateString("es-AR");
+      const finLabel = new Date(`${fin}T00:00:00`).toLocaleDateString("es-AR");
+      addLine(`Reporte personalizado: ${inicioLabel} → ${finLabel}`, 10, 6, true);
+    } else {
+      addLine("Reporte general: últimos 30 y 90 días", 10, 6, true);
+    }
+
+    addSection("KPIs (últimos 30 días)");
+    addLine(`Postulaciones iniciadas: ${formatValue(adopciones30.iniciadas)}`);
+    addLine(`Postulaciones actualizadas: ${formatValue(adopciones30.actualizadas)}`);
+    addLine(`Tiempo promedio de adopción: ${formatValue(promedioTiempo, " días")}`);
+    addLine(`Detalle: Perros ${formatValue(perro, " días")} · Gatos ${formatValue(gato, " días")}`);
+    addLine(`Publicaciones con adopción: ${formatValue(publicaciones30.con_adopcion_aprobada)}`);
+
+    addSection("Tasa de éxito (últimos 90 días)");
+    addLine(`Aprobadas: ${formatValue(tasa.aprobadas)}`);
+    addLine(`Rechazadas: ${formatValue(tasa.rechazadas)}`);
+    addLine(`Porcentaje aprobación: ${formatValue(porcentajeAprobadas, "%")}`);
+
+    if (reportSnapshot.adopcionEdad) {
+      addSection("Adopción por edad (últimos 90 días)");
+      const { perros, gatos } = reportSnapshot.adopcionEdad;
+      const formatEdad = (label, value) =>
+        `${label}: ${value !== null && value !== undefined ? `${value} días` : "N/A"}`;
+      if (perros) {
+        addLine("Perros");
+        addLine(formatEdad("Cachorros", perros.cachorros), 10, 5);
+        addLine(formatEdad("Jóvenes", perros.jovenes), 10, 5);
+        addLine(formatEdad("Adultos", perros.adultos), 10, 5);
+        addLine(formatEdad("Seniors", perros.seniors), 10, 5);
+      }
+      if (gatos) {
+        cursorY += 2;
+        addLine("Gatos");
+        addLine(formatEdad("Cachorros", gatos.cachorros), 10, 5);
+        addLine(formatEdad("Jóvenes", gatos.jovenes), 10, 5);
+        addLine(formatEdad("Adultos", gatos.adultos), 10, 5);
+        addLine(formatEdad("Seniors", gatos.seniors), 10, 5);
+      }
+    }
+
+    if (Array.isArray(reportSnapshot.adopcionZona) && reportSnapshot.adopcionZona.length) {
+      addSection("Top zonas de adopción");
+      reportSnapshot.adopcionZona.slice(0, 5).forEach((zona, index) => {
+        addLine(
+          `${index + 1}. ${zona.barrio || "Sin barrio"}, ${zona.ciudad || "Sin ciudad"} · ${formatValue(
+            zona.total_adopciones
+          )} adopciones`,
+          10,
+          5
+        );
+      });
+    }
+
+    if (Array.isArray(reportSnapshot.mascotasEspera) && reportSnapshot.mascotasEspera.length) {
+      addSection("Mascotas con más tiempo en espera");
+      reportSnapshot.mascotasEspera.slice(0, 5).forEach((mascota, index) => {
+        addLine(
+          `${index + 1}. ${mascota.nombre || "Mascota"} · ${formatValue(mascota.dias_en_espera, " días")}`,
+          10,
+          5
+        );
+      });
+    }
+
+    if (reportSnapshot.personalizado && reportSnapshot.personalizadoRango) {
+      const { inicio, fin } = reportSnapshot.personalizadoRango;
+      const customData = reportSnapshot.personalizado;
+      const stats = customData.adopciones || {};
+      const perfil = customData.perfil_adopcion || {};
+      addSection("Reporte personalizado");
+      addLine(`Iniciadas: ${formatValue(stats.iniciadas)}`);
+      addLine(`Aprobadas: ${formatValue(stats.aprobadas)}`);
+      addLine(`Canceladas: ${formatValue(stats.canceladas)}`);
+      if (Array.isArray(perfil.por_tipo_mascota)) {
+        addLine("Perfil de adopción · Tipo de mascota");
+        perfil.por_tipo_mascota.forEach((item) => {
+          addLine(`- ${item.tipo_mascota}: ${formatValue(item.cantidad)}`, 10, 5);
+        });
+      }
+      if (Array.isArray(perfil.por_vivienda)) {
+        addLine("Perfil de adopción · Tipo de vivienda");
+        perfil.por_vivienda.forEach((item) => {
+          addLine(`- ${item.tipo_vivienda}: ${formatValue(item.cantidad)}`, 10, 5);
+        });
+      }
+    }
+
+    const fileStamp = date.toISOString().slice(0, 10);
+    pdf.save(`reporte-${reportSnapshot.personalizado ? "personalizado" : "dashboard"}-${fileStamp}.pdf`);
+
+    if (exportButton) {
+      exportButton.classList.remove("is-loading");
+      exportButton.disabled = false;
     }
   };
 
@@ -436,6 +625,8 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(data.message || "Error al generar el reporte.");
       }
 
+      reportSnapshot.personalizado = data;
+      reportSnapshot.personalizadoRango = { inicio, fin };
       renderizarReportePersonalizado(data, inicio, fin);
     } catch (error) {
       console.error("Error al obtener el reporte:", error);
@@ -485,6 +676,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateKpis(data30, data90);
       renderDashboardCharts(data30, data90);
       renderizarIndicadoresClave(dataIndicadores);
+      reportSnapshot.indicadores = dataIndicadores;
 
       // Petición para las estadísticas por edad
       const resAdopcionEdad = await fetch(
@@ -500,6 +692,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
       if (dataAdopcionEdad.status === "success") {
         renderizarAdopcionPorEdad(dataAdopcionEdad.data);
+        reportSnapshot.adopcionEdad = dataAdopcionEdad.data;
       } else {
         throw new Error(
           dataAdopcionEdad.message || "No se pudieron cargar las estadísticas."
@@ -520,6 +713,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
       if (dataAdopcionZona.status === "success") {
         renderizarAdopcionesPorZona(dataAdopcionZona.data);
+        reportSnapshot.adopcionZona = dataAdopcionZona.data;
       }
 
       // Petición para las mascotas con más tiempo en espera
@@ -536,6 +730,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
       if (dataMascotasEspera.status === "success") {
         renderizarMascotasEnEspera(dataMascotasEspera.data);
+        reportSnapshot.mascotasEspera = dataMascotasEspera.data;
       }
 
     } catch (error) {
@@ -948,6 +1143,10 @@ document.addEventListener("DOMContentLoaded", () => {
         offcanvas.hide();
       }
     });
+  });
+
+  exportButtons.forEach((button) => {
+    button.addEventListener("click", exportActiveReportToPdf);
   });
 
   // --- Carga Inicial Automática ---

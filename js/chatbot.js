@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatbox = document.querySelector(".chatbox");
   const chatInput = document.querySelector(".chat-input textarea");
   const sendChatBtn = document.querySelector(".chat-input span");
+  const userType = localStorage.getItem("tipo");
 
   const stopWords = new Set([
     "que",
@@ -75,7 +76,14 @@ document.addEventListener("DOMContentLoaded", () => {
     cerca: ["cercania", "zona", "ubicacion", "cercanas"],
     tamano: ["tamaño", "pequeno", "pequeño", "mediano", "grande", "chico"],
     energia: ["energia", "energía"],
+    publicar: ["publicar", "cargar", "subir", "crear", "nueva", "agregar"],
+    editar: ["editar", "modificar", "actualizar"],
+    postulaciones: ["postulacion", "solicitudes", "aplicaciones"],
+    reportes: ["reporte", "reportes", "estadisticas", "metricas"],
+    estado: ["estado", "activa", "adoptada", "revision", "archivada"],
   };
+
+  const faqLink = "/pages/faq.html";
 
   const normalizeText = (text) => {
     if (!text) {
@@ -121,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
     {
       question: "Ayuda",
       answer:
-        "Podés hacer preguntas sobre adopciones, filtros del catálogo, requisitos o el proceso para ONGs. También podés visitar nuestras <a href=\"./pages/faq.html\">Preguntas Frecuentes</a>.",
+        `Podés hacer preguntas sobre adopciones, filtros del catálogo, requisitos o el proceso para ONGs. También podés visitar nuestras <a href="${faqLink}">Preguntas Frecuentes</a>.`,
       keywords: ["ayuda", "faq", "preguntas", "informacion"],
     },
   ];
@@ -145,7 +153,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const loadFaqs = async () => {
     try {
-      const response = await fetch("./js/chatbot-faqs.json", {
+      const faqPath = window.location.pathname.includes("/pages/")
+        ? "../js/chatbot-faqs.json"
+        : "./js/chatbot-faqs.json";
+      const response = await fetch(faqPath, {
         cache: "no-store",
       });
       if (!response.ok) {
@@ -199,7 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const normalizedMessage = normalizeText(userMessage);
     const userTokens = expandTokens(tokenize(userMessage));
     const fallbackAnswer =
-      "Mmm... no estoy seguro de haber entendido tu pregunta. 🤔<br>Podés preguntarme sobre adopciones, filtros del catálogo, requisitos o el proceso para ONGs. Si querés, podés visitar nuestras <a href=\"./pages/faq.html\">Preguntas Frecuentes</a>. Si necesitás ayuda específica, escribinos a <strong>pawtasticarg@gmail.com</strong>.";
+      `Mmm... no estoy seguro de haber entendido tu pregunta. 🤔<br>Podés preguntarme sobre adopciones, filtros del catálogo, requisitos o el proceso para ONGs. Si querés, podés visitar nuestras <a href="${faqLink}">Preguntas Frecuentes</a>. Si necesitás ayuda específica, escribinos a <strong>pawtasticarg@gmail.com</strong>.`;
     let bestMatch = {
       score: 0,
       answer: fallbackAnswer,
@@ -224,6 +235,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const union = faq.tokens.size + userTokens.size - overlap;
       const jaccard = union ? overlap / union : 0;
       score += jaccard * 2;
+
+      if (userType && faq.audience) {
+        if (faq.audience === userType) {
+          score += 0.4;
+        } else {
+          score -= 0.15;
+        }
+      }
 
       if (score > bestMatch.score) {
         bestMatch = { score, answer: faq.answer };

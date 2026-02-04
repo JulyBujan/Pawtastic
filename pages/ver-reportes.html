@@ -61,6 +61,9 @@
           aria-controls="reportesMenu">
           <i class="bi bi-list"></i> Ver reportes
         </button>
+        <button type="button" class="btn btn-report-ghost btn-export-pdf">
+          <i class="bi bi-download"></i> Exportar PDF
+        </button>
         <span class="report-tag report-tag-outline">Últimos 30 días</span>
       </div>
     </section>
@@ -150,7 +153,7 @@
             </div>
             <div class="indicator-block">
               <div class="indicator-block-header">
-                <span class="indicator-icon indicator-icon-cool"><i class="bi bi-hourglass-split"></i></span>
+                <span class="indicator-icon indicator-icon-cool"><i class="bi bi-heart-fill indicator-icon-animate"></i></span>
                 <div>
                   <h5>Tiempo promedio de adopción</h5>
                   <p>Promedio en días por especie.</p>
@@ -197,7 +200,7 @@
             </div>
             <div class="indicator-block">
               <div class="indicator-block-header">
-                <span class="indicator-icon indicator-icon-cool"><i class="bi bi-hourglass-split"></i></span>
+                <span class="indicator-icon indicator-icon-cool"><i class="bi bi-heart-fill indicator-icon-animate"></i></span>
                 <div>
                   <h5>Tiempo promedio de adopción</h5>
                   <p>Promedio en días por especie.</p>
@@ -530,6 +533,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <!-- Leaflet JS para el mapa interactivo -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -542,6 +546,8 @@
     });
   </script>
   <script src="../js/ver-reportes.js"></script>
+  <script src="../js/role-theme.js"></script>
+
 </body>
 
 </html>
