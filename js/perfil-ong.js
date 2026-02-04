@@ -13,6 +13,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const notifList = document.getElementById("notifList");
   const markAllNotifBtn = document.getElementById("markAllNotif");
   const actividadList = document.getElementById("actividadList");
+  const ongLogoImg = document.getElementById("ongLogo");
+  const ongLogoInput = document.getElementById("ongLogoInput");
+  const ongLogoTrigger = document.getElementById("ongLogoTrigger");
+  const ongPerfilNombre = document.getElementById("ongPerfilNombre");
+  const ongPerfilRazon = document.getElementById("ongPerfilRazon");
+  const ongPerfilCuit = document.getElementById("ongPerfilCuit");
+  const ongPerfilEmail = document.getElementById("ongPerfilEmail");
+  const ongPerfilDireccion = document.getElementById("ongPerfilDireccion");
+  const ongPerfilActualizacion = document.getElementById("ongPerfilActualizacion");
 
   if (!token || tipo !== "ong") {
     showToast("⚠️ Debes iniciar sesión como ONG para acceder a esta página.", "danger");
@@ -68,6 +77,111 @@ document.addEventListener("DOMContentLoaded", () => {
       .replace(/'/g, "&#39;");
   };
 
+  const defaultLogoSrc = "../img/pdefault.jpg";
+
+  const resolveLogoSrc = (logoUrl) => {
+    if (!logoUrl) return defaultLogoSrc;
+    if (/^https?:\/\//i.test(logoUrl)) return logoUrl;
+    if (logoUrl.startsWith("/")) return logoUrl;
+    const cleanPath = logoUrl.replace(/^\.\//, "");
+    return `../${cleanPath}`;
+  };
+
+  const setText = (element, value, fallback = "—") => {
+    if (!element) return;
+    const text = value === null || value === undefined || value === "" ? fallback : value;
+    element.textContent = text;
+  };
+
+  const formatAddress = (ong) => {
+    if (!ong) return "—";
+    const road = ong.road || "";
+    const number = parseInt(ong.house_number, 10);
+    const safeNumber = Number.isNaN(number) || number <= 0 ? "" : String(number);
+    const depto = ong.departamento ? `, Depto ${ong.departamento}` : "";
+    const line = [road, safeNumber].filter(Boolean).join(" ");
+    const area = [ong.suburb, ong.city].filter(Boolean).join(", ");
+    const full = [line ? `${line}${depto}` : "", area].filter(Boolean).join(" • ");
+    return full || "—";
+  };
+
+  if (ongLogoImg) {
+    ongLogoImg.onerror = () => {
+      ongLogoImg.src = defaultLogoSrc;
+    };
+  }
+
+  const validateLogoFile = (file) => {
+    if (!file) {
+      return "Seleccioná una imagen.";
+    }
+    if (!file.type.startsWith("image/")) {
+      return "El archivo debe ser una imagen.";
+    }
+    const maxSizeMb = 4;
+    if (file.size > maxSizeMb * 1024 * 1024) {
+      return `La imagen no puede superar los ${maxSizeMb}MB.`;
+    }
+    return "";
+  };
+
+  const uploadOngLogo = async (file) => {
+    const error = validateLogoFile(file);
+    if (error) {
+      showToast(error, "warning");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("logo", file);
+
+    try {
+      const response = await fetch("../api/perfil-ong.php", {
+        method: "POST",
+        headers: { Authorization: "Bearer " + token },
+        body: formData,
+      });
+
+      if (handleUnauthorized(response)) {
+        return;
+      }
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data.message || "No se pudo actualizar el logo.");
+      }
+
+      if (data.logo_url && ongLogoImg) {
+        ongLogoImg.src = resolveLogoSrc(data.logo_url);
+      }
+      showToast("Logo actualizado con éxito.", "success");
+    } catch (error) {
+      console.error(error);
+      showToast(error.message || "No se pudo actualizar el logo.", "danger");
+    } finally {
+      if (ongLogoInput) {
+        ongLogoInput.value = "";
+      }
+    }
+  };
+
+  if (ongLogoTrigger && ongLogoInput) {
+    ongLogoTrigger.addEventListener("click", () => ongLogoInput.click());
+  }
+
+  if (ongLogoImg && ongLogoInput) {
+    ongLogoImg.addEventListener("click", () => ongLogoInput.click());
+  }
+
+  if (ongLogoInput) {
+    ongLogoInput.addEventListener("change", (event) => {
+      const file = event.target.files && event.target.files[0];
+      if (file) {
+        uploadOngLogo(file);
+      }
+    });
+  }
+
   const getIconForNotif = (tipoNotif) => {
     const type = (tipoNotif || "").toLowerCase();
     if (type.includes("comentario")) return "bi-chat-left-dots";
@@ -91,16 +205,31 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const ong = await response.json();
-      if (ong.nombre) {
+      if (ong.nombre && nombreOngSpan) {
         nombreOngSpan.textContent = ong.nombre;
+      }
+      setText(ongPerfilNombre, ong.nombre);
+      setText(ongPerfilRazon, ong.razon_social);
+      setText(ongPerfilCuit, ong.cuit);
+      setText(ongPerfilEmail, ong.email);
+      setText(ongPerfilDireccion, formatAddress(ong));
+      setText(ongPerfilActualizacion, formatDateTime(ong.ultima_actualizacion));
+      if (ongLogoImg) {
+        ongLogoImg.src = resolveLogoSrc(ong.logo_url);
       }
     } catch (error) {
       console.error(error);
-      nombreOngSpan.textContent = "Error al cargar";
+      if (nombreOngSpan) {
+        nombreOngSpan.textContent = "Error al cargar";
+      }
+      setText(ongPerfilNombre, "Error al cargar", "Error al cargar");
     }
   };
 
   const fetchMascotasData = async () => {
+    if (!totalMascotasEl || !ultimaMascotaUpdateEl) {
+      return;
+    }
     try {
       const response = await fetch("../api/get_mascota.php?include_adoptadas=1&include_archivadas=1", {
         headers: { Authorization: "Bearer " + token },
@@ -143,6 +272,9 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const fetchPostulacionesData = async () => {
+    if (!totalPostulacionesEl || !ultimaPostulacionUpdateEl) {
+      return;
+    }
     try {
       const response = await fetch("../api/postulaciones.php", {
         headers: { Authorization: "Bearer " + token },
@@ -176,6 +308,9 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const renderNotifications = (notificaciones) => {
+    if (!notifList) {
+      return;
+    }
     if (!Array.isArray(notificaciones) || notificaciones.length === 0) {
       notifList.innerHTML = "<div class=\"text-muted small\">Sin notificaciones por ahora.</div>";
       return;
@@ -204,6 +339,9 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const renderActividad = (notificaciones) => {
+    if (!actividadList) {
+      return;
+    }
     if (!Array.isArray(notificaciones) || notificaciones.length === 0) {
       actividadList.innerHTML = "<li class=\"activity-item text-muted\">Sin actividad reciente.</li>";
       return;
@@ -225,6 +363,9 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const fetchNotificaciones = async () => {
+    if (!notifBadge && !notifList && !actividadList) {
+      return;
+    }
     try {
       const [countRes, listRes] = await Promise.all([
         fetch("../api/notificaciones.php?count=1", {
@@ -241,11 +382,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (countRes.ok) {
         const countData = await countRes.json();
         const unread = countData.unread || 0;
-        if (unread > 0) {
-          notifBadge.textContent = unread;
-          notifBadge.classList.remove("d-none");
-        } else {
-          notifBadge.classList.add("d-none");
+        if (notifBadge) {
+          if (unread > 0) {
+            notifBadge.textContent = unread;
+            notifBadge.classList.remove("d-none");
+          } else {
+            notifBadge.classList.add("d-none");
+          }
         }
       }
 
@@ -254,13 +397,21 @@ document.addEventListener("DOMContentLoaded", () => {
         renderNotifications(notificaciones);
         renderActividad(notificaciones);
       } else {
-        notifList.innerHTML = "<div class=\"text-muted small\">No se pudieron cargar las notificaciones.</div>";
-        actividadList.innerHTML = "<li class=\"activity-item text-muted\">Sin actividad reciente.</li>";
+        if (notifList) {
+          notifList.innerHTML = "<div class=\"text-muted small\">No se pudieron cargar las notificaciones.</div>";
+        }
+        if (actividadList) {
+          actividadList.innerHTML = "<li class=\"activity-item text-muted\">Sin actividad reciente.</li>";
+        }
       }
     } catch (error) {
       console.error(error);
-      notifList.innerHTML = "<div class=\"text-muted small\">No se pudieron cargar las notificaciones.</div>";
-      actividadList.innerHTML = "<li class=\"activity-item text-muted\">Sin actividad reciente.</li>";
+      if (notifList) {
+        notifList.innerHTML = "<div class=\"text-muted small\">No se pudieron cargar las notificaciones.</div>";
+      }
+      if (actividadList) {
+        actividadList.innerHTML = "<li class=\"activity-item text-muted\">Sin actividad reciente.</li>";
+      }
     }
   };
 
@@ -285,28 +436,30 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  markAllNotifBtn.addEventListener("click", async () => {
-    try {
-      const response = await fetch("../api/notificaciones.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
-        },
-        body: JSON.stringify({ mark_all: true }),
-      });
+  if (markAllNotifBtn) {
+    markAllNotifBtn.addEventListener("click", async () => {
+      try {
+        const response = await fetch("../api/notificaciones.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+          body: JSON.stringify({ mark_all: true }),
+        });
 
-      if (!response.ok) {
-        throw new Error("No se pudieron marcar las notificaciones.");
+        if (!response.ok) {
+          throw new Error("No se pudieron marcar las notificaciones.");
+        }
+
+        showToast("Notificaciones marcadas como leídas.", "success");
+        await fetchNotificaciones();
+      } catch (error) {
+        console.error(error);
+        showToast("No se pudieron marcar las notificaciones.", "danger");
       }
-
-      showToast("Notificaciones marcadas como leídas.", "success");
-      await fetchNotificaciones();
-    } catch (error) {
-      console.error(error);
-      showToast("No se pudieron marcar las notificaciones.", "danger");
-    }
-  });
+    });
+  }
 
   if (notifList) {
     notifList.addEventListener("click", async (event) => {

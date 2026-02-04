@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Perfil ONG | Pawtastic</title>
+  <title>Mi perfil ONG | Pawtastic</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
   <link rel="icon" href="../img/favicon.ico" type="image/png">
@@ -15,18 +15,21 @@
   <!-- NAVBAR ONG -->
   <nav class="navbar navbar-expand-lg navbar-dark nav-app">
     <div class="container">
-      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarOng"
-        aria-controls="navbarOng" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarOngPerfil"
+        aria-controls="navbarOngPerfil" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <a class="navbar-brand text-warning fw-bold me-3" href="../index.html">
         <img src="../img/logo.png" alt="Logo Pawtastic" width="40" height="40" class="d-inline-block d-lg-none">
         <span class="d-none d-lg-inline">Pawtastic</span>
       </a>
-      <div class="collapse navbar-collapse" id="navbarOng">
+      <div class="collapse navbar-collapse" id="navbarOngPerfil">
         <ul class="navbar-nav align-items-lg-center ms-auto"></ul>
       </div>
       <div class="d-flex align-items-center gap-2 ms-auto">
+        <a href="perfil-ong.html" class="btn btn-custom-nav">
+          <i class="bi bi-house-door me-1"></i>Inicio
+        </a>
         <a href="perfil-ong-datos.html" class="btn nav-icon" aria-label="Mi perfil">
           <i class="bi bi-person-circle"></i>
         </a>
@@ -58,51 +61,53 @@
   <main class="container py-5 flex-grow-1">
     <div class="ong-shell">
       <div class="ong-card">
-        <div class="ong-greeting">
-          <span>👋 Hola,</span>
-        </div>
-        <div class="ong-banner">
-          <h2 id="bienvenidaOng">¡Bienvenida!</h2>
-          <div class="ong-name">
-            <span id="nombreOng">Cargando...</span>
-            <span class="ong-icon" aria-hidden="true">🐾</span>
+        <div class="ong-profile" id="perfilOng">
+          <div class="ong-profile-header">
+            <div>
+              <h5><i class="bi bi-person-badge"></i> Mi perfil</h5>
+              <p class="ong-profile-subtitle">Información institucional de la ONG.</p>
+            </div>
+            <div class="ong-profile-actions">
+              <span class="ong-profile-tag">Datos visibles</span>
+              <a href="perfil-ong.html" class="btn btn-ong-secondary btn-ong-close">
+                <i class="bi bi-x-lg"></i> Cerrar
+              </a>
+            </div>
           </div>
-        </div>
-        <div class="ong-actions">
-          <a href="gestionar-mascota-cards.html" class="btn btn-ong-primary">
-            <i class="bi bi-plus-lg me-2"></i>Nueva mascota
-          </a>
-          <a href="ver-reportes.html" class="btn btn-ong-secondary">
-            <i class="bi bi-bar-chart-line me-2"></i>Ver reportes
-          </a>
-        </div>
-
-        <div class="ong-stats">
-          <div class="stat-card stat-card-center">
-            <div class="stat-number" id="totalMascotas">0</div>
-            <div class="stat-label"><i class="bi bi-heart-fill"></i> Total de mascotas</div>
-            <div class="stat-meta" id="ultimaMascotaUpdate">Última actualización: —</div>
-            <a href="mis-mascotas.html" class="btn btn-stat">Ver catálogo</a>
+          <div class="ong-profile-body">
+            <div class="ong-profile-photo">
+              <img id="ongLogo" src="../img/pdefault.jpg" alt="Logo de la ONG" title="Haz clic para cambiar el logo">
+              <input type="file" id="ongLogoInput" name="logo" accept="image/*" hidden>
+              <button type="button" class="btn btn-ong-secondary ong-upload-btn" id="ongLogoTrigger">Cambiar logo</button>
+              <span class="ong-profile-caption">Logo institucional</span>
+            </div>
+            <div class="ong-profile-grid">
+              <div class="ong-profile-item">
+                <span class="ong-profile-label">Nombre</span>
+                <span class="ong-profile-value" id="ongPerfilNombre">—</span>
+              </div>
+              <div class="ong-profile-item">
+                <span class="ong-profile-label">Razón social</span>
+                <span class="ong-profile-value" id="ongPerfilRazon">—</span>
+              </div>
+              <div class="ong-profile-item">
+                <span class="ong-profile-label">CUIT</span>
+                <span class="ong-profile-value" id="ongPerfilCuit">—</span>
+              </div>
+              <div class="ong-profile-item">
+                <span class="ong-profile-label">Email</span>
+                <span class="ong-profile-value" id="ongPerfilEmail">—</span>
+              </div>
+              <div class="ong-profile-item">
+                <span class="ong-profile-label">Dirección</span>
+                <span class="ong-profile-value" id="ongPerfilDireccion">—</span>
+              </div>
+              <div class="ong-profile-item">
+                <span class="ong-profile-label">Última actualización</span>
+                <span class="ong-profile-value" id="ongPerfilActualizacion">—</span>
+              </div>
+            </div>
           </div>
-          <div class="stat-card stat-card-center">
-            <div class="stat-number" id="totalMascotasActivas">0</div>
-            <div class="stat-label"><i class="bi bi-lightning-charge"></i> Mascotas activas</div>
-            <div class="stat-meta">Disponibles en catálogo</div>
-            <a href="mis-mascotas.html?estado=activa" class="btn btn-stat">Ver activas</a>
-          </div>
-          <div class="stat-card stat-card-center">
-            <div class="stat-number" id="totalPostulaciones">0</div>
-            <div class="stat-label"><i class="bi bi-envelope"></i> Postulaciones</div>
-            <div class="stat-meta" id="ultimaPostulacionUpdate">Última: —</div>
-            <a href="postulaciones.html" class="btn btn-stat">Ver postulaciones</a>
-          </div>
-        </div>
-
-        <div class="ong-activity">
-          <h5><i class="bi bi-clock"></i> Actividad reciente</h5>
-          <ul class="activity-list" id="actividadList">
-            <li class="activity-item text-muted">Cargando...</li>
-          </ul>
         </div>
       </div>
     </div>
@@ -176,7 +181,6 @@
   <script src="../js/toast.js"></script>
   <script src="../js/chatbot.js"></script>
   <script src="../js/perfil-ong.js"></script>
-
   <script src="../js/role-theme.js"></script>
 
 </body>

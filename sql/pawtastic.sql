@@ -491,6 +491,7 @@ CREATE TABLE `ONGs` (
   `nombre` varchar(150) NOT NULL,
   `razon_social` varchar(255) DEFAULT NULL,
   `cuit` varchar(13) DEFAULT NULL,
+  `logo_url` varchar(255) DEFAULT NULL,
   `lat` float NOT NULL DEFAULT '-31',
   `lon` float NOT NULL DEFAULT '-64',
   `city` varchar(31) NOT NULL,

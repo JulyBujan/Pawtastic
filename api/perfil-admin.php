@@ -27,7 +27,36 @@ try {
         throw new Exception("No se encontró un administrador asociado a este usuario.");
     }
 
-    echo json_encode($admin);
+    $stats = [];
+
+    $stmt_users = $conn->prepare("SELECT COUNT(*) AS total FROM usuarios WHERE tipo = 'usuario'");
+    if (!$stmt_users) {
+        throw new Exception("Error al preparar la consulta de usuarios.");
+    }
+    $stmt_users->execute();
+    $stats['usuarios'] = (int) $stmt_users->get_result()->fetch_assoc()['total'];
+    $stmt_users->close();
+
+    $stmt_ongs = $conn->prepare("SELECT COUNT(*) AS total FROM ONGs");
+    if (!$stmt_ongs) {
+        throw new Exception("Error al preparar la consulta de ONGs.");
+    }
+    $stmt_ongs->execute();
+    $stats['ongs'] = (int) $stmt_ongs->get_result()->fetch_assoc()['total'];
+    $stmt_ongs->close();
+
+    $stmt_mascotas = $conn->prepare("SELECT COUNT(*) AS total FROM mascotas WHERE estado = 3");
+    if (!$stmt_mascotas) {
+        throw new Exception("Error al preparar la consulta de mascotas archivadas.");
+    }
+    $stmt_mascotas->execute();
+    $stats['mascotas_archivadas'] = (int) $stmt_mascotas->get_result()->fetch_assoc()['total'];
+    $stmt_mascotas->close();
+
+    echo json_encode([
+        "nombre" => $admin['nombre'],
+        "stats" => $stats
+    ]);
 
 } catch (Exception $e) {
     http_response_code(500);
