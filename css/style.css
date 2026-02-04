@@ -5680,6 +5680,7 @@ footer .mx-2 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 0.9rem;
+  margin-bottom: 1rem;
 }
 
 .admin-summary-card {
@@ -5713,10 +5714,22 @@ footer .mx-2 {
   flex-wrap: wrap;
 }
 
+.admin-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
 .admin-search .input-group-text {
   background: #f1f6fb;
   border: 1px solid rgba(14, 90, 126, 0.18);
   color: #0e5a7e;
+}
+
+.admin-search {
+  flex: 1 1 320px;
+  max-width: 520px;
 }
 
 .admin-search .form-control {
@@ -5788,6 +5801,553 @@ footer .mx-2 {
 
 .admin-pagination .page-link:focus {
   box-shadow: 0 0 0 0.2rem rgba(14, 90, 126, 0.18);
+}
+
+.admin-users-page,
+.admin-ongs-page,
+.admin-mascotas-page,
+.admin-vacunas-page {
+  font-family: "Manrope", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.admin-users-page h1,
+.admin-users-page h2,
+.admin-users-page h3,
+.admin-users-page h4,
+.admin-users-page h5,
+.admin-users-page h6,
+.admin-ongs-page h1,
+.admin-ongs-page h2,
+.admin-ongs-page h3,
+.admin-ongs-page h4,
+.admin-ongs-page h5,
+.admin-ongs-page h6,
+.admin-mascotas-page h1,
+.admin-mascotas-page h2,
+.admin-mascotas-page h3,
+.admin-mascotas-page h4,
+.admin-mascotas-page h5,
+.admin-mascotas-page h6,
+.admin-vacunas-page h1,
+.admin-vacunas-page h2,
+.admin-vacunas-page h3,
+.admin-vacunas-page h4,
+.admin-vacunas-page h5,
+.admin-vacunas-page h6 {
+  font-family: "Space Grotesk", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.admin-users-card,
+.admin-ongs-card,
+.admin-mascotas-card,
+.admin-vacunas-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-users-card::before,
+.admin-ongs-card::before,
+.admin-mascotas-card::before,
+.admin-vacunas-card::before {
+  content: "";
+  position: absolute;
+  top: -140px;
+  right: -160px;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(14, 90, 126, 0.18) 0%, rgba(14, 90, 126, 0) 70%);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.admin-users-card > *,
+.admin-ongs-card > *,
+.admin-mascotas-card > *,
+.admin-vacunas-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-users-card .admin-page-header,
+.admin-ongs-card .admin-page-header,
+.admin-mascotas-card .admin-page-header,
+.admin-vacunas-card .admin-page-header {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(27, 36, 54, 0.08);
+}
+
+.admin-users-card .admin-summary-card,
+.admin-ongs-card .admin-summary-card,
+.admin-mascotas-card .admin-summary-card,
+.admin-vacunas-card .admin-summary-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: #ffffff;
+  border: 1px solid rgba(27, 36, 54, 0.08);
+  box-shadow: 0 14px 28px rgba(27, 36, 54, 0.08);
+  padding: 0.95rem 1rem;
+  border-radius: 18px;
+  --accent: #0e5a7e;
+  --accent-soft: rgba(14, 90, 126, 0.15);
+}
+
+.admin-users-card .admin-summary-card[data-accent="activos"] {
+  --accent: #16a34a;
+  --accent-soft: rgba(22, 163, 74, 0.15);
+}
+
+.admin-users-card .admin-summary-card[data-accent="inactivos"] {
+  --accent: #dc2626;
+  --accent-soft: rgba(220, 38, 38, 0.15);
+}
+
+.admin-users-card .admin-summary-card[data-accent="mostrando"] {
+  --accent: #7c3aed;
+  --accent-soft: rgba(124, 58, 237, 0.15);
+}
+
+.admin-ongs-card .admin-summary-card[data-accent="pendientes"] {
+  --accent: #f59e0b;
+  --accent-soft: rgba(245, 158, 11, 0.18);
+}
+
+.admin-ongs-card .admin-summary-card[data-accent="aprobadas"] {
+  --accent: #16a34a;
+  --accent-soft: rgba(22, 163, 74, 0.15);
+}
+
+.admin-ongs-card .admin-summary-card[data-accent="rechazadas"] {
+  --accent: #dc2626;
+  --accent-soft: rgba(220, 38, 38, 0.15);
+}
+
+.admin-ongs-card .admin-summary-card[data-accent="preexistentes"] {
+  --accent: #2563eb;
+  --accent-soft: rgba(37, 99, 235, 0.15);
+}
+
+.admin-users-card .admin-summary-icon,
+.admin-ongs-card .admin-summary-icon,
+.admin-mascotas-card .admin-summary-icon,
+.admin-vacunas-card .admin-summary-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+.admin-users-card .admin-summary-label,
+.admin-ongs-card .admin-summary-label,
+.admin-mascotas-card .admin-summary-label,
+.admin-vacunas-card .admin-summary-label {
+  margin-bottom: 0.2rem;
+}
+
+.admin-users-card .admin-summary-value,
+.admin-ongs-card .admin-summary-value,
+.admin-mascotas-card .admin-summary-value,
+.admin-vacunas-card .admin-summary-value {
+  color: var(--accent);
+}
+
+.admin-ongs-card .admin-summary {
+  margin-bottom: 1.5rem;
+}
+
+.admin-mascotas-card .admin-summary {
+  margin-bottom: 1.5rem;
+}
+
+.admin-vacunas-card .admin-summary {
+  margin-bottom: 1.5rem;
+}
+
+.admin-mascotas-card .admin-summary-card[data-accent="archivadas"] {
+  --accent: #6b7280;
+  --accent-soft: rgba(107, 114, 128, 0.15);
+}
+
+.admin-mascotas-card .admin-summary-card[data-accent="ongs"] {
+  --accent: #2563eb;
+  --accent-soft: rgba(37, 99, 235, 0.15);
+}
+
+.admin-mascotas-card .admin-summary-card[data-accent="mostrando"] {
+  --accent: #7c3aed;
+  --accent-soft: rgba(124, 58, 237, 0.15);
+}
+
+.admin-vacunas-card .admin-summary-card[data-accent="perro"] {
+  --accent: #2563eb;
+  --accent-soft: rgba(37, 99, 235, 0.15);
+}
+
+.admin-vacunas-card .admin-summary-card[data-accent="gato"] {
+  --accent: #0f766e;
+  --accent-soft: rgba(15, 118, 110, 0.15);
+}
+
+.admin-vacunas-card .admin-summary-card[data-accent="mostrando"] {
+  --accent: #7c3aed;
+  --accent-soft: rgba(124, 58, 237, 0.15);
+}
+
+.admin-vacunas-card .admin-summary-card[data-accent="total"] {
+  --accent: #0e5a7e;
+  --accent-soft: rgba(14, 90, 126, 0.15);
+}
+
+.admin-filter-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.admin-filter-chip {
+  border-radius: 999px;
+  border: 1px solid rgba(14, 90, 126, 0.25);
+  background: #ffffff;
+  color: #0e5a7e;
+  font-weight: 600;
+  padding: 0.35rem 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.admin-filter-chip.is-active,
+.admin-filter-chip:hover {
+  background: #0e5a7e;
+  color: #ffffff;
+  border-color: #0e5a7e;
+  box-shadow: 0 12px 24px rgba(14, 90, 126, 0.2);
+}
+
+.admin-users-card .admin-table-wrapper,
+.admin-ongs-card .admin-table-wrapper,
+.admin-mascotas-card .admin-table-wrapper,
+.admin-vacunas-card .admin-table-wrapper {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.admin-users-card .table-responsive,
+.admin-ongs-card .table-responsive,
+.admin-mascotas-card .table-responsive,
+.admin-vacunas-card .table-responsive {
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+.admin-users-card .admin-table,
+.admin-ongs-card .admin-table,
+.admin-mascotas-card .admin-table,
+.admin-vacunas-card .admin-table {
+  border-collapse: separate;
+  border-spacing: 0 0.75rem;
+}
+
+.admin-users-card .admin-table thead th,
+.admin-ongs-card .admin-table thead th,
+.admin-mascotas-card .admin-table thead th,
+.admin-vacunas-card .admin-table thead th {
+  background: transparent;
+  border: none;
+  color: #5d6b82;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.admin-users-card .admin-table tbody tr,
+.admin-ongs-card .admin-table tbody tr,
+.admin-mascotas-card .admin-table tbody tr,
+.admin-vacunas-card .admin-table tbody tr {
+  background: #ffffff;
+  box-shadow: 0 16px 32px rgba(27, 36, 54, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-users-card .admin-table tbody tr:hover,
+.admin-ongs-card .admin-table tbody tr:hover,
+.admin-mascotas-card .admin-table tbody tr:hover,
+.admin-vacunas-card .admin-table tbody tr:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 40px rgba(27, 36, 54, 0.12);
+}
+
+.admin-users-card .admin-table tbody tr:hover td,
+.admin-ongs-card .admin-table tbody tr:hover td,
+.admin-mascotas-card .admin-table tbody tr:hover td,
+.admin-vacunas-card .admin-table tbody tr:hover td {
+  background: #ffffff;
+}
+
+.admin-users-card .admin-table tbody tr {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-users-card .admin-table tbody tr:focus-within {
+  z-index: 5;
+}
+
+.admin-users-card .admin-table tbody tr.is-dropdown-open {
+  z-index: 10;
+}
+
+.admin-users-card .btn-group.show {
+  z-index: 6;
+}
+
+.admin-users-card .dropdown-menu {
+  z-index: 1080;
+}
+
+.admin-users-card .admin-table tbody td,
+.admin-ongs-card .admin-table tbody td,
+.admin-mascotas-card .admin-table tbody td,
+.admin-vacunas-card .admin-table tbody td {
+  border: none;
+  vertical-align: middle;
+  background: #ffffff;
+}
+
+.admin-users-card .admin-table tbody td:first-child,
+.admin-ongs-card .admin-table tbody td:first-child,
+.admin-mascotas-card .admin-table tbody td:first-child,
+.admin-vacunas-card .admin-table tbody td:first-child {
+  border-top-left-radius: 18px;
+  border-bottom-left-radius: 18px;
+}
+
+.admin-users-card .admin-table tbody td:last-child,
+.admin-ongs-card .admin-table tbody td:last-child,
+.admin-mascotas-card .admin-table tbody td:last-child,
+.admin-vacunas-card .admin-table tbody td:last-child {
+  border-top-right-radius: 18px;
+  border-bottom-right-radius: 18px;
+}
+
+.admin-user-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.admin-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #0e5a7e, #3b82f6);
+  color: #ffffff;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.04em;
+  box-shadow: 0 10px 20px rgba(14, 90, 126, 0.25);
+}
+
+.admin-user-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.admin-user-name {
+  font-weight: 700;
+  color: #1b2436;
+}
+
+.admin-user-email {
+  font-size: 0.82rem;
+  color: #6b7280;
+}
+
+.admin-entity-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.admin-entity-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #0f766e, #22c55e);
+  color: #ffffff;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.04em;
+  box-shadow: 0 10px 20px rgba(15, 118, 110, 0.25);
+}
+
+.admin-entity-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.admin-entity-name {
+  font-weight: 700;
+  color: #1b2436;
+}
+
+.admin-entity-sub {
+  font-size: 0.82rem;
+  color: #6b7280;
+}
+
+.admin-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.admin-status-pill::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.admin-status-pill.is-active {
+  background: rgba(16, 185, 129, 0.15);
+  color: #047857;
+}
+
+.admin-status-pill.is-inactive {
+  background: rgba(239, 68, 68, 0.15);
+  color: #b91c1c;
+}
+
+.admin-status-pill.is-pending {
+  background: rgba(245, 158, 11, 0.18);
+  color: #b45309;
+}
+
+.admin-status-pill.is-approved {
+  background: rgba(16, 185, 129, 0.18);
+  color: #047857;
+}
+
+.admin-status-pill.is-rejected {
+  background: rgba(239, 68, 68, 0.18);
+  color: #b91c1c;
+}
+
+.admin-status-pill.is-preexistente {
+  background: rgba(59, 130, 246, 0.15);
+  color: #1d4ed8;
+}
+
+.admin-status-pill.is-archived {
+  background: rgba(148, 163, 184, 0.2);
+  color: #475569;
+}
+
+.admin-status-pill.is-perro {
+  background: rgba(37, 99, 235, 0.15);
+  color: #1d4ed8;
+}
+
+.admin-status-pill.is-gato {
+  background: rgba(15, 118, 110, 0.15);
+  color: #0f766e;
+}
+
+.admin-vaccine-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.admin-vaccine-name {
+  font-weight: 700;
+  color: #1b2436;
+}
+
+.admin-vaccine-desc {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.admin-docs {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.admin-docs .btn {
+  border-radius: 999px;
+}
+
+.admin-action-buttons {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.admin-action-buttons .btn {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-vacunas-card .admin-action-buttons .btn {
+  min-width: 120px;
+}
+
+.admin-action-buttons .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+}
+
+.btn-admin-approve {
+  background: rgba(16, 185, 129, 0.18);
+  color: #047857;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  font-weight: 600;
+}
+
+.btn-admin-approve:hover {
+  background: rgba(16, 185, 129, 0.3);
+  color: #047857;
+}
+
+.btn-admin-reject {
+  background: rgba(239, 68, 68, 0.16);
+  color: #b91c1c;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  font-weight: 600;
+}
+
+.btn-admin-reject:hover {
+  background: rgba(239, 68, 68, 0.28);
+  color: #b91c1c;
+}
+
+.admin-empty {
+  color: #94a3b8;
+  font-weight: 600;
 }
 
 @media (max-width: 767px) {

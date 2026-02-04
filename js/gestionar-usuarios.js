@@ -13,6 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const mostrandoUsuariosEl = document.getElementById("adminUsuariosMostrando");
     const paginationEl = document.getElementById("usuariosPagination");
     const paginationInfoEl = document.getElementById("usuariosPaginationInfo");
+    const estadoFilterButtons = Array.from(document.querySelectorAll("[data-estado-filter]"));
+    const tableColspan = 4;
 
     // 1. Proteger la ruta
     if (!token || tipoUsuario !== 'admin') {
@@ -26,6 +28,29 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentPage = 1;
     const pageSize = 10;
     let lastTotalPages = 1;
+    let estadoFiltro = "todos";
+
+    const escapeHtml = (value) => {
+        if (value === null || value === undefined) return "";
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/\"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    };
+
+    const getInitials = (user) => {
+        const nombre = `${user.nombre || ""}`.trim();
+        const apellido = `${user.apellido || ""}`.trim();
+        const first = nombre ? nombre[0] : "";
+        const last = apellido ? apellido[0] : "";
+        if (first || last) {
+            return `${first}${last}`.toUpperCase();
+        }
+        const email = `${user.email || ""}`.trim();
+        return email ? email[0].toUpperCase() : "?";
+    };
 
     const updateResumen = (cantidadFiltrados = 0) => {
         const total = todosLosUsuarios.length;
@@ -39,12 +64,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const getFilteredUsuarios = () => {
         const terminoBusqueda = filtroInput ? filtroInput.value.toLowerCase().trim() : "";
-        if (!terminoBusqueda) return todosLosUsuarios;
-        return todosLosUsuarios.filter((user) => {
-            const nombreCompleto = `${user.nombre} ${user.apellido}`.toLowerCase();
-            const email = user.email.toLowerCase();
-            return nombreCompleto.includes(terminoBusqueda) || email.includes(terminoBusqueda);
-        });
+        let filtrados = [...todosLosUsuarios];
+        if (terminoBusqueda) {
+            filtrados = filtrados.filter((user) => {
+                const nombreCompleto = `${user.nombre} ${user.apellido}`.toLowerCase();
+                const email = `${user.email || ""}`.toLowerCase();
+                return nombreCompleto.includes(terminoBusqueda) || email.includes(terminoBusqueda);
+            });
+        }
+        if (estadoFiltro !== "todos") {
+            filtrados = filtrados.filter((user) => {
+                const activo = user.estado == 0;
+                return estadoFiltro === "activos" ? activo : !activo;
+            });
+        }
+        return filtrados;
     };
 
     const paginate = (lista) => {
@@ -72,13 +106,15 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             const data = await response.json();
-            listaOngs = data.ongs; // Guardar lista de ONGs
-            todosLosUsuarios = data.usuarios; // Guardar la lista completa
+            listaOngs = Array.isArray(data.ongs) ? data.ongs : []; // Guardar lista de ONGs
+            const usuarios = Array.isArray(data.usuarios) ? data.usuarios : [];
+            // Mostrar solo usuarios adoptantes en esta vista
+            todosLosUsuarios = usuarios.filter((user) => user.tipo === 'usuario');
             renderUsuariosView();
             populateOngSelect();
 
         } catch (error) {
-            tablaBody.innerHTML = `<tr><td colspan="7" class="text-center text-danger">${error.message}</td></tr>`;
+            tablaBody.innerHTML = `<tr><td colspan="${tableColspan}" class="text-center text-danger">${error.message}</td></tr>`;
             updateResumen(0);
             if (paginationEl) paginationEl.innerHTML = "";
             if (paginationInfoEl) paginationInfoEl.textContent = "Sin usuarios para mostrar.";
@@ -91,30 +127,38 @@ document.addEventListener("DOMContentLoaded", () => {
      */
     const renderTabla = (usuarios) => {
         if (usuarios.length === 0) {
-            tablaBody.innerHTML = `<tr><td colspan="7" class="text-center">No se encontraron usuarios.</td></tr>`;
+            tablaBody.innerHTML = `<tr><td colspan="${tableColspan}" class="text-center">No se encontraron usuarios.</td></tr>`;
             return;
         }
 
         tablaBody.innerHTML = usuarios.map(user => {
             const estadoBadge = user.estado == 0
-                ? `<span class="badge bg-success">Activo</span>`
-                : `<span class="badge bg-danger">Inactivo</span>`;
+                ? `<span class="admin-status-pill is-active">Activo</span>`
+                : `<span class="admin-status-pill is-inactive">Inactivo</span>`;
 
             const accionHabilitar = user.estado == 0
                 ? `<a class="dropdown-item" href="#" data-action="deshabilitar" data-id="${user.id}">Deshabilitar</a>`
                 : `<a class="dropdown-item" href="#" data-action="habilitar" data-id="${user.id}">Habilitar</a>`;
 
+            const initials = getInitials(user);
+            const fullName = `${user.nombre || ""} ${user.apellido || ""}`.trim() || "Usuario";
+            const email = user.email || "Sin email";
             const accionAsignarOng = user.tipo === 'ong'
-                ? `<li><a class="dropdown-item" href="#" data-action="asignar-ong" data-id="${user.id}" data-nombre="${user.nombre} ${user.apellido}">Asignar ONG</a></li>`
+                ? `<li><a class="dropdown-item" href="#" data-action="asignar-ong" data-id="${user.id}" data-nombre="${escapeHtml(fullName)}">Asignar ONG</a></li>`
                 : '';
 
             return `
                 <tr>
-                    <td>${user.id}</td>
-                    <td>${user.nombre}</td>
-                    <td>${user.apellido}</td>
-                    <td>${user.email}</td>
-                    <td>${user.tipo}</td>
+                    <td>${escapeHtml(user.id)}</td>
+                    <td>
+                        <div class="admin-user-cell">
+                            <span class="admin-avatar">${escapeHtml(initials)}</span>
+                            <div class="admin-user-meta">
+                                <span class="admin-user-name">${escapeHtml(fullName)}</span>
+                                <span class="admin-user-email">${escapeHtml(email)}</span>
+                            </div>
+                        </div>
+                    </td>
                     <td>${estadoBadge}</td>
                     <td class="text-center">
                         <div class="btn-group">
@@ -122,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 Acciones
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="usuario.html?id=${user.id}" target="_blank">Ver Perfil</a></li>
+                                <li><a class="dropdown-item" href="admin-ver-usuario.html?id=${user.id}" target="_blank">Ver Perfil</a></li>
                                 ${accionAsignarOng}
                                 <li><hr class="dropdown-divider"></li>
                                 <li>${accionHabilitar}</li>
@@ -304,8 +348,26 @@ document.addEventListener("DOMContentLoaded", () => {
             if (filtroInput) {
                 filtroInput.value = "";
             }
+            estadoFiltro = "todos";
+            estadoFilterButtons.forEach((btn) => {
+                btn.classList.toggle("is-active", btn.dataset.estadoFilter === "todos");
+            });
             currentPage = 1;
             renderUsuariosView();
+        });
+    }
+
+    if (estadoFilterButtons.length > 0) {
+        estadoFilterButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                const nextFilter = button.dataset.estadoFilter || "todos";
+                estadoFiltro = nextFilter;
+                estadoFilterButtons.forEach((btn) => {
+                    btn.classList.toggle("is-active", btn === button);
+                });
+                currentPage = 1;
+                renderUsuariosView();
+            });
         });
     }
 
@@ -321,6 +383,20 @@ document.addEventListener("DOMContentLoaded", () => {
             renderUsuariosView();
         });
     }
+
+    document.addEventListener("shown.bs.dropdown", (event) => {
+        const row = event.target ? event.target.closest("tr") : null;
+        if (row) {
+            row.classList.add("is-dropdown-open");
+        }
+    });
+
+    document.addEventListener("hidden.bs.dropdown", (event) => {
+        const row = event.target ? event.target.closest("tr") : null;
+        if (row) {
+            row.classList.remove("is-dropdown-open");
+        }
+    });
 
     // Carga inicial de datos
     fetchUsuariosYongs();

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Gestionar Usuarios | Pawtastic</title>
+  <title>Mascotas archivadas | Pawtastic</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -16,24 +16,27 @@
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 
-<body class="admin-dashboard admin-users-page d-flex flex-column min-vh-100">
+<body class="admin-dashboard admin-mascotas-page d-flex flex-column min-vh-100">
   <!-- NAVBAR ADMIN -->
   <nav class="navbar navbar-expand-lg navbar-dark nav-app">
     <div class="container">
-      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarUsuarios"
-        aria-controls="navbarUsuarios" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMascotas"
+        aria-controls="navbarMascotas" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <a class="navbar-brand text-warning fw-bold me-3" href="../index.html">
         <img src="../img/logo.png" alt="Logo Pawtastic" width="40" height="40" class="d-inline-block d-lg-none">
         <span class="d-none d-lg-inline">Pawtastic</span>
       </a>
-      <div class="collapse navbar-collapse" id="navbarUsuarios">
+      <div class="collapse navbar-collapse" id="navbarMascotas">
         <ul class="navbar-nav align-items-lg-center ms-auto"></ul>
       </div>
       <div class="d-flex align-items-center gap-2 ms-auto">
         <a href="perfil-admin.html" class="btn btn-custom-nav">
           <i class="bi bi-speedometer2 me-1"></i>Panel
+        </a>
+        <a href="gestionar-ongs.html" class="btn btn-custom-nav">
+          <i class="bi bi-buildings me-1"></i>ONGs
         </a>
         <a href="#" class="btn btn-custom-nav" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion">
           <i class="bi bi-box-arrow-right me-1"></i>Salir
@@ -45,48 +48,41 @@
   <!-- CONTENIDO PRINCIPAL -->
   <main class="container py-5 flex-grow-1">
     <div class="admin-shell">
-      <div class="admin-card admin-users-card">
+      <div class="admin-card admin-mascotas-card">
         <div class="admin-page-header">
           <div>
             <span class="admin-kicker">Panel Administrador</span>
-            <h2>Gestión de usuarios</h2>
-            <p class="admin-page-subtitle">Administrá el estado y los accesos de los usuarios adoptantes.</p>
+            <h2>Mascotas archivadas</h2>
+            <p class="admin-page-subtitle">Listado de mascotas dadas de baja por las ONGs.</p>
           </div>
           <div class="admin-page-actions">
-            <a href="gestionar-ongs.html" class="btn btn-admin-secondary btn-sm">
-              <i class="bi bi-buildings me-1"></i>Ver ONGs
+            <a href="gestionar-usuarios.html" class="btn btn-admin-secondary btn-sm">
+              <i class="bi bi-people me-1"></i>Ver usuarios
             </a>
-            <span class="admin-tag">Actualizado</span>
+            <span class="admin-tag">Revisión</span>
           </div>
         </div>
 
         <div class="admin-summary">
-          <div class="admin-summary-card" data-accent="total">
-            <div class="admin-summary-icon"><i class="bi bi-people-fill"></i></div>
+          <div class="admin-summary-card" data-accent="archivadas">
+            <div class="admin-summary-icon"><i class="bi bi-trash"></i></div>
             <div class="admin-summary-content">
-              <span class="admin-summary-label">Total</span>
-              <span class="admin-summary-value" id="adminUsuariosTotal">0</span>
+              <span class="admin-summary-label">Archivadas</span>
+              <span class="admin-summary-value" id="adminMascotasArchivadasTotal">0</span>
             </div>
           </div>
-          <div class="admin-summary-card" data-accent="activos">
-            <div class="admin-summary-icon"><i class="bi bi-check-circle-fill"></i></div>
+          <div class="admin-summary-card" data-accent="ongs">
+            <div class="admin-summary-icon"><i class="bi bi-building"></i></div>
             <div class="admin-summary-content">
-              <span class="admin-summary-label">Activos</span>
-              <span class="admin-summary-value" id="adminUsuariosActivos">0</span>
-            </div>
-          </div>
-          <div class="admin-summary-card" data-accent="inactivos">
-            <div class="admin-summary-icon"><i class="bi bi-slash-circle-fill"></i></div>
-            <div class="admin-summary-content">
-              <span class="admin-summary-label">Inactivos</span>
-              <span class="admin-summary-value" id="adminUsuariosInactivos">0</span>
+              <span class="admin-summary-label">ONGs</span>
+              <span class="admin-summary-value" id="adminMascotasArchivadasOngs">0</span>
             </div>
           </div>
           <div class="admin-summary-card" data-accent="mostrando">
-            <div class="admin-summary-icon"><i class="bi bi-eye-fill"></i></div>
+            <div class="admin-summary-icon"><i class="bi bi-eye"></i></div>
             <div class="admin-summary-content">
               <span class="admin-summary-label">Mostrando</span>
-              <span class="admin-summary-value" id="adminUsuariosMostrando">0</span>
+              <span class="admin-summary-value" id="adminMascotasArchivadasMostrando">0</span>
             </div>
           </div>
         </div>
@@ -94,16 +90,11 @@
         <div class="admin-toolbar">
           <div class="input-group admin-search">
             <span class="input-group-text"><i class="bi bi-search"></i></span>
-            <input type="text" class="form-control" id="filtro-usuarios"
-              placeholder="Buscar por nombre, apellido o email...">
+            <input type="text" class="form-control" id="filtro-mascotas-archivadas"
+              placeholder="Buscar por mascota u ONG...">
           </div>
           <div class="admin-toolbar-actions">
-            <div class="admin-filter-group" role="group" aria-label="Filtrar estado de usuarios">
-              <button type="button" class="btn admin-filter-chip is-active" data-estado-filter="todos">Todos</button>
-              <button type="button" class="btn admin-filter-chip" data-estado-filter="activos">Activos</button>
-              <button type="button" class="btn admin-filter-chip" data-estado-filter="inactivos">Inactivos</button>
-            </div>
-            <button type="button" class="btn btn-admin-ghost" id="limpiarFiltro">
+            <button type="button" class="btn btn-admin-ghost" id="limpiarFiltroMascotas">
               <i class="bi bi-x-circle me-1"></i>Limpiar
             </button>
           </div>
@@ -115,14 +106,16 @@
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Usuario</th>
+                  <th>Mascota</th>
+                  <th>ONG</th>
+                  <th>Fecha</th>
                   <th>Estado</th>
                   <th class="text-center">Acciones</th>
                 </tr>
               </thead>
-              <tbody id="tabla-usuarios-body">
+              <tbody id="tabla-mascotas-archivadas-body">
                 <tr>
-                  <td colspan="4" class="text-center">
+                  <td colspan="6" class="text-center">
                     <div class="spinner-border text-warning" role="status">
                       <span class="visually-hidden">Cargando...</span>
                     </div>
@@ -134,42 +127,11 @@
         </div>
 
         <div class="admin-pagination">
-          <span class="text-muted small" id="usuariosPaginationInfo">Mostrando 0 de 0</span>
-          <nav aria-label="Paginación de usuarios">
-            <ul class="pagination mb-0" id="usuariosPagination"></ul>
-          </nav>
+          <span class="text-muted small" id="mascotasArchivadasInfo">Mostrando 0 de 0</span>
         </div>
       </div>
     </div>
   </main>
-
-  <!-- MODAL ASIGNAR ONG -->
-  <div class="modal fade" id="modalAsignarOng" tabindex="-1" aria-labelledby="modalAsignarOngLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <form id="formAsignarOng">
-          <div class="modal-header">
-            <h5 class="modal-title" id="modalAsignarOngLabel">Asignar ONG a Usuario</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-          </div>
-          <div class="modal-body">
-            <input type="hidden" id="usuarioIdParaAsignar">
-            <p>Usuario: <strong id="nombreUsuarioParaAsignar"></strong></p>
-            <div class="mb-3">
-              <label for="selectOng" class="form-label">Seleccionar ONG</label>
-              <select class="form-select" id="selectOng" required>
-                <!-- Opciones de ONG se cargarán aquí -->
-              </select>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-admin-ghost" data-bs-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-admin-primary">Guardar asignación</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
 
   <!-- MODAL SALIR -->
   <div class="modal fade" id="modalCerrarSesion" tabindex="-1" aria-labelledby="modalCerrarSesionLabel"
@@ -192,28 +154,6 @@
   <!-- Contenedor de Toasts -->
   <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3"></div>
 
-  <!-- CHATBOT -->
-  <button class="chatbot-toggler">
-    <img src="../img/emojis.com robot-dog.png" alt="Chatbot Icon" class="chatbot-icon">
-    <span class="material-symbols-outlined close-icon">?</span>
-  </button>
-  <div class="chatbot">
-    <header>
-      <h2>Pawtastic-Bot 🐾</h2>
-      <span class="close-btn material-symbols-outlined">?</span>
-    </header>
-    <ul class="chatbox">
-      <li class="chat incoming">
-        <span class="material-symbols-outlined">smart_toy</span>
-        <p>¡Hola! 👋<br>Soy tu asistente virtual. ¿Cómo puedo ayudarte hoy?</p>
-      </li>
-    </ul>
-    <div class="chat-input">
-      <textarea placeholder="Escribe tu mensaje..." required></textarea>
-      <span id="send-btn" class="material-symbols-outlined">send</span>
-    </div>
-  </div>
-
   <!-- FOOTER -->
   <footer class="login-footer">
     <div class="container text-center">
@@ -232,9 +172,7 @@
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../js/toast.js"></script>
-  <script src="../js/chatbot.js"></script>
-  <script src="../js/gestionar-usuarios.js"></script>
-  <script src="../js/role-theme.js"></script>
+  <script src="../js/gestionar-mascotas-borradas.js"></script>
 </body>
 
 </html>

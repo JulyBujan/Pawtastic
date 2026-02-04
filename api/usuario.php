@@ -43,8 +43,8 @@ function manejarSubidaFotoPerfil($urlActual = null) {
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // --- OBTENER DATOS DEL USUARIO ---
     try {
-        // Si se pasa un ID y el usuario es una ONG, se busca por ID.
-        if (isset($_GET['id']) && $user_tipo === 'ong') {
+        // Si se pasa un ID y el usuario es admin, se busca por ID.
+        if (isset($_GET['id']) && $user_tipo === 'admin') {
             $id_a_buscar = (int)$_GET['id'];
             $stmt = $conn->prepare("SELECT id, nombre, apellido, telefono, tipo_documento, documento, city, road, house_number, departamento, suburb, lat, lon, fecha_nacimiento, sexo, tipo_casa, otras_mascotas, experiencia, energia, sociabilidad, presencia, estilov, foto_perfil_url FROM usuarios WHERE id = ? AND tipo = 'usuario'");
             if (!$stmt) {
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             }
             $stmt->bind_param("i", $id_a_buscar);
         } elseif (isset($_GET['id'])) {
-            // Si se pasa un ID pero el usuario no es ONG, se deniega el acceso.
+            // Si se pasa un ID pero el usuario no es ONG ni admin, se deniega el acceso.
             http_response_code(403); // Forbidden
             echo json_encode(["message" => "No tienes permiso para ver perfiles de otros usuarios."]);
             exit;

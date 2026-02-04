@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Perfil de usuario | Pawtastic</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="icon" href="../img/favicon.ico" type="image/png">
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body class="usuario-profile-body d-flex flex-column min-vh-100">
+  <!-- NAVBAR PERFIL -->
+  <nav class="navbar navbar-expand-lg navbar-dark nav-app">
+    <div class="container">
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarUsuario"
+        aria-controls="navbarUsuario" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand text-warning fw-bold me-3" href="../index.html">
+        <img src="../img/logo.png" alt="Logo Pawtastic" width="40" height="40" class="d-inline-block d-lg-none">
+        <span class="d-none d-lg-inline">Pawtastic</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarUsuario">
+        <ul class="navbar-nav align-items-lg-center ms-auto flex-lg-row gap-2">
+          <li class="nav-item">
+            <a href="perfil-admin.html" class="btn btn-custom-nav">
+              <i class="bi bi-speedometer2"></i> Panel
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="gestionar-usuarios.html" class="btn btn-custom-nav">
+              <i class="bi bi-people"></i> Usuarios
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="btn btn-custom-nav" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion"
+              title="Salir">
+              <i class="bi bi-box-arrow-right"></i> Salir
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="container py-5 flex-grow-1">
+    <section class="profile-hero text-center mb-4">
+      <span class="profile-kicker">Panel Administrador</span>
+      <h2 class="profile-title">Perfil de usuario</h2>
+      <p class="profile-lead">
+        Vista de solo lectura para revisión administrativa.
+      </p>
+    </section>
+
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div class="profile-card">
+          <form id="perfil-form">
+            <div class="profile-photo-block">
+              <img src="../img/fotoJW.jpg?v=2" data-default-src="../img/fotoJW.jpg?v=2" alt="Foto de perfil"
+                id="perfilfoto" class="profile-photo" title="Haz clic para cambiar tu foto">
+              <input type="file" id="foto-input" name="foto_perfil" accept="image/*" hidden>
+              <span class="profile-photo-hint">Tocá la foto para actualizarla.</span>
+            </div>
+
+            <div class="profile-stepper" role="tablist" aria-label="Secciones del perfil">
+              <button type="button" class="profile-step-btn is-active" data-step="0" role="tab"
+                aria-selected="true">Datos</button>
+              <button type="button" class="profile-step-btn" data-step="1" role="tab" aria-selected="false">Dirección</button>
+              <button type="button" class="profile-step-btn" data-step="2" role="tab" aria-selected="false">Hogar</button>
+              <button type="button" class="profile-step-btn" data-step="3" role="tab" aria-selected="false">Personalidad</button>
+            </div>
+
+            <div class="profile-step is-active" data-step="0">
+              <div class="profile-section">
+                <div class="profile-section-title"><i class="bi bi-person"></i>Datos personales</div>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="nombre" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="apellido" class="form-label">Apellido</label>
+                    <input type="text" class="form-control" id="apellido" name="apellido">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="fecha_nacimiento" class="form-label">Nacimiento</label>
+                    <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="sexo" class="form-label">Sexo</label>
+                    <select class="form-select" id="sexo" name="sexo">
+                      <option value="" selected disabled>Seleccionar...</option>
+                      <option value="Masculino">Masculino</option>
+                      <option value="Femenino">Femenino</option>
+                      <option value="Otro">Otro</option>
+                    </select>
+                  </div>
+                  <div class="col-md-5">
+                    <label for="tipo_documento" class="form-label">Tipo de documento</label>
+                    <select class="form-select" id="tipo_documento" name="tipo_documento">
+                      <option value="" selected disabled>Seleccionar...</option>
+                      <option value="0">DNI</option>
+                      <option value="1">Pasaporte</option>
+                    </select>
+                    <div class="invalid-feedback">
+                      Por favor, selecciona un tipo de documento.
+                    </div>
+                  </div>
+                  <div class="col-md-7">
+                    <label for="documento" class="form-label">Número de Documento</label>
+                    <input type="text" class="form-control" id="documento" name="documento">
+                    <div class="invalid-feedback">
+                      Por favor, ingresa un número de documento válido.
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <label for="telefono" class="form-label">Teléfono</label>
+                    <input type="text" class="form-control" id="telefono" name="telefono">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="profile-step" data-step="1">
+              <div class="profile-section">
+                <div class="profile-section-title"><i class="bi bi-geo-alt"></i>Dirección</div>
+                <div class="row g-3">
+                  <div class="col-12">
+                    <label for="city" class="form-label">Localidad</label>
+                    <input type="text" class="form-control" id="city" name="city">
+                    <div class="invalid-feedback">Por favor, ingresa tu localidad.</div>
+                  </div>
+                  <div class="col-md-7">
+                    <label for="road" class="form-label">Calle</label>
+                    <input type="text" class="form-control" id="road" name="road">
+                    <div class="invalid-feedback">Por favor, ingresa el nombre de la calle.</div>
+                  </div>
+                  <div class="col-md-2">
+                    <label for="house_number" class="form-label">Nro</label>
+                    <input type="text" class="form-control" id="house_number" name="house_number">
+                    <div class="invalid-feedback">Nro.</div>
+                  </div>
+                  <div class="col-md-3">
+                    <label for="departamento" class="form-label">Depto</label>
+                    <input type="text" class="form-control" id="departamento" name="departamento">
+                  </div>
+                  <div class="col-12 text-end">
+                    <button type="button" class="btn btn-profile-outline btn-sm" id="validar-direccion-btn">
+                      Validar dirección
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="profile-step" data-step="2">
+              <div class="profile-section">
+                <div class="profile-section-title"><i class="bi bi-house-heart"></i>Hogar y experiencia</div>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="tipo_casa" class="form-label">Tipo de casa</label>
+                    <select class="form-select" id="tipo_casa" name="tipo_casa">
+                      <option value="" selected disabled>Seleccionar...</option>
+                      <option value="Casa con patio">Casa con patio</option>
+                      <option value="Casa sin patio">Casa sin patio</option>
+                      <option value="Departamento">Departamento</option>
+                      <option value="Finca/Campo">Finca/Campo</option>
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <label for="otras_mascotas" class="form-label">Otras mascotas</label>
+                    <select class="form-select" id="otras_mascotas" name="otras_mascotas">
+                      <option value="0" selected>No tiene</option>
+                      <option value="1">Tiene perros</option>
+                      <option value="2">Tiene gatos</option>
+                      <option value="3">Tiene perros y gatos</option>
+                      <option value="4">Tiene otras especies</option>
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <label for="experiencia" class="form-label">Experiencia</label>
+                    <textarea class="form-control" id="experiencia" name="experiencia" rows="2"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="profile-step" data-step="3">
+              <div class="profile-section">
+                <div class="profile-section-title"><i class="bi bi-stars"></i>Personalidad</div>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="energia" class="form-label">Nivel de energía</label>
+                    <select id="energia" name="energia" class="form-select">
+                      <option value="0" disabled>Seleccionar...</option>
+                      <option value="1">Bajo</option>
+                      <option value="2">Medio</option>
+                      <option value="3">Alto</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="sociabilidad" class="form-label">Sociabilidad</label>
+                    <select id="sociabilidad" name="sociabilidad" class="form-select">
+                      <option value="0" disabled>Seleccionar...</option>
+                      <option value="1">Bajo</option>
+                      <option value="2">Medio</option>
+                      <option value="3">Alto</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="presencia" class="form-label">Presencia</label>
+                    <select id="presencia" name="presencia" class="form-select">
+                      <option value="0" disabled>Seleccionar...</option>
+                      <option value="1">Ausente</option>
+                      <option value="2">Mixto</option>
+                      <option value="3">Presente</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="estilov" class="form-label">Estilo de vida</label>
+                    <select id="estilov" name="estilov" class="form-select">
+                      <option value="0" disabled>Seleccionar...</option>
+                      <option value="1">Interior</option>
+                      <option value="2">Mixto</option>
+                      <option value="3">Exterior</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="profile-pagination">
+              <button type="button" class="btn btn-profile-outline" id="profilePrev">
+                <i class="bi bi-arrow-left"></i> Anterior
+              </button>
+              <span class="profile-page-info" id="profilePageInfo">Paso 1 de 4</span>
+              <button type="button" class="btn btn-profile-outline" id="profileNext">
+                Siguiente <i class="bi bi-arrow-right"></i>
+              </button>
+            </div>
+
+            <div class="profile-actions" id="user-action-buttons">
+              <button type="submit" class="btn btn-profile-primary">Actualizar</button>
+              <a href="catalogo.html" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <aside class="profile-sidebar">
+          <div class="profile-side-card">
+            <div class="profile-side-header">
+              <h5>Estado del perfil</h5>
+              <span class="profile-progress-text" id="profileProgressText">0% completo</span>
+            </div>
+            <div class="profile-progress">
+              <div class="profile-progress-bar" id="profileProgressBar"></div>
+            </div>
+            <ul class="profile-checklist">
+              <li class="profile-check-item" data-section="personal">
+                <span>Datos personales</span>
+                <span class="profile-check-status">Pendiente</span>
+              </li>
+              <li class="profile-check-item" data-section="direccion">
+                <span>Dirección</span>
+                <span class="profile-check-status">Pendiente</span>
+              </li>
+              <li class="profile-check-item" data-section="hogar">
+                <span>Hogar y experiencia</span>
+                <span class="profile-check-status">Pendiente</span>
+              </li>
+              <li class="profile-check-item" data-section="personalidad">
+                <span>Personalidad</span>
+                <span class="profile-check-status">Pendiente</span>
+              </li>
+            </ul>
+            <div class="profile-side-tip">
+              <i class="bi bi-lightbulb"></i>
+              Completá los campos clave para recibir mejores recomendaciones.
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL DE CONFIRMACIÓN DE CIERRE DE SESIÓN -->
+  <div class="modal fade" id="modalCerrarSesion" tabindex="-1" aria-labelledby="modalCerrarSesionLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-warning-subtle">
+          <h5 class="modal-title" id="modalCerrarSesionLabel">¿Cerrar sesión?</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          ¿Estás segura de que querés salir del sitio?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button id="confirmarSalir" class="btn btn-danger">Sí, salir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor de Toasts -->
+  <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
+    <!-- Los toasts se insertarán aquí dinámicamente -->
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="login-footer">
+    <div class="container text-center">
+      <a href="./terminosYcondiciones.html">Términos y condiciones</a>
+      <span class="footer-divider">|</span>
+      <a href="./politicaDeCookies.html">Política de cookies</a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/usuario.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('token');
+      const tipoUsuario = localStorage.getItem('tipo');
+      const urlParams = new URLSearchParams(window.location.search);
+      const userId = urlParams.get('id');
+
+      if (!token || tipoUsuario !== 'admin') {
+        showToast('Acceso denegado. Debes ser administrador.', 'danger');
+        setTimeout(() => window.location.href = 'login.html', 1500);
+        return;
+      }
+
+      if (!userId) {
+        showToast('Falta el ID del usuario a visualizar.', 'warning');
+        setTimeout(() => window.location.href = 'gestionar-usuarios.html', 1500);
+        return;
+      }
+
+      const confirmarSalir = document.getElementById("confirmarSalir");
+      if (confirmarSalir) {
+        confirmarSalir.addEventListener("click", () => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("tipo");
+          window.location.href = "/index.html";
+        });
+      }
+    });
+  </script>
+  <script src="../js/role-theme.js"></script>
+
+</body>
+
+</html>
