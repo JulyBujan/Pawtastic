@@ -1,5 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
   const formRegistro = document.getElementById('formRegistro');
+  if (formRegistro) {
+    formRegistro.reset();
+    requestAnimationFrame(() => {
+      formRegistro.reset();
+    });
+  }
 
   // Helper para mostrar alertas (puedes mejorarlo con toasts de Bootstrap)
   // Helper para hashear con SHA-256 (igual que en login.js)

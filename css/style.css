@@ -7460,6 +7460,18 @@ footer .mx-2 {
   border-color: rgba(255, 255, 255, 0.4);
 }
 
+@media (max-width: 991px) {
+  .landing-nav .navbar-nav .nav-item + .nav-item {
+    margin-top: 0.6rem;
+  }
+
+  .landing-nav .navbar-nav .btn-custom-nav {
+    width: 100%;
+    justify-content: center;
+    padding: 0.6rem 1.2rem;
+  }
+}
+
 .landing-hero {
   position: relative;
   padding: 4.5rem 0 4rem;

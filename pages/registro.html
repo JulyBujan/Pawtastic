@@ -15,67 +15,61 @@
   <link rel="icon" href="../img/favicon.ico" type="image/x-icon" />
 </head>
 
-<body>
-  <nav class="navbar navbar-expand-lg navbar-dark">
+<body class="login-body d-flex flex-column min-vh-100">
+  <nav class="navbar navbar-expand-lg navbar-dark login-nav">
     <div class="container">
-      <a class="navbar-brand d-flex align-items-center" href="/index.html">
-        <img src="/img/logo.png" alt="Logo Pawtastic" width="50" height="50" class="me-2 logo-navbar" />
-
-        <span class="text-warning fw-bold">Pawtastic</span>
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav align-items-center ms-auto">
+      <a class="navbar-brand text-warning fw-bold me-3" href="../index.html">
+        <img src="../img/logo.png" alt="Logo Pawtastic" width="40" height="40" class="d-inline-block d-lg-none">
+        <span class="d-none d-lg-inline">Pawtastic</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav align-items-lg-center ms-auto">
           <li class="nav-item">
-            <a class="btn btn-custom-nav me-2" href="../index.html">Inicio</a>
+            <a class="btn btn-custom-nav btn-custom-nav-light me-lg-2" href="../index.html">Inicio</a>
           </li>
           <li class="nav-item">
-            <a class="btn btn-custom-nav" href="./login.html">Ingresar</a>
+            <a class="btn btn-custom-nav btn-custom-nav-light" href="./login.html">Ingresar</a>
           </li>
         </ul>
       </div>
     </div>
   </nav>
-  <!-- Mensaje para ONG -->
-  <section class="py-4 bg-warning-subtle text-center">
-    <div class="container">
-      <p class="mb-2 fw-bold text-dark">
-        ¿Representas a una ONG? Regístrala para empezar a publicar mascotas.
-      </p>
-      <a href="registro-ong.html" class="btn btn-dark">Registrar ONG</a>
-    </div>
-  </section>
 
   <!-- Formulario de Registro -->
-  <section class="py-5 bg-light">
+  <section class="login-section flex-grow-1">
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-md-6">
-          <div class="card shadow-lg">
+          <div class="card login-panel login-card">
             <div class="card-body p-4">
-              <h2 class="text-center mb-4 text-warning">Crear cuenta</h2>
-              <form id="formRegistro" novalidate>
+              <div class="login-head text-center mb-4">
+                <span class="login-kicker">Sumate a Pawtastic</span>
+                <h2 class="text-warning">Crear cuenta</h2>
+              </div>
+              <form id="formRegistro" novalidate autocomplete="off">
                 <div class="mb-3">
                   <label for="nombre" class="form-label">Nombre</label>
-                  <input type="text" class="form-control" id="nombre" required />
+                  <input type="text" class="form-control" id="nombre" autocomplete="off" required />
                 </div>
                 <div class="mb-3">
                   <label for="apellido" class="form-label">Apellido</label>
-                  <input type="text" class="form-control" id="apellido" required />
+                  <input type="text" class="form-control" id="apellido" autocomplete="off" required />
                 </div>
                 <div class="mb-3">
                   <label for="email" class="form-label">Correo electrónico</label>
-                  <input type="email" class="form-control" id="email" required />
+                  <input type="email" class="form-control" id="email" autocomplete="off" required />
                 </div>
                 <div class="mb-3">
                   <label for="password" class="form-label">Contraseña</label>
-                  <input type="password" class="form-control" id="password" required />
+                  <input type="password" class="form-control" id="password" autocomplete="new-password" required />
                 </div>
                 <div class="mb-3">
                   <label for="confirm-password" class="form-label">Reconfirmar contraseña</label>
-                  <input type="password" class="form-control" id="confirm-password" required>
+                  <input type="password" class="form-control" id="confirm-password" autocomplete="new-password" required>
                   <div class="invalid-feedback">Las contraseñas no coinciden.</div>
                 </div>
                 <div class="d-grid">
@@ -95,46 +89,11 @@
     </div>
   </section>
   <!-- FOOTER -->
-  <footer class="bg-footer text-dark pt-4 pb-3 mt-3">
-    <div class="container text-center text-md-start">
-      <div class="row">
-        <div class="col-md-4 mb-3 text-center">
-
-
-          <h5 class="fw-bold mt-2">Pawtastic</h5>
-          <p class="small">Conectamos corazones con patas. Gracias por elegir adoptar.</p>
-          <a href="../index.html">
-            <img src="../img/logo.png" alt="Logo Pawtastic" style="max-width: 100px; border-radius: 40%;">
-          </a>
-        </div>
-        <div class="col-md-4 mb-3 d-flex flex-column align-items-center">
-          <h5 class="fw-bold text-center">Navegación</h5>
-          <ul class="list-unstyled text-center">
-            <li><a href="https://interfacessistemas3.my.canva.site/manual-de-usuario-pawtastic"
-                class="text-dark text-decoration-none" target="_blank" rel="noopener noreferrer">Manual de Usuario</a>
-            </li>
-            <li><a href="https://drive.google.com/drive/folders/1UiabMGZbGNRz8LPfdU74eroOOLEoH8Xb?usp=sharing"
-                class="text-dark text-decoration-none" target="_blank" rel="noopener noreferrer">Documentación del
-                Proyecto</a></li>
-          </ul>
-        </div>
-        <div class="col-md-4 mb-3 fs-5">
-          <h5 class="fw-bold">Seguinos</h5>
-          <a href="https://www.facebook.com/profile.php?id=61581919419192" class="text-dark me-3"><i
-              class="bi bi-facebook" style="font-size: 2.5rem;"></i></a>
-          <a href="https://www.instagram.com/pawtasticarg/" class="text-dark me-3"><i class="bi bi-instagram"
-              style="font-size: 2.5rem;"></i></a>
-          <a href="https://x.com/PawtasticArg" class="text-dark"><i class="bi bi-x-circle-fill"
-              style="font-size: 2.5rem;"></i></a>
-        </div>
-      </div>
-      <hr class="border-dark">
-      <div class="text-center">
-        <small>&copy; 2025 Pawtastic. Todos los derechos reservados.</small>
-        <br>
-        <a href="./terminosYcondiciones.html" class="text-dark text-decoration-underline small">Términos y condiciones</a> |
-        <a href="./politicaDeCookies.html" class="text-dark text-decoration-underline small">Política de cookies</a>
-      </div>
+  <footer class="login-footer">
+    <div class="container text-center">
+      <a href="./terminosYcondiciones.html">Términos y condiciones</a>
+      <span class="footer-divider">|</span>
+      <a href="./politicaDeCookies.html">Política de cookies</a>
     </div>
   </footer>
   <!-- Contenedor de Toasts -->
