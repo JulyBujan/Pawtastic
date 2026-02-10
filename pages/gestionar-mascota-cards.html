@@ -196,7 +196,7 @@
       border-radius: 16px;
       border: 1px dashed rgba(27, 36, 54, 0.2);
       background: rgba(255, 255, 255, 0.7);
-      height: 170px;
+      height: 200px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -279,7 +279,7 @@
   </style>
 </head>
 
-<body>
+<body class="form-theme usuario-profile-body pet-form-page d-flex flex-column min-vh-100">
   <!-- NAVBAR ONG -->
   <nav class="navbar navbar-expand-lg navbar-dark encabezado-azul nav-glass">
     <div class="container">
@@ -310,310 +310,316 @@
   </nav>
 
   <!-- CONTENIDO PRINCIPAL -->
-  <main class="container py-5">
-    <div class="d-flex flex-column align-items-center mb-4">
-      <h2 id="formTitle" class="text-warning fw-bold mb-2">Cargar nueva mascota</h2>
-      <p id="formSubtitle" class="text-muted mb-0 text-center">Completá los datos para publicar en adopción.</p>
+  <main class="container py-5 flex-grow-1">
+    <section class="profile-hero text-center mb-4">
+      <h2 id="formTitle" class="profile-title">
+        <span class="form-title-text">Cargar Mascota</span>
+        <span class="title-icon title-icon--double" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+            <circle cx="6.8" cy="8.5" r="2.1"></circle>
+            <circle cx="10.6" cy="6.5" r="2.0"></circle>
+            <circle cx="13.4" cy="6.5" r="2.0"></circle>
+            <circle cx="17.2" cy="8.5" r="2.1"></circle>
+            <ellipse cx="12" cy="15.5" rx="5" ry="4"></ellipse>
+          </svg>
+          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+            <circle cx="6.8" cy="8.5" r="2.1"></circle>
+            <circle cx="10.6" cy="6.5" r="2.0"></circle>
+            <circle cx="13.4" cy="6.5" r="2.0"></circle>
+            <circle cx="17.2" cy="8.5" r="2.1"></circle>
+            <ellipse cx="12" cy="15.5" rx="5" ry="4"></ellipse>
+          </svg>
+        </span>
+      </h2>
+      <p id="formSubtitle" class="profile-lead">Completá los datos para publicar en adopción.</p>
+    </section>
+
+    <div class="row g-4 justify-content-center">
+      <div class="col-12 col-lg-10 col-xl-9">
+        <div class="profile-card">
+          <form id="form-mascota-cards" enctype="multipart/form-data">
+            <input type="hidden" id="id_mascota" name="id">
+            <input type="hidden" id="edad" name="edad">
+
+            <div class="profile-stepper" role="tablist" aria-label="Secciones de la mascota">
+              <button type="button" class="profile-step-btn is-active" data-step="0" role="tab"
+                aria-selected="true">Datos</button>
+              <button type="button" class="profile-step-btn" data-step="1" role="tab" aria-selected="false">Raza y color</button>
+              <button type="button" class="profile-step-btn" data-step="2" role="tab" aria-selected="false">Fotos</button>
+              <button type="button" class="profile-step-btn" data-step="3" role="tab" aria-selected="false">Salud</button>
+              <button type="button" class="profile-step-btn" data-step="4" role="tab" aria-selected="false">Personalidad</button>
+            </div>
+
+            <div class="profile-step is-active" data-step="0">
+              <div class="profile-section">
+                <div class="profile-section-title"><i class="bi bi-person-vcard"></i>Datos básicos</div>
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <label for="nombre" class="form-label"><span class="label-pill">Nombre</span></label>
+                    <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Ej: Luna">
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label for="tipo" class="form-label"><span class="label-pill">Tipo</span></label>
+                    <select id="tipo" name="tipo" class="form-select">
+                      <option value="">Seleccionar</option>
+                      <option value="perro">Perro</option>
+                      <option value="gato">Gato</option>
+                    </select>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="form-label"><span class="label-pill">Edad</span></label>
+                    <div class="row g-2">
+                      <div class="col">
+                        <label for="edad_anos" class="form-label small">Años</label>
+                        <input type="number" class="form-control" id="edad_anos" min="0" value="0">
+                      </div>
+                      <div class="col">
+                        <label for="edad_meses" class="form-label small">Meses</label>
+                        <input type="number" class="form-control" id="edad_meses" min="0" max="11" value="0">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label for="sexo" class="form-label"><span class="label-pill">Sexo</span></label>
+                    <select id="sexo" name="sexo" class="form-select">
+                      <option value="">Seleccionar</option>
+                      <option value="Macho">Macho</option>
+                      <option value="Hembra">Hembra</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="profile-step" data-step="1">
+              <div class="profile-section">
+                <div class="profile-section-title"><i class="bi bi-tags"></i>Tamaño, raza y color</div>
+                <div class="row g-3">
+                  <div class="col-12 col-md-6 col-lg-4">
+                    <label for="tamano" class="form-label"><span class="label-pill">Tamaño</span></label>
+                    <select id="tamano" name="tamaño" class="form-select">
+                      <option value="">Seleccionar</option>
+                      <option value="Pequeño">Pequeño</option>
+                      <option value="Mediano">Mediano</option>
+                      <option value="Grande">Grande</option>
+                    </select>
+                  </div>
+                  <div class="col-12 col-md-6 col-lg-4">
+                    <label for="breed" class="form-label"><span class="label-pill">Raza</span></label>
+                    <select id="breed" name="breed" class="form-select">
+                      <option value="">Seleccionar Raza</option>
+                      <option value="DOMESTIC SH">Mestizo Pelo Corto</option>
+                      <option value="PIT BULL">Pit Bull</option>
+                      <option value="LABRADOR RETR">Labrador Retriever</option>
+                      <option value="GERM SHEPHERD">Pastor Aleman</option>
+                      <option value="DOMESTIC MH">Mestizo Pelo Mediano</option>
+                      <option value="BEAGLE">Beagle</option>
+                      <option value="BOXER">Boxer</option>
+                      <option value="DOMESTIC LH">Mestizo Pelo Largo</option>
+                      <option value="CHIHUAHUA SH">Chihuahua Pelo Corto</option>
+                      <option value="SHIH TZU">Shih Tzu</option>
+                      <option value="SIBERIAN HUSKY">Husky Siberiano</option>
+                      <option value="ALASKAN HUSKY">Husky de Alaska</option>
+                      <option value="OTHER">Otro</option>
+                    </select>
+                    <input type="text" id="breed_custom" name="breed_custom" class="form-control mt-2 d-none"
+                      placeholder="Especificar raza">
+                  </div>
+                  <div class="col-12 col-md-6 col-lg-4">
+                    <label for="color" class="form-label"><span class="label-pill">Color</span></label>
+                    <select id="color" name="color" class="form-select">
+                      <option value="">Seleccionar Color</option>
+                      <option value="BLACK">Negro</option>
+                      <option value="TABBY">Atigrado</option>
+                      <option value="WHITE">Blanco</option>
+                      <option value="BROWN">Marron</option>
+                      <option value="GRAY">Gris</option>
+                      <option value="TAN">Canela</option>
+                      <option value="BRINDLE">Brindle</option>
+                      <option value="TORTIE">Tortuga</option>
+                      <option value="ORANGE">Naranja</option>
+                      <option value="CALICO">Calico</option>
+                      <option value="OTHER">Otro</option>
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <label for="descripcion" class="form-label"><span class="label-pill">Descripción</span></label>
+                    <textarea id="descripcion" name="descripcion" class="form-control" rows="3"
+                      placeholder="Breve descripción"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="profile-step" data-step="2">
+              <div class="profile-section">
+                <div class="profile-section-title"><i class="bi bi-image"></i>Fotos</div>
+                <div class="row g-3">
+                  <div class="col-12 col-lg-6">
+                    <label class="form-label"><span class="label-pill">Foto actual</span></label>
+                    <div class="photo-preview" id="fotoActualContainer">
+                      <img id="fotoActualPreview" src="" alt="Foto actual">
+                      <div class="photo-placeholder" id="fotoPlaceholder">
+                        <i class="bi bi-camera"></i>
+                        Sin foto todavía
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-lg-6">
+                    <label for="foto" class="form-label"><span class="label-pill">Cambiar foto</span></label>
+                    <input type="file" id="foto" name="imagen" accept="image/*" class="form-control">
+                    <small class="text-muted d-block mt-2">JPG o PNG, max 2MB.</small>
+                    <hr class="my-3">
+                    <label for="fotos-extra" class="form-label mt-3"><span class="label-pill">Fotos adicionales (hasta 3)</span></label>
+                    <input type="file" id="fotos-extra" name="imagenes[]" accept="image/*" multiple class="form-control">
+                    <small class="text-muted d-block mt-2">Podés subir hasta 3 fotos extra para el detalle.</small>
+                    <div class="photo-extra-section">
+                      <div id="fotos-extra-existing-label" class="small text-muted mb-2 d-none">Fotos actuales</div>
+                      <div id="fotos-extra-existing" class="photo-extra-grid"></div>
+                    </div>
+                    <div class="photo-extra-section">
+                      <div id="fotos-extra-preview-label" class="small text-muted mb-2 d-none">Fotos nuevas</div>
+                      <div id="fotos-extra-preview" class="photo-extra-grid"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="profile-step" data-step="3">
+              <div class="profile-section">
+                <div class="profile-section-title"><i class="bi bi-shield-check"></i>Datos adicionales</div>
+                <div class="row g-3">
+                  <div class="col-12 col-md-4">
+                    <label for="vacunado" class="form-label"><span class="label-pill">Vacunado</span></label>
+                    <select id="vacunado" name="vacunado" class="form-select">
+                      <option value="">Seleccionar...</option>
+                      <option value="si">Si</option>
+                      <option value="no">No</option>
+                    </select>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <label for="esterilizado" class="form-label"><span class="label-pill">Esterilizado</span></label>
+                    <select id="esterilizado" name="esterilizado" class="form-select">
+                      <option value="">Seleccionar...</option>
+                      <option value="si">Si</option>
+                      <option value="no">No</option>
+                    </select>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <label for="chip" class="form-label"><span class="label-pill">Chip</span></label>
+                    <select id="chip" name="chip" class="form-select">
+                      <option value="">Seleccionar...</option>
+                      <option value="si">Si</option>
+                      <option value="no">No</option>
+                    </select>
+                  </div>
+                </div>
+                <hr>
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <span class="fw-semibold">Vacunas aplicadas</span>
+                  <button type="button" class="btn btn-profile-outline btn-sm" id="btnAgregarVacuna"
+                    data-bs-toggle="modal" data-bs-target="#modalAgregarVacuna">Agregar vacuna</button>
+                </div>
+                <div class="table-responsive">
+                  <table class="table table-sm align-middle mb-0">
+                    <thead>
+                      <tr>
+                        <th>Vacuna</th>
+                        <th>Fecha</th>
+                        <th>Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tabla-vacunas-body">
+                      <tr>
+                        <td colspan="3" class="text-center text-muted">Guardá la mascota para cargar vacunas.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="profile-step" data-step="4">
+              <div class="profile-section">
+                <div class="profile-section-title"><i class="bi bi-emoji-smile"></i>Apto y personalidad</div>
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <label for="apto_ninos" class="form-label"><span class="label-pill">Apto ninos</span></label>
+                    <select id="apto_ninos" name="apto_ninos" class="form-select">
+                      <option value="">Seleccionar...</option>
+                      <option value="1">Si</option>
+                      <option value="0">No</option>
+                    </select>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label for="apto_mascotas" class="form-label"><span class="label-pill">Apto otras mascotas</span></label>
+                    <select id="apto_mascotas" name="apto_mascotas" class="form-select">
+                      <option value="">Seleccionar...</option>
+                      <option value="1">Si</option>
+                      <option value="0">No</option>
+                    </select>
+                  </div>
+                  <div class="col-12 col-md-6 col-lg-4">
+                    <label for="energia" class="form-label"><span class="label-pill">Nivel de energia</span></label>
+                    <select id="energia" name="energia" class="form-select">
+                      <option value="">Seleccionar...</option>
+                      <option value="1">Bajo</option>
+                      <option value="2">Medio</option>
+                      <option value="3">Alto</option>
+                    </select>
+                  </div>
+                  <div class="col-12 col-md-6 col-lg-4">
+                    <label for="sociabilidad" class="form-label"><span class="label-pill">Sociabilidad</span></label>
+                    <select id="sociabilidad" name="sociabilidad" class="form-select">
+                      <option value="">Seleccionar...</option>
+                      <option value="1">Reservado</option>
+                      <option value="2">Selectivo</option>
+                      <option value="3">Muy sociable</option>
+                    </select>
+                  </div>
+                  <div class="col-12 col-md-6 col-lg-4">
+                    <label for="presencia" class="form-label"><span class="label-pill">Presencia</span></label>
+                    <select id="presencia" name="presencia" class="form-select">
+                      <option value="">Seleccionar...</option>
+                      <option value="1">Independiente</option>
+                      <option value="2">Tolera soledad</option>
+                      <option value="3">Compania constante</option>
+                    </select>
+                  </div>
+                  <div class="col-12 col-md-6 col-lg-4">
+                    <label for="estilov" class="form-label"><span class="label-pill">Estilo de vida</span></label>
+                    <select id="estilov" name="estilov" class="form-select">
+                      <option value="">Seleccionar...</option>
+                      <option value="1">Interior</option>
+                      <option value="2">Mixto</option>
+                      <option value="3">Exterior</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="profile-pagination">
+              <button type="button" class="btn btn-profile-outline" id="profilePrev">
+                <i class="bi bi-arrow-left"></i> Anterior
+              </button>
+              <span class="profile-page-info" id="profilePageInfo">Paso 1 de 5</span>
+              <button type="button" class="btn btn-profile-outline" id="profileNext">
+                Siguiente <i class="bi bi-arrow-right"></i>
+              </button>
+            </div>
+
+            <div class="profile-actions" id="user-action-buttons">
+              <a href="#" class="btn btn-profile-outline" id="btn-cancelar"><i class="bi bi-x-circle me-1"></i>Cancelar</a>
+              <button type="submit" class="btn btn-profile-primary" id="btn-guardar">
+                <i class="bi bi-check-lg me-2"></i>Guardar cambios
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
-
-    <form id="form-mascota-cards" enctype="multipart/form-data">
-      <input type="hidden" id="id_mascota" name="id">
-      <input type="hidden" id="edad" name="edad">
-      <div class="row g-4">
-        <div class="col-12 col-xl-6">
-          <div class="card border-0 shadow-sm rounded-4 h-100">
-            <div class="card-header bg-body-tertiary border-0">
-              <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-person-vcard text-warning"></i>
-                <span class="section-title">Datos básicos</span>
-              </div>
-            </div>
-            <div class="card-body">
-              <div class="row g-3">
-                <div class="col-12 col-md-6">
-                  <label for="nombre" class="form-label"><span class="label-pill">Nombre</span></label>
-                  <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Ej: Luna">
-                </div>
-                <div class="col-12 col-md-6">
-                  <label for="tipo" class="form-label"><span class="label-pill">Tipo</span></label>
-                  <select id="tipo" name="tipo" class="form-select">
-                    <option value="">Seleccionar</option>
-                    <option value="perro">Perro</option>
-                    <option value="gato">Gato</option>
-                  </select>
-                </div>
-                <div class="col-12 col-md-6">
-                  <label class="form-label"><span class="label-pill">Edad</span></label>
-                  <div class="row g-2">
-                    <div class="col">
-                      <label for="edad_anos" class="form-label small">Años</label>
-                      <input type="number" class="form-control" id="edad_anos" min="0" value="0">
-                    </div>
-                    <div class="col">
-                      <label for="edad_meses" class="form-label small">Meses</label>
-                      <input type="number" class="form-control" id="edad_meses" min="0" max="11" value="0">
-                    </div>
-                  </div>
-                </div>
-                <div class="col-12 col-md-6">
-                  <label for="sexo" class="form-label"><span class="label-pill">Sexo</span></label>
-                  <select id="sexo" name="sexo" class="form-select">
-                    <option value="">Seleccionar</option>
-                    <option value="Macho">Macho</option>
-                    <option value="Hembra">Hembra</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-12 col-xl-6">
-          <div class="card border-0 shadow-sm rounded-4 h-100">
-            <div class="card-header bg-body-tertiary border-0">
-              <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-tags text-warning"></i>
-                <span class="section-title">Tamaño, raza y color</span>
-              </div>
-            </div>
-            <div class="card-body">
-              <div class="row g-3">
-                <div class="col-12 col-md-6 col-lg-4">
-                  <label for="tamano" class="form-label"><span class="label-pill">Tamaño</span></label>
-                  <select id="tamano" name="tamaño" class="form-select">
-                    <option value="">Seleccionar</option>
-                    <option value="Pequeño">Pequeño</option>
-                    <option value="Mediano">Mediano</option>
-                    <option value="Grande">Grande</option>
-                  </select>
-                </div>
-                <div class="col-12 col-md-6 col-lg-4">
-                  <label for="breed" class="form-label"><span class="label-pill">Raza</span></label>
-                  <select id="breed" name="breed" class="form-select">
-                    <option value="">Seleccionar Raza</option>
-                    <option value="DOMESTIC SH">Mestizo Pelo Corto</option>
-                    <option value="PIT BULL">Pit Bull</option>
-                    <option value="LABRADOR RETR">Labrador Retriever</option>
-                    <option value="GERM SHEPHERD">Pastor Aleman</option>
-                    <option value="DOMESTIC MH">Mestizo Pelo Mediano</option>
-                    <option value="BEAGLE">Beagle</option>
-                    <option value="BOXER">Boxer</option>
-                    <option value="DOMESTIC LH">Mestizo Pelo Largo</option>
-                    <option value="CHIHUAHUA SH">Chihuahua Pelo Corto</option>
-                    <option value="SHIH TZU">Shih Tzu</option>
-                    <option value="SIBERIAN HUSKY">Husky Siberiano</option>
-                    <option value="ALASKAN HUSKY">Husky de Alaska</option>
-                    <option value="OTHER">Otro</option>
-                  </select>
-                  <input type="text" id="breed_custom" name="breed_custom" class="form-control mt-2 d-none"
-                    placeholder="Especificar raza">
-                </div>
-                <div class="col-12 col-md-6 col-lg-4">
-                  <label for="color" class="form-label"><span class="label-pill">Color</span></label>
-                  <select id="color" name="color" class="form-select">
-                    <option value="">Seleccionar Color</option>
-                    <option value="BLACK">Negro</option>
-                    <option value="TABBY">Atigrado</option>
-                    <option value="WHITE">Blanco</option>
-                    <option value="BROWN">Marron</option>
-                    <option value="GRAY">Gris</option>
-                    <option value="TAN">Canela</option>
-                    <option value="BRINDLE">Brindle</option>
-                    <option value="TORTIE">Tortuga</option>
-                    <option value="ORANGE">Naranja</option>
-                    <option value="CALICO">Calico</option>
-                    <option value="OTHER">Otro</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-12">
-          <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-header bg-body-tertiary border-0">
-              <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-image text-warning"></i>
-                <span class="section-title">Descripción y fotos</span>
-              </div>
-            </div>
-            <div class="card-body">
-              <div class="row g-3">
-                <div class="col-12 col-lg-6">
-                  <label for="descripcion" class="form-label"><span class="label-pill">Descripcion</span></label>
-                  <textarea id="descripcion" name="descripcion" class="form-control" rows="5"
-                    placeholder="Contanos algo sobre la mascota..."></textarea>
-                </div>
-                <div class="col-12 col-md-6 col-lg-3">
-                  <label class="form-label"><span class="label-pill">Foto actual</span></label>
-                  <div class="photo-preview" id="fotoActualContainer">
-                    <img id="fotoActualPreview" src="" alt="Foto actual">
-                    <div class="photo-placeholder" id="fotoPlaceholder">
-                      <i class="bi bi-camera"></i>
-                      Sin foto todavía
-                    </div>
-                  </div>
-                </div>
-                <div class="col-12 col-md-6 col-lg-3">
-                  <label for="foto" class="form-label"><span class="label-pill">Cambiar foto</span></label>
-                  <input type="file" id="foto" name="imagen" accept="image/*" class="form-control">
-                  <small class="text-muted d-block mt-2">JPG o PNG, max 2MB.</small>
-                </div>
-                <div class="col-12">
-                  <label for="fotos-extra" class="form-label"><span class="label-pill">Fotos adicionales (hasta 3)</span></label>
-                  <input type="file" id="fotos-extra" name="imagenes[]" accept="image/*" multiple class="form-control">
-                  <small class="text-muted d-block mt-2">Podés subir hasta 3 fotos extra para el detalle.</small>
-                  <div class="photo-extra-section">
-                    <div id="fotos-extra-existing-label" class="small text-muted mb-2 d-none">Fotos actuales</div>
-                    <div id="fotos-extra-existing" class="photo-extra-grid"></div>
-                  </div>
-                  <div class="photo-extra-section">
-                    <div id="fotos-extra-preview-label" class="small text-muted mb-2 d-none">Fotos nuevas</div>
-                    <div id="fotos-extra-preview" class="photo-extra-grid"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-12 col-xl-6">
-          <div class="card border-0 shadow-sm rounded-4 h-100">
-            <div class="card-header bg-body-tertiary border-0">
-              <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-shield-check text-warning"></i>
-                <span class="section-title">Datos adicionales</span>
-              </div>
-            </div>
-            <div class="card-body">
-              <div class="row g-3">
-                <div class="col-12 col-md-4">
-                  <label for="vacunado" class="form-label"><span class="label-pill">Vacunado</span></label>
-                  <select id="vacunado" name="vacunado" class="form-select">
-                    <option value="">Seleccionar...</option>
-                    <option value="si">Si</option>
-                    <option value="no">No</option>
-                  </select>
-                </div>
-                <div class="col-12 col-md-4">
-                  <label for="esterilizado" class="form-label"><span class="label-pill">Esterilizado</span></label>
-                  <select id="esterilizado" name="esterilizado" class="form-select">
-                    <option value="">Seleccionar...</option>
-                    <option value="si">Si</option>
-                    <option value="no">No</option>
-                  </select>
-                </div>
-                <div class="col-12 col-md-4">
-                  <label for="chip" class="form-label"><span class="label-pill">Chip</span></label>
-                  <select id="chip" name="chip" class="form-select">
-                    <option value="">Seleccionar...</option>
-                    <option value="si">Si</option>
-                    <option value="no">No</option>
-                  </select>
-                </div>
-              </div>
-              <hr>
-              <div class="d-flex align-items-center justify-content-between mb-2">
-                <span class="fw-semibold">Vacunas aplicadas</span>
-                <button type="button" class="btn btn-outline-secondary btn-sm" id="btnAgregarVacuna"
-                  data-bs-toggle="modal" data-bs-target="#modalAgregarVacuna">Agregar vacuna</button>
-              </div>
-              <div class="table-responsive">
-                <table class="table table-sm align-middle mb-0">
-                  <thead>
-                    <tr>
-                      <th>Vacuna</th>
-                      <th>Fecha</th>
-                      <th>Acción</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tabla-vacunas-body">
-                    <tr>
-                      <td colspan="3" class="text-center text-muted">Guardá la mascota para cargar vacunas.</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-12 col-xl-6">
-          <div class="card border-0 shadow-sm rounded-4 h-100">
-            <div class="card-header bg-body-tertiary border-0">
-              <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-emoji-smile text-warning"></i>
-                <span class="section-title">Apto y personalidad</span>
-              </div>
-            </div>
-            <div class="card-body">
-              <div class="row g-3">
-                <div class="col-12 col-md-6">
-                  <label for="apto_ninos" class="form-label"><span class="label-pill">Apto ninos</span></label>
-                  <select id="apto_ninos" name="apto_ninos" class="form-select">
-                    <option value="">Seleccionar...</option>
-                    <option value="1">Si</option>
-                    <option value="0">No</option>
-                  </select>
-                </div>
-                <div class="col-12 col-md-6">
-                  <label for="apto_mascotas" class="form-label"><span class="label-pill">Apto otras mascotas</span></label>
-                  <select id="apto_mascotas" name="apto_mascotas" class="form-select">
-                    <option value="">Seleccionar...</option>
-                    <option value="1">Si</option>
-                    <option value="0">No</option>
-                  </select>
-                </div>
-                <div class="col-12 col-md-6 col-lg-4">
-                  <label for="energia" class="form-label"><span class="label-pill">Nivel de energia</span></label>
-                  <select id="energia" name="energia" class="form-select">
-                    <option value="">Seleccionar...</option>
-                    <option value="1">Bajo</option>
-                    <option value="2">Medio</option>
-                    <option value="3">Alto</option>
-                  </select>
-                </div>
-                <div class="col-12 col-md-6 col-lg-4">
-                  <label for="sociabilidad" class="form-label"><span class="label-pill">Sociabilidad</span></label>
-                  <select id="sociabilidad" name="sociabilidad" class="form-select">
-                    <option value="">Seleccionar...</option>
-                    <option value="1">Reservado</option>
-                    <option value="2">Selectivo</option>
-                    <option value="3">Muy sociable</option>
-                  </select>
-                </div>
-                <div class="col-12 col-md-6 col-lg-4">
-                  <label for="presencia" class="form-label"><span class="label-pill">Presencia</span></label>
-                  <select id="presencia" name="presencia" class="form-select">
-                    <option value="">Seleccionar...</option>
-                    <option value="1">Independiente</option>
-                    <option value="2">Tolera soledad</option>
-                    <option value="3">Compania constante</option>
-                  </select>
-                </div>
-                <div class="col-12 col-md-6 col-lg-4">
-                  <label for="estilov" class="form-label"><span class="label-pill">Estilo de vida</span></label>
-                  <select id="estilov" name="estilov" class="form-select">
-                    <option value="">Seleccionar...</option>
-                    <option value="1">Interior</option>
-                    <option value="2">Mixto</option>
-                    <option value="3">Exterior</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="form-actions">
-        <a href="#" class="btn-cancel-link" id="btn-cancelar"><i class="bi bi-x-circle me-1"></i>Cancelar</a>
-        <button type="submit" class="btn btn-primary btn-save" id="btn-guardar">
-          <i class="bi bi-check-lg me-2"></i>Guardar cambios
-        </button>
-      </div>
-    </form>
   </main>
 
   <!-- MODAL SALIR -->
@@ -658,8 +664,8 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" id="btn-guardar-vacuna" class="btn btn-primary">Guardar</button>
+          <button type="button" class="btn btn-profile-outline" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" id="btn-guardar-vacuna" class="btn btn-profile-primary">Guardar</button>
         </div>
       </div>
     </div>

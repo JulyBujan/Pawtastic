@@ -63,6 +63,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   const markAllNotif = document.getElementById("markAllNotif");
   const hasNotifUi = Boolean(notifBadge || notifList || notifDropdown);
   let notifDropdownOpen = false;
+  const stepButtons = Array.from(document.querySelectorAll(".profile-step-btn"));
+  const steps = Array.from(document.querySelectorAll(".profile-step"));
+  const prevStepBtn = document.getElementById("profilePrev");
+  const nextStepBtn = document.getElementById("profileNext");
+  const stepInfo = document.getElementById("profilePageInfo");
+  const actionButtons = document.getElementById("user-action-buttons");
+  let currentStep = 0;
+  const setFormTitle = (text) => {
+    if (!formTitle) return;
+    const textEl = formTitle.querySelector(".form-title-text");
+    if (textEl) {
+      textEl.textContent = text;
+    } else {
+      formTitle.textContent = text;
+    }
+  };
 
   const token = localStorage.getItem("token");
   const tipoUsuario = localStorage.getItem("tipo");
@@ -71,6 +87,67 @@ document.addEventListener("DOMContentLoaded", async () => {
     showToast("⚠️ Debes iniciar sesión como ONG para acceder a esta página.", "danger");
     window.location.href = "login.html";
     return;
+  }
+
+  const setStep = (nextStep) => {
+    if (!steps.length) return;
+    const totalSteps = steps.length;
+    const clampedStep = Math.max(0, Math.min(totalSteps - 1, nextStep));
+    currentStep = clampedStep;
+
+    steps.forEach((step) => {
+      step.classList.toggle("is-active", parseInt(step.dataset.step, 10) === currentStep);
+    });
+
+    stepButtons.forEach((btn) => {
+      const isActive = parseInt(btn.dataset.step, 10) === currentStep;
+      btn.classList.toggle("is-active", isActive);
+      btn.setAttribute("aria-selected", isActive ? "true" : "false");
+    });
+
+    if (stepInfo) {
+      stepInfo.textContent = `Paso ${currentStep + 1} de ${totalSteps}`;
+    }
+
+    if (prevStepBtn) prevStepBtn.disabled = currentStep === 0;
+    if (nextStepBtn) nextStepBtn.disabled = currentStep === totalSteps - 1;
+
+    if (actionButtons) {
+      actionButtons.style.display = currentStep === totalSteps - 1 ? "flex" : "none";
+    }
+  };
+
+  steps.forEach((step, index) => {
+    if (!step.dataset.step) {
+      step.dataset.step = `${index}`;
+    }
+  });
+
+  stepButtons.forEach((button, index) => {
+    if (!button.dataset.step) {
+      button.dataset.step = `${index}`;
+    }
+  });
+
+  stepButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const step = parseInt(button.dataset.step, 10);
+      if (!Number.isNaN(step)) {
+        setStep(step);
+      }
+    });
+  });
+
+  if (prevStepBtn) {
+    prevStepBtn.addEventListener("click", () => setStep(currentStep - 1));
+  }
+
+  if (nextStepBtn) {
+    nextStepBtn.addEventListener("click", () => setStep(currentStep + 1));
+  }
+
+  if (steps.length) {
+    setStep(0);
   }
 
   const setSelectValue = (id, value) => {
@@ -597,9 +674,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   async function setupEditMode(id) {
-    if (formTitle) {
-      formTitle.textContent = "Editar mascota";
-    }
+    setFormTitle("Editar mascota");
     if (formSubtitle) {
       formSubtitle.textContent = "Actualizá la información antes de guardar cambios.";
     }

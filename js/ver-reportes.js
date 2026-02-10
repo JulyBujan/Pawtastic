@@ -155,6 +155,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const formatValue = (value, suffix = "") =>
       value === null || value === undefined || value === "" ? "--" : `${value}${suffix}`;
+    const getActiveReportKey = () => {
+      const activeSection = Array.from(reportSections).find(
+        (section) => !section.classList.contains("d-none")
+      );
+      return activeSection?.dataset.reportSection || "dashboard";
+    };
+    const addChartImage = (chart, title) => {
+      if (!chart || !chart.canvas) return false;
+      const dataUrl =
+        typeof chart.toBase64Image === "function"
+          ? chart.toBase64Image()
+          : chart.canvas.toDataURL("image/png", 1.0);
+      if (!dataUrl || !dataUrl.startsWith("data:image")) {
+        return false;
+      }
+      const canvas = chart.canvas;
+      const maxWidth = pageWidth - margin * 2;
+      const aspect = canvas.width ? canvas.height / canvas.width : 0.6;
+      let imgWidth = maxWidth;
+      let imgHeight = imgWidth * aspect;
+      const maxHeight = 90;
+      if (imgHeight > maxHeight) {
+        imgHeight = maxHeight;
+        imgWidth = aspect ? imgHeight / aspect : maxWidth;
+      }
+      if (cursorY + imgHeight + 12 > 285) {
+        pdf.addPage();
+        cursorY = 16;
+      }
+      addLine(title, 11, 6, true);
+      pdf.addImage(dataUrl, "PNG", margin, cursorY, imgWidth, imgHeight);
+      cursorY += imgHeight + 8;
+      return true;
+    };
 
     const dataIndicadores = reportSnapshot.indicadores || {};
     const data30 = dataIndicadores.ultimos_30_dias || {};
@@ -270,6 +304,28 @@ document.addEventListener("DOMContentLoaded", () => {
           addLine(`- ${item.tipo_vivienda}: ${formatValue(item.cantidad)}`, 10, 5);
         });
       }
+    }
+
+    const activeSectionKey = getActiveReportKey();
+    const chartsToInclude = [];
+    if (activeSectionKey === "dashboard") {
+      chartsToInclude.push(
+        { chart: reportLineChart, title: "Publicaciones por día" },
+        { chart: reportStatusChart, title: "Estados de adopción (30 vs 60 días)" },
+        { chart: reportTypeChart, title: "Tipo de mascota adoptada" },
+        { chart: reportHousingChart, title: "Tipo de vivienda de adoptantes" }
+      );
+    }
+    if (activeSectionKey === "personalizado") {
+      chartsToInclude.push(
+        { chart: viviendaChartManual, title: "Adopciones por Tipo de Vivienda" },
+        { chart: tipoMascotaChartManual, title: "Adopciones por Tipo de Mascota" }
+      );
+    }
+
+    if (chartsToInclude.some((item) => item.chart)) {
+      addSection("Gráficos");
+      chartsToInclude.forEach(({ chart, title }) => addChartImage(chart, title));
     }
 
     const fileStamp = date.toISOString().slice(0, 10);

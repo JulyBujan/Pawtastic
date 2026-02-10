@@ -632,6 +632,30 @@ async function eliminarMascota(id) {
 }
 
 async function estimarAdopcion(mascota) {
+  const overlayId = "predictionLoadingOverlay";
+  let overlay = document.getElementById(overlayId);
+  if (!overlay) {
+    document.body.insertAdjacentHTML('beforeend', `
+      <div class="prediction-overlay" id="${overlayId}" role="status" aria-live="polite" aria-busy="true">
+        <div class="prediction-overlay__card">
+          <div class="prediction-loading">
+            <div class="prediction-loader" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+            <div>
+              <p class="prediction-loading__title">Analizando datos</p>
+              <p class="prediction-loading__subtitle">Conectando con el motor ML...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    `);
+    overlay = document.getElementById(overlayId);
+  }
+  const showOverlay = () => overlay?.classList.add("is-visible");
+  const hideOverlay = () => overlay?.classList.remove("is-visible");
+  const waitMs = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
   const modalElementId = "predictionModal";
   let modalElement = document.getElementById(modalElementId);
 
@@ -678,18 +702,9 @@ async function estimarAdopcion(mascota) {
     modalHeaderMeta.textContent = '';
   }
 
-  modalBody.innerHTML = `
-    <div class="prediction-loading">
-      <div class="prediction-loader" aria-hidden="true">
-        <span></span><span></span><span></span>
-      </div>
-      <div>
-        <p class="prediction-loading__title">Analizando datos</p>
-        <p class="prediction-loading__subtitle">Conectando con el motor ML...</p>
-      </div>
-    </div>
-  `;
-  predictionModal.show();
+  const minOverlayMs = 1200;
+  const overlayStart = Date.now();
+  showOverlay();
 
   const animaltype = mascota.tipo.toLowerCase() === 'perro' ? 1 : 0;
   const gender = mascota.sexo.toLowerCase() === 'macho' ? 1 : 0;
@@ -857,6 +872,10 @@ async function estimarAdopcion(mascota) {
         Estimación orientativa: no garantiza el resultado real.
       </div>
     `;
+    const elapsed = Date.now() - overlayStart;
+    await waitMs(Math.max(0, minOverlayMs - elapsed));
+    hideOverlay();
+    predictionModal.show();
   } catch (error) {
     modalBody.innerHTML = `
       <div class="prediction-error">
@@ -864,5 +883,9 @@ async function estimarAdopcion(mascota) {
         ${error.message}
       </div>
     `;
+    const elapsed = Date.now() - overlayStart;
+    await waitMs(Math.max(0, minOverlayMs - elapsed));
+    hideOverlay();
+    predictionModal.show();
   }
 }

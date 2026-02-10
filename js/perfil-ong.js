@@ -77,6 +77,17 @@ document.addEventListener("DOMContentLoaded", () => {
       .replace(/'/g, "&#39;");
   };
 
+  const parsePayload = (payload) => {
+    if (!payload) return null;
+    if (typeof payload === "object") return payload;
+    if (typeof payload !== "string") return null;
+    try {
+      return JSON.parse(payload);
+    } catch (error) {
+      return null;
+    }
+  };
+
   const defaultLogoSrc = "../img/pdefault.jpg";
 
   const resolveLogoSrc = (logoUrl) => {
@@ -188,6 +199,22 @@ document.addEventListener("DOMContentLoaded", () => {
     if (type.includes("estado")) return "bi-check-circle";
     if (type.includes("postul")) return "bi-envelope";
     return "bi-heart-fill";
+  };
+
+  const buildNotificationLink = (notif) => {
+    const tipo = (notif.tipo || "").toLowerCase();
+    const entidadTipo = (notif.entidad_tipo || "").toLowerCase();
+    const payload = parsePayload(notif.payload) || {};
+    const adopcionId = payload.adopcion_id || (entidadTipo === "adopcion" ? notif.entidad_id : null);
+    const mascotaId = payload.mascota_id || (entidadTipo === "mascota" ? notif.entidad_id : null);
+
+    if (entidadTipo === "adopcion" || tipo.includes("postul") || tipo.includes("comentario") || tipo.includes("estado")) {
+      return adopcionId ? `postulaciones.html?adopcion=${encodeURIComponent(adopcionId)}` : "postulaciones.html";
+    }
+    if (entidadTipo === "mascota" || tipo.includes("mascota") || tipo.includes("vacuna")) {
+      return mascotaId ? `gestionar-mascota-cards.html?id=${encodeURIComponent(mascotaId)}` : "mis-mascotas.html";
+    }
+    return "";
   };
 
   const fetchOngData = async () => {
@@ -322,15 +349,19 @@ document.addEventListener("DOMContentLoaded", () => {
         const body = escapeHtml(notif.cuerpo || "");
         const time = formatDateTime(notif.created_at);
         const unreadClass = notif.leida_at ? "" : " unread";
+        const link = buildNotificationLink(notif);
+        const tag = link ? "a" : "div";
+        const hrefAttr = link ? ` href="${link}"` : "";
+        const linkClass = link ? " notification-link" : "";
         return `
-          <div class="notification-item${unreadClass}" data-notif-id="${notif.id}">
+          <${tag}${hrefAttr} class="notification-item${unreadClass}${linkClass}" data-notif-id="${notif.id}">
             <div class="notification-header">
               <div class="fw-semibold">${title}</div>
               ${notif.leida_at ? "" : "<span class=\"notification-pill\">Nueva</span>"}
             </div>
             ${body ? `<div class="small text-muted">${body}</div>` : ""}
             <div class="notification-meta">${time}</div>
-          </div>
+          </${tag}>
         `;
       })
       .join("");
@@ -415,7 +446,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  const marcarNotificaciones = async (ids) => {
+  const marcarNotificaciones = async (ids, options = {}) => {
     try {
       const response = await fetch("../api/notificaciones.php", {
         method: "POST",
@@ -424,6 +455,7 @@ document.addEventListener("DOMContentLoaded", () => {
           Authorization: "Bearer " + token,
         },
         body: JSON.stringify({ ids }),
+        ...options,
       });
 
       if (!response.ok) {
@@ -464,14 +496,23 @@ document.addEventListener("DOMContentLoaded", () => {
   if (notifList) {
     notifList.addEventListener("click", async (event) => {
       const item = event.target.closest(".notification-item");
-      if (!item || !item.classList.contains("unread")) {
+      if (!item) {
         return;
       }
       const notifId = item.getAttribute("data-notif-id");
-      if (!notifId) {
+      const isUnread = item.classList.contains("unread");
+      const link = item.getAttribute("href");
+      const isModifiedClick = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button === 1;
+      if (!notifId || !isUnread) {
         return;
       }
-      await marcarNotificaciones([parseInt(notifId, 10)]);
+      if (link && !isModifiedClick) {
+        event.preventDefault();
+        await marcarNotificaciones([parseInt(notifId, 10)]);
+        window.location.href = link;
+        return;
+      }
+      marcarNotificaciones([parseInt(notifId, 10)], { keepalive: true });
     });
   }
 

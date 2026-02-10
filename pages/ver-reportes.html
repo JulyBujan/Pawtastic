@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 
-<body class="reports-body d-flex flex-column min-vh-100">
+<body class="form-theme reports-body d-flex flex-column min-vh-100">
   <!-- NAVBAR ONG -->
   <nav class="navbar navbar-expand-lg navbar-dark nav-app">
     <div class="container">
@@ -49,6 +49,27 @@
 
   <!-- CONTENIDO PRINCIPAL -->
   <main class="container py-5 flex-grow-1">
+    <nav class="reports-tabs" aria-label="Secciones de reportes">
+      <button type="button" class="report-tab report-menu-item active" data-report-target="dashboard">
+        Resumen general
+      </button>
+      <button type="button" class="report-tab report-menu-item" data-report-target="indicadores">
+        Indicadores 30/60 días
+      </button>
+      <button type="button" class="report-tab report-menu-item" data-report-target="adopcion-rapida">
+        Adopción por edad
+      </button>
+      <button type="button" class="report-tab report-menu-item" data-report-target="zonas">
+        Zonas de adopción
+      </button>
+      <button type="button" class="report-tab report-menu-item" data-report-target="espera">
+        Mascotas en espera
+      </button>
+      <button type="button" class="report-tab report-menu-item" data-report-target="personalizado">
+        Reporte personalizado
+      </button>
+    </nav>
+
     <section class="report-section" data-report-section="dashboard">
       <section class="reports-hero">
         <div>
