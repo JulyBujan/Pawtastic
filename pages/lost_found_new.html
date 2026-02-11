@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Publicar Mascota Perdida | Pawtastic</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="icon" href="../img/favicon.ico" type="image/png">
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body class="lost-found-body d-flex flex-column min-vh-100">
+  <nav class="navbar navbar-expand-lg navbar-dark nav-app">
+    <div class="container">
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarLostFound"
+        aria-controls="navbarLostFound" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand text-warning fw-bold me-3" href="../index.html">
+        <img src="../img/logo.png" alt="Logo Pawtastic" width="40" height="40" class="d-inline-block d-lg-none">
+        <span class="d-none d-lg-inline">Pawtastic</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarLostFound">
+        <ul class="navbar-nav align-items-lg-center ms-auto">
+          <li class="nav-item">
+            <a href="lost_found.html" class="btn btn-custom-nav">
+              <i class="bi bi-arrow-left"></i> Volver
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-5 flex-grow-1">
+    <section class="lost-found-hero">
+      <div>
+        <span class="detail-badge">Publicación nueva</span>
+        <h2 class="lost-found-title">Publicar mascota perdida o encontrada</h2>
+        <p class="lost-found-subtitle">Completá la información principal para activar la búsqueda.</p>
+      </div>
+    </section>
+
+    <div class="lost-found-form-card form-theme">
+      <form id="lostFoundForm" class="row g-3">
+        <div class="col-12 col-md-4">
+          <label for="lostType" class="form-label">Tipo</label>
+          <select id="lostType" class="form-select" required>
+            <option value="">Seleccionar</option>
+            <option value="LOST">Perdida</option>
+            <option value="FOUND">Encontrada</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-4">
+          <label for="lostSpecies" class="form-label">Especie</label>
+          <select id="lostSpecies" class="form-select" required>
+            <option value="">Seleccionar</option>
+            <option value="Perro">Perro</option>
+            <option value="Gato">Gato</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-4">
+          <label for="lostSize" class="form-label">Tamaño</label>
+          <select id="lostSize" class="form-select">
+            <option value="">Seleccionar</option>
+            <option value="small">Pequeño</option>
+            <option value="medium">Mediano</option>
+            <option value="large">Grande</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-6">
+          <label for="lostPetName" class="form-label">Nombre (opcional)</label>
+          <input type="text" class="form-control" id="lostPetName" maxlength="100" placeholder="Ej: Lola">
+        </div>
+        <div class="col-12 col-md-6">
+          <label for="lostBreed" class="form-label">Raza</label>
+          <input type="text" class="form-control" id="lostBreed" maxlength="80" placeholder="Ej: Mestizo">
+        </div>
+        <div class="col-12">
+          <label for="lostColors" class="form-label">Colores</label>
+          <input type="text" class="form-control" id="lostColors" maxlength="255" placeholder="Ej: negro, blanco, marrón">
+        </div>
+        <div class="col-12">
+          <label for="city" class="form-label">Localidad</label>
+          <input type="text" class="form-control" id="city" name="city" required>
+          <div class="invalid-feedback">Por favor, ingresa tu localidad.</div>
+        </div>
+        <div class="col-md-7">
+          <label for="road" class="form-label">Calle</label>
+          <input type="text" class="form-control" id="road" name="road" required>
+          <div class="invalid-feedback">Por favor, ingresa el nombre de la calle.</div>
+        </div>
+        <div class="col-md-2">
+          <label for="house_number" class="form-label">Nro</label>
+          <input type="text" class="form-control" id="house_number" name="house_number" required>
+          <div class="invalid-feedback">Nro.</div>
+        </div>
+        <div class="col-md-3">
+          <label for="departamento" class="form-label">Depto</label>
+          <input type="text" class="form-control" id="departamento" name="departamento">
+        </div>
+        <div class="col-12 text-end">
+          <button type="button" class="btn btn-outline-secondary btn-sm" id="validar-direccion-btn">
+            Validar dirección
+          </button>
+        </div>
+        <div class="col-12 col-md-6">
+          <label for="lostDate" class="form-label" id="lostDateLabel">Fecha vista</label>
+          <input type="date" class="form-control" id="lostDate">
+        </div>
+        <div class="col-12">
+          <label for="lostDescription" class="form-label">Descripción</label>
+          <textarea class="form-control" id="lostDescription" rows="4" maxlength="600"
+            placeholder="Detalles relevantes"></textarea>
+        </div>
+        <div class="col-12">
+          <label for="lostPhotoFile" class="form-label">Foto</label>
+          <div class="lost-photo-preview" id="lostPhotoPreview">
+            <img id="lostPhotoPreviewImg" alt="Vista previa" class="d-none">
+            <div class="lost-photo-placeholder" id="lostPhotoPlaceholder">
+              <i class="bi bi-image"></i>
+              Sin foto todavía
+            </div>
+          </div>
+          <input type="file" class="form-control" id="lostPhotoFile" name="imagen" accept="image/*">
+          <small class="text-muted d-block mt-2">Formatos permitidos: JPG, PNG o WEBP.</small>
+        </div>
+        <div class="col-12 d-flex flex-wrap gap-2 justify-content-end">
+          <button type="button" class="btn btn-outline-secondary" id="lostFoundCancel">Cancelar</button>
+          <button type="submit" class="btn btn-ong-primary">Publicar</button>
+        </div>
+        <input type="hidden" id="lat" name="lat">
+        <input type="hidden" id="lon" name="lon">
+        <input type="hidden" id="suburb" name="suburb">
+      </form>
+    </div>
+  </main>
+
+  <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3"></div>
+
+  <footer class="mini-footer mt-auto">
+    <div class="container text-center">
+      <a href="./terminosYcondiciones.html" class="text-decoration-none">Términos y condiciones</a>
+      <span class="mx-2">|</span>
+      <a href="./politicaDeCookies.html" class="text-decoration-none">Política de cookies</a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/lost_found_new.js"></script>
+  <script src="../js/role-theme.js"></script>
+</body>
+
+</html>

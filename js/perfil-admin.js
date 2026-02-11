@@ -60,6 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const getIconForNotif = (tipoNotif) => {
     const type = (tipoNotif || "").toLowerCase();
     if (type.includes("comentario")) return "bi-chat-left-dots";
+    if (type.includes("mensaje") || type.includes("message") || type.includes("lost_found")) return "bi-chat-left-dots";
     if (type.includes("estado")) return "bi-check-circle";
     if (type.includes("postul")) return "bi-envelope";
     return "bi-heart-fill";

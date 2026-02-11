@@ -196,6 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const getIconForNotif = (tipoNotif) => {
     const type = (tipoNotif || "").toLowerCase();
     if (type.includes("comentario")) return "bi-chat-left-dots";
+    if (type.includes("mensaje") || type.includes("message") || type.includes("lost_found")) return "bi-chat-left-dots";
     if (type.includes("estado")) return "bi-check-circle";
     if (type.includes("postul")) return "bi-envelope";
     return "bi-heart-fill";
@@ -207,12 +208,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const payload = parsePayload(notif.payload) || {};
     const adopcionId = payload.adopcion_id || (entidadTipo === "adopcion" ? notif.entidad_id : null);
     const mascotaId = payload.mascota_id || (entidadTipo === "mascota" ? notif.entidad_id : null);
+    const lostFoundId = payload.lost_found_id || payload.post_id || (entidadTipo === "lost_found" ? notif.entidad_id : null);
 
     if (entidadTipo === "adopcion" || tipo.includes("postul") || tipo.includes("comentario") || tipo.includes("estado")) {
       return adopcionId ? `postulaciones.html?adopcion=${encodeURIComponent(adopcionId)}` : "postulaciones.html";
     }
     if (entidadTipo === "mascota" || tipo.includes("mascota") || tipo.includes("vacuna")) {
       return mascotaId ? `gestionar-mascota-cards.html?id=${encodeURIComponent(mascotaId)}` : "mis-mascotas.html";
+    }
+    if (entidadTipo === "lost_found" || tipo.includes("lost_found") || tipo.includes("mensaje") || tipo.includes("message")) {
+      return lostFoundId ? `lost_found_detail.html?id=${encodeURIComponent(lostFoundId)}` : "lost_found.html";
     }
     return "";
   };

@@ -62,6 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const getIconForNotif = (tipoNotif) => {
     const type = (tipoNotif || "").toLowerCase();
     if (type.includes("comentario")) return "bi-chat-left-dots";
+    if (type.includes("mensaje") || type.includes("message") || type.includes("lost_found")) return "bi-chat-left-dots";
     if (type.includes("estado")) return "bi-check-circle";
     if (type.includes("postul")) return "bi-envelope";
     return "bi-heart-fill";
@@ -201,7 +202,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const filtered = notificaciones.filter((notif) => {
       const type = (notif.tipo || "").toLowerCase();
-      return type.includes("comentario") || type.includes("estado_actualizado");
+      return (
+        type.includes("comentario") ||
+        type.includes("estado_actualizado") ||
+        type.includes("mensaje") ||
+        type.includes("message") ||
+        type.includes("lost_found")
+      );
     });
 
     if (filtered.length === 0) {
@@ -222,7 +229,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
       const adopcionId = payload?.adopcion_id;
-      const link = adopcionId ? `postulaciones.html?adopcion=${adopcionId}` : "postulaciones.html";
+      const lostFoundId = payload?.lost_found_id || payload?.post_id || (notif.entidad_tipo === "lost_found" ? notif.entidad_id : null);
+      const link = adopcionId
+        ? `postulaciones.html?adopcion=${adopcionId}`
+        : lostFoundId
+          ? `lost_found_detail.html?id=${lostFoundId}`
+          : "postulaciones.html";
       const unreadClass = notif.leida_at ? "" : " is-unread";
       return `
         <li class="activity-item">

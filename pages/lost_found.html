@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mascotas Perdidas | Pawtastic</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="icon" href="../img/favicon.ico" type="image/png">
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body class="lost-found-body d-flex flex-column min-vh-100">
+  <nav class="navbar navbar-expand-lg navbar-dark nav-app">
+    <div class="container">
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarLostFound"
+        aria-controls="navbarLostFound" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand text-warning fw-bold me-3" href="../index.html">
+        <img src="../img/logo.png" alt="Logo Pawtastic" width="40" height="40" class="d-inline-block d-lg-none">
+        <span class="d-none d-lg-inline">Pawtastic</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarLostFound">
+        <ul class="navbar-nav align-items-lg-center ms-auto">
+          <li class="nav-item">
+            <a href="#" class="btn btn-custom-nav" id="lostFoundBack">
+              <i class="bi bi-arrow-left"></i> Volver
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-5 flex-grow-1">
+    <section class="lost-found-hero">
+      <div>
+        <h2 class="lost-found-title">Mascotas perdidas y encontradas</h2>
+        <p class="lost-found-subtitle">Publicá y encontrá coincidencias rápido.</p>
+      </div>
+      <div class="lost-found-actions">
+        <a href="lost_found_new.html" class="btn btn-ong-primary">
+          <i class="bi bi-plus-lg me-1"></i> Publicar
+        </a>
+      </div>
+    </section>
+
+    <section class="filter-panel mb-4">
+      <div class="filter-panel-header">
+        <div>
+          <h5 class="filter-title">Filtrar publicaciones</h5>
+          <p class="text-muted small mb-0">Filtrá por especie, tamaño y ordená por fecha.</p>
+        </div>
+        <button type="button" class="btn btn-outline-secondary btn-sm btn-clear-filters" id="lostClearFilters">
+          Limpiar filtros
+        </button>
+      </div>
+      <form class="row g-3 align-items-end" id="lostFiltersForm">
+        <div class="col-md-4 col-lg-3">
+          <label for="lostFilterSpecies" class="form-label">Especie</label>
+          <select class="form-select filter-select" id="lostFilterSpecies">
+            <option value="">Todas</option>
+            <option value="perro">Perro</option>
+            <option value="gato">Gato</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+        <div class="col-md-4 col-lg-3">
+          <label for="lostFilterSize" class="form-label">Tamaño</label>
+          <select class="form-select filter-select" id="lostFilterSize">
+            <option value="">Todos</option>
+            <option value="small">Pequeño</option>
+            <option value="medium">Mediano</option>
+            <option value="large">Grande</option>
+          </select>
+        </div>
+        <div class="col-md-4 col-lg-3">
+          <label class="form-label d-block">Orden por fecha</label>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="lostSortDate" checked>
+            <label class="form-check-label" for="lostSortDate" id="lostSortLabel">Descendente</label>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <button type="submit" class="btn btn-dark">
+            <i class="bi bi-sliders"></i> Aplicar filtros
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <ul class="nav nav-tabs lost-found-tabs" id="lostFoundTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="lost-tab" data-bs-toggle="tab" data-bs-target="#lost-panel" type="button"
+          role="tab" aria-controls="lost-panel" aria-selected="true">Perdidas</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="found-tab" data-bs-toggle="tab" data-bs-target="#found-panel" type="button"
+          role="tab" aria-controls="found-panel" aria-selected="false">Encontradas</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="resolved-tab" data-bs-toggle="tab" data-bs-target="#resolved-panel" type="button"
+          role="tab" aria-controls="resolved-panel" aria-selected="false">Resueltas</button>
+      </li>
+      <li class="nav-item d-none" role="presentation" id="deleted-tab-item">
+        <button class="nav-link" id="deleted-tab" data-bs-toggle="tab" data-bs-target="#deleted-panel" type="button"
+          role="tab" aria-controls="deleted-panel" aria-selected="false">Eliminadas</button>
+      </li>
+    </ul>
+
+    <div class="tab-content lost-found-content" id="lostFoundTabsContent">
+      <div class="tab-pane fade show active" id="lost-panel" role="tabpanel" aria-labelledby="lost-tab" tabindex="0">
+        <div id="lostLoading" class="lost-found-loading">Cargando publicaciones...</div>
+        <div id="lostList" class="row g-4"></div>
+        <div id="lostEmpty" class="lost-found-empty d-none">No hay publicaciones activas.</div>
+      </div>
+      <div class="tab-pane fade" id="found-panel" role="tabpanel" aria-labelledby="found-tab" tabindex="0">
+        <div id="foundLoading" class="lost-found-loading">Cargando publicaciones...</div>
+        <div id="foundList" class="row g-4"></div>
+        <div id="foundEmpty" class="lost-found-empty d-none">No hay publicaciones activas.</div>
+      </div>
+      <div class="tab-pane fade" id="resolved-panel" role="tabpanel" aria-labelledby="resolved-tab" tabindex="0">
+        <div id="resolvedLoading" class="lost-found-loading">Cargando publicaciones...</div>
+        <div id="resolvedList" class="row g-4"></div>
+        <div id="resolvedEmpty" class="lost-found-empty d-none">No tenés publicaciones resueltas.</div>
+      </div>
+      <div class="tab-pane fade d-none" id="deleted-panel" role="tabpanel" aria-labelledby="deleted-tab" tabindex="0">
+        <div id="deletedLoading" class="lost-found-loading">Cargando publicaciones...</div>
+        <div id="deletedList" class="row g-4"></div>
+        <div id="deletedEmpty" class="lost-found-empty d-none">No hay publicaciones eliminadas.</div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3"></div>
+
+  <footer class="mini-footer mt-auto">
+    <div class="container text-center">
+      <a href="./terminosYcondiciones.html" class="text-decoration-none">Términos y condiciones</a>
+      <span class="mx-2">|</span>
+      <a href="./politicaDeCookies.html" class="text-decoration-none">Política de cookies</a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/lost_found.js"></script>
+  <script src="../js/role-theme.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Detalle de Mascota | Pawtastic</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="icon" href="../img/favicon.ico" type="image/png">
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body class="lost-found-body d-flex flex-column min-vh-100">
+  <nav class="navbar navbar-expand-lg navbar-dark nav-app">
+    <div class="container">
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarLostFound"
+        aria-controls="navbarLostFound" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand text-warning fw-bold me-3" href="../index.html">
+        <img src="../img/logo.png" alt="Logo Pawtastic" width="40" height="40" class="d-inline-block d-lg-none">
+        <span class="d-none d-lg-inline">Pawtastic</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarLostFound">
+        <ul class="navbar-nav align-items-lg-center ms-auto">
+          <li class="nav-item">
+            <a href="lost_found.html" class="btn btn-custom-nav">
+              <i class="bi bi-arrow-left"></i> Volver
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-5 flex-grow-1">
+    <section class="lost-found-detail" id="lostFoundDetail">
+      <div class="lost-found-loading">Cargando detalle...</div>
+    </section>
+
+    <div id="mapa-section" class="card detail-card border-0 shadow-sm mt-4 d-none">
+      <div class="card-body">
+        <button class="btn detail-map-toggle w-100 d-flex align-items-center justify-content-between" type="button"
+          data-bs-toggle="collapse" data-bs-target="#mapa-collapse" aria-expanded="false"
+          aria-controls="mapa-collapse">
+          <span><i class="bi bi-geo-alt-fill me-2"></i>Ubicación de la mascota encontrada</span>
+          <i class="bi bi-chevron-down"></i>
+        </button>
+        <p id="lost-map-note" class="text-center mt-2 fw-semibold small text-muted d-none"></p>
+        <div class="collapse mt-3" id="mapa-collapse">
+          <div id="map" class="detail-map"></div>
+        </div>
+      </div>
+    </div>
+
+    <section class="lost-found-messages mt-5">
+      <div class="lost-found-section-header">
+        <h3>Mensajes</h3>
+        <p class="text-muted">Conversá con usuarios interesados sobre esta publicación.</p>
+      </div>
+      <div class="lost-messages-card form-theme">
+        <div id="messagesLoading" class="lost-found-loading">Cargando mensajes...</div>
+        <div id="messagesList" class="lost-messages-list"></div>
+        <div id="messagesEmpty" class="comment-empty d-none">Todavía no hay mensajes.</div>
+        <div id="messagesNotice" class="lost-message-note d-none"></div>
+        <form id="messageForm" class="lost-message-form">
+          <div class="lost-message-select d-none" id="messageRecipientGroup">
+            <label for="messageRecipient" class="form-label">Enviar a</label>
+            <select id="messageRecipient" class="form-select"></select>
+          </div>
+          <label for="messageText" class="form-label">Escribir mensaje</label>
+          <textarea id="messageText" class="form-control" rows="3" maxlength="600"
+            placeholder="Escribe un mensaje..."></textarea>
+          <div class="d-flex justify-content-end gap-2">
+            <button type="submit" class="btn btn-ong-primary">Enviar mensaje</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section class="lost-found-matches mt-5">
+      <div class="lost-found-section-header">
+        <h3>Posibles coincidencias</h3>
+        <p class="text-muted">Resultados basados en especie, ubicación, colores y fechas cercanas.</p>
+        <button type="button" class="btn btn-link p-0 text-decoration-none lost-score-help" data-bs-toggle="modal"
+          data-bs-target="#scoreHelpModal">
+          ¿Cómo se calcula el score?
+        </button>
+      </div>
+      <div id="matchesLoading" class="lost-found-loading">Buscando coincidencias...</div>
+      <div id="matchesList" class="row g-4"></div>
+      <div id="matchesEmpty" class="lost-found-empty d-none">No se encontraron coincidencias por ahora.</div>
+    </section>
+  </main>
+
+  <div class="modal fade" id="scoreHelpModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Cómo se calcula el score</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-2">El score es una suma de coincidencias (máximo 11 puntos):</p>
+          <ul class="mb-0">
+            <li>+3 especie</li>
+            <li>+2 raza similar</li>
+            <li>+1 por color en común (máx +3)</li>
+            <li>+1 tamaño</li>
+            <li>+2 ubicación similar</li>
+            <li>+2 fecha cercana (≤ 7 días) o +1 (≤ 30 días)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3"></div>
+
+  <footer class="mini-footer mt-auto">
+    <div class="container text-center">
+      <a href="./terminosYcondiciones.html" class="text-decoration-none">Términos y condiciones</a>
+      <span class="mx-2">|</span>
+      <a href="./politicaDeCookies.html" class="text-decoration-none">Política de cookies</a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/lost_found_detail.js"></script>
+  <script src="../js/role-theme.js"></script>
+</body>
+
+</html>
