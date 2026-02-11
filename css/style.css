@@ -8181,6 +8181,20 @@ body.role-ong.reports-body {
   border: 1px solid rgba(27, 36, 54, 0.08);
   box-shadow: 0 18px 40px rgba(27, 36, 54, 0.1);
   margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.lost-found-head {
+  flex: 1 1 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lost-found-head .title-icon--double svg {
+  width: 28px;
+  height: 28px;
 }
 
 .lost-found-title {
@@ -8200,6 +8214,10 @@ body.role-ong.reports-body {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  position: absolute;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .lost-found-tabs {
@@ -8539,8 +8557,24 @@ body.role-ong.reports-body {
 }
 
 .lost-found-body .pet-photo {
-  object-fit: contain;
+  object-fit: cover;
   background: #ffffff;
+}
+
+.lost-found-body .pet-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.lost-found-body .pet-card .card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.lost-found-body .pet-actions {
+  margin-top: auto;
 }
 
 .lost-found-body .lost-reasons {
@@ -8550,6 +8584,15 @@ body.role-ong.reports-body {
 @media (max-width: 991px) {
   .lost-detail-card {
     grid-template-columns: 1fr;
+  }
+
+  .lost-found-hero {
+    justify-content: center;
+  }
+
+  .lost-found-actions {
+    position: static;
+    transform: none;
   }
 }
 

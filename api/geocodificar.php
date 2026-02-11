@@ -13,6 +13,12 @@ if (empty($_GET['road']) || empty($_GET['house_number']) || empty($_GET['city'])
     exit;
 }
 
+if (!function_exists('curl_init')) {
+    http_response_code(500);
+    echo json_encode(["message" => "El servidor no tiene cURL habilitado para validar direcciones."]);
+    exit;
+}
+
 $house_number = trim($_GET['house_number']);
 $road = trim($_GET['road']);
 $city = trim($_GET['city']);

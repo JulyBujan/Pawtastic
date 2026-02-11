@@ -105,7 +105,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch(url, {
         headers: { Authorization: "Bearer " + token },
       });
-      const data = await response.json();
+      const rawText = await response.text();
+      let data = {};
+      try {
+        data = rawText ? JSON.parse(rawText) : {};
+      } catch (parseError) {
+        throw new Error("La respuesta del servidor no es válida.");
+      }
 
       if (!response.ok) {
         throw new Error(data.message || "Error al validar la dirección.");

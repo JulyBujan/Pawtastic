@@ -34,6 +34,29 @@ function sanitize_text($value) {
     return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
+function ends_with_text($value, $suffix) {
+    $value = (string)$value;
+    $suffix = (string)$suffix;
+    $len = strlen($suffix);
+    if ($len === 0) {
+        return true;
+    }
+    return substr($value, -$len) === $suffix;
+}
+
+function is_missing_photo($photo_url) {
+    if ($photo_url === null) {
+        return true;
+    }
+    $photo_url = trim((string)$photo_url);
+    return $photo_url === '' || $photo_url === 'img/mascotas/default.jpg' || ends_with_text($photo_url, '/default.jpg');
+}
+
+function should_hide_post($photo_url) {
+    return is_missing_photo($photo_url);
+}
+
+
 try {
     $viewer_id = isset($decoded_token->user_id) ? (int)$decoded_token->user_id : null;
     $user_tipo = $decoded_token->tipo ?? '';
@@ -96,6 +119,10 @@ try {
 
     $viewer_id = isset($decoded_token->user_id) ? (int)$decoded_token->user_id : null;
 
+    $filtered = array_filter($rows, function ($row) {
+        return !should_hide_post($row['photo_url'] ?? null);
+    });
+
     $posts = array_map(function ($row) use ($string_fields, $viewer_id) {
         foreach ($string_fields as $field) {
             if (array_key_exists($field, $row)) {
@@ -110,7 +137,7 @@ try {
         unset($row['suburb'], $row['user_id']);
         $row['id'] = (int)$row['id'];
         return $row;
-    }, $rows);
+    }, $filtered);
 
     echo json_encode($posts);
 } catch (Exception $e) {

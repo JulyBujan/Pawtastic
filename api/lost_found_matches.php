@@ -41,6 +41,29 @@ function sanitize_text($value) {
     return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
+function ends_with_text($value, $suffix) {
+    $value = (string)$value;
+    $suffix = (string)$suffix;
+    $len = strlen($suffix);
+    if ($len === 0) {
+        return true;
+    }
+    return substr($value, -$len) === $suffix;
+}
+
+function is_missing_photo($photo_url) {
+    if ($photo_url === null) {
+        return true;
+    }
+    $photo_url = trim((string)$photo_url);
+    return $photo_url === '' || $photo_url === 'img/mascotas/default.jpg' || ends_with_text($photo_url, '/default.jpg');
+}
+
+function should_hide_post($photo_url) {
+    return is_missing_photo($photo_url);
+}
+
+
 function normalize_text($value) {
     $value = trim((string)$value);
     if (function_exists('mb_strtolower')) {
@@ -152,6 +175,12 @@ try {
         exit;
     }
 
+    if (should_hide_post($base['photo_url'] ?? null)) {
+        http_response_code(404);
+        echo json_encode(["message" => "Post no encontrado."]);
+        exit;
+    }
+
     $viewer_id = isset($decoded_token->user_id) ? (int)$decoded_token->user_id : null;
     $base_owner = $base['user_id'] !== null ? (int)$base['user_id'] : null;
     $is_owner = $viewer_id && $base_owner === $viewer_id;
@@ -184,6 +213,9 @@ try {
     $matches = [];
 
     foreach ($candidates as $cand) {
+        if (should_hide_post($cand['photo_url'] ?? null)) {
+            continue;
+        }
         $score_data = compute_match_score($base, $cand, $max_days);
         if ($score_data['skip']) {
             continue;

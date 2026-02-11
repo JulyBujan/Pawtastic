@@ -25,6 +25,29 @@ function sanitize_text($value) {
     return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
+function ends_with_text($value, $suffix) {
+    $value = (string)$value;
+    $suffix = (string)$suffix;
+    $len = strlen($suffix);
+    if ($len === 0) {
+        return true;
+    }
+    return substr($value, -$len) === $suffix;
+}
+
+function is_missing_photo($photo_url) {
+    if ($photo_url === null) {
+        return true;
+    }
+    $photo_url = trim((string)$photo_url);
+    return $photo_url === '' || $photo_url === 'img/mascotas/default.jpg' || ends_with_text($photo_url, '/default.jpg');
+}
+
+function should_hide_post($photo_url) {
+    return is_missing_photo($photo_url);
+}
+
+
 try {
     $stmt = $conn->prepare("SELECT id, type, user_id, pet_name, species, breed, colors, size, location_text, suburb, lat, lon, date_seen, description, photo_url, status, created_at, updated_at FROM lost_found_posts WHERE id = ? AND deleted_at IS NULL");
     if (!$stmt) {
@@ -37,6 +60,12 @@ try {
     $stmt->close();
 
     if (!$post) {
+        http_response_code(404);
+        echo json_encode(["message" => "Post no encontrado."]);
+        exit;
+    }
+
+    if (should_hide_post($post['photo_url'] ?? null)) {
         http_response_code(404);
         echo json_encode(["message" => "Post no encontrado."]);
         exit;

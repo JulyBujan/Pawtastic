@@ -50,13 +50,14 @@ function getCoordinatesFromAddress($address) {
 
     // 8. Extrae las coordenadas
     if (!empty($data) && isset($data[0]['lat']) && isset($data[0]['lon'])) {
+        $address = $data[0]['address'] ?? [];
         return [
             'lat' => $data[0]['lat'],
             'lon' => $data[0]['lon'],
-            'city' => $data[0]['address']['city'],
-            'road' => $data[0]['address']['road'],
-            'house_number' => $data[0]['address']['house_number'],
-            'suburb' => $data[0]['address']['suburb']
+            'city' => $address['city'] ?? $address['town'] ?? $address['village'] ?? $address['municipality'] ?? null,
+            'road' => $address['road'] ?? $address['pedestrian'] ?? $address['footway'] ?? $address['street'] ?? null,
+            'house_number' => $address['house_number'] ?? null,
+            'suburb' => $address['suburb'] ?? $address['neighbourhood'] ?? $address['hamlet'] ?? null
         ];
     }
     return null; // No se encontraron resultados
