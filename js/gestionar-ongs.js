@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const getEstadoInfo = (ong) => {
         const raw = ong.estado;
         if (raw === null || raw === undefined || raw === "") {
-            return { key: "preexistente", label: "Pre-existente", className: "is-preexistente" };
+            return { key: "preexistente", label: "Registrada", className: "is-preexistente" };
         }
         const parsed = parseInt(raw, 10);
         switch (parsed) {
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
             case 2:
                 return { key: "rechazado", label: "Rechazado", className: "is-rejected" };
             default:
-                return { key: "preexistente", label: "Pre-existente", className: "is-preexistente" };
+                return { key: "preexistente", label: "Registrada", className: "is-preexistente" };
         }
     };
 
@@ -483,6 +483,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 btn.classList.toggle("is-active", btn.dataset.estadoFilter === "todos");
             });
             renderOngsView();
+        });
+    }
+
+    if (window.bootstrap && typeof window.bootstrap.Tooltip === "function") {
+        document.querySelectorAll("[data-bs-toggle='tooltip']").forEach((el) => {
+            const existing = window.bootstrap.Tooltip.getInstance(el);
+            if (existing) {
+                existing.dispose();
+            }
+            new window.bootstrap.Tooltip(el);
+        });
+    }
+
+    if (window.bootstrap && typeof window.bootstrap.Popover === "function") {
+        document.querySelectorAll("[data-bs-toggle='popover']").forEach((el) => {
+            const existing = window.bootstrap.Popover.getInstance(el);
+            if (existing) {
+                existing.dispose();
+            }
+            new window.bootstrap.Popover(el);
         });
     }
 

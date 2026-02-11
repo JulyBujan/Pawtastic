@@ -5871,6 +5871,12 @@ footer .mx-2 {
   margin-bottom: 1rem;
 }
 
+@media (min-width: 992px) {
+  .admin-ongs-card .admin-summary {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
 .admin-summary-card {
   background: #f7fbff;
   border-radius: 16px;
@@ -5907,6 +5913,18 @@ footer .mx-2 {
   align-items: center;
   gap: 0.75rem;
   flex-wrap: wrap;
+}
+
+.admin-filter-help {
+  color: #0e5a7e;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+}
+
+.admin-filter-help:hover {
+  color: #0b4661;
 }
 
 .admin-search .input-group-text {

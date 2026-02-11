@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const perfilForm = document.getElementById('perfil-form');
     const validarDireccionBtn = document.getElementById('validar-direccion-btn');
+    const direccionValidadaEl = document.getElementById('direccion-validada');
     const perfilFoto = document.getElementById('perfilfoto');
     const fotoInput = document.getElementById('foto-input');
     const stepButtons = Array.from(document.querySelectorAll('.profile-step-btn'));
@@ -194,6 +195,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('presencia').value = usuario.presencia || 0;
             document.getElementById('estilov').value = usuario.estilov || 0;
 
+            setDireccionValidada(Boolean(usuario.suburb));
+
             // Actualizar la foto de perfil
             if (usuario.foto_perfil_url && usuario.foto_perfil_url.startsWith('/img/profile/')) {
                 // Añadimos un timestamp para evitar problemas de caché si se sube una foto con el mismo nombre
@@ -314,6 +317,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return esValido;
     };
 
+    const setDireccionValidada = (isValid) => {
+        if (!direccionValidadaEl) return;
+        direccionValidadaEl.classList.toggle('d-none', !isValid);
+    };
+
     /**
      * Valida y geocodifica la dirección ingresada por el usuario.
      */
@@ -368,6 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('suburb').value = data.suburb;
             }
 
+            setDireccionValidada(Boolean(data.suburb));
             showToast('Dirección validada con éxito. Guardando...', 'success');
             perfilForm.requestSubmit(); // Envía el formulario para guardar los datos actualizados
         } catch (error) {
@@ -440,6 +449,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Event listener para el botón de validar dirección
     validarDireccionBtn.addEventListener('click', handleValidarDireccion);
+
+    ['city', 'road', 'house_number', 'departamento'].forEach((fieldId) => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener('input', () => setDireccionValidada(false));
+        }
+    });
 
     stepButtons.forEach(button => {
         button.addEventListener('click', (event) => {

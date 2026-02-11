@@ -75,6 +75,13 @@
               <span class="admin-summary-value" id="adminOngsTotal">0</span>
             </div>
           </div>
+          <div class="admin-summary-card" data-accent="preexistentes">
+            <div class="admin-summary-icon"><i class="bi bi-stars"></i></div>
+            <div class="admin-summary-content">
+              <span class="admin-summary-label">Registradas</span>
+              <span class="admin-summary-value" id="adminOngsPreexistentes">0</span>
+            </div>
+          </div>
           <div class="admin-summary-card" data-accent="pendientes">
             <div class="admin-summary-icon"><i class="bi bi-hourglass-split"></i></div>
             <div class="admin-summary-content">
@@ -96,13 +103,6 @@
               <span class="admin-summary-value" id="adminOngsRechazadas">0</span>
             </div>
           </div>
-          <div class="admin-summary-card" data-accent="preexistentes">
-            <div class="admin-summary-icon"><i class="bi bi-stars"></i></div>
-            <div class="admin-summary-content">
-              <span class="admin-summary-label">Pre-existentes</span>
-              <span class="admin-summary-value" id="adminOngsPreexistentes">0</span>
-            </div>
-          </div>
         </div>
 
         <div class="admin-toolbar">
@@ -114,11 +114,18 @@
           <div class="admin-toolbar-actions">
             <div class="admin-filter-group" role="group" aria-label="Filtrar estado de ONGs">
               <button type="button" class="btn admin-filter-chip is-active" data-estado-filter="todos">Todas</button>
+              <button type="button" class="btn admin-filter-chip" data-estado-filter="preexistente">Registradas</button>
               <button type="button" class="btn admin-filter-chip" data-estado-filter="pendiente">Pendientes</button>
               <button type="button" class="btn admin-filter-chip" data-estado-filter="aprobado">Aprobadas</button>
               <button type="button" class="btn admin-filter-chip" data-estado-filter="rechazado">Rechazadas</button>
-              <button type="button" class="btn admin-filter-chip" data-estado-filter="preexistente">Pre-existentes</button>
             </div>
+            <button type="button" class="btn btn-link p-0 admin-filter-help" data-bs-toggle="popover"
+              data-bs-trigger="hover focus" data-bs-placement="top" data-bs-html="true"
+              title="Estados de ONGs"
+              data-bs-content="<ul class='mb-0 ps-3'><li>Registradas: datos básicos sin papeles.</li><li>Pendientes: papeles completos en evaluación.</li><li>Aprobadas: habilitadas.</li><li>Rechazadas: no aprobadas.</li></ul>">
+              <i class="bi bi-info-circle"></i>
+              <span class="visually-hidden">Ayuda sobre estados</span>
+            </button>
             <button type="button" class="btn btn-admin-ghost" id="limpiarFiltroOngs">
               <i class="bi bi-x-circle me-1"></i>Limpiar
             </button>
