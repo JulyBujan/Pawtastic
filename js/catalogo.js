@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let matchRange = null;
     const userType = localStorage.getItem('tipo');
     const isUser = Boolean(localStorage.getItem('token')) && userType === 'usuario';
+    const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
     // --- FUNCIONES ---
 
@@ -365,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <i class="bi bi-heart-fill"></i> Match activo
               </span>
               <span>Ordenado por compatibilidad (de mayor a menor).</span>
-              <span class="catalog-mode__note">Recomendaciones generadas por modelo predictivo.</span>
+              <span class="catalog-mode__note">Basado en tu perfil: energía, sociabilidad, presencia y estilo de vida.</span>
             `;
             if (matchFilters) {
                 matchFilters.classList.remove('d-none');
@@ -406,6 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         mostrarSpinner();
+        const startTime = Date.now();
 
         try {
             const response = await fetch('/api/get_compatibilidad.php', {
@@ -415,6 +417,10 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const data = await response.json();
+            const elapsed = Date.now() - startTime;
+            if (elapsed < 1200) {
+                await wait(1200 - elapsed);
+            }
 
             if (!response.ok) {
                 showToast(data.message, 'danger');
@@ -446,6 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         mostrarSpinner();
+        const startTime = Date.now();
 
         try {
             const response = await fetch('/api/get_cercania.php', {
@@ -455,6 +462,10 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const data = await response.json();
+            const elapsed = Date.now() - startTime;
+            if (elapsed < 1200) {
+                await wait(1200 - elapsed);
+            }
 
             if (!response.ok) {
                 // El código 412 indica que el usuario no tiene dirección validada.

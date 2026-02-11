@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const usarUbicacionBtn = document.getElementById("usar-ubicacion-btn");
   const geoStatus = document.getElementById("geoStatus");
   const dateLabel = document.getElementById("lostDateLabel");
+  const nameHint = document.getElementById("lostNameHint");
   const photoInput = document.getElementById("lostPhotoFile");
   const photoPreviewImg = document.getElementById("lostPhotoPreviewImg");
   const photoPlaceholder = document.getElementById("lostPhotoPlaceholder");
@@ -85,6 +86,12 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       dateLabel.textContent = "Fecha vista";
     }
+  };
+
+  const updateNameHint = () => {
+    if (!nameHint) return;
+    const typeValue = getValue("lostType");
+    nameHint.classList.toggle("d-none", typeValue !== "FOUND");
   };
 
   const resolvePhoto = (value) => {
@@ -339,8 +346,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const typeSelect = document.getElementById("lostType");
   if (typeSelect) {
-    typeSelect.addEventListener("change", updateDateLabel);
+    typeSelect.addEventListener("change", () => {
+      updateDateLabel();
+      updateNameHint();
+    });
     updateDateLabel();
+    updateNameHint();
   }
 
   const fillForm = (data) => {
@@ -375,6 +386,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     direccionValidada = Boolean(existingSuburb);
     updateDateLabel();
+    updateNameHint();
 
     if (photoPreviewImg && data.photo_url) {
       photoPreviewImg.src = resolvePhoto(data.photo_url);

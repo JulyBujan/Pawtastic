@@ -1,0 +1,28 @@
+Explicación técnica del chatbot de Pawtastic
+
+1) Arquitectura
+- Chatbot cliente-side, sin llamadas a IA externa.
+- Usa un archivo de FAQs (js/chatbot-faqs.json) y lógica de matching en JavaScript.
+- Se integra en varias pantallas con el mismo componente.
+- Usamos JSON local para mantenerlo liviano y rápido, sin depender de servidor.
+- Alternativa: API/DB/IA externa, pero agrega latencia, costo y dependencias.
+
+2) Flujo general
+1. Al cargar la página se inicializa el chat (DOMContentLoaded).
+2. Se cargan las FAQs desde JSON; si falla, usa un fallback local.
+3. El usuario escribe una consulta.
+4. Se normaliza el texto (minúsculas, sin acentos ni símbolos) y se tokeniza.
+5. Se eliminan stopwords y se expanden sinónimos.
+6. Se calcula un score de similitud contra cada FAQ.
+7. Si el score supera el umbral (>= 0.6), responde con la mejor coincidencia.
+8. Si no, devuelve un fallback con link a FAQ y contacto.
+
+3) Cálculo de score
+- Match por frases clave: +2 si la frase aparece en el mensaje.
+- Similaridad Jaccard entre tokens del usuario y tokens de la FAQ.
+- Ajuste por audiencia: si el FAQ coincide con el perfil actual (usuario/ong/admin) suma +0.4; si no coincide, resta, por eso prioriza respuestas del perfil correspondiente.
+
+4) UX
+- Muestra un indicador de “escribiendo” con delay de 600 ms.
+- Respuestas pueden incluir HTML (links a FAQ).
+- No persiste historial en servidor; todo se resuelve localmente.
