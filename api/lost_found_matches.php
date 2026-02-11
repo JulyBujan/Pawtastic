@@ -34,6 +34,11 @@ $max_days = filter_input(INPUT_GET, 'maxDays', FILTER_VALIDATE_INT, [
     ]
 ]);
 
+$max_km = isset($_GET['maxKm']) ? floatval($_GET['maxKm']) : 5;
+if ($max_km < 0) {
+    $max_km = 0;
+}
+
 function sanitize_text($value) {
     if ($value === null) {
         return null;
@@ -102,7 +107,24 @@ function diff_days($date_a, $date_b) {
     return abs($a->diff($b)->days);
 }
 
-function compute_match_score($base, $cand, $max_days) {
+function has_coord($value) {
+    return $value !== null && $value !== '' && is_numeric($value);
+}
+
+function haversine_km($lat1, $lon1, $lat2, $lon2) {
+    $lat1 = deg2rad((float)$lat1);
+    $lon1 = deg2rad((float)$lon1);
+    $lat2 = deg2rad((float)$lat2);
+    $lon2 = deg2rad((float)$lon2);
+
+    $dlat = $lat2 - $lat1;
+    $dlon = $lon2 - $lon1;
+    $a = pow(sin($dlat / 2), 2) + cos($lat1) * cos($lat2) * pow(sin($dlon / 2), 2);
+    $c = 2 * asin(min(1, sqrt($a)));
+    return 6371 * $c;
+}
+
+function compute_match_score($base, $cand, $max_days, $max_km) {
     $score = 0;
     $reasons = [];
 
@@ -127,17 +149,39 @@ function compute_match_score($base, $cand, $max_days) {
         $reasons[] = 'Colores en común: ' . implode(', ', array_slice($common_colors, 0, $color_points));
     }
 
-    if (!empty($base['size']) && !empty($cand['size']) && $base['size'] === $cand['size']) {
+    $base_size = normalize_text($base['size'] ?? '');
+    $cand_size = normalize_text($cand['size'] ?? '');
+    if ($base_size !== '' && $cand_size !== '' && $base_size !== $cand_size) {
+        return ['skip' => true, 'score' => 0, 'reasons' => []];
+    }
+    if ($base_size !== '' && $cand_size !== '' && $base_size === $cand_size) {
         $score += 1;
         $reasons[] = 'Mismo tamaño';
     }
 
-    $base_location = normalize_text($base['location_text'] ?? '');
-    $cand_location = normalize_text($cand['location_text'] ?? '');
-    if ($base_location !== '' && $cand_location !== '') {
-        if (stripos($cand_location, $base_location) !== false || stripos($base_location, $cand_location) !== false) {
-            $score += 2;
-            $reasons[] = 'Ubicación similar';
+    $used_geo = false;
+    $base_lat = $base['lat'] ?? null;
+    $base_lon = $base['lon'] ?? null;
+    $cand_lat = $cand['lat'] ?? null;
+    $cand_lon = $cand['lon'] ?? null;
+    if (has_coord($base_lat) && has_coord($base_lon) && has_coord($cand_lat) && has_coord($cand_lon)) {
+        $distance_km = haversine_km($base_lat, $base_lon, $cand_lat, $cand_lon);
+        if ($max_km > 0 && $distance_km > $max_km) {
+            return ['skip' => true, 'score' => 0, 'reasons' => []];
+        }
+        $score += 2;
+        $reasons[] = 'Ubicación cercana (' . round($distance_km, 1) . ' km)';
+        $used_geo = true;
+    }
+
+    if (!$used_geo) {
+        $base_location = normalize_text($base['location_text'] ?? '');
+        $cand_location = normalize_text($cand['location_text'] ?? '');
+        if ($base_location !== '' && $cand_location !== '') {
+            if (stripos($cand_location, $base_location) !== false || stripos($base_location, $cand_location) !== false) {
+                $score += 2;
+                $reasons[] = 'Ubicación similar';
+            }
         }
     }
 
@@ -159,7 +203,7 @@ function compute_match_score($base, $cand, $max_days) {
 }
 
 try {
-    $stmt = $conn->prepare("SELECT id, type, user_id, pet_name, species, breed, colors, size, location_text, date_seen, description, photo_url, status, created_at FROM lost_found_posts WHERE id = ? AND deleted_at IS NULL");
+    $stmt = $conn->prepare("SELECT id, type, user_id, pet_name, species, breed, colors, size, location_text, lat, lon, date_seen, description, photo_url, status, created_at FROM lost_found_posts WHERE id = ? AND deleted_at IS NULL");
     if (!$stmt) {
         throw new Exception("Error al preparar la consulta: " . $conn->error);
     }
@@ -200,7 +244,7 @@ try {
 
     $target_type = $base_type === 'LOST' ? 'FOUND' : 'LOST';
 
-    $stmt = $conn->prepare("SELECT id, type, user_id, pet_name, species, breed, colors, size, location_text, suburb, date_seen, photo_url, created_at FROM lost_found_posts WHERE status = 'OPEN' AND type = ? AND species = ? AND deleted_at IS NULL");
+    $stmt = $conn->prepare("SELECT id, type, user_id, pet_name, species, breed, colors, size, location_text, suburb, lat, lon, date_seen, photo_url, created_at FROM lost_found_posts WHERE status = 'OPEN' AND type = ? AND species = ? AND deleted_at IS NULL");
     if (!$stmt) {
         throw new Exception("Error al preparar la consulta: " . $conn->error);
     }
@@ -216,7 +260,7 @@ try {
         if (should_hide_post($cand['photo_url'] ?? null)) {
             continue;
         }
-        $score_data = compute_match_score($base, $cand, $max_days);
+        $score_data = compute_match_score($base, $cand, $max_days, $max_km);
         if ($score_data['skip']) {
             continue;
         }

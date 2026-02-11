@@ -33,6 +33,24 @@ function text_length($value) {
 
 $method = $_SERVER['REQUEST_METHOD'];
 
+function has_column($conn, $table, $column) {
+    $stmt = $conn->prepare(
+        "SELECT COUNT(*) AS total
+         FROM INFORMATION_SCHEMA.COLUMNS
+         WHERE TABLE_SCHEMA = DATABASE()
+           AND TABLE_NAME = ?
+           AND COLUMN_NAME = ?"
+    );
+    if (!$stmt) {
+        return false;
+    }
+    $stmt->bind_param("ss", $table, $column);
+    $stmt->execute();
+    $row = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+    return ($row && (int)$row['total'] > 0);
+}
+
 if ($method === 'GET') {
     $post_id = filter_input(INPUT_GET, 'post_id', FILTER_VALIDATE_INT);
     if (!$post_id) {
@@ -43,6 +61,9 @@ if ($method === 'GET') {
 
     $inTransaction = false;
     try {
+        $hasEditedAt = has_column($conn, 'lost_found_messages', 'edited_at');
+        $editedSelect = $hasEditedAt ? "m.edited_at" : "NULL AS edited_at";
+
         $stmt_post = $conn->prepare("SELECT id, user_id, pet_name, status FROM lost_found_posts WHERE id = ? AND deleted_at IS NULL");
         if (!$stmt_post) {
             throw new Exception("Error al preparar la consulta: " . $conn->error);
@@ -68,10 +89,10 @@ if ($method === 'GET') {
         }
 
         if ($is_owner) {
-            $stmt_msgs = $conn->prepare("SELECT m.id, m.sender_id, m.recipient_id, m.message, m.created_at, u.nombre, u.apellido FROM lost_found_messages m JOIN usuarios u ON u.id = m.sender_id WHERE m.post_id = ? ORDER BY m.created_at ASC, m.id ASC");
+            $stmt_msgs = $conn->prepare("SELECT m.id, m.sender_id, m.recipient_id, m.message, m.created_at, $editedSelect, u.nombre, u.apellido FROM lost_found_messages m JOIN usuarios u ON u.id = m.sender_id WHERE m.post_id = ? ORDER BY m.created_at ASC, m.id ASC");
             $stmt_msgs->bind_param("i", $post_id);
         } else {
-            $stmt_msgs = $conn->prepare("SELECT m.id, m.sender_id, m.recipient_id, m.message, m.created_at, u.nombre, u.apellido FROM lost_found_messages m JOIN usuarios u ON u.id = m.sender_id WHERE m.post_id = ? AND (m.sender_id = ? OR m.recipient_id = ?) ORDER BY m.created_at ASC, m.id ASC");
+            $stmt_msgs = $conn->prepare("SELECT m.id, m.sender_id, m.recipient_id, m.message, m.created_at, $editedSelect, u.nombre, u.apellido FROM lost_found_messages m JOIN usuarios u ON u.id = m.sender_id WHERE m.post_id = ? AND (m.sender_id = ? OR m.recipient_id = ?) ORDER BY m.created_at ASC, m.id ASC");
             $stmt_msgs->bind_param("iii", $post_id, $user_id, $user_id);
         }
 
@@ -90,6 +111,7 @@ if ($method === 'GET') {
                 'recipient_id' => (int)$row['recipient_id'],
                 'message' => sanitize_text($row['message'] ?? ''),
                 'created_at' => sanitize_text($row['created_at'] ?? ''),
+                'edited_at' => sanitize_text($row['edited_at'] ?? ''),
                 'sender_name' => sanitize_text(format_user_name($row)),
             ];
         }, $rows);
@@ -125,8 +147,10 @@ if ($method === 'GET') {
         echo json_encode([
             'postId' => (int)$post_id,
             'ownerId' => $owner_id,
+            'viewerId' => $user_id,
             'isOwner' => $is_owner,
             'canMessage' => $owner_id !== null,
+            'postStatus' => sanitize_text($post['status'] ?? ''),
             'participants' => $participants,
             'messages' => $messages
         ]);

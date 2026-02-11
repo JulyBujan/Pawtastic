@@ -16,6 +16,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const paginationInfoEl = document.getElementById("vacunasPaginationInfo");
     const tipoFilterButtons = Array.from(document.querySelectorAll("[data-tipo-filter]"));
     const submitVacunaBtn = document.getElementById("submitVacuna");
+    const confirmDeleteModalEl = document.getElementById("modalConfirmVacunaDelete");
+    const confirmDeleteBody = document.getElementById("modalConfirmVacunaDeleteBody");
+    const confirmDeleteBtn = document.getElementById("modalConfirmVacunaDeleteBtn");
+    const confirmDeleteModal = confirmDeleteModalEl ? new bootstrap.Modal(confirmDeleteModalEl) : null;
 
     if (!token || tipoUsuario !== 'admin') {
         showToast("Acceso denegado. Debes ser administrador.", "danger");
@@ -28,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let pageSize = 10;
     let lastTotalPages = 1;
     let tipoFiltro = "todos";
+    let pendingDeleteVacunaId = null;
 
     const escapeHtml = (value) => {
         if (value === null || value === undefined) return "";
@@ -55,6 +60,63 @@ document.addEventListener('DOMContentLoaded', () => {
         if (vacunasGatoEl) vacunasGatoEl.textContent = gatos;
         if (vacunasMostrandoEl) vacunasMostrandoEl.textContent = mostrando;
     };
+
+    const deleteVacuna = async (vacunaId) => {
+        const response = await fetch(`../api/gestionar-vacunas.php?id=${vacunaId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message);
+
+        showToast(result.message, 'success');
+        fetchVacunas();
+    };
+
+    const openDeleteConfirm = (vacunaId) => {
+        if (!confirmDeleteModal || !confirmDeleteBtn) {
+            deleteVacuna(vacunaId).catch((error) => {
+                showToast(error.message, 'danger');
+            });
+            return;
+        }
+        if (confirmDeleteBody) {
+            confirmDeleteBody.textContent = `¿Estás seguro de que quieres eliminar la vacuna con ID ${vacunaId}?`;
+        }
+        confirmDeleteBtn.disabled = false;
+        confirmDeleteBtn.textContent = "Eliminar";
+        pendingDeleteVacunaId = vacunaId;
+        confirmDeleteModal.show();
+    };
+
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener("click", async () => {
+            if (!pendingDeleteVacunaId) return;
+            const vacunaId = pendingDeleteVacunaId;
+            confirmDeleteBtn.disabled = true;
+            confirmDeleteBtn.textContent = "Eliminando...";
+            try {
+                await deleteVacuna(vacunaId);
+                confirmDeleteModal?.hide();
+            } catch (error) {
+                showToast(error.message, 'danger');
+                confirmDeleteBtn.disabled = false;
+                confirmDeleteBtn.textContent = "Eliminar";
+            } finally {
+                pendingDeleteVacunaId = null;
+            }
+        });
+    }
+
+    if (confirmDeleteModalEl) {
+        confirmDeleteModalEl.addEventListener("hidden.bs.modal", () => {
+            pendingDeleteVacunaId = null;
+            if (confirmDeleteBtn) {
+                confirmDeleteBtn.disabled = false;
+                confirmDeleteBtn.textContent = "Eliminar";
+            }
+        });
+    }
 
     const getFilteredVacunas = () => {
         const terminoBusqueda = filtroInput ? filtroInput.value.toLowerCase().trim() : "";
@@ -273,21 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (target.classList.contains('btn-eliminar')) {
-            if (confirm(`¿Estás seguro de que quieres eliminar la vacuna con ID ${vacunaId}?`)) {
-                try {
-                    const response = await fetch(`../api/gestionar-vacunas.php?id=${vacunaId}`, {
-                        method: 'DELETE',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    const result = await response.json();
-                    if (!response.ok) throw new Error(result.message);
-
-                    showToast(result.message, 'success');
-                    fetchVacunas();
-                } catch (error) {
-                    showToast(error.message, 'danger');
-                }
-            }
+            openDeleteConfirm(vacunaId);
         }
     });
 

@@ -488,7 +488,8 @@ CREATE TABLE `lost_found_messages` (
   `sender_id` int NOT NULL,
   `recipient_id` int NOT NULL,
   `message` text NOT NULL,
-  `created_at` datetime DEFAULT CURRENT_TIMESTAMP
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `edited_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --

@@ -3405,6 +3405,10 @@ footer .mx-2 {
   color: #64748b;
   font-weight: 700;
   margin-bottom: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
 .comment-item-body {
@@ -3415,6 +3419,29 @@ footer .mx-2 {
 .comment-empty {
   font-size: 0.8rem;
   color: #94a3b8;
+}
+
+.comment-item-meta-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.comment-edit-btn {
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 0.7rem;
+  padding: 0;
+}
+
+.comment-item-edited {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  margin-top: 0.25rem;
+}
+
+.comment-edit-actions {
+  margin-top: 0.4rem;
 }
 
 /* === MODAL CERRAR SESION === */
@@ -8459,6 +8486,55 @@ body.role-ong.reports-body {
   margin-bottom: 1rem;
 }
 
+.lost-found-how {
+  background: #f8fafc;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  padding: 0.9rem 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.lost-found-how-title {
+  font-weight: 700;
+  color: #1b2436;
+  margin-bottom: 0.4rem;
+  font-size: 0.95rem;
+}
+
+.lost-found-how-list {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: #52606d;
+  font-size: 0.88rem;
+}
+
+.lost-owner-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(26, 148, 196, 0.15);
+  color: #0e5a7e;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.pet-owner-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(26, 148, 196, 0.12);
+  color: #0e5a7e;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin: 0.1rem 0 0.4rem;
+  justify-content: center;
+}
+
 .lost-reasons {
   padding-left: 1.2rem;
   margin: 0.4rem 0 0;
@@ -8550,6 +8626,30 @@ body.role-ong.reports-body {
   background: #1a9c7a;
   border-color: #1a9c7a;
   color: #ffffff;
+}
+
+.pet-badge.match-high {
+  background: #16a34a;
+  border-color: #16a34a;
+  color: #ffffff;
+}
+
+.pet-badge.match-medium {
+  background: #f59e0b;
+  border-color: #f59e0b;
+  color: #ffffff;
+}
+
+.pet-badge.match-low {
+  background: #0ea5e9;
+  border-color: #0ea5e9;
+  color: #ffffff;
+}
+
+.match-reason-line {
+  font-size: 0.8rem;
+  color: #5a6b7a;
+  margin-bottom: 0.75rem;
 }
 
 .lost-found-body .pet-image::after {

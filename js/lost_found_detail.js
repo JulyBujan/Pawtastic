@@ -23,7 +23,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const mapSection = document.getElementById("mapa-section");
   const mapCollapse = document.getElementById("mapa-collapse");
   const mapNote = document.getElementById("lost-map-note");
+  const resolveConfirmModalEl = document.getElementById("resolveConfirmModal");
+  const resolveConfirmBody = document.getElementById("resolveConfirmBody");
+  const resolveConfirmBtn = document.getElementById("resolveConfirmBtn");
+  const deleteConfirmModalEl = document.getElementById("deleteConfirmModal");
+  const deleteConfirmBody = document.getElementById("deleteConfirmBody");
+  const deleteConfirmBtn = document.getElementById("deleteConfirmBtn");
   let mapInstance = null;
+  let resolveModalInstance = null;
+  let pendingResolve = null;
+  let deleteModalInstance = null;
+  let pendingDelete = null;
 
   const params = new URLSearchParams(window.location.search);
   const postId = params.get("id");
@@ -37,7 +47,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const messageContext = {
     isOwner: false,
     canMessage: true,
+    viewerId: null,
+    postStatus: "",
   };
+
+  const messageStore = new Map();
 
   const safeText = (value) => String(value ?? "");
 
@@ -119,6 +133,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    const ownerBadge = post.is_owner
+      ? `<span class="lost-owner-badge"><i class="bi bi-person-check"></i> Tu publicación</span>`
+      : "";
+
     const ownerActions = post.is_owner
       ? `
           <div class="lost-detail-actions">
@@ -146,6 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
         <div class="lost-detail-card__body">
           <h2>${petName}</h2>
+          ${ownerBadge}
           <p class="lost-card__meta">
             ${safeText(post.species || "")}
             ${post.breed ? `· ${safeText(post.breed)}` : ""}
@@ -200,12 +219,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (matchesEmpty) matchesEmpty.classList.add("d-none");
 
-    const scoreHint =
-      "Score (máx 11): +3 especie, +2 raza, +3 colores, +1 tamaño, +2 ubicación, +2 fecha.";
     const getScoreLevel = (score) => {
-      if (score >= 8) return "Alto";
-      if (score >= 4) return "Medio";
-      return "Bajo";
+      if (score >= 8) return { label: "Alta", className: "match-high" };
+      if (score >= 4) return { label: "Media", className: "match-medium" };
+      return { label: "Baja", className: "match-low" };
     };
 
     items.forEach((match) => {
@@ -217,18 +234,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const location = safeText(summary.location_text || "");
       const dateText = formatDate(summary.date_seen);
       const reasons = Array.isArray(match.reasons) ? match.reasons : [];
-      const reasonsHtml = reasons.length
-        ? `<ul class="lost-reasons">${reasons.map((reason) => `<li>${safeText(reason)}</li>`).join("")}</ul>`
+      const reasonItems = reasons.map((reason) => safeText(reason));
+      const visibleReasons = reasonItems.slice(0, 3);
+      const extraReasons = reasonItems.length - visibleReasons.length;
+      const reasonsLine = visibleReasons.length
+        ? `Basado en: ${visibleReasons.join(", ")}${extraReasons > 0 ? ` y ${extraReasons} más` : ""}.`
         : "";
 
       const summaryParts = [species, breed].filter(Boolean).join(" · ");
+      const matchLevel = getScoreLevel(match.score);
 
       const card = `
         <div class="col-12 col-sm-6 col-lg-4 col-xxl-3">
           <div class="pet-card h-100">
             <div class="pet-image">
-              <span class="pet-badge status-found" data-score-tooltip="true" data-bs-toggle="tooltip"
-                data-bs-placement="top" title="${scoreHint} Nivel: ${getScoreLevel(match.score)}.">Score ${match.score}</span>
+              <span class="pet-badge ${matchLevel.className}">Coincidencia ${matchLevel.label}</span>
               <img class="pet-photo" src="${resolvePhoto(summary.photo_url)}" alt="${species}">
             </div>
             <div class="card-body">
@@ -239,7 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <span><i class="bi bi-calendar-event"></i> Fecha vista: ${dateText}</span>
                 ${colorsText ? `<span><i class="bi bi-palette"></i> ${colorsText}</span>` : ""}
               </div>
-              ${reasonsHtml}
+              ${reasonsLine ? `<p class="match-reason-line">${reasonsLine}</p>` : ""}
               <div class="d-flex flex-wrap gap-2 pet-actions justify-content-center">
                 <a href="lost_found_detail.html?id=${match.postId}" class="btn btn-dark btn-sm">Ver detalle</a>
               </div>
@@ -251,20 +271,12 @@ document.addEventListener("DOMContentLoaded", () => {
       matchesList.insertAdjacentHTML("beforeend", card);
     });
 
-    if (window.bootstrap && typeof window.bootstrap.Tooltip === "function") {
-      document.querySelectorAll("[data-score-tooltip]").forEach((el) => {
-        const existing = window.bootstrap.Tooltip.getInstance(el);
-        if (existing) {
-          existing.dispose();
-        }
-        new window.bootstrap.Tooltip(el);
-      });
-    }
   };
 
   const renderMessages = (items) => {
     if (!messagesList) return;
     messagesList.innerHTML = "";
+    messageStore.clear();
     if (!Array.isArray(items) || items.length === 0) {
       if (messagesEmpty) messagesEmpty.classList.remove("d-none");
       return;
@@ -272,14 +284,31 @@ document.addEventListener("DOMContentLoaded", () => {
     if (messagesEmpty) messagesEmpty.classList.add("d-none");
 
     items.forEach((message) => {
+      messageStore.set(message.id, {
+        text: safeText(message.message || ""),
+        edited_at: message.edited_at || "",
+        sender_id: message.sender_id,
+      });
       const sender = safeText(message.sender_name || "Usuario");
-      const meta = `${sender} · ${formatDateTime(message.created_at)}`;
+      const metaText = `${sender} · ${formatDateTime(message.created_at)}`;
       const body = safeText(message.message || "").replace(/\n/g, "<br>");
+      const isMine = messageContext.viewerId && message.sender_id === messageContext.viewerId;
+      const editedLabel = message.edited_at
+        ? `<div class="comment-item-edited">Editado · ${formatDateTime(message.edited_at)}</div>`
+        : "";
+      const canEdit = isMine && messageContext.postStatus !== "RESOLVED";
+      const editAction = canEdit
+        ? `<button type="button" class="btn btn-link comment-edit-btn" data-action="edit" data-id="${message.id}">Editar</button>`
+        : "";
 
       const itemHtml = `
-        <div class="comment-item">
-          <div class="comment-item-meta">${meta}</div>
+        <div class="comment-item" data-message-id="${message.id}">
+          <div class="comment-item-meta">
+            <span>${metaText}</span>
+            <span class="comment-item-meta-actions">${editAction}</span>
+          </div>
           <div class="comment-item-body">${body}</div>
+          ${editedLabel}
         </div>
       `;
 
@@ -301,6 +330,100 @@ document.addEventListener("DOMContentLoaded", () => {
         messagesNotice.classList.remove("d-none");
       } else {
         messagesNotice.classList.add("d-none");
+      }
+    }
+  };
+
+  const startEditMessage = (messageId) => {
+    if (!messagesList) return;
+    const item = messagesList.querySelector(`[data-message-id="${messageId}"]`);
+    if (!item || item.classList.contains("is-editing")) return;
+    const messageData = messageStore.get(messageId);
+    if (!messageData) return;
+
+    const bodyEl = item.querySelector(".comment-item-body");
+    if (!bodyEl) return;
+    item.classList.add("is-editing");
+
+    bodyEl.innerHTML = `<textarea class="form-control form-control-sm comment-edit-input" rows="3" maxlength="600"></textarea>`;
+    const textarea = bodyEl.querySelector("textarea");
+    if (textarea) {
+      textarea.value = messageData.text;
+      textarea.focus();
+    }
+
+    const actions = document.createElement("div");
+    actions.className = "comment-edit-actions d-flex justify-content-end gap-2";
+    actions.innerHTML = `
+      <button type="button" class="btn btn-outline-secondary btn-sm" data-action="cancel" data-id="${messageId}">
+        Cancelar
+      </button>
+      <button type="button" class="btn btn-dark btn-sm" data-action="save" data-id="${messageId}">
+        Guardar
+      </button>
+    `;
+    item.appendChild(actions);
+  };
+
+  const cancelEditMessage = (messageId) => {
+    if (!messagesList) return;
+    const item = messagesList.querySelector(`[data-message-id="${messageId}"]`);
+    if (!item) return;
+    const messageData = messageStore.get(messageId);
+    if (!messageData) return;
+
+    const bodyEl = item.querySelector(".comment-item-body");
+    if (bodyEl) {
+      bodyEl.innerHTML = messageData.text.replace(/\n/g, "<br>");
+    }
+    const actions = item.querySelector(".comment-edit-actions");
+    if (actions) actions.remove();
+    item.classList.remove("is-editing");
+  };
+
+  const saveEditMessage = async (messageId, buttonEl) => {
+    if (!messagesList) return;
+    const item = messagesList.querySelector(`[data-message-id="${messageId}"]`);
+    if (!item) return;
+    const textarea = item.querySelector(".comment-edit-input");
+    if (!textarea) return;
+    const newText = textarea.value.trim();
+    if (!newText) {
+      if (typeof showToast === "function") {
+        showToast("El mensaje no puede estar vacío.", "warning");
+      }
+      return;
+    }
+
+    if (buttonEl) {
+      buttonEl.disabled = true;
+      buttonEl.textContent = "Guardando...";
+    }
+
+    try {
+      const response = await fetch("../api/lost_found_message_edit.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        body: JSON.stringify({ id: messageId, message: newText }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "No se pudo actualizar el mensaje.");
+      }
+      if (typeof showToast === "function") {
+        showToast("Mensaje actualizado.", "success");
+      }
+      await fetchMessages();
+    } catch (error) {
+      if (typeof showToast === "function") {
+        showToast(error.message, "danger");
+      }
+      if (buttonEl) {
+        buttonEl.disabled = false;
+        buttonEl.textContent = "Guardar";
       }
     }
   };
@@ -342,78 +465,41 @@ document.addEventListener("DOMContentLoaded", () => {
       if (data?.is_owner) {
         const deleteBtn = document.getElementById("lostFoundDelete");
         if (deleteBtn) {
-          deleteBtn.addEventListener("click", async () => {
-            const confirmed = window.confirm("¿Seguro que querés borrar esta publicación?");
-            if (!confirmed) return;
-
-            deleteBtn.disabled = true;
-            deleteBtn.textContent = "Borrando...";
-
-            try {
-              const response = await fetch("../api/lost_found_delete.php", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: "Bearer " + token,
-                },
-                body: JSON.stringify({ id: postId }),
-              });
-              const result = await response.json();
-              if (!response.ok) {
-                throw new Error(result.message || "No se pudo borrar la publicación.");
-              }
-              if (typeof showToast === "function") {
-                showToast("Publicación eliminada.", "success");
-              }
-              window.location.href = "lost_found.html";
-            } catch (error) {
-              if (typeof showToast === "function") {
-                showToast(error.message, "danger");
-              }
-              deleteBtn.disabled = false;
-              deleteBtn.innerHTML = '<i class="bi bi-trash"></i> Borrar';
+          deleteBtn.addEventListener("click", () => {
+            if (!deleteConfirmModalEl || !deleteConfirmBody || !deleteConfirmBtn) {
+              return;
+            }
+            deleteConfirmBody.textContent = "¿Seguro que querés borrar esta publicación?";
+            pendingDelete = { button: deleteBtn };
+            if (window.bootstrap) {
+              deleteModalInstance =
+                deleteModalInstance ||
+                window.bootstrap.Modal.getOrCreateInstance(deleteConfirmModalEl);
+              deleteModalInstance.show();
             }
           });
         }
 
         const resolveBtn = document.getElementById("lostFoundResolve");
         if (resolveBtn) {
-          resolveBtn.addEventListener("click", async () => {
+          resolveBtn.addEventListener("click", () => {
+            if (!resolveConfirmModalEl || !resolveConfirmBody || !resolveConfirmBtn) {
+              return;
+            }
             const message =
               data.type === "FOUND"
                 ? "¿Confirmás que la mascota ya está con su dueño?"
                 : "¿Confirmás que la mascota ya apareció?";
-            const confirmed = window.confirm(message);
-            if (!confirmed) return;
-
-            resolveBtn.disabled = true;
-            resolveBtn.textContent = "Marcando...";
-
-            try {
-              const response = await fetch("../api/lost_found_resolve.php", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: "Bearer " + token,
-                },
-                body: JSON.stringify({ id: postId }),
-              });
-              const result = await response.json();
-              if (!response.ok) {
-                throw new Error(result.message || "No se pudo actualizar la publicación.");
-              }
-              if (typeof showToast === "function") {
-                showToast("Publicación marcada como resuelta.", "success");
-              }
-              await fetchDetail();
-            } catch (error) {
-              if (typeof showToast === "function") {
-                showToast(error.message, "danger");
-              }
-              resolveBtn.disabled = false;
-              resolveBtn.innerHTML = `<i class="bi bi-check-circle"></i> ${
-                data.type === "FOUND" ? "Ya está con su dueño" : "Ya apareció"
-              }`;
+            resolveConfirmBody.textContent = message;
+            pendingResolve = {
+              button: resolveBtn,
+              type: data.type,
+            };
+            if (window.bootstrap) {
+              resolveModalInstance =
+                resolveModalInstance ||
+                window.bootstrap.Modal.getOrCreateInstance(resolveConfirmModalEl);
+              resolveModalInstance.show();
             }
           });
         }
@@ -512,6 +598,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await response.json();
       messageContext.isOwner = Boolean(data.isOwner);
       messageContext.canMessage = data.canMessage !== false;
+      messageContext.viewerId = data.viewerId || null;
+      messageContext.postStatus = (data.postStatus || "").toString().toUpperCase();
       renderMessages(data.messages || []);
       setupRecipients(data.participants || []);
 
@@ -594,6 +682,114 @@ document.addEventListener("DOMContentLoaded", () => {
         if (submitBtn) {
           submitBtn.disabled = false;
           submitBtn.textContent = "Enviar mensaje";
+        }
+      }
+    });
+  }
+
+  if (messagesList) {
+    messagesList.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const action = target.getAttribute("data-action");
+      const idAttr = target.getAttribute("data-id");
+      if (!action || !idAttr) return;
+      const messageId = parseInt(idAttr, 10);
+      if (!messageId) return;
+
+      if (action === "edit") {
+        startEditMessage(messageId);
+      } else if (action === "cancel") {
+        cancelEditMessage(messageId);
+      } else if (action === "save") {
+        saveEditMessage(messageId, target);
+      }
+    });
+  }
+
+  if (resolveConfirmBtn) {
+    resolveConfirmBtn.addEventListener("click", async () => {
+      if (!pendingResolve) return;
+      const resolveBtn = pendingResolve.button;
+      const resolveType = pendingResolve.type;
+      pendingResolve = null;
+
+      if (resolveBtn) {
+        resolveBtn.disabled = true;
+        resolveBtn.textContent = "Marcando...";
+      }
+
+      try {
+        const response = await fetch("../api/lost_found_resolve.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+          body: JSON.stringify({ id: postId }),
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.message || "No se pudo actualizar la publicación.");
+        }
+        if (typeof showToast === "function") {
+          showToast("Publicación marcada como resuelta.", "success");
+        }
+        await fetchDetail();
+      } catch (error) {
+        if (typeof showToast === "function") {
+          showToast(error.message, "danger");
+        }
+        if (resolveBtn) {
+          resolveBtn.disabled = false;
+          resolveBtn.innerHTML = `<i class="bi bi-check-circle"></i> ${
+            resolveType === "FOUND" ? "Ya está con su dueño" : "Ya apareció"
+          }`;
+        }
+      } finally {
+        if (resolveModalInstance) {
+          resolveModalInstance.hide();
+        }
+      }
+    });
+  }
+
+  if (deleteConfirmBtn) {
+    deleteConfirmBtn.addEventListener("click", async () => {
+      if (!pendingDelete) return;
+      const deleteBtn = pendingDelete.button;
+      if (!deleteBtn) return;
+
+      deleteBtn.disabled = true;
+      deleteBtn.textContent = "Borrando...";
+
+      try {
+        const response = await fetch("../api/lost_found_delete.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+          body: JSON.stringify({ id: postId }),
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.message || "No se pudo borrar la publicación.");
+        }
+        if (typeof showToast === "function") {
+          showToast("Publicación eliminada.", "success");
+        }
+        window.location.href = "lost_found.html";
+      } catch (error) {
+        if (typeof showToast === "function") {
+          showToast(error.message, "danger");
+        }
+        deleteBtn.disabled = false;
+        deleteBtn.innerHTML = '<i class="bi bi-trash"></i> Borrar';
+      } finally {
+        pendingDelete = null;
+        if (deleteModalInstance) {
+          deleteModalInstance.hide();
         }
       }
     });

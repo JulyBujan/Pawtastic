@@ -131,6 +131,7 @@ try {
         }
         $row['user_id'] = $row['user_id'] !== null ? (int)$row['user_id'] : null;
         $is_owner = $viewer_id && $row['user_id'] === $viewer_id;
+        $row['is_owner'] = $is_owner ? true : false;
         if (!$is_owner) {
             $row['location_text'] = $row['suburb'] ?: 'Barrio no disponible';
         }

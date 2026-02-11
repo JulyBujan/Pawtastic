@@ -41,6 +41,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const sortToggle = document.getElementById("lostSortDate");
   const sortLabel = document.getElementById("lostSortLabel");
   const clearFiltersBtn = document.getElementById("lostClearFilters");
+  const restoreConfirmModalEl = document.getElementById("restoreConfirmModal");
+  const restoreConfirmBody = document.getElementById("restoreConfirmBody");
+  const restoreConfirmBtn = document.getElementById("restoreConfirmBtn");
 
   const dataStore = {
     lost: [],
@@ -54,6 +57,8 @@ document.addEventListener("DOMContentLoaded", () => {
     resolved: false,
     deleted: false,
   };
+  let restoreModalInstance = null;
+  let pendingRestore = null;
 
   const filterState = {
     species: "",
@@ -94,6 +99,54 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
+  const restorePost = async (postId, button) => {
+    if (button) {
+      button.disabled = true;
+      button.textContent = "Restaurando...";
+    }
+
+    try {
+      const response = await fetch("../api/lost_found_restore.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        body: JSON.stringify({ id: postId }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "No se pudo restaurar la publicación.");
+      }
+      if (typeof showToast === "function") {
+        showToast("Publicación restaurada.", "success");
+      }
+      fetchDeletedList();
+    } catch (error) {
+      if (typeof showToast === "function") {
+        showToast(error.message, "danger");
+      }
+      if (button) {
+        button.disabled = false;
+        button.textContent = "Restaurar";
+      }
+    }
+  };
+
+  const openRestoreConfirm = (postId, button) => {
+    if (!restoreConfirmModalEl || !restoreConfirmBody || !restoreConfirmBtn) {
+      restorePost(postId, button);
+      return;
+    }
+    restoreConfirmBody.textContent = "¿Querés restaurar esta publicación?";
+    pendingRestore = { postId, button };
+    if (window.bootstrap) {
+      restoreModalInstance =
+        restoreModalInstance || window.bootstrap.Modal.getOrCreateInstance(restoreConfirmModalEl);
+      restoreModalInstance.show();
+    }
+  };
+
   const renderList = (items, container, emptyEl) => {
     if (!container) return;
     container.innerHTML = "";
@@ -123,6 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .map((color) => color.trim())
         .filter(Boolean)
         .join(", ");
+      const ownerBadge = item.is_owner ? '<span class="pet-owner-badge"><i class="bi bi-person-check"></i> Tu publicación</span>' : "";
 
       const card = `
         <div class="col-12 col-sm-6 col-lg-4 col-xxl-3">
@@ -133,6 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <div class="card-body">
               <h5 class="fw-bold">${petName}</h5>
+              ${ownerBadge}
               <p class="pet-summary mb-3">${summary || "Sin detalles cargados."}</p>
               <div class="pet-meta mb-3">
                 <span><i class="bi bi-geo-alt"></i> ${location || "Ubicación pendiente"}</span>
@@ -183,6 +238,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .filter(Boolean)
         .join(", ");
       const statusLabel = (item.status || "").toUpperCase() === "RESOLVED" ? "Resuelto" : "Activo";
+      const ownerBadge = item.is_owner ? '<span class="pet-owner-badge"><i class="bi bi-person-check"></i> Tu publicación</span>' : "";
 
       const card = `
         <div class="col-12 col-sm-6 col-lg-4 col-xxl-3">
@@ -193,6 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <div class="card-body">
               <h5 class="fw-bold">${petName}</h5>
+              ${ownerBadge}
               <p class="pet-summary mb-3">${summary || "Sin detalles cargados."}</p>
               <div class="pet-meta mb-3">
                 <span><i class="bi bi-geo-alt"></i> ${location || "Ubicación pendiente"}</span>
@@ -216,36 +273,7 @@ document.addEventListener("DOMContentLoaded", () => {
     deletedList.querySelectorAll(".lost-restore-btn").forEach((btn) => {
       btn.addEventListener("click", async () => {
         const postId = btn.dataset.id;
-        const confirmed = window.confirm("¿Querés restaurar esta publicación?");
-        if (!confirmed) return;
-
-        btn.disabled = true;
-        btn.textContent = "Restaurando...";
-
-        try {
-          const response = await fetch("../api/lost_found_restore.php", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
-            },
-            body: JSON.stringify({ id: postId }),
-          });
-          const data = await response.json();
-          if (!response.ok) {
-            throw new Error(data.message || "No se pudo restaurar la publicación.");
-          }
-          if (typeof showToast === "function") {
-            showToast("Publicación restaurada.", "success");
-          }
-          fetchDeletedList();
-        } catch (error) {
-          if (typeof showToast === "function") {
-            showToast(error.message, "danger");
-          }
-          btn.disabled = false;
-          btn.textContent = "Restaurar";
-        }
+        openRestoreConfirm(postId, btn);
       });
     });
   };
@@ -383,14 +411,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (deletedPanel) deletedPanel.classList.remove("d-none");
   }
 
-  if (filtersForm) {
-    filtersForm.addEventListener("submit", (event) => {
-      event.preventDefault();
-      syncFilterState();
-      applyFiltersToAll();
-    });
-  }
-
   [filterSpecies, filterSize, sortToggle].forEach((control) => {
     if (!control) return;
     control.addEventListener("change", () => {
@@ -406,6 +426,32 @@ document.addEventListener("DOMContentLoaded", () => {
       if (sortToggle) sortToggle.checked = true;
       syncFilterState();
       applyFiltersToAll();
+    });
+  }
+
+  if (restoreConfirmBtn) {
+    restoreConfirmBtn.addEventListener("click", async () => {
+      if (!pendingRestore) return;
+      const { postId, button } = pendingRestore;
+      pendingRestore = null;
+      restoreConfirmBtn.disabled = true;
+      restoreConfirmBtn.textContent = "Restaurando...";
+      await restorePost(postId, button);
+      restoreConfirmBtn.disabled = false;
+      restoreConfirmBtn.textContent = "Restaurar";
+      if (restoreModalInstance) {
+        restoreModalInstance.hide();
+      }
+    });
+  }
+
+  if (restoreConfirmModalEl) {
+    restoreConfirmModalEl.addEventListener("hidden.bs.modal", () => {
+      pendingRestore = null;
+      if (restoreConfirmBtn) {
+        restoreConfirmBtn.disabled = false;
+        restoreConfirmBtn.textContent = "Restaurar";
+      }
     });
   }
 

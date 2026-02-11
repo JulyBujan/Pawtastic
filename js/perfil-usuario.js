@@ -59,6 +59,17 @@ document.addEventListener("DOMContentLoaded", () => {
       .replace(/'/g, "&#39;");
   };
 
+  const parsePayload = (payload) => {
+    if (!payload) return null;
+    if (typeof payload === "object") return payload;
+    if (typeof payload !== "string") return null;
+    try {
+      return JSON.parse(payload);
+    } catch (error) {
+      return null;
+    }
+  };
+
   const getIconForNotif = (tipoNotif) => {
     const type = (tipoNotif || "").toLowerCase();
     if (type.includes("comentario")) return "bi-chat-left-dots";
@@ -66,6 +77,27 @@ document.addEventListener("DOMContentLoaded", () => {
     if (type.includes("estado")) return "bi-check-circle";
     if (type.includes("postul")) return "bi-envelope";
     return "bi-heart-fill";
+  };
+
+  const buildNotificationLink = (notif) => {
+    const tipoNotif = (notif.tipo || "").toLowerCase();
+    const entidadTipo = (notif.entidad_tipo || "").toLowerCase();
+    const payload = parsePayload(notif.payload) || {};
+    const adopcionId = payload.adopcion_id || (entidadTipo === "adopcion" ? notif.entidad_id : null);
+    const mascotaId = payload.mascota_id || (entidadTipo === "mascota" ? notif.entidad_id : null);
+    const lostFoundId =
+      payload.lost_found_id || payload.post_id || (entidadTipo === "lost_found" ? notif.entidad_id : null);
+
+    if (entidadTipo === "adopcion" || tipoNotif.includes("postul") || tipoNotif.includes("estado") || tipoNotif.includes("comentario")) {
+      return adopcionId ? `postulaciones.html?adopcion=${encodeURIComponent(adopcionId)}` : "postulaciones.html";
+    }
+    if (entidadTipo === "lost_found" || tipoNotif.includes("lost_found") || tipoNotif.includes("mensaje") || tipoNotif.includes("message")) {
+      return lostFoundId ? `lost_found_detail.html?id=${encodeURIComponent(lostFoundId)}` : "lost_found.html";
+    }
+    if (entidadTipo === "mascota" || tipoNotif.includes("mascota")) {
+      return mascotaId ? `detalle-mascota.html?id=${encodeURIComponent(mascotaId)}` : "catalogo.html";
+    }
+    return "";
   };
 
   const fetchUsuarioData = async () => {
@@ -175,15 +207,19 @@ document.addEventListener("DOMContentLoaded", () => {
         const body = escapeHtml(notif.cuerpo || "");
         const time = formatDateTime(notif.created_at);
         const unreadClass = notif.leida_at ? "" : " unread";
+        const link = buildNotificationLink(notif);
+        const tag = link ? "a" : "div";
+        const linkClass = link ? " notification-link" : "";
+        const hrefAttr = link ? ` href="${link}"` : "";
         return `
-          <div class="notification-item${unreadClass}" data-notif-id="${notif.id}">
+          <${tag}${hrefAttr} class="notification-item${unreadClass}${linkClass}" data-notif-id="${notif.id}">
             <div class="notification-header">
               <div class="fw-semibold">${title}</div>
               ${notif.leida_at ? "" : '<span class="notification-pill">Nueva</span>'}
             </div>
             ${body ? `<div class="small text-muted">${body}</div>` : ""}
             <div class="notification-meta">${time}</div>
-          </div>
+          </${tag}>
         `;
       })
       .join("");
@@ -220,14 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const icon = getIconForNotif(notif.tipo);
       const texto = escapeHtml(notif.cuerpo || notif.titulo || "Actividad");
       const time = formatDateTime(notif.created_at);
-      let payload = notif.payload;
-      if (typeof payload === "string") {
-        try {
-          payload = JSON.parse(payload);
-        } catch (error) {
-          payload = null;
-        }
-      }
+      const payload = parsePayload(notif.payload);
       const adopcionId = payload?.adopcion_id;
       const lostFoundId = payload?.lost_found_id || payload?.post_id || (notif.entidad_tipo === "lost_found" ? notif.entidad_id : null);
       const link = adopcionId
@@ -297,7 +326,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  const marcarNotificaciones = async (ids) => {
+  const marcarNotificaciones = async (ids, options = {}) => {
     try {
       const response = await fetch("../api/notificaciones.php", {
         method: "POST",
@@ -306,6 +335,7 @@ document.addEventListener("DOMContentLoaded", () => {
           Authorization: "Bearer " + token,
         },
         body: JSON.stringify({ ids }),
+        ...options,
       });
 
       if (!response.ok) {
@@ -352,14 +382,23 @@ document.addEventListener("DOMContentLoaded", () => {
   if (notifList) {
     notifList.addEventListener("click", async (event) => {
       const item = event.target.closest(".notification-item");
-      if (!item || !item.classList.contains("unread")) {
+      if (!item) {
         return;
       }
       const notifId = item.getAttribute("data-notif-id");
-      if (!notifId) {
+      const isUnread = item.classList.contains("unread");
+      const link = item.getAttribute("href");
+      const isModifiedClick = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button === 1;
+      if (!notifId || !isUnread) {
         return;
       }
-      await marcarNotificaciones([parseInt(notifId, 10)]);
+      if (link && !isModifiedClick) {
+        event.preventDefault();
+        await marcarNotificaciones([parseInt(notifId, 10)]);
+        window.location.href = link;
+        return;
+      }
+      marcarNotificaciones([parseInt(notifId, 10)], { keepalive: true });
     });
   }
 

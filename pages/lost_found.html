@@ -93,9 +93,6 @@
           </div>
         </div>
         <div class="col-lg-3 d-flex flex-wrap gap-2">
-          <button type="submit" class="btn btn-dark">
-            <i class="bi bi-sliders"></i> Aplicar filtros
-          </button>
           <button type="button" class="btn btn-outline-secondary btn-sm btn-clear-filters" id="lostClearFilters">
             Limpiar filtros
           </button>
@@ -145,6 +142,22 @@
       </div>
     </div>
   </main>
+
+  <div class="modal fade" id="restoreConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirmar restauración</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body" id="restoreConfirmBody"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-success" id="restoreConfirmBtn">Restaurar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3"></div>
 

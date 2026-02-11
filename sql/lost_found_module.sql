@@ -103,12 +103,29 @@ CREATE TABLE IF NOT EXISTS `lost_found_messages` (
   `recipient_id` int NOT NULL,
   `message` text NOT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `edited_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_lost_found_msg_post` (`post_id`),
   KEY `idx_lost_found_msg_sender` (`sender_id`),
   KEY `idx_lost_found_msg_recipient` (`recipient_id`),
   KEY `idx_lost_found_msg_created` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+SET @col_exists := (
+  SELECT COUNT(*)
+  FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'lost_found_messages'
+    AND COLUMN_NAME = 'edited_at'
+);
+SET @sql_stmt := IF(
+  @col_exists = 0,
+  'ALTER TABLE lost_found_messages ADD COLUMN edited_at datetime DEFAULT NULL',
+  'SELECT 1'
+);
+PREPARE stmt FROM @sql_stmt;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
 
 -- Datos de ejemplo (opcional)
 

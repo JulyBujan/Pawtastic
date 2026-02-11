@@ -21,6 +21,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalDocsOng = modalDocsOngEl ? new bootstrap.Modal(modalDocsOngEl) : null;
     const docsOngIdInput = document.getElementById("docs-ong-id");
     const docsOngNombreEl = document.getElementById("docs-ong-nombre");
+    const confirmActionModalEl = document.getElementById("modalConfirmOngAction");
+    const confirmActionTitle = document.getElementById("modalConfirmOngActionTitle");
+    const confirmActionBody = document.getElementById("modalConfirmOngActionBody");
+    const confirmActionBtn = document.getElementById("modalConfirmOngActionBtn");
+    const confirmActionModal = confirmActionModalEl ? new bootstrap.Modal(confirmActionModalEl) : null;
 
     if (!token || tipoUsuario !== "admin") {
         showToast("Acceso denegado. Debes ser administrador.", "danger");
@@ -32,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let estadoFiltro = "todos";
     let isSubmitting = false;
     let isUploadingDocs = false;
+    let pendingSolicitudAction = null;
 
     const escapeHtml = (value) => {
         if (value === null || value === undefined) return "";
@@ -392,6 +398,51 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    const openConfirmSolicitud = (ongId, action) => {
+        if (!confirmActionModal || !confirmActionBtn) {
+            handleSolicitudAction(ongId, action);
+            return;
+        }
+
+        const isApprove = action === "aprobar";
+        if (confirmActionTitle) {
+            confirmActionTitle.textContent = isApprove ? "Confirmar aprobación" : "Confirmar rechazo";
+        }
+        if (confirmActionBody) {
+            confirmActionBody.textContent = isApprove
+                ? `¿Estás seguro de que quieres APROBAR la solicitud de la ONG con ID ${ongId}?`
+                : `¿Estás seguro de que quieres RECHAZAR la solicitud de la ONG con ID ${ongId}?`;
+        }
+        confirmActionBtn.classList.remove("btn-success", "btn-danger");
+        confirmActionBtn.classList.add(isApprove ? "btn-success" : "btn-danger");
+        confirmActionBtn.textContent = isApprove ? "Aprobar" : "Rechazar";
+        confirmActionBtn.disabled = false;
+        pendingSolicitudAction = { ongId, action };
+        confirmActionModal.show();
+    };
+
+    if (confirmActionBtn) {
+        confirmActionBtn.addEventListener("click", async () => {
+            if (!pendingSolicitudAction) return;
+            const { ongId, action } = pendingSolicitudAction;
+            confirmActionBtn.disabled = true;
+            confirmActionBtn.textContent = "Procesando...";
+            await handleSolicitudAction(ongId, action);
+            confirmActionBtn.disabled = false;
+            pendingSolicitudAction = null;
+            confirmActionModal?.hide();
+        });
+    }
+
+    if (confirmActionModalEl) {
+        confirmActionModalEl.addEventListener("hidden.bs.modal", () => {
+            pendingSolicitudAction = null;
+            if (confirmActionBtn) {
+                confirmActionBtn.disabled = false;
+            }
+        });
+    }
+
     if (tablaBody) {
         tablaBody.addEventListener("click", (e) => {
             const aprobarBtn = e.target.closest(".btn-aprobar");
@@ -400,16 +451,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (aprobarBtn) {
                 const ongId = aprobarBtn.dataset.id;
-                if (confirm(`¿Estás seguro de que quieres APROBAR la solicitud de la ONG con ID ${ongId}?`)) {
-                    handleSolicitudAction(ongId, "aprobar");
-                }
+                openConfirmSolicitud(ongId, "aprobar");
             }
 
             if (rechazarBtn) {
                 const ongId = rechazarBtn.dataset.id;
-                if (confirm(`¿Estás seguro de que quieres RECHAZAR la solicitud de la ONG con ID ${ongId}?`)) {
-                    handleSolicitudAction(ongId, "rechazar");
-                }
+                openConfirmSolicitud(ongId, "rechazar");
             }
 
             if (subirDocsBtn) {
