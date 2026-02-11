@@ -32,6 +32,20 @@ document.addEventListener("DOMContentLoaded", () => {
   let mapInstance = null;
   let resolveModalInstance = null;
   let pendingResolve = null;
+  const pendingToast = sessionStorage.getItem("lostFoundToast");
+  if (pendingToast) {
+    sessionStorage.removeItem("lostFoundToast");
+    try {
+      const toastData = JSON.parse(pendingToast);
+      if (toastData && toastData.message && typeof showToast === "function") {
+        showToast(toastData.message, toastData.type || "success");
+      }
+    } catch (error) {
+      if (typeof showToast === "function") {
+        showToast("La mascota fue publicada.", "success");
+      }
+    }
+  }
   let deleteModalInstance = null;
   let pendingDelete = null;
 

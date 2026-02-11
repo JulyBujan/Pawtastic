@@ -59,16 +59,15 @@
             <option value="">Seleccionar</option>
             <option value="Perro">Perro</option>
             <option value="Gato">Gato</option>
-            <option value="Otro">Otro</option>
           </select>
         </div>
         <div class="col-12 col-md-4">
           <label for="lostSize" class="form-label">Tamaño</label>
           <select id="lostSize" class="form-select">
             <option value="">Seleccionar</option>
-            <option value="small">Pequeño</option>
-            <option value="medium">Mediano</option>
-            <option value="large">Grande</option>
+            <option value="small">Pequeño (0-5 kg)</option>
+            <option value="medium">Mediano (6-15 kg)</option>
+            <option value="large">Grande (+15 kg)</option>
           </select>
           <div class="form-text">Guía: Pequeño (0-5 kg, razas toy), Mediano (6-15 kg), Grande (+15 kg).</div>
         </div>
@@ -103,10 +102,16 @@
           <label for="departamento" class="form-label">Depto</label>
           <input type="text" class="form-control" id="departamento" name="departamento">
         </div>
-        <div class="col-12 text-end">
+        <div class="col-12 d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-outline-primary btn-sm" id="usar-ubicacion-btn">
+            <i class="bi bi-geo-alt"></i> Usar mi ubicación
+          </button>
           <button type="button" class="btn btn-outline-secondary btn-sm" id="validar-direccion-btn">
             Validar dirección
           </button>
+        </div>
+        <div class="col-12 text-end">
+          <small class="text-muted" id="geoStatus">Te pediremos permiso del navegador para usar tu ubicación y ayudarte a completar la dirección.</small>
         </div>
         <div class="col-12 col-md-6">
           <label for="lostDate" class="form-label" id="lostDateLabel">Fecha vista</label>

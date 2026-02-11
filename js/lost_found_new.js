@@ -22,6 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const submitBtn = form.querySelector("button[type='submit']");
   const validarDireccionBtn = document.getElementById("validar-direccion-btn");
+  const usarUbicacionBtn = document.getElementById("usar-ubicacion-btn");
+  const geoStatus = document.getElementById("geoStatus");
   const dateLabel = document.getElementById("lostDateLabel");
   const photoInput = document.getElementById("lostPhotoFile");
   const photoPreviewImg = document.getElementById("lostPhotoPreviewImg");
@@ -171,6 +173,112 @@ document.addEventListener("DOMContentLoaded", () => {
     validarDireccionBtn.addEventListener("click", handleValidarDireccion);
   }
 
+  const handleUseLocation = () => {
+    if (!navigator.geolocation) {
+      notify("Tu navegador no permite usar geolocalización.", "warning");
+      if (geoStatus) {
+        geoStatus.textContent = "Tu navegador no permite usar geolocalización.";
+      }
+      return;
+    }
+
+    if (usarUbicacionBtn) {
+      usarUbicacionBtn.disabled = true;
+      usarUbicacionBtn.innerHTML =
+        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Detectando...';
+    }
+    if (geoStatus) {
+      geoStatus.textContent = "Detectando tu ubicación...";
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const latField = document.getElementById("lat");
+        const lonField = document.getElementById("lon");
+        const cityField = document.getElementById("city");
+        const roadField = document.getElementById("road");
+        const houseField = document.getElementById("house_number");
+        const suburbField = document.getElementById("suburb");
+
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        if (latField) latField.value = lat;
+        if (lonField) lonField.value = lon;
+
+        try {
+          const response = await fetch(
+            `/api/reverse_geocodificar.php?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`,
+            { headers: { Authorization: "Bearer " + token } }
+          );
+          const rawText = await response.text();
+          let data = {};
+          try {
+            data = rawText ? JSON.parse(rawText) : {};
+          } catch (parseError) {
+            throw new Error("La respuesta del servidor no es válida.");
+          }
+          if (!response.ok) {
+            throw new Error(data.message || "No se pudo obtener la dirección.");
+          }
+
+          if (cityField && data.city) cityField.value = data.city;
+          if (roadField && data.road) roadField.value = data.road;
+          if (houseField && data.house_number) houseField.value = data.house_number;
+          if (suburbField) suburbField.value = data.suburb || "";
+
+          direccionValidada = Boolean(suburbField && suburbField.value);
+          if (direccionValidada) {
+            notify("Ubicación detectada y dirección completada.", "success");
+            if (geoStatus) {
+              geoStatus.textContent = "Ubicación detectada y dirección completada.";
+            }
+          } else {
+            notify("Ubicación detectada. Revisá la dirección y validá el barrio.", "warning");
+            if (geoStatus) {
+              geoStatus.textContent = "Ubicación detectada. Revisá la dirección y validá el barrio.";
+            }
+          }
+        } catch (error) {
+          notify("Ubicación detectada, pero no se pudo completar la dirección.", "warning");
+          if (geoStatus) {
+            geoStatus.textContent = "Ubicación detectada. Completá la dirección manualmente y validá.";
+          }
+        } finally {
+          if (usarUbicacionBtn) {
+            usarUbicacionBtn.disabled = false;
+            usarUbicacionBtn.innerHTML = '<i class="bi bi-geo-alt"></i> Usar mi ubicación';
+          }
+        }
+      },
+      (error) => {
+        if (error && error.code === error.PERMISSION_DENIED) {
+          notify("Necesitamos permiso para acceder a tu ubicación.", "warning");
+          if (geoStatus) {
+            geoStatus.textContent = "No se otorgó permiso para acceder a la ubicación.";
+          }
+        } else {
+          notify("No se pudo obtener tu ubicación. Intentá de nuevo.", "warning");
+          if (geoStatus) {
+            geoStatus.textContent = "No se pudo obtener tu ubicación. Intentá de nuevo.";
+          }
+        }
+        if (usarUbicacionBtn) {
+          usarUbicacionBtn.disabled = false;
+          usarUbicacionBtn.innerHTML = '<i class="bi bi-geo-alt"></i> Usar mi ubicación';
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
+  };
+
+  if (usarUbicacionBtn) {
+    usarUbicacionBtn.addEventListener("click", handleUseLocation);
+  }
+
   if (photoInput) {
     photoInput.addEventListener("change", () => {
       const file = photoInput.files && photoInput.files[0];
@@ -296,6 +404,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       notify("Publicación creada.", "success");
+
+      sessionStorage.setItem(
+        "lostFoundToast",
+        JSON.stringify({ message: "La mascota fue publicada.", type: "success" })
+      );
 
       if (data && data.id) {
         window.location.href = `lost_found_detail.html?id=${data.id}`;

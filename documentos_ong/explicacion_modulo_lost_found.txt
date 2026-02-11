@@ -1,0 +1,27 @@
+Guion oral (explicación técnica breve)
+
+Implementé un módulo privado de Mascotas Perdidas/Encontradas con coincidencias automáticas.
+Los usuarios publican un post con especie, tamaño, colores, ubicación, fecha y foto.
+La dirección se valida con geocodificación y ahora también pueden usar el botón de geolocalización
+para cargar lat/lon reales, lo que mejora el matching.
+
+Cuando se ve el detalle, el sistema calcula coincidencias entre publicaciones opuestas
+(perdida vs encontrada) usando especie obligatoria y un score interno, pero lo mostramos al
+usuario como “Coincidencia Alta/Media/Baja” para hacerlo más claro.
+
+Reglas de matching actuales:
+- Especie (obligatorio).
+- Tamaño: si ambos tienen tamaño y no coincide, se descarta.
+- Colores, raza y fecha suman relevancia.
+- Ubicación por distancia real si hay coordenadas (filtra por kilómetros).
+- Si no hay coords, se usa similitud de texto de ubicación.
+
+Además, el módulo incluye:
+- Mensajes privados entre usuarios involucrados.
+- Notificaciones desde la campanita con link directo.
+- Estado RESOLVED, borrado lógico y restauración para admin.
+- Validación de dirección obligatoria por barrio para evitar datos incompletos.
+
+Resumen:
+Se buscó aumentar la precisión de coincidencias sin usar APIs externas de IA y mejorar la
+experiencia con una UI clara (badges de coincidencia, toasts y modales).
