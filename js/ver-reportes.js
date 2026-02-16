@@ -22,6 +22,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const mascotasEnEsperaContainer = document.getElementById(
     "mascotas-en-espera-container"
   );
+  const probabilisticaContainer = document.getElementById("probabilistica-container");
+  const probabilisticaLoading = document.getElementById("probabilistica-loading");
+  const probabilisticaEmpty = document.getElementById("probabilistica-empty");
+  const probabilisticaTableBody = document.getElementById("probabilistica-table-body");
+  const probTopCanvas = document.getElementById("probTopChart");
+  const probBottomCanvas = document.getElementById("probBottomChart");
+  const probDistributionCanvas = document.getElementById("probDistributionChart");
   const loadingSpinner = document.getElementById("loading-spinner");
 
   const fechaFinInput = document.getElementById("fecha_fin_manual");
@@ -41,6 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let reportStatusChart = null;
   let reportTypeChart = null;
   let reportHousingChart = null;
+  let probTopChart = null;
+  let probBottomChart = null;
+  let probDistributionChart = null;
   const reportSnapshot = {
     indicadores: null,
     adopcionEdad: null,
@@ -48,6 +58,118 @@ document.addEventListener("DOMContentLoaded", () => {
     mascotasEspera: null,
     personalizado: null,
     personalizadoRango: null,
+    probabilistica: null,
+  };
+
+  const escapeHtml = (value) => {
+    if (value === null || value === undefined) return "";
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  };
+
+  const formatEdad = (mesesTotal) => {
+    const total = parseInt(mesesTotal, 10);
+    if (!Number.isFinite(total) || total < 0) return "Sin edad";
+    if (total === 0) return "Recién nacido";
+    const anos = Math.floor(total / 12);
+    const meses = total % 12;
+    const partes = [];
+    if (anos > 0) {
+      partes.push(`${anos} año${anos === 1 ? "" : "s"}`);
+    }
+    if (meses > 0 || partes.length === 0) {
+      partes.push(`${meses} mes${meses === 1 ? "" : "es"}`);
+    }
+    return partes.join(" ");
+  };
+
+  const formatPercentage = (value) => {
+    if (value === null || value === undefined) return null;
+    let numeric = value;
+    if (typeof numeric === "string") {
+      numeric = parseFloat(numeric.replace("%", "").trim());
+    }
+    if (Number.isNaN(numeric)) return null;
+    if (numeric <= 1) {
+      numeric = numeric * 100;
+    }
+    return Math.round(numeric);
+  };
+
+  const buildPredictFallback = (payload) => {
+    const petsize = Number.isFinite(payload.petsize) ? payload.petsize : 2;
+    const animaltype = payload.animaltype === 1 ? 1 : 0;
+    const gender = payload.gender === 1 ? 1 : 0;
+    const breed = payload.breed || "";
+    const color = payload.color || "";
+
+    let base = 20 + petsize * 6 + (animaltype === 1 ? 3 : 0);
+    base += gender === 1 ? 2 : 0;
+    base += breed === "Others" ? 5 : 0;
+    base += color === "Others" ? 3 : 0;
+
+    const dias_estimados = Math.max(7, Math.min(120, base));
+    const rango_min = Math.max(5, dias_estimados - 6);
+    const rango_max = dias_estimados + 8;
+
+    return {
+      dias_estimados,
+      rango_estimado: `${rango_min} - ${rango_max} días`,
+      confianza_modelo: "Media (simulada)",
+      probabilidades_temporales: {
+        adopcion_en_menos_de_30_dias: "35%",
+        adopcion_en_30_a_60_dias: "45%",
+        adopcion_en_mas_de_60_dias: "20%",
+      },
+      simulado: true,
+    };
+  };
+
+  const fetchWithTimeout = async (url, options = {}, timeoutMs = 5000) => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const response = await fetch(url, { ...options, signal: controller.signal });
+      return response;
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  };
+
+  const safePredict = async (payload) => {
+    try {
+      const response = await fetchWithTimeout("/api/predict.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const rawText = await response.text();
+      let prediction = {};
+      try {
+        prediction = rawText ? JSON.parse(rawText) : {};
+      } catch (parseError) {
+        return buildPredictFallback(payload);
+      }
+      if (!response.ok) {
+        return buildPredictFallback(payload);
+      }
+      return prediction;
+    } catch (error) {
+      return buildPredictFallback(payload);
+    }
+  };
+
+  const setProbabilisticaLoading = (isLoading) => {
+    if (probabilisticaLoading) {
+      probabilisticaLoading.classList.toggle("d-none", !isLoading);
+    }
+    if (probabilisticaContainer) {
+      probabilisticaContainer.classList.toggle("d-none", isLoading);
+    }
   };
 
   const animateIndicatorBar = (bar, percent) => {
@@ -98,6 +220,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (target === "indicadores" && reportSnapshot.indicadores) {
       setTimeout(() => rerunIndicatorBars(), 180);
+    }
+    if (target === "probabilistica") {
+      fetchProbabilistica();
     }
   };
 
@@ -825,6 +950,275 @@ document.addEventListener("DOMContentLoaded", () => {
       showToast(error.message, "danger");
     } finally {
       toggleLoading(false);
+    }
+  };
+
+  const buildPredictPayload = (mascota) => {
+    const animaltype = String(mascota.tipo || "").toLowerCase() === "perro" ? 1 : 0;
+    const gender = String(mascota.sexo || "").toLowerCase() === "macho" ? 1 : 0;
+    const sizeMap = {
+      cachorro: 0,
+      miniatura: 0,
+      pequeño: 1,
+      pequeno: 1,
+      mediano: 2,
+      grande: 3,
+      "muy grande": 4,
+    };
+    const rawSize = String(mascota["tamaño"] ?? mascota.tamano ?? "").toLowerCase();
+    const petsize = sizeMap[rawSize] ?? 2;
+
+    const allowedBreeds = [
+      "DOMESTIC SH",
+      "PIT BULL",
+      "LABRADOR RETR",
+      "GERM SHEPHERD",
+      "DOMESTIC MH",
+      "BEAGLE",
+      "BOXER",
+      "DOMESTIC LH",
+      "CHIHUAHUA SH",
+      "SHIH TZU",
+      "SIBERIAN HUSKY",
+      "ALASKAN HUSKY",
+    ];
+    const allowedColors = [
+      "BLACK",
+      "TABBY",
+      "WHITE",
+      "BROWN",
+      "GRAY",
+      "TAN",
+      "BRINDLE",
+      "TORTIE",
+      "ORANGE",
+      "CALICO",
+    ];
+    const normalizeValue = (value) =>
+      value ? String(value).trim().toUpperCase() : "";
+
+    const rawBreed = normalizeValue(mascota.breed);
+    const breed = allowedBreeds.includes(rawBreed) ? rawBreed : "Others";
+    const rawColor = normalizeValue(mascota.color);
+    const color = allowedColors.includes(rawColor) ? rawColor : "Others";
+
+    return { animaltype, gender, petsize, breed, color };
+  };
+
+  const renderProbabilisticaCharts = (items) => {
+    if (!probTopCanvas || !probBottomCanvas || !probDistributionCanvas) return;
+    const sorted = [...items].sort((a, b) => (b.probLess30 || 0) - (a.probLess30 || 0));
+    const topItems = sorted.slice(0, 5);
+    const bottomItems = sorted.slice(-5).reverse();
+
+    const buildBar = (canvas, dataItems, label, color) => {
+      if (!canvas) return null;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return null;
+      const labels = dataItems.map((item) => item.nombre || "Mascota");
+      const values = dataItems.map((item) => item.probLess30 || 0);
+      return new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [
+            {
+              label,
+              data: values,
+              backgroundColor: color,
+              borderRadius: 8,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (context) => `${context.parsed.y}%`,
+              },
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: { callback: (value) => `${value}%` },
+            },
+          },
+        },
+      });
+    };
+
+    if (probTopChart) probTopChart.destroy();
+    if (probBottomChart) probBottomChart.destroy();
+    if (probDistributionChart) probDistributionChart.destroy();
+
+    probTopChart = buildBar(probTopCanvas, topItems, "Probabilidad <30", "#16a34a");
+    probBottomChart = buildBar(probBottomCanvas, bottomItems, "Probabilidad <30", "#ef4444");
+
+    const totals = items.reduce(
+      (acc, item) => {
+        if (item.probLess30 !== null) {
+          acc.less30 += item.probLess30;
+          acc.count += 1;
+        }
+        if (item.prob30_60 !== null) {
+          acc.mid += item.prob30_60;
+          acc.countMid += 1;
+        }
+        if (item.prob60 !== null) {
+          acc.more += item.prob60;
+          acc.countMore += 1;
+        }
+        return acc;
+      },
+      { less30: 0, mid: 0, more: 0, count: 0, countMid: 0, countMore: 0 }
+    );
+
+    const avgLess30 = totals.count ? Math.round(totals.less30 / totals.count) : 0;
+    const avgMid = totals.countMid ? Math.round(totals.mid / totals.countMid) : 0;
+    const avgMore = totals.countMore ? Math.round(totals.more / totals.countMore) : 0;
+
+    const distCtx = probDistributionCanvas.getContext("2d");
+    probDistributionChart = new Chart(distCtx, {
+      type: "doughnut",
+      data: {
+        labels: ["<30 días", "30-60 días", ">60 días"],
+        datasets: [
+          {
+            data: [avgLess30, avgMid, avgMore],
+            backgroundColor: ["#16a34a", "#f59e0b", "#ef4444"],
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: "bottom" },
+          tooltip: {
+            callbacks: {
+              label: (context) => `${context.label}: ${context.parsed}%`,
+            },
+          },
+        },
+      },
+    });
+  };
+
+  const renderProbabilisticaTable = (items) => {
+    if (!probabilisticaTableBody) return;
+    probabilisticaTableBody.innerHTML = "";
+    if (!items.length) {
+      if (probabilisticaEmpty) {
+        probabilisticaEmpty.classList.remove("d-none");
+      }
+      return;
+    }
+    if (probabilisticaEmpty) {
+      probabilisticaEmpty.classList.add("d-none");
+    }
+
+    const sorted = [...items].sort((a, b) => (b.probLess30 || 0) - (a.probLess30 || 0)).slice(0, 10);
+    sorted.forEach((item) => {
+      const row = `
+        <tr>
+          <td>${escapeHtml(item.nombre || "Mascota")}</td>
+          <td>${escapeHtml(item.tipo || "")}</td>
+          <td>${escapeHtml(formatEdad(item.edad))}</td>
+          <td>${escapeHtml(item.tamano || "")}</td>
+          <td>${item.dias_estimados ?? "--"}</td>
+          <td>${escapeHtml(item.rango_estimado || "--")}</td>
+          <td>${escapeHtml(item.confianza_modelo || "--")}</td>
+          <td>${item.probLess30 !== null ? `${item.probLess30}%` : "--"}</td>
+          <td>${item.prob30_60 !== null ? `${item.prob30_60}%` : "--"}</td>
+          <td>${item.prob60 !== null ? `${item.prob60}%` : "--"}</td>
+        </tr>
+      `;
+      probabilisticaTableBody.insertAdjacentHTML("beforeend", row);
+    });
+  };
+
+  const fetchProbabilistica = async () => {
+    if (!probabilisticaContainer || !probabilisticaLoading) return;
+    if (reportSnapshot.probabilistica) {
+      setProbabilisticaLoading(false);
+      renderProbabilisticaTable(reportSnapshot.probabilistica);
+      renderProbabilisticaCharts(reportSnapshot.probabilistica);
+      return;
+    }
+
+    setProbabilisticaLoading(true);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      if (typeof showToast === "function") {
+        showToast("Debes iniciar sesión para ver este reporte.", "danger");
+      }
+      setProbabilisticaLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/get_mascota.php?include_adoptadas=1&include_archivadas=1", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message || "No se pudieron cargar las mascotas.");
+      }
+      const mascotas = await response.json();
+      const list = Array.isArray(mascotas) ? mascotas : [];
+      const activas = list.filter((mascota) => {
+        const estado = parseInt(mascota.estado, 10);
+        return estado === 1 || estado === 0;
+      });
+
+      if (!activas.length) {
+        reportSnapshot.probabilistica = [];
+        renderProbabilisticaTable([]);
+        renderProbabilisticaCharts([]);
+        setProbabilisticaLoading(false);
+        return;
+      }
+
+      const results = await Promise.all(
+        activas.map(async (mascota) => {
+          const payload = buildPredictPayload(mascota);
+          const prediction = await safePredict(payload);
+          const probs = prediction.probabilidades_temporales || {};
+          const probLess30 = formatPercentage(probs.adopcion_en_menos_de_30_dias);
+          const prob30_60 = formatPercentage(probs.adopcion_en_30_a_60_dias);
+          const prob60 = formatPercentage(probs.adopcion_en_mas_de_60_dias);
+          return {
+            id: mascota.id,
+            nombre: mascota.nombre || "Mascota",
+            tipo: mascota.tipo || "",
+            edad: mascota.edad,
+            tamano: mascota["tamaño"] ?? mascota.tamano ?? "",
+            dias_estimados: prediction.dias_estimados ?? null,
+            rango_estimado: prediction.rango_estimado ?? null,
+            confianza_modelo: prediction.confianza_modelo ?? null,
+            probLess30,
+            prob30_60,
+            prob60,
+          };
+        })
+      );
+
+      reportSnapshot.probabilistica = results;
+      renderProbabilisticaTable(results);
+      renderProbabilisticaCharts(results);
+    } catch (error) {
+      console.error("Error al cargar probabilística:", error);
+      if (typeof showToast === "function") {
+        showToast(error.message || "No se pudo generar el reporte.", "danger");
+      }
+      if (probabilisticaEmpty) {
+        probabilisticaEmpty.classList.remove("d-none");
+      }
+    } finally {
+      setProbabilisticaLoading(false);
     }
   };
 

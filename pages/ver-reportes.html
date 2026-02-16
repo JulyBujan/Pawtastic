@@ -65,6 +65,9 @@
       <button type="button" class="report-tab report-menu-item" data-report-target="espera">
         Mascotas en espera
       </button>
+      <button type="button" class="report-tab report-menu-item" data-report-target="probabilistica">
+        Probabilística
+      </button>
       <button type="button" class="report-tab report-menu-item" data-report-target="personalizado">
         Reporte personalizado
       </button>
@@ -388,6 +391,81 @@
       </div>
     </section>
 
+    <section class="report-section d-none" data-report-section="probabilistica">
+      <div class="report-section-header">
+        <h3 class="report-section-title">Probabilística</h3>
+        <p class="report-section-subtitle">Ranking y probabilidades de adopción estimadas por mascota.</p>
+        <button type="button" class="btn btn-report-menu" data-bs-toggle="offcanvas" data-bs-target="#reportesMenu"
+          aria-controls="reportesMenu">
+          <i class="bi bi-list"></i> Volver al menú
+        </button>
+      </div>
+
+      <div id="probabilistica-loading" class="text-center py-5">
+        <div class="spinner-border text-warning" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-2">Calculando probabilidades...</p>
+      </div>
+
+      <div id="probabilistica-container" class="d-none">
+        <section class="reports-charts">
+          <article class="report-chart-card animate-item">
+            <div class="report-chart-header">
+              <h3>Top 5 con mayor probabilidad (&lt;30 días)</h3>
+            </div>
+            <div class="chart-area">
+              <canvas id="probTopChart"></canvas>
+            </div>
+          </article>
+          <article class="report-chart-card animate-item">
+            <div class="report-chart-header">
+              <h3>Top 5 con menor probabilidad (&lt;30 días)</h3>
+            </div>
+            <div class="chart-area">
+              <canvas id="probBottomChart"></canvas>
+            </div>
+          </article>
+          <article class="report-chart-card animate-item">
+            <div class="report-chart-header">
+              <h3>Distribución promedio por ventana</h3>
+            </div>
+            <div class="chart-area">
+              <canvas id="probDistributionChart"></canvas>
+            </div>
+          </article>
+        </section>
+
+        <div class="report-chart-card animate-item">
+          <div class="report-chart-header">
+            <h3>Detalle por mascota</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>Mascota</th>
+                  <th>Tipo</th>
+                  <th>Edad</th>
+                  <th>Tamaño</th>
+                  <th>Días estimados</th>
+                  <th>Rango</th>
+                  <th>Confianza</th>
+                  <th>Prob. &lt;30</th>
+                  <th>Prob. 30-60</th>
+                  <th>Prob. &gt;60</th>
+                </tr>
+              </thead>
+              <tbody id="probabilistica-table-body"></tbody>
+            </table>
+          </div>
+          <div id="probabilistica-empty" class="text-muted text-center py-3 d-none">
+            No hay mascotas activas para analizar.
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="report-section d-none" data-report-section="personalizado">
       <div class="report-section-header">
         <h3 class="report-section-title">Reporte personalizado</h3>
@@ -518,6 +596,13 @@
           <span class="menu-text">
             <span class="menu-title">Mascotas en espera</span>
             <span class="menu-subtitle">Casos prioritarios</span>
+          </span>
+        </button>
+        <button class="list-group-item list-group-item-action report-menu-item" data-report-target="probabilistica">
+          <span class="menu-icon"><i class="bi bi-bar-chart-steps"></i></span>
+          <span class="menu-text">
+            <span class="menu-title">Probabilística</span>
+            <span class="menu-subtitle">Ranking y probabilidades</span>
           </span>
         </button>
         <button class="list-group-item list-group-item-action report-menu-item" data-report-target="personalizado">
