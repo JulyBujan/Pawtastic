@@ -60,6 +60,44 @@ document.addEventListener("DOMContentLoaded", () => {
     personalizadoRango: null,
     probabilistica: null,
   };
+  const ongProfileCache = { loaded: false, data: null };
+  const defaultOngLogoSrc = "../img/pdefault.jpg";
+
+  const resolveLogoSrc = (logoUrl) => {
+    if (!logoUrl) return defaultOngLogoSrc;
+    if (/^https?:\/\//i.test(logoUrl)) return logoUrl;
+    if (logoUrl.startsWith("/")) return logoUrl;
+    const cleanPath = logoUrl.replace(/^\.\//, "");
+    return `../${cleanPath}`;
+  };
+
+  const fetchOngProfile = async () => {
+    if (ongProfileCache.loaded) {
+      return ongProfileCache.data;
+    }
+    const token = localStorage.getItem("token");
+    if (!token) {
+      ongProfileCache.loaded = true;
+      return null;
+    }
+    try {
+      const response = await fetch("/api/perfil-ong.php", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) {
+        throw new Error("No se pudo cargar el perfil de la ONG.");
+      }
+      const data = await response.json();
+      ongProfileCache.loaded = true;
+      ongProfileCache.data = data;
+      return data;
+    } catch (error) {
+      console.warn("No se pudo obtener el perfil de la ONG.", error);
+      ongProfileCache.loaded = true;
+      ongProfileCache.data = null;
+      return null;
+    }
+  };
 
   const escapeHtml = (value) => {
     if (value === null || value === undefined) return "";
@@ -226,7 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  const exportActiveReportToPdf = () => {
+  const exportActiveReportToPdf = async () => {
     if (!window.jspdf?.jsPDF) {
       if (typeof showToast === "function") {
         showToast("No se pudo cargar el exportador PDF.", "danger");
@@ -252,30 +290,186 @@ document.addEventListener("DOMContentLoaded", () => {
       showToast("Generando PDF... ⏳", "info");
     }
 
+    const loadImageAsDataUrl = async (url) => {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) return null;
+        const blob = await response.blob();
+        return await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => resolve(null);
+          reader.readAsDataURL(blob);
+        });
+      } catch (error) {
+        return null;
+      }
+    };
+
+    const ongProfile = await fetchOngProfile();
+    const ongName =
+      (ongProfile?.nombre || ongProfile?.razon_social || "ONG").toString().trim() || "ONG";
+    const logoUrl = resolveLogoSrc(ongProfile?.logo_url);
+    const logoDataUrl = await loadImageAsDataUrl(logoUrl);
+
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF("p", "mm", "a4");
     const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
     const margin = 14;
-    let cursorY = 16;
+    const contentWidth = pageWidth - margin * 2;
+    const palette = {
+      primary: [245, 158, 11],
+      dark: [15, 23, 42],
+      text: [17, 24, 39],
+      muted: [107, 114, 128],
+    };
+    let cursorY = 18;
 
-    const addLine = (text, size = 11, gap = 6, bold = false) => {
+    const ensureSpace = (needed = 8) => {
+      if (cursorY + needed > pageHeight - 12) {
+        pdf.addPage();
+        cursorY = 18;
+      }
+    };
+
+    const addLine = (
+      text,
+      size = 11,
+      gap = 6,
+      bold = false,
+      indent = 0,
+      color = palette.text
+    ) => {
       pdf.setFont("helvetica", bold ? "bold" : "normal");
       pdf.setFontSize(size);
-      const lines = pdf.splitTextToSize(String(text), pageWidth - margin * 2);
+      pdf.setTextColor(...color);
+      const lines = pdf.splitTextToSize(String(text), contentWidth - indent);
       lines.forEach((line) => {
-        if (cursorY > 285) {
-          pdf.addPage();
-          cursorY = 16;
-        }
-        pdf.text(line, margin, cursorY);
+        ensureSpace(gap);
+        pdf.text(line, margin + indent, cursorY);
         cursorY += gap;
       });
     };
 
+    const addDivider = () => {
+      ensureSpace(6);
+      pdf.setDrawColor(...palette.primary);
+      pdf.setLineWidth(0.4);
+      pdf.line(margin, cursorY, pageWidth - margin, cursorY);
+      cursorY += 6;
+    };
+
+    const addHeader = (title, subtitle, dateLabel, metaLines = []) => {
+      const headerHeight = Math.max(30, 32 + metaLines.length * 5 + 2);
+      pdf.setFillColor(255, 251, 235);
+      pdf.rect(0, 0, pageWidth, headerHeight, "F");
+      pdf.setTextColor(...palette.dark);
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(16);
+      const titleX = logoDataUrl ? margin + 16 : margin;
+      if (logoDataUrl) {
+        pdf.addImage(logoDataUrl, "PNG", margin, 8, 12, 12);
+      }
+      pdf.text(title, titleX, 15);
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(10);
+      pdf.setTextColor(...palette.muted);
+      pdf.text(dateLabel, pageWidth - margin, 15, { align: "right" });
+      cursorY = 26;
+      addLine(subtitle, 11, 6, false, 0, palette.muted);
+      if (metaLines.length) {
+        metaLines.forEach((line) => {
+          addLine(line, 10, 5, false, 0, palette.muted);
+        });
+      }
+      addDivider();
+    };
+
     const addSection = (title) => {
       cursorY += 2;
-      addLine(title, 12, 7, true);
+      pdf.setTextColor(...palette.primary);
+      addLine(title, 11, 6, true, 0, palette.primary);
+      pdf.setTextColor(...palette.text);
       cursorY += 1;
+    };
+
+    const addKpiCards = (kpis) => {
+      if (!Array.isArray(kpis) || !kpis.length) return;
+      const gap = 6;
+      const cardWidth = (contentWidth - gap) / 2;
+      const cardHeight = 26;
+      const rows = Math.ceil(kpis.length / 2);
+      const gridHeight = rows * cardHeight + (rows - 1) * gap;
+      ensureSpace(gridHeight + 6);
+
+      kpis.forEach((kpi, index) => {
+        const col = index % 2;
+        const row = Math.floor(index / 2);
+        const x = margin + col * (cardWidth + gap);
+        const y = cursorY + row * (cardHeight + gap);
+
+        pdf.setFillColor(249, 250, 251);
+        pdf.setDrawColor(229, 231, 235);
+        pdf.roundedRect(x, y, cardWidth, cardHeight, 2, 2, "FD");
+
+        pdf.setTextColor(...palette.muted);
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(9);
+        pdf.text(String(kpi.label || ""), x + 6, y + 8);
+
+        pdf.setTextColor(...palette.dark);
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(14);
+        pdf.text(String(kpi.value || "--"), x + 6, y + 17);
+
+        if (kpi.meta) {
+          pdf.setTextColor(...palette.muted);
+          pdf.setFont("helvetica", "normal");
+          pdf.setFontSize(8.5);
+          pdf.text(String(kpi.meta), x + 6, y + 23);
+        }
+      });
+
+      cursorY += gridHeight + 4;
+    };
+
+    const addMiniTable = (rows, options = {}) => {
+      if (!Array.isArray(rows) || !rows.length) return;
+      const rowHeight = options.rowHeight || 8;
+      const labelWidth = options.labelWidth || 82;
+      const valueWidth = options.valueWidth || 24;
+      const tableWidth = labelWidth + valueWidth;
+      ensureSpace(rows.length * rowHeight + 6);
+
+      rows.forEach((row, index) => {
+        const y = cursorY + index * rowHeight;
+        const isEven = index % 2 === 0;
+
+        pdf.setFillColor(isEven ? 249 : 255, isEven ? 250 : 255, isEven ? 251 : 255);
+        pdf.setDrawColor(229, 231, 235);
+        pdf.rect(margin, y, tableWidth, rowHeight, "F");
+
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(10);
+        pdf.setTextColor(...palette.text);
+        pdf.text(String(row.label || ""), margin + 4, y + 5.5);
+
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(10);
+        pdf.setTextColor(...palette.dark);
+        pdf.text(String(row.value || "--"), margin + tableWidth - 4, y + 5.5, { align: "right" });
+      });
+
+      pdf.setDrawColor(229, 231, 235);
+      pdf.rect(margin, cursorY, tableWidth, rows.length * rowHeight, "S");
+      cursorY += rows.length * rowHeight + 4;
+    };
+
+    const estimateMiniTableHeight = (rows, options = {}) => {
+      if (!Array.isArray(rows) || !rows.length) return 0;
+      const rowHeight = options.rowHeight || 8;
+      return rows.length * rowHeight + 4;
     };
 
     const formatValue = (value, suffix = "") =>
@@ -286,13 +480,42 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       return activeSection?.dataset.reportSection || "dashboard";
     };
-    const addChartImage = (chart, title) => {
-      if (!chart || !chart.canvas) return false;
+
+    const getChartImage = (chart) => {
+      if (!chart || !chart.canvas) return null;
+      const originalRatio =
+        chart.options?.devicePixelRatio ||
+        chart.config?.options?.devicePixelRatio ||
+        window.devicePixelRatio ||
+        1;
+      const exportRatio = Math.max(3, originalRatio);
+      if (chart.options) {
+        chart.options.devicePixelRatio = exportRatio;
+      }
+      if (chart.config?.options) {
+        chart.config.options.devicePixelRatio = exportRatio;
+      }
+      chart.resize();
+      chart.update("none");
       const dataUrl =
         typeof chart.toBase64Image === "function"
           ? chart.toBase64Image()
           : chart.canvas.toDataURL("image/png", 1.0);
-      if (!dataUrl || !dataUrl.startsWith("data:image")) {
+      if (chart.options) {
+        chart.options.devicePixelRatio = originalRatio;
+      }
+      if (chart.config?.options) {
+        chart.config.options.devicePixelRatio = originalRatio;
+      }
+      chart.resize();
+      chart.update("none");
+      return dataUrl && dataUrl.startsWith("data:image") ? dataUrl : null;
+    };
+
+    const addChartImage = (chart, title) => {
+      if (!chart || !chart.canvas) return false;
+      const dataUrl = getChartImage(chart);
+      if (!dataUrl) {
         return false;
       }
       const canvas = chart.canvas;
@@ -300,17 +523,17 @@ document.addEventListener("DOMContentLoaded", () => {
       const aspect = canvas.width ? canvas.height / canvas.width : 0.6;
       let imgWidth = maxWidth;
       let imgHeight = imgWidth * aspect;
-      const maxHeight = 90;
+      const maxHeight = 95;
       if (imgHeight > maxHeight) {
         imgHeight = maxHeight;
         imgWidth = aspect ? imgHeight / aspect : maxWidth;
       }
-      if (cursorY + imgHeight + 12 > 285) {
-        pdf.addPage();
-        cursorY = 16;
-      }
-      addLine(title, 11, 6, true);
+      ensureSpace(imgHeight + 12);
+      addLine(title, 11, 6, true, 0, palette.dark);
       pdf.addImage(dataUrl, "PNG", margin, cursorY, imgWidth, imgHeight);
+      pdf.setDrawColor(229, 231, 235);
+      pdf.setLineWidth(0.4);
+      pdf.roundedRect(margin, cursorY, imgWidth, imgHeight, 2, 2, "S");
       cursorY += imgHeight + 8;
       return true;
     };
@@ -337,75 +560,116 @@ document.addEventListener("DOMContentLoaded", () => {
       totalTasa > 0 ? Math.round((tasa.aprobadas / totalTasa) * 100) : "--";
 
     const date = new Date();
-    addLine("Reporte ONG · Pawtastic", 14, 8, true);
-    addLine(`Fecha: ${date.toLocaleDateString("es-AR")}`, 10, 6);
+    const metaLines = [];
+    if (ongProfile?.cuit) {
+      metaLines.push(`CUIT: ${ongProfile.cuit}`);
+    }
+    if (ongProfile) {
+      const addressParts = [ongProfile.road, ongProfile.house_number]
+        .filter(Boolean)
+        .join(" ");
+      const areaParts = [ongProfile.suburb, ongProfile.city].filter(Boolean).join(", ");
+      const address = [addressParts, areaParts].filter(Boolean).join(" • ");
+      if (address) {
+        metaLines.push(`Dirección: ${address}`);
+      }
+    }
+
+    addHeader(
+      `Reporte ${ongName}`,
+      reportSnapshot.personalizado && reportSnapshot.personalizadoRango
+        ? "Reporte personalizado"
+        : "Reporte general",
+      `Fecha: ${date.toLocaleDateString("es-AR")}`,
+      metaLines
+    );
 
     if (reportSnapshot.personalizado && reportSnapshot.personalizadoRango) {
       const inicio = reportSnapshot.personalizadoRango.inicio;
       const fin = reportSnapshot.personalizadoRango.fin;
       const inicioLabel = new Date(`${inicio}T00:00:00`).toLocaleDateString("es-AR");
       const finLabel = new Date(`${fin}T00:00:00`).toLocaleDateString("es-AR");
-      addLine(`Reporte personalizado: ${inicioLabel} → ${finLabel}`, 10, 6, true);
+      addLine(`Período: ${inicioLabel} → ${finLabel}`, 10, 6, true, 0, palette.muted);
     } else {
-    addLine("Reporte general: últimos 30 y 60 días", 10, 6, true);
+      addLine("Últimos 30 y 60 días", 10, 6, true, 0, palette.muted);
     }
 
     addSection("KPIs (últimos 30 días)");
-    addLine(`Postulaciones iniciadas: ${formatValue(adopciones30.iniciadas)}`);
-    addLine(`Postulaciones actualizadas: ${formatValue(adopciones30.actualizadas)}`);
-    addLine(`Tiempo promedio de adopción: ${formatValue(promedioTiempo, " días")}`);
-    addLine(`Detalle: Perros ${formatValue(perro, " días")} · Gatos ${formatValue(gato, " días")}`);
-    addLine(`Publicaciones con adopción: ${formatValue(publicaciones30.con_adopcion_aprobada)}`);
+    const totalPublicadas = sumCantidad(publicaciones30.por_dia);
+    addKpiCards([
+      {
+        label: "Postulaciones iniciadas",
+        value: formatValue(adopciones30.iniciadas),
+        meta: `Actualizadas: ${adopciones30.actualizadas ?? 0}`,
+      },
+      {
+        label: "Tiempo promedio de adopción",
+        value: formatValue(promedioTiempo, " días"),
+        meta: `Perros ${formatValue(perro, " días")} · Gatos ${formatValue(gato, " días")}`,
+      },
+      {
+        label: "Tasa de aprobación",
+        value: formatValue(porcentajeAprobadas, "%"),
+        meta: `Aprobadas ${tasa.aprobadas ?? 0} · Rechazadas ${tasa.rechazadas ?? 0}`,
+      },
+      {
+        label: "Publicaciones con adopción",
+        value: formatValue(publicaciones30.con_adopcion_aprobada),
+        meta: `Publicadas: ${totalPublicadas}`,
+      },
+    ]);
 
     addSection("Tasa de éxito (últimos 60 días)");
-    addLine(`Aprobadas: ${formatValue(tasa.aprobadas)}`);
-    addLine(`Rechazadas: ${formatValue(tasa.rechazadas)}`);
-    addLine(`Porcentaje aprobación: ${formatValue(porcentajeAprobadas, "%")}`);
+    addMiniTable([
+      { label: "Aprobadas", value: formatValue(tasa.aprobadas) },
+      { label: "Rechazadas", value: formatValue(tasa.rechazadas) },
+      { label: "Porcentaje aprobación", value: formatValue(porcentajeAprobadas, "%") },
+    ]);
 
     if (reportSnapshot.adopcionEdad) {
       addSection("Adopción por edad (últimos 60 días)");
       const { perros, gatos } = reportSnapshot.adopcionEdad;
-      const formatEdad = (label, value) =>
-        `${label}: ${value !== null && value !== undefined ? `${value} días` : "N/A"}`;
       if (perros) {
-        addLine("Perros");
-        addLine(formatEdad("Cachorros", perros.cachorros), 10, 5);
-        addLine(formatEdad("Jóvenes", perros.jovenes), 10, 5);
-        addLine(formatEdad("Adultos", perros.adultos), 10, 5);
-        addLine(formatEdad("Seniors", perros.seniors), 10, 5);
+        addLine("Perros", 11, 6, true, 0, palette.dark);
+        addMiniTable([
+          { label: "Cachorros", value: formatValue(perros.cachorros, " días") },
+          { label: "Jóvenes", value: formatValue(perros.jovenes, " días") },
+          { label: "Adultos", value: formatValue(perros.adultos, " días") },
+          { label: "Seniors", value: formatValue(perros.seniors, " días") },
+        ]);
       }
       if (gatos) {
         cursorY += 2;
-        addLine("Gatos");
-        addLine(formatEdad("Cachorros", gatos.cachorros), 10, 5);
-        addLine(formatEdad("Jóvenes", gatos.jovenes), 10, 5);
-        addLine(formatEdad("Adultos", gatos.adultos), 10, 5);
-        addLine(formatEdad("Seniors", gatos.seniors), 10, 5);
+        addLine("Gatos", 11, 6, true, 0, palette.dark);
+        addMiniTable([
+          { label: "Cachorros", value: formatValue(gatos.cachorros, " días") },
+          { label: "Jóvenes", value: formatValue(gatos.jovenes, " días") },
+          { label: "Adultos", value: formatValue(gatos.adultos, " días") },
+          { label: "Seniors", value: formatValue(gatos.seniors, " días") },
+        ]);
       }
     }
 
     if (Array.isArray(reportSnapshot.adopcionZona) && reportSnapshot.adopcionZona.length) {
+      const zonasRows = reportSnapshot.adopcionZona.slice(0, 5).map((zona, index) => ({
+          label: `${index + 1}. ${zona.barrio || "Sin barrio"}, ${zona.ciudad || "Sin ciudad"}`,
+          value: formatValue(zona.total_adopciones),
+      }));
+      const zonasTableHeight = estimateMiniTableHeight(zonasRows, { labelWidth: 90, valueWidth: 18 });
+      ensureSpace(zonasTableHeight + 16);
       addSection("Top zonas de adopción");
-      reportSnapshot.adopcionZona.slice(0, 5).forEach((zona, index) => {
-        addLine(
-          `${index + 1}. ${zona.barrio || "Sin barrio"}, ${zona.ciudad || "Sin ciudad"} · ${formatValue(
-            zona.total_adopciones
-          )} adopciones`,
-          10,
-          5
-        );
-      });
+      addMiniTable(zonasRows, { labelWidth: 90, valueWidth: 18 });
     }
 
     if (Array.isArray(reportSnapshot.mascotasEspera) && reportSnapshot.mascotasEspera.length) {
+      const esperaRows = reportSnapshot.mascotasEspera.slice(0, 5).map((mascota, index) => ({
+          label: `${index + 1}. ${mascota.nombre || "Mascota"}`,
+          value: formatValue(mascota.dias_en_espera, " días"),
+      }));
+      const esperaTableHeight = estimateMiniTableHeight(esperaRows, { labelWidth: 90, valueWidth: 18 });
+      ensureSpace(esperaTableHeight + 16);
       addSection("Mascotas con más tiempo en espera");
-      reportSnapshot.mascotasEspera.slice(0, 5).forEach((mascota, index) => {
-        addLine(
-          `${index + 1}. ${mascota.nombre || "Mascota"} · ${formatValue(mascota.dias_en_espera, " días")}`,
-          10,
-          5
-        );
-      });
+      addMiniTable(esperaRows, { labelWidth: 90, valueWidth: 18 });
     }
 
     if (reportSnapshot.personalizado && reportSnapshot.personalizadoRango) {
@@ -414,20 +678,30 @@ document.addEventListener("DOMContentLoaded", () => {
       const stats = customData.adopciones || {};
       const perfil = customData.perfil_adopcion || {};
       addSection("Reporte personalizado");
-      addLine(`Iniciadas: ${formatValue(stats.iniciadas)}`);
-      addLine(`Aprobadas: ${formatValue(stats.aprobadas)}`);
-      addLine(`Canceladas: ${formatValue(stats.canceladas)}`);
+      addMiniTable([
+        { label: "Iniciadas", value: formatValue(stats.iniciadas) },
+        { label: "Aprobadas", value: formatValue(stats.aprobadas) },
+        { label: "Canceladas", value: formatValue(stats.canceladas) },
+      ]);
       if (Array.isArray(perfil.por_tipo_mascota)) {
-        addLine("Perfil de adopción · Tipo de mascota");
-        perfil.por_tipo_mascota.forEach((item) => {
-          addLine(`- ${item.tipo_mascota}: ${formatValue(item.cantidad)}`, 10, 5);
-        });
+        addLine("Perfil de adopción · Tipo de mascota", 11, 6, true, 0, palette.dark);
+        addMiniTable(
+          perfil.por_tipo_mascota.map((item) => ({
+            label: item.tipo_mascota,
+            value: formatValue(item.cantidad),
+          })),
+          { labelWidth: 90, valueWidth: 18 }
+        );
       }
       if (Array.isArray(perfil.por_vivienda)) {
-        addLine("Perfil de adopción · Tipo de vivienda");
-        perfil.por_vivienda.forEach((item) => {
-          addLine(`- ${item.tipo_vivienda}: ${formatValue(item.cantidad)}`, 10, 5);
-        });
+        addLine("Perfil de adopción · Tipo de vivienda", 11, 6, true, 0, palette.dark);
+        addMiniTable(
+          perfil.por_vivienda.map((item) => ({
+            label: item.tipo_vivienda,
+            value: formatValue(item.cantidad),
+          })),
+          { labelWidth: 90, valueWidth: 18 }
+        );
       }
     }
 
@@ -454,6 +728,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const fileStamp = date.toISOString().slice(0, 10);
+    const totalPages = pdf.getNumberOfPages();
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(9);
+    pdf.setTextColor(...palette.muted);
+    for (let page = 1; page <= totalPages; page += 1) {
+      pdf.setPage(page);
+      pdf.text(
+        `Página ${page} de ${totalPages}`,
+        pageWidth - margin,
+        pageHeight - 6,
+        { align: "right" }
+      );
+    }
+
     pdf.save(`reporte-${reportSnapshot.personalizado ? "personalizado" : "dashboard"}-${fileStamp}.pdf`);
 
     if (exportButton) {

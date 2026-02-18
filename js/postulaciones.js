@@ -707,6 +707,31 @@ document.addEventListener("DOMContentLoaded", () => {
     sectionPages.pendientes = 1;
     sectionPages.aprobadas = 1;
     sectionPages.rechazadas = 1;
+    if (query) {
+      const countsBySection = filteredPostulaciones.reduce(
+        (acc, p) => {
+          const estado = parseInt(p.estado, 10);
+          if (estado === 1) {
+            acc.aprobadas += 1;
+          } else if (estado === 2) {
+            acc.rechazadas += 1;
+          } else {
+            acc.pendientes += 1;
+          }
+          return acc;
+        },
+        { pendientes: 0, aprobadas: 0, rechazadas: 0 }
+      );
+
+      if (countsBySection[activeSection] === 0) {
+        const nextSection = ["pendientes", "aprobadas", "rechazadas"].find(
+          (key) => countsBySection[key] > 0
+        );
+        if (nextSection) {
+          activeSection = nextSection;
+        }
+      }
+    }
     updateStats(allPostulaciones, filteredPostulaciones);
     renderSections();
   };

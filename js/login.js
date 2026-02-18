@@ -2,6 +2,24 @@ document.addEventListener('DOMContentLoaded', function () {
   const formLogin = document.getElementById("formLogin");
   const formRecuperar = document.getElementById('formRecuperar');
   const modalRecuperarEl = document.getElementById('modalRecuperar');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const togglePasswordButton = document.getElementById('togglePassword');
+  const iconEye = document.getElementById('iconEye');
+  const iconEyeSlash = document.getElementById('iconEyeSlash');
+
+  const clearAutofill = () => {
+    const active = document.activeElement;
+    if (active === emailInput || active === passwordInput) {
+      return;
+    }
+    if (emailInput) {
+      emailInput.value = '';
+    }
+    if (passwordInput) {
+      passwordInput.value = '';
+    }
+  };
 
   // Helper para hashear un string con SHA-256
   async function sha256(message) {
@@ -19,6 +37,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // --- Login Form Logic ---
   if (formLogin) {
+    setTimeout(clearAutofill, 60);
+    window.addEventListener('pageshow', () => setTimeout(clearAutofill, 60));
+
     formLogin.addEventListener("submit", async function (event) {
       event.preventDefault();
       event.stopPropagation();
@@ -63,6 +84,17 @@ document.addEventListener('DOMContentLoaded', function () {
         console.error("Error al conectar con el servidor:", error);
         showToast("Error de conexión con el servidor.", "danger");
       }
+    });
+  }
+
+  if (togglePasswordButton && passwordInput && iconEye && iconEyeSlash) {
+    togglePasswordButton.addEventListener('click', function () {
+      const isHidden = passwordInput.type === 'password';
+      passwordInput.type = isHidden ? 'text' : 'password';
+      iconEye.classList.toggle('d-none', !isHidden);
+      iconEyeSlash.classList.toggle('d-none', isHidden);
+      togglePasswordButton.setAttribute('aria-label', isHidden ? 'Ocultar contraseña' : 'Mostrar contraseña');
+      togglePasswordButton.setAttribute('aria-pressed', isHidden ? 'true' : 'false');
     });
   }
 
