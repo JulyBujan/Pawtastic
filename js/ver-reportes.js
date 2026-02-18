@@ -286,45 +286,54 @@ document.addEventListener("DOMContentLoaded", () => {
       exportButton.disabled = true;
     }
 
-    if (typeof showToast === "function") {
-      showToast("Generando PDF... ⏳", "info");
-    }
-
-    const loadImageAsDataUrl = async (url) => {
-      try {
-        const response = await fetch(url);
-        if (!response.ok) return null;
-        const blob = await response.blob();
-        return await new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = () => resolve(null);
-          reader.readAsDataURL(blob);
-        });
-      } catch (error) {
-        return null;
+    try {
+      if (typeof showToast === "function") {
+        showToast("Generando PDF... ⏳", "info");
       }
-    };
 
-    const ongProfile = await fetchOngProfile();
-    const ongName =
-      (ongProfile?.nombre || ongProfile?.razon_social || "ONG").toString().trim() || "ONG";
-    const logoUrl = resolveLogoSrc(ongProfile?.logo_url);
-    const logoDataUrl = await loadImageAsDataUrl(logoUrl);
+      const loadImageAsDataUrl = async (url) => {
+        try {
+          const response = await fetch(url);
+          if (!response.ok) return null;
+          const blob = await response.blob();
+          return await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => resolve(null);
+            reader.readAsDataURL(blob);
+          });
+        } catch (error) {
+          return null;
+        }
+      };
 
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF("p", "mm", "a4");
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    const margin = 14;
-    const contentWidth = pageWidth - margin * 2;
-    const palette = {
-      primary: [245, 158, 11],
-      dark: [15, 23, 42],
-      text: [17, 24, 39],
-      muted: [107, 114, 128],
-    };
-    let cursorY = 18;
+      const getImageFormatFromDataUrl = (dataUrl) => {
+        if (!dataUrl || typeof dataUrl !== "string") return null;
+        const match = dataUrl.match(/^data:image\/(png|jpe?g)/i);
+        if (!match) return null;
+        return match[1].toLowerCase().startsWith("png") ? "PNG" : "JPEG";
+      };
+
+      const ongProfile = await fetchOngProfile();
+      const ongName =
+        (ongProfile?.nombre || ongProfile?.razon_social || "ONG").toString().trim() || "ONG";
+      const logoUrl = resolveLogoSrc(ongProfile?.logo_url);
+      const logoDataUrl = await loadImageAsDataUrl(logoUrl);
+      const logoFormat = getImageFormatFromDataUrl(logoDataUrl);
+
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 14;
+      const contentWidth = pageWidth - margin * 2;
+      const palette = {
+        primary: [245, 158, 11],
+        dark: [15, 23, 42],
+        text: [17, 24, 39],
+        muted: [107, 114, 128],
+      };
+      let cursorY = 18;
 
     const ensureSpace = (needed = 8) => {
       if (cursorY + needed > pageHeight - 12) {
@@ -367,9 +376,13 @@ document.addEventListener("DOMContentLoaded", () => {
       pdf.setTextColor(...palette.dark);
       pdf.setFont("helvetica", "bold");
       pdf.setFontSize(16);
-      const titleX = logoDataUrl ? margin + 16 : margin;
-      if (logoDataUrl) {
-        pdf.addImage(logoDataUrl, "PNG", margin, 8, 12, 12);
+      const titleX = logoDataUrl && logoFormat ? margin + 16 : margin;
+      if (logoDataUrl && logoFormat) {
+        try {
+          pdf.addImage(logoDataUrl, logoFormat, margin, 8, 12, 12);
+        } catch (error) {
+          console.warn("No se pudo insertar el logo en el PDF.", error);
+        }
       }
       pdf.text(title, titleX, 15);
       pdf.setFont("helvetica", "normal");
@@ -742,11 +755,19 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     }
 
-    pdf.save(`reporte-${reportSnapshot.personalizado ? "personalizado" : "dashboard"}-${fileStamp}.pdf`);
-
-    if (exportButton) {
-      exportButton.classList.remove("is-loading");
-      exportButton.disabled = false;
+      pdf.save(
+        `reporte-${reportSnapshot.personalizado ? "personalizado" : "dashboard"}-${fileStamp}.pdf`
+      );
+    } catch (error) {
+      console.error("Error al generar el PDF:", error);
+      if (typeof showToast === "function") {
+        showToast("No se pudo generar el PDF.", "danger");
+      }
+    } finally {
+      if (exportButton) {
+        exportButton.classList.remove("is-loading");
+        exportButton.disabled = false;
+      }
     }
   };
 

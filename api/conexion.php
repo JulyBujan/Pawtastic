@@ -8,12 +8,20 @@ $conn = new mysqli($host, $user, $pass, $db);
 
 // Verificar si hay algún error en la conexión
 if ($conn->connect_error) {
-    http_response_code(500);
-    die("Error de conexión: " . $conn->connect_error);
+    if (!headers_sent()) {
+        http_response_code(500);
+        header("Content-Type: application/json");
+    }
+    echo json_encode(["message" => "Error de conexión a la base de datos."]);
+    exit;
 }
 
 if (!$conn->set_charset("utf8mb4")) {
-    http_response_code(500);
-    die("Error al configurar el charset: " . $conn->error);
+    if (!headers_sent()) {
+        http_response_code(500);
+        header("Content-Type: application/json");
+    }
+    echo json_encode(["message" => "Error al configurar el charset de la base de datos."]);
+    exit;
 }
 ?>
