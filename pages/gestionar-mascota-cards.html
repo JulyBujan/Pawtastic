@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="../css/style.css" />
   <style>
     :root {
-      --cards-bg: radial-gradient(circle at top, #f7f4ee 0%, #ece7dd 45%, #e2ddcf 100%);
+      --cards-bg: linear-gradient(180deg, #a8d0ec 0%, #d7e9f6 100%);
       --card-surface: #ffffff;
       --card-border: rgba(27, 36, 54, 0.12);
       --card-shadow: 0 24px 60px rgba(27, 36, 54, 0.18), 0 6px 18px rgba(27, 36, 54, 0.1);
@@ -19,13 +19,13 @@
     }
 
     body {
-      background: var(--cards-bg);
+      background: var(--cards-bg) !important;
     }
 
     .card {
       background: var(--card-surface);
-      border: 1px solid var(--card-border);
-      box-shadow: var(--card-shadow);
+      border: 2px solid rgba(11, 15, 23, 0.5) !important;
+      box-shadow: 0 0 0 2px rgba(26, 148, 196, 0.35), 0 22px 48px rgba(26, 148, 196, 0.75) !important;
     }
 
     .card-header {

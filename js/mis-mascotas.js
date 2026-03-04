@@ -257,7 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .join("");
 
       const card = `
-        <div class="col-12 col-sm-6 col-lg-4 col-xxl-3">
+        <div class="col-12 col-sm-6 col-md-4 col-xxl-3">
           <div class="pet-card h-100">
             <div class="pet-image">
               <span class="pet-badge ${estadoCss}">${estado}</span>
