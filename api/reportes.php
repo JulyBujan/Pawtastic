@@ -189,7 +189,7 @@ function generarReporteParaPeriodo($conn, $id_ong, $fecha_inicio, $fecha_fin) {
 
 function getTiempoAdopcionPorEdad($conn, $id_ong) {
     $fecha_fin = (new DateTime())->format('Y-m-d H:i:s');
-    $fecha_inicio = (new DateTime())->sub(new DateInterval('P59D'))->format('Y-m-d');
+    $fecha_inicio = (new DateTime())->sub(new DateInterval('P179D'))->format('Y-m-d');
 
     $stmt = $conn->prepare(
         "SELECT
@@ -354,20 +354,20 @@ try {
         http_response_code(200);
         echo json_encode($reporte_personalizado);
 
-    } else { // Si no, se devuelven los indicadores clave de 30 y 60 días
+    } else { // Si no, se devuelven los indicadores clave de 90 y 180 días
         $hoy = new DateTime();
         $fecha_fin_90 = $hoy->format('Y-m-d');
-        $fecha_inicio_90 = (clone $hoy)->sub(new DateInterval('P59D'))->format('Y-m-d');
+        $fecha_inicio_90 = (clone $hoy)->sub(new DateInterval('P89D'))->format('Y-m-d');
 
-        $fecha_fin_30 = $hoy->format('Y-m-d');
-        $fecha_inicio_30 = (clone $hoy)->sub(new DateInterval('P29D'))->format('Y-m-d');
+        $fecha_fin_180 = $hoy->format('Y-m-d');
+        $fecha_inicio_180 = (clone $hoy)->sub(new DateInterval('P179D'))->format('Y-m-d');
 
-        $reporte_30_dias = generarReporteParaPeriodo($conn, $id_ong, $fecha_inicio_30, $fecha_fin_30);
         $reporte_90_dias = generarReporteParaPeriodo($conn, $id_ong, $fecha_inicio_90, $fecha_fin_90);
+        $reporte_180_dias = generarReporteParaPeriodo($conn, $id_ong, $fecha_inicio_180, $fecha_fin_180);
 
         $respuesta_agrupada = [
-            'ultimos_30_dias' => $reporte_30_dias,
-            'ultimos_90_dias' => $reporte_90_dias
+            'ultimos_90_dias' => $reporte_90_dias,
+            'ultimos_180_dias' => $reporte_180_dias
         ];
 
         http_response_code(200);

@@ -54,7 +54,7 @@
         Resumen general
       </button>
       <button type="button" class="report-tab report-menu-item" data-report-target="indicadores">
-        Indicadores 30/60 días
+        Indicadores 90/180 días
       </button>
       <button type="button" class="report-tab report-menu-item" data-report-target="adopcion-rapida">
         Adopción por edad
@@ -125,7 +125,7 @@
       </article>
       <article class="report-chart-card animate-item">
         <div class="report-chart-header">
-          <h3>Estados de adopción (30 vs 60 días)</h3>
+          <h3>Estados de adopción (90 vs 180 días)</h3>
         </div>
         <div class="chart-area">
           <canvas id="reportStatusChart"></canvas>
@@ -160,71 +160,18 @@
     <section class="report-section d-none" data-report-section="indicadores">
       <div class="report-section-header">
         <h3 class="report-section-title">Indicadores clave</h3>
-        <p class="report-section-subtitle">Comparativos de los últimos 30 y 60 días.</p>
+        <p class="report-section-subtitle">Comparativos de los últimos 90 y 180 días.</p>
         <button type="button" class="btn btn-report-menu" data-bs-toggle="offcanvas" data-bs-target="#reportesMenu"
           aria-controls="reportesMenu">
           <i class="bi bi-list"></i> Volver al menú
         </button>
       </div>
-      <!-- SECCIÓN DE INDICADORES CLAVE (30 y 60 días) -->
+      <!-- SECCIÓN DE INDICADORES CLAVE (90 y 180 días) -->
       <div id="indicadores-clave-container" class="d-none">
         <div class="indicators-grid">
-          <article class="indicator-card animate-item" data-period="30">
+          <article class="indicator-card animate-item" data-period="90">
             <div class="indicator-card-header">
-              <span class="indicator-pill">Últimos 30 días</span>
-              <h4>Resumen del período</h4>
-            </div>
-            <div class="indicator-block">
-              <div class="indicator-block-header">
-                <span class="indicator-icon indicator-icon-cool"><i class="bi bi-heart-fill indicator-icon-animate"></i></span>
-                <div>
-                  <h5>Tiempo promedio de adopción</h5>
-                  <p>Promedio en días por especie.</p>
-                </div>
-              </div>
-              <div class="indicator-metrics">
-                <div class="indicator-metric">
-                  <span class="metric-label"><i class="bi bi-dog"></i> Perros</span>
-                  <div class="metric-value" id="tiempo-promedio-perros-30">--</div>
-                  <span class="metric-unit">días</span>
-                </div>
-                <div class="indicator-metric">
-                  <span class="metric-label"><i class="bi bi-cat"></i> Gatos</span>
-                  <div class="metric-value" id="tiempo-promedio-gatos-30">--</div>
-                  <span class="metric-unit">días</span>
-                </div>
-              </div>
-            </div>
-            <div class="indicator-block">
-              <div class="indicator-block-header">
-                <span class="indicator-icon indicator-icon-good"><i class="bi bi-check2-circle"></i></span>
-                <div>
-                  <h5>Tasa de éxito</h5>
-                  <p>Porcentaje sobre postulaciones cerradas.</p>
-                </div>
-              </div>
-              <div class="indicator-metrics">
-                <div class="indicator-metric indicator-metric-positive">
-                  <span class="metric-label"><i class="bi bi-check-circle"></i> Aprobadas</span>
-                  <div class="metric-value" id="tasa-aprobadas-30">--%</div>
-                  <div class="metric-bar">
-                    <span class="metric-bar-fill" id="tasa-aprobadas-30-bar"></span>
-                  </div>
-                </div>
-                <div class="indicator-metric indicator-metric-negative">
-                  <span class="metric-label"><i class="bi bi-x-circle"></i> Rechazadas</span>
-                  <div class="metric-value" id="tasa-rechazadas-30">--%</div>
-                  <div class="metric-bar">
-                    <span class="metric-bar-fill" id="tasa-rechazadas-30-bar"></span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <article class="indicator-card animate-item" data-period="60">
-            <div class="indicator-card-header">
-              <span class="indicator-pill indicator-pill-alt">Últimos 60 días</span>
+              <span class="indicator-pill">Últimos 90 días</span>
               <h4>Resumen del período</h4>
             </div>
             <div class="indicator-block">
@@ -269,6 +216,59 @@
                   <div class="metric-value" id="tasa-rechazadas-90">--%</div>
                   <div class="metric-bar">
                     <span class="metric-bar-fill" id="tasa-rechazadas-90-bar"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="indicator-card animate-item" data-period="180">
+            <div class="indicator-card-header">
+              <span class="indicator-pill indicator-pill-alt">Últimos 180 días</span>
+              <h4>Resumen del período</h4>
+            </div>
+            <div class="indicator-block">
+              <div class="indicator-block-header">
+                <span class="indicator-icon indicator-icon-cool"><i class="bi bi-heart-fill indicator-icon-animate"></i></span>
+                <div>
+                  <h5>Tiempo promedio de adopción</h5>
+                  <p>Promedio en días por especie.</p>
+                </div>
+              </div>
+              <div class="indicator-metrics">
+                <div class="indicator-metric">
+                  <span class="metric-label"><i class="bi bi-dog"></i> Perros</span>
+                  <div class="metric-value" id="tiempo-promedio-perros-180">--</div>
+                  <span class="metric-unit">días</span>
+                </div>
+                <div class="indicator-metric">
+                  <span class="metric-label"><i class="bi bi-cat"></i> Gatos</span>
+                  <div class="metric-value" id="tiempo-promedio-gatos-180">--</div>
+                  <span class="metric-unit">días</span>
+                </div>
+              </div>
+            </div>
+            <div class="indicator-block">
+              <div class="indicator-block-header">
+                <span class="indicator-icon indicator-icon-good"><i class="bi bi-check2-circle"></i></span>
+                <div>
+                  <h5>Tasa de éxito</h5>
+                  <p>Porcentaje sobre postulaciones cerradas.</p>
+                </div>
+              </div>
+              <div class="indicator-metrics">
+                <div class="indicator-metric indicator-metric-positive">
+                  <span class="metric-label"><i class="bi bi-check-circle"></i> Aprobadas</span>
+                  <div class="metric-value" id="tasa-aprobadas-180">--%</div>
+                  <div class="metric-bar">
+                    <span class="metric-bar-fill" id="tasa-aprobadas-180-bar"></span>
+                  </div>
+                </div>
+                <div class="indicator-metric indicator-metric-negative">
+                  <span class="metric-label"><i class="bi bi-x-circle"></i> Rechazadas</span>
+                  <div class="metric-value" id="tasa-rechazadas-180">--%</div>
+                  <div class="metric-bar">
+                    <span class="metric-bar-fill" id="tasa-rechazadas-180-bar"></span>
                   </div>
                 </div>
               </div>
@@ -382,7 +382,6 @@
           <div class="waiting-card-header">
             <span class="waiting-pill"><i class="bi bi-clock-history"></i> Top 6 en adopción</span>
             <h4>Mascotas con más tiempo en espera</h4>
-            <p>Mascotas disponibles que llevan más días publicadas.</p>
           </div>
           <div id="lista-mascotas-espera" class="waiting-grid">
             <!-- Los items se insertarán aquí dinámicamente -->
@@ -532,7 +531,7 @@
             </div>
           </div>
           <div class="table-responsive">
-            <table class="table table-hover align-middle">
+            <table class="table table-hover align-middle prob-table">
               <thead>
                 <tr>
                   <th>Mascota</th>
@@ -608,9 +607,6 @@
 
       <!-- Contenedor para el Reporte Personalizado (oculto por defecto) -->
       <div id="reporte-personalizado-container" class="custom-report-results d-none mt-4">
-        <div class="d-flex justify-content-center align-items-center mb-3">
-          <span class="result-period-tag" id="titulo-reporte-personalizado"></span>
-        </div>
         <!-- Estadísticas de Adopciones -->
         <div class="d-flex justify-content-center mb-3">
           <span class="result-section-tag">Adopciones</span>
@@ -670,7 +666,7 @@
         <button class="list-group-item list-group-item-action report-menu-item" data-report-target="indicadores">
           <span class="menu-icon"><i class="bi bi-graph-up"></i></span>
           <span class="menu-text">
-            <span class="menu-title">Indicadores 30/60 días</span>
+            <span class="menu-title">Indicadores 90/180 días</span>
             <span class="menu-subtitle">Comparativos clave</span>
           </span>
         </button>

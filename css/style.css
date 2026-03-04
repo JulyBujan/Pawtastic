@@ -9152,3 +9152,322 @@ body.role-ong.reports-body {
     height: 170px;
   }
 }
+
+/* === Demo visibility overrides (tesis) === */
+html {
+  font-size: 17px;
+}
+
+body {
+  color: #0b0f17;
+}
+
+.text-muted {
+  color: #0b0f17 !important;
+}
+
+.navbar-dark .navbar-brand,
+.nav-glass .navbar-brand {
+  color: #0b0f17 !important;
+  text-shadow: 0 2px 0 rgba(247, 147, 30, 0.85);
+  font-weight: 800;
+}
+
+.hero-logo {
+  width: min(200px, 65%);
+  height: auto;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.form-label {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0b0f17;
+}
+
+.form-control,
+.form-select {
+  border: 2px solid rgba(11, 15, 23, 0.35);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: rgba(11, 15, 23, 0.6);
+  box-shadow: 0 0 0 2px rgba(247, 147, 30, 0.15);
+}
+
+.login-section .form-control {
+  border-width: 2px;
+  box-shadow: 0 0 0 2px rgba(247, 147, 30, 0.12);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #1b2436;
+  font-weight: 600;
+}
+
+.pet-form-page .label-pill {
+  font-size: 0.85rem;
+}
+
+.card {
+  border: 2px solid rgba(11, 15, 23, 0.5) !important;
+  background: #ffffff;
+}
+
+.reports-body {
+  color: #0b0f17;
+  font-size: 1.05rem;
+}
+
+.reports-body p,
+.reports-body .report-section-subtitle,
+.reports-body .zones-card-header p,
+.reports-body .custom-report-header p,
+.reports-body .result-meta,
+.reports-body .prob-insight-meta,
+.reports-body .prob-detail-label,
+.reports-body .prob-explainer p,
+.reports-body .prob-filter-label,
+.reports-body .prob-meta,
+.reports-body .age-card-header p,
+.reports-body .zone-city,
+.reports-body .text-muted {
+  color: #0b0f17 !important;
+}
+
+.reports-body .kpi-card,
+.reports-body .indicator-card,
+.reports-body .report-chart-card,
+.reports-body .prob-insight-card,
+.reports-body .prob-explainer,
+.reports-body .reports-hero,
+.reports-body .zones-rankings,
+.reports-body .zones-map-card,
+.reports-body .waiting-card,
+.reports-body .custom-report-card,
+.reports-body .report-loading-card,
+.reports-body .result-card {
+  border: 2px solid rgba(11, 15, 23, 0.5) !important;
+  box-shadow: 0 0 0 2px rgba(26, 148, 196, 0.35), 0 22px 48px rgba(26, 148, 196, 0.75) !important;
+}
+
+.indicator-block {
+  background: #eef6ff;
+  border: 2px solid rgba(26, 148, 196, 0.35);
+}
+
+.indicator-block:nth-of-type(2) {
+  background: #fff3e6;
+  border-color: rgba(245, 158, 11, 0.45);
+}
+
+.indicator-block h5 {
+  font-size: 1.1rem;
+}
+
+.indicator-block p,
+.metric-label {
+  font-size: 0.95rem;
+}
+
+.metric-value {
+  font-size: 1.4rem;
+}
+
+.metric-unit {
+  font-size: 0.9rem;
+}
+
+.age-card {
+  border: 2px solid rgba(11, 15, 23, 0.5) !important;
+  box-shadow: 0 0 0 2px rgba(26, 148, 196, 0.35), 0 22px 48px rgba(26, 148, 196, 0.75) !important;
+}
+
+.age-list .list-group-item {
+  border: 2px solid rgba(11, 15, 23, 0.25);
+  background: #eef6ff;
+}
+
+.age-card-cat .age-list .list-group-item {
+  background: #fff3e6;
+  border-color: rgba(245, 158, 11, 0.45);
+}
+
+.zones-card-header {
+  padding-bottom: 0.8rem;
+  border-bottom: 2px dashed rgba(26, 148, 196, 0.25);
+}
+
+.zones-list {
+  padding: 0.7rem;
+  border-radius: 16px;
+  background: #f7fbff;
+  border: 2px solid rgba(26, 148, 196, 0.18);
+}
+
+.zones-map {
+  background: #f7fbff;
+  box-shadow: inset 0 0 0 2px rgba(26, 148, 196, 0.12);
+}
+
+.waiting-item {
+  background: #eef6ff;
+  border: 2px solid rgba(26, 148, 196, 0.35);
+  box-shadow: 0 10px 20px rgba(26, 148, 196, 0.18);
+  font-size: 1rem;
+}
+
+.waiting-item:nth-child(even) {
+  background: #fff3e6;
+  border-color: rgba(245, 158, 11, 0.45);
+  box-shadow: 0 10px 20px rgba(245, 158, 11, 0.2);
+}
+
+.waiting-avatar {
+  width: 120px;
+  height: 120px;
+}
+
+.waiting-name {
+  font-size: 1.05rem;
+}
+
+.waiting-meta {
+  font-size: 0.98rem;
+}
+
+.waiting-pill-danger {
+  font-size: 0.98rem;
+}
+
+.prob-insight-header h4 {
+  font-size: 1.12rem;
+}
+
+.prob-insight-value {
+  font-size: 1.9rem;
+}
+
+.prob-insight-meta {
+  font-size: 0.95rem;
+}
+
+.prob-explainer {
+  background: #f7fbff;
+  position: relative;
+  overflow: hidden;
+}
+
+.prob-explainer::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, rgba(26, 148, 196, 0.85), rgba(14, 90, 126, 0.6));
+}
+
+.prob-explainer-header h4 {
+  font-size: 1.15rem;
+}
+
+.prob-explainer-toggle {
+  font-size: 0.9rem;
+}
+
+.prob-explainer p {
+  font-size: 1rem;
+}
+
+.prob-legend-item {
+  font-size: 0.9rem;
+}
+
+.prob-badge {
+  font-size: 0.9rem;
+}
+
+.prob-filter .form-label {
+  font-size: 0.9rem;
+}
+
+#probResultsCount,
+#probPageInfo {
+  font-size: 0.95rem;
+}
+
+.prob-reset,
+.prob-detail-btn {
+  font-size: 0.9rem;
+}
+
+.prob-detail-label {
+  font-size: 0.85rem;
+}
+
+.prob-detail-value {
+  font-size: 1.1rem;
+}
+
+[data-report-section="probabilistica"] .report-chart-header h3,
+[data-report-section="probabilistica"] .table {
+  font-size: 1.02rem;
+}
+
+[data-report-section="probabilistica"] .prob-table {
+  border-collapse: separate !important;
+  border-spacing: 0 0.65rem;
+}
+
+[data-report-section="probabilistica"] .prob-table thead th {
+  background: #eef6ff;
+  color: #0b0f17;
+  border-bottom: 2px solid rgba(11, 15, 23, 0.3);
+  text-align: center;
+  padding: 0.85rem;
+  font-weight: 800;
+}
+
+[data-report-section="probabilistica"] .prob-table tbody tr {
+  background: #eaf4ff;
+  --bs-table-bg: #eaf4ff;
+  box-shadow: 0 12px 22px rgba(15, 23, 42, 0.12);
+}
+
+[data-report-section="probabilistica"] .prob-table tbody tr:nth-child(even) {
+  background: #fff1e6;
+  --bs-table-bg: #fff1e6;
+}
+
+[data-report-section="probabilistica"] .prob-table tbody td {
+  border-top: 2px solid rgba(11, 15, 23, 0.18);
+  border-bottom: 2px solid rgba(11, 15, 23, 0.18);
+  padding: 0.85rem;
+  text-align: center;
+}
+
+[data-report-section="probabilistica"] .prob-table tbody tr td:first-child {
+  border-left: 2px solid rgba(11, 15, 23, 0.18);
+  border-radius: 14px 0 0 14px;
+}
+
+[data-report-section="probabilistica"] .prob-table tbody tr td:last-child {
+  border-right: 2px solid rgba(11, 15, 23, 0.18);
+  border-radius: 0 14px 14px 0;
+}
+
+.prob-detail-btn {
+  background: #0e5a7e;
+  border-color: #0e5a7e;
+  color: #ffffff;
+}
+
+.prob-detail-btn:hover,
+.prob-detail-btn:focus {
+  background: #0b4b67;
+  border-color: #0b4b67;
+  color: #ffffff;
+}
