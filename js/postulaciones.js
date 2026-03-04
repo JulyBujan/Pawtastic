@@ -264,7 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tablaHTML += `<td data-label="Mascota">
                         <div class="postulacion-pet">
                           <a href="detalle-mascota.html?id=${p.mascota_id}">${p.mascota_nombre}</a>
-                          <a href="detalle-mascota.html?id=${p.mascota_id}" class="btn btn-action btn-action-outline">Ver perfil</a>
+                          <a href="detalle-mascota.html?id=${p.mascota_id}" class="btn btn-action btn-action-outline btn-action-view">Ver perfil</a>
                         </div>
                       </td>
                               <td data-label="Postulante"><a href="usuario.html?id=${p.usuario_id}">${p.usuario_nombre} ${p.usuario_apellido}</a></td>`;
@@ -272,7 +272,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tablaHTML += `<td data-label="Mascota">
                         <div class="postulacion-pet">
                           <a href="detalle-mascota.html?id=${p.mascota_id}">${p.mascota_nombre}</a>
-                          <a href="detalle-mascota.html?id=${p.mascota_id}" class="btn btn-action btn-action-outline">Ver perfil</a>
+                          <a href="detalle-mascota.html?id=${p.mascota_id}" class="btn btn-action btn-action-outline btn-action-view">Ver perfil</a>
                         </div>
                       </td>
                               <td data-label="ONG Responsable">${p.ong_nombre}</td>`;
@@ -376,11 +376,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const headerLeft = tipoUsuario === "ong"
         ? `<div class="postulacion-pet">
              <a href="detalle-mascota.html?id=${p.mascota_id}">${p.mascota_nombre}</a>
-             <a href="detalle-mascota.html?id=${p.mascota_id}" class="btn btn-action btn-action-outline">Ver perfil</a>
+             <a href="detalle-mascota.html?id=${p.mascota_id}" class="btn btn-action btn-action-outline btn-action-view">Ver perfil</a>
            </div>`
         : `<div class="postulacion-pet">
              <a href="detalle-mascota.html?id=${p.mascota_id}">${p.mascota_nombre}</a>
-             <a href="detalle-mascota.html?id=${p.mascota_id}" class="btn btn-action btn-action-outline">Ver perfil</a>
+             <a href="detalle-mascota.html?id=${p.mascota_id}" class="btn btn-action btn-action-outline btn-action-view">Ver perfil</a>
            </div>`;
       const headerRight = tipoUsuario === "ong"
         ? `<span class="text-muted">Postulante: <a href="usuario.html?id=${p.usuario_id}">${p.usuario_nombre} ${p.usuario_apellido}</a></span>`
