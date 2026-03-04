@@ -409,6 +409,60 @@
       </div>
 
       <div id="probabilistica-container" class="d-none">
+        <section class="prob-insights">
+          <article class="prob-insight-card" data-accent="fast">
+            <div class="prob-insight-header">
+              <span class="report-chip">Promedio &lt;30 días</span>
+              <h4>Probabilidad de adopción rápida</h4>
+            </div>
+            <div class="prob-insight-value" id="probInsightAvg30">--</div>
+            <div class="prob-insight-meta" id="probInsightAvgMeta">Calculando...</div>
+            <div class="metric-bar">
+              <span class="metric-bar-fill" id="probInsightAvgBar"></span>
+            </div>
+          </article>
+          <article class="prob-insight-card" data-accent="top">
+            <div class="prob-insight-header">
+              <span class="report-chip">Mejor candidata</span>
+              <h4>Mascota con mayor probabilidad</h4>
+            </div>
+            <div class="prob-insight-value" id="probInsightTop">--</div>
+            <div class="prob-insight-meta" id="probInsightTopMeta">Calculando...</div>
+          </article>
+          <article class="prob-insight-card" data-accent="risk">
+            <div class="prob-insight-header">
+              <span class="report-chip report-tag-outline">Riesgo de demora</span>
+              <h4>Mayor probabilidad &gt;60 días</h4>
+            </div>
+            <div class="prob-insight-value" id="probInsightRisk">--</div>
+            <div class="prob-insight-meta" id="probInsightRiskMeta">Calculando...</div>
+          </article>
+        </section>
+
+        <div class="prob-explainer-toggle-row">
+          <button class="btn btn-report-ghost prob-explainer-toggle" type="button" data-bs-toggle="collapse"
+            data-bs-target="#probExplainerSection" aria-expanded="false" aria-controls="probExplainerSection">
+            <span class="toggle-label toggle-label-hide">Ocultar explicación</span>
+            <span class="toggle-label toggle-label-show">Ver explicación</span>
+            <i class="bi bi-chevron-up"></i>
+          </button>
+        </div>
+
+        <section class="prob-explainer collapse" id="probExplainerSection">
+          <div class="prob-explainer-header">
+            <span class="report-chip">Guía rápida</span>
+            <h4>Cómo interpretar estas probabilidades</h4>
+          </div>
+          <p>Este reporte estima la probabilidad de adopción en tres ventanas: &lt;30 días, 30-60 días y &gt;60 días.</p>
+          <p>Se calcula con variables de la mascota: tipo, sexo, tamaño, raza y color. No contempla campañas externas.</p>
+          <p>La “confianza” es la etiqueta informada por el modelo. Usala como referencia, no como garantía.</p>
+          <div class="prob-legend">
+            <span class="prob-legend-item prob-legend-fast"><span class="prob-legend-dot"></span> &lt;30 días</span>
+            <span class="prob-legend-item prob-legend-mid"><span class="prob-legend-dot"></span> 30-60 días</span>
+            <span class="prob-legend-item prob-legend-slow"><span class="prob-legend-dot"></span> &gt;60 días</span>
+          </div>
+        </section>
+
         <section class="reports-charts">
           <article class="report-chart-card animate-item">
             <div class="report-chart-header">
@@ -440,24 +494,67 @@
           <div class="report-chart-header">
             <h3>Detalle por mascota</h3>
           </div>
+          <div class="prob-table-toolbar">
+            <div class="prob-filter">
+              <label for="probFilterSearch" class="form-label">Buscar</label>
+              <input type="text" class="form-control" id="probFilterSearch" placeholder="Nombre de mascota">
+            </div>
+            <div class="prob-filter">
+              <label for="probFilterType" class="form-label">Tipo</label>
+              <select id="probFilterType" class="form-select">
+                <option value="todos">Todos</option>
+                <option value="perro">Perros</option>
+                <option value="gato">Gatos</option>
+              </select>
+            </div>
+            <div class="prob-filter">
+              <label for="probFilterRisk" class="form-label">Riesgo &gt;60</label>
+              <select id="probFilterRisk" class="form-select">
+                <option value="todos">Todos</option>
+                <option value="alto">Alto</option>
+                <option value="medio">Medio</option>
+                <option value="bajo">Bajo</option>
+              </select>
+            </div>
+            <div class="prob-filter">
+              <label for="probFilterSort" class="form-label">Orden</label>
+              <select id="probFilterSort" class="form-select">
+                <option value="prob_less30_desc">Prob. &lt;30 (alta)</option>
+                <option value="prob_less30_asc">Prob. &lt;30 (baja)</option>
+                <option value="prob_more60_desc">Prob. &gt;60 (alta)</option>
+                <option value="prob_more60_asc">Prob. &gt;60 (baja)</option>
+                <option value="nombre">Nombre (A-Z)</option>
+              </select>
+            </div>
+            <div class="prob-filter prob-filter-summary">
+              <span id="probResultsCount">0 resultados</span>
+              <button type="button" class="btn btn-report-ghost prob-reset" id="probResetFilters">Limpiar</button>
+            </div>
+          </div>
           <div class="table-responsive">
             <table class="table table-hover align-middle">
               <thead>
                 <tr>
                   <th>Mascota</th>
                   <th>Tipo</th>
-                  <th>Edad</th>
-                  <th>Tamaño</th>
                   <th>Días estimados</th>
-                  <th>Rango</th>
                   <th>Confianza</th>
                   <th>Prob. &lt;30</th>
-                  <th>Prob. 30-60</th>
                   <th>Prob. &gt;60</th>
+                  <th>Detalle</th>
                 </tr>
               </thead>
               <tbody id="probabilistica-table-body"></tbody>
             </table>
+          </div>
+          <div class="prob-pagination">
+            <button type="button" class="btn btn-report-ghost" id="probPrevPage">
+              <i class="bi bi-chevron-left"></i> Anterior
+            </button>
+            <span id="probPageInfo">Página 1 de 1</span>
+            <button type="button" class="btn btn-report-ghost" id="probNextPage">
+              Siguiente <i class="bi bi-chevron-right"></i>
+            </button>
           </div>
           <div id="probabilistica-empty" class="text-muted text-center py-3 d-none">
             No hay mascotas activas para analizar.
@@ -631,6 +728,64 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
           <button id="confirmarSalir" class="btn btn-danger">Sí, salir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="probDetailModal" tabindex="-1" aria-labelledby="probDetailTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="probDetailTitle">Detalle de mascota</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="prob-detail-grid">
+            <div class="prob-detail-item">
+              <span class="prob-detail-label">Mascota</span>
+              <span class="prob-detail-value" id="probDetailNombre">--</span>
+            </div>
+            <div class="prob-detail-item">
+              <span class="prob-detail-label">Tipo</span>
+              <span class="prob-detail-value" id="probDetailTipo">--</span>
+            </div>
+            <div class="prob-detail-item">
+              <span class="prob-detail-label">Edad</span>
+              <span class="prob-detail-value" id="probDetailEdad">--</span>
+            </div>
+            <div class="prob-detail-item">
+              <span class="prob-detail-label">Tamaño</span>
+              <span class="prob-detail-value" id="probDetailTamano">--</span>
+            </div>
+            <div class="prob-detail-item">
+              <span class="prob-detail-label">Días estimados</span>
+              <span class="prob-detail-value" id="probDetailDias">--</span>
+            </div>
+            <div class="prob-detail-item">
+              <span class="prob-detail-label">Rango estimado</span>
+              <span class="prob-detail-value" id="probDetailRango">--</span>
+            </div>
+            <div class="prob-detail-item">
+              <span class="prob-detail-label">Confianza</span>
+              <span class="prob-detail-value" id="probDetailConfianza">--</span>
+            </div>
+            <div class="prob-detail-item">
+              <span class="prob-detail-label">Prob. &lt;30</span>
+              <span class="prob-detail-value" id="probDetailProbLess30">--</span>
+            </div>
+            <div class="prob-detail-item">
+              <span class="prob-detail-label">Prob. 30-60</span>
+              <span class="prob-detail-value" id="probDetailProb3060">--</span>
+            </div>
+            <div class="prob-detail-item">
+              <span class="prob-detail-label">Prob. &gt;60</span>
+              <span class="prob-detail-value" id="probDetailProbMore60">--</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
         </div>
       </div>
     </div>

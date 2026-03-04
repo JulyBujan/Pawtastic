@@ -29,6 +29,38 @@ document.addEventListener("DOMContentLoaded", () => {
   const probTopCanvas = document.getElementById("probTopChart");
   const probBottomCanvas = document.getElementById("probBottomChart");
   const probDistributionCanvas = document.getElementById("probDistributionChart");
+  const probFilterSearch = document.getElementById("probFilterSearch");
+  const probFilterType = document.getElementById("probFilterType");
+  const probFilterRisk = document.getElementById("probFilterRisk");
+  const probFilterSort = document.getElementById("probFilterSort");
+  const probResetFilters = document.getElementById("probResetFilters");
+  const probResultsCount = document.getElementById("probResultsCount");
+  const probPrevPage = document.getElementById("probPrevPage");
+  const probNextPage = document.getElementById("probNextPage");
+  const probPageInfo = document.getElementById("probPageInfo");
+  const probDetailModalEl = document.getElementById("probDetailModal");
+  const probDetailModal =
+    probDetailModalEl && typeof bootstrap !== "undefined"
+      ? new bootstrap.Modal(probDetailModalEl)
+      : null;
+  const probDetailTitle = document.getElementById("probDetailTitle");
+  const probDetailNombre = document.getElementById("probDetailNombre");
+  const probDetailTipo = document.getElementById("probDetailTipo");
+  const probDetailEdad = document.getElementById("probDetailEdad");
+  const probDetailTamano = document.getElementById("probDetailTamano");
+  const probDetailDias = document.getElementById("probDetailDias");
+  const probDetailRango = document.getElementById("probDetailRango");
+  const probDetailConfianza = document.getElementById("probDetailConfianza");
+  const probDetailProbLess30 = document.getElementById("probDetailProbLess30");
+  const probDetailProb3060 = document.getElementById("probDetailProb3060");
+  const probDetailProbMore60 = document.getElementById("probDetailProbMore60");
+  const probInsightAvg = document.getElementById("probInsightAvg30");
+  const probInsightAvgMeta = document.getElementById("probInsightAvgMeta");
+  const probInsightAvgBar = document.getElementById("probInsightAvgBar");
+  const probInsightTop = document.getElementById("probInsightTop");
+  const probInsightTopMeta = document.getElementById("probInsightTopMeta");
+  const probInsightRisk = document.getElementById("probInsightRisk");
+  const probInsightRiskMeta = document.getElementById("probInsightRiskMeta");
   const loadingSpinner = document.getElementById("loading-spinner");
 
   const fechaFinInput = document.getElementById("fecha_fin_manual");
@@ -51,6 +83,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let probTopChart = null;
   let probBottomChart = null;
   let probDistributionChart = null;
+  let probabilisticaIndex = new Map();
+  let probPage = 1;
+  const probPageSize = 8;
   const reportSnapshot = {
     indicadores: null,
     adopcionEdad: null,
@@ -136,6 +171,88 @@ document.addEventListener("DOMContentLoaded", () => {
       numeric = numeric * 100;
     }
     return Math.round(numeric);
+  };
+
+  const setText = (element, value) => {
+    if (!element) return;
+    element.textContent = value;
+  };
+
+  const formatProbBadge = (value, kind) => {
+    if (value === null || value === undefined) return "--";
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) return "--";
+    const classMap = {
+      fast: "prob-badge-fast",
+      mid: "prob-badge-mid",
+      slow: "prob-badge-slow",
+    };
+    const className = classMap[kind] || "prob-badge-mid";
+    return `<span class="prob-badge ${className}">${numeric}%</span>`;
+  };
+
+  const getProbRiskLevel = (prob60) => {
+    const value = Number(prob60);
+    if (!Number.isFinite(value)) return "bajo";
+    if (value >= 60) return "alto";
+    if (value >= 35) return "medio";
+    return "bajo";
+  };
+
+  const applyProbFilters = (items) => {
+    const searchTerm = (probFilterSearch?.value || "").trim().toLowerCase();
+    const typeFilter = probFilterType?.value || "todos";
+    const riskFilter = probFilterRisk?.value || "todos";
+    const sortValue = probFilterSort?.value || "prob_less30_desc";
+
+    let filtered = [...items];
+
+    if (searchTerm) {
+      filtered = filtered.filter((item) =>
+        String(item.nombre || "")
+          .toLowerCase()
+          .includes(searchTerm)
+      );
+    }
+
+    if (typeFilter !== "todos") {
+      filtered = filtered.filter(
+        (item) => String(item.tipo || "").toLowerCase() === typeFilter
+      );
+    }
+
+    if (riskFilter !== "todos") {
+      filtered = filtered.filter(
+        (item) => getProbRiskLevel(item.prob60) === riskFilter
+      );
+    }
+
+    const sorters = {
+      prob_less30_desc: (a, b) => (b.probLess30 || 0) - (a.probLess30 || 0),
+      prob_less30_asc: (a, b) => (a.probLess30 || 0) - (b.probLess30 || 0),
+      prob_more60_desc: (a, b) => (b.prob60 || 0) - (a.prob60 || 0),
+      prob_more60_asc: (a, b) => (a.prob60 || 0) - (b.prob60 || 0),
+      nombre: (a, b) => String(a.nombre || "").localeCompare(String(b.nombre || "")),
+    };
+    const sorter = sorters[sortValue];
+    if (sorter) {
+      filtered.sort(sorter);
+    }
+
+    return filtered;
+  };
+
+  const updateProbResultsCount = (visibleCount, totalCount) => {
+    if (!probResultsCount) return;
+    probResultsCount.textContent = `${visibleCount} de ${totalCount} resultados`;
+  };
+
+  const updateProbPagination = (currentPage, totalPages) => {
+    if (probPageInfo) {
+      probPageInfo.textContent = `Página ${totalPages === 0 ? 0 : currentPage} de ${totalPages}`;
+    }
+    if (probPrevPage) probPrevPage.disabled = currentPage <= 1;
+    if (probNextPage) probNextPage.disabled = currentPage >= totalPages;
   };
 
   const buildPredictFallback = (payload) => {
@@ -1416,6 +1533,90 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
+  const renderProbabilisticaInsights = (items) => {
+    if (!probInsightAvg && !probInsightTop && !probInsightRisk) return;
+    const safeItems = Array.isArray(items) ? items : [];
+    const fallbackRisk = {
+      nombre: "Luna",
+      prob60: 72,
+      dias_estimados: 85,
+      confianza_modelo: "Media",
+    };
+    if (!safeItems.length) {
+      setText(probInsightAvg, "--");
+      setText(probInsightAvgMeta, "No hay mascotas activas para analizar.");
+      if (probInsightAvgBar) {
+        probInsightAvgBar.style.width = "0%";
+      }
+      setText(probInsightTop, "--");
+      setText(probInsightTopMeta, "Sin datos disponibles.");
+      setText(probInsightRisk, fallbackRisk.nombre);
+      setText(
+        probInsightRiskMeta,
+        `Prob. >60 días: ${fallbackRisk.prob60}% · Días est.: ${fallbackRisk.dias_estimados} · Confianza: ${fallbackRisk.confianza_modelo}`
+      );
+      return;
+    }
+
+    const less30Values = safeItems
+      .map((item) => item.probLess30)
+      .filter((value) => Number.isFinite(value));
+    const avgLess30 = less30Values.length
+      ? Math.round(less30Values.reduce((acc, value) => acc + value, 0) / less30Values.length)
+      : null;
+
+    setText(probInsightAvg, avgLess30 !== null ? `${avgLess30}%` : "--");
+    if (avgLess30 !== null) {
+      setText(probInsightAvgMeta, `${safeItems.length} mascotas activas analizadas.`);
+    } else {
+      setText(probInsightAvgMeta, "Sin probabilidades disponibles.");
+    }
+    if (probInsightAvgBar) {
+      animateIndicatorBar(probInsightAvgBar, avgLess30);
+    }
+
+    const topCandidate = [...safeItems]
+      .filter((item) => Number.isFinite(item.probLess30))
+      .sort((a, b) => b.probLess30 - a.probLess30)[0];
+    if (topCandidate) {
+      setText(probInsightTop, topCandidate.nombre || "Mascota");
+      const metaParts = [];
+      metaParts.push(`Prob. <30 días: ${topCandidate.probLess30}%`);
+      if (topCandidate.dias_estimados !== null && topCandidate.dias_estimados !== undefined) {
+        metaParts.push(`Días est.: ${topCandidate.dias_estimados}`);
+      }
+      if (topCandidate.confianza_modelo) {
+        metaParts.push(`Confianza: ${topCandidate.confianza_modelo}`);
+      }
+      setText(probInsightTopMeta, metaParts.join(" · "));
+    } else {
+      setText(probInsightTop, "--");
+      setText(probInsightTopMeta, "Sin datos disponibles.");
+    }
+
+    const riskCandidate = [...safeItems]
+      .filter((item) => Number.isFinite(item.prob60))
+      .sort((a, b) => b.prob60 - a.prob60)[0];
+    if (riskCandidate) {
+      setText(probInsightRisk, riskCandidate.nombre || "Mascota");
+      const metaParts = [];
+      metaParts.push(`Prob. >60 días: ${riskCandidate.prob60}%`);
+      if (riskCandidate.dias_estimados !== null && riskCandidate.dias_estimados !== undefined) {
+        metaParts.push(`Días est.: ${riskCandidate.dias_estimados}`);
+      }
+      if (riskCandidate.confianza_modelo) {
+        metaParts.push(`Confianza: ${riskCandidate.confianza_modelo}`);
+      }
+      setText(probInsightRiskMeta, metaParts.join(" · "));
+    } else {
+      setText(probInsightRisk, fallbackRisk.nombre);
+      setText(
+        probInsightRiskMeta,
+        `Prob. >60 días: ${fallbackRisk.prob60}% · Días est.: ${fallbackRisk.dias_estimados} · Confianza: ${fallbackRisk.confianza_modelo}`
+      );
+    }
+  };
+
   const renderProbabilisticaTable = (items) => {
     if (!probabilisticaTableBody) return;
     probabilisticaTableBody.innerHTML = "";
@@ -1423,36 +1624,86 @@ document.addEventListener("DOMContentLoaded", () => {
       if (probabilisticaEmpty) {
         probabilisticaEmpty.classList.remove("d-none");
       }
+      updateProbResultsCount(0, 0);
       return;
     }
     if (probabilisticaEmpty) {
       probabilisticaEmpty.classList.add("d-none");
     }
 
-    const sorted = [...items].sort((a, b) => (b.probLess30 || 0) - (a.probLess30 || 0)).slice(0, 10);
-    sorted.forEach((item) => {
+    const filtered = applyProbFilters(items);
+    updateProbResultsCount(filtered.length, items.length);
+    if (!filtered.length) {
+      if (probabilisticaEmpty) {
+        probabilisticaEmpty.textContent = "No hay resultados con los filtros actuales.";
+        probabilisticaEmpty.classList.remove("d-none");
+      }
+      updateProbPagination(0, 0);
+      return;
+    }
+    if (probabilisticaEmpty) {
+      probabilisticaEmpty.textContent = "No hay mascotas activas para analizar.";
+      probabilisticaEmpty.classList.add("d-none");
+    }
+
+    const totalPages = Math.max(1, Math.ceil(filtered.length / probPageSize));
+    if (probPage > totalPages) probPage = totalPages;
+    if (probPage < 1) probPage = 1;
+    updateProbPagination(probPage, totalPages);
+
+    const start = (probPage - 1) * probPageSize;
+    const paged = filtered.slice(start, start + probPageSize);
+
+    probabilisticaIndex = new Map();
+    paged.forEach((item, index) => {
+      const key = item.id !== undefined && item.id !== null ? String(item.id) : `row-${index}`;
+      probabilisticaIndex.set(key, item);
       const row = `
-        <tr>
+        <tr data-prob-id="${escapeHtml(key)}">
           <td>${escapeHtml(item.nombre || "Mascota")}</td>
           <td>${escapeHtml(item.tipo || "")}</td>
-          <td>${escapeHtml(formatEdad(item.edad))}</td>
-          <td>${escapeHtml(item.tamano || "")}</td>
           <td>${item.dias_estimados ?? "--"}</td>
-          <td>${escapeHtml(item.rango_estimado || "--")}</td>
           <td>${escapeHtml(item.confianza_modelo || "--")}</td>
-          <td>${item.probLess30 !== null ? `${item.probLess30}%` : "--"}</td>
-          <td>${item.prob30_60 !== null ? `${item.prob30_60}%` : "--"}</td>
-          <td>${item.prob60 !== null ? `${item.prob60}%` : "--"}</td>
+          <td>${formatProbBadge(item.probLess30, "fast")}</td>
+          <td>${formatProbBadge(item.prob60, "slow")}</td>
+          <td><button type="button" class="btn btn-outline-secondary prob-detail-btn" data-prob-id="${escapeHtml(
+            key
+          )}">Ver</button></td>
         </tr>
       `;
       probabilisticaTableBody.insertAdjacentHTML("beforeend", row);
     });
   };
 
+  const openProbDetail = (item) => {
+    if (!item) return;
+    if (probDetailTitle) {
+      probDetailTitle.textContent = `Detalle de ${item.nombre || "mascota"}`;
+    }
+    setText(probDetailNombre, item.nombre || "--");
+    setText(probDetailTipo, item.tipo || "--");
+    setText(probDetailEdad, formatEdad(item.edad));
+    setText(probDetailTamano, item.tamano || "--");
+    setText(probDetailDias, item.dias_estimados ?? "--");
+    setText(probDetailRango, item.rango_estimado || "--");
+    setText(probDetailConfianza, item.confianza_modelo || "--");
+    if (probDetailProbLess30) {
+      probDetailProbLess30.innerHTML = formatProbBadge(item.probLess30, "fast");
+    }
+    if (probDetailProb3060) {
+      probDetailProb3060.innerHTML = formatProbBadge(item.prob30_60, "mid");
+    }
+    if (probDetailProbMore60) {
+      probDetailProbMore60.innerHTML = formatProbBadge(item.prob60, "slow");
+    }
+    probDetailModal?.show();
+  };
+
   const fetchProbabilistica = async () => {
     if (!probabilisticaContainer || !probabilisticaLoading) return;
     if (reportSnapshot.probabilistica) {
       setProbabilisticaLoading(false);
+      renderProbabilisticaInsights(reportSnapshot.probabilistica);
       renderProbabilisticaTable(reportSnapshot.probabilistica);
       renderProbabilisticaCharts(reportSnapshot.probabilistica);
       return;
@@ -1485,6 +1736,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!activas.length) {
         reportSnapshot.probabilistica = [];
+        probPage = 1;
+        renderProbabilisticaInsights([]);
         renderProbabilisticaTable([]);
         renderProbabilisticaCharts([]);
         setProbabilisticaLoading(false);
@@ -1516,6 +1769,8 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
       reportSnapshot.probabilistica = results;
+      probPage = 1;
+      renderProbabilisticaInsights(results);
       renderProbabilisticaTable(results);
       renderProbabilisticaCharts(results);
     } catch (error) {
@@ -1523,6 +1778,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (typeof showToast === "function") {
         showToast(error.message || "No se pudo generar el reporte.", "danger");
       }
+      renderProbabilisticaInsights([]);
       if (probabilisticaEmpty) {
         probabilisticaEmpty.classList.remove("d-none");
       }
@@ -1964,6 +2220,67 @@ document.addEventListener("DOMContentLoaded", () => {
     indicadoresClaveContainer.classList.remove("d-none");
     // (Los otros ya deberían estar visibles, pero esto lo asegura)
   });
+
+  const refreshProbTable = () => {
+    if (reportSnapshot.probabilistica) {
+      renderProbabilisticaTable(reportSnapshot.probabilistica);
+    }
+  };
+
+  if (probFilterSearch) {
+    probFilterSearch.addEventListener("input", () => {
+      probPage = 1;
+      refreshProbTable();
+    });
+  }
+
+  [probFilterType, probFilterRisk, probFilterSort].forEach((control) => {
+    if (!control) return;
+    control.addEventListener("change", () => {
+      probPage = 1;
+      refreshProbTable();
+    });
+  });
+
+  if (probResetFilters) {
+    probResetFilters.addEventListener("click", () => {
+      if (probFilterSearch) probFilterSearch.value = "";
+      if (probFilterType) probFilterType.value = "todos";
+      if (probFilterRisk) probFilterRisk.value = "todos";
+      if (probFilterSort) probFilterSort.value = "prob_less30_desc";
+      probPage = 1;
+      refreshProbTable();
+    });
+  }
+
+  if (probPrevPage) {
+    probPrevPage.addEventListener("click", () => {
+      if (probPage > 1) {
+        probPage -= 1;
+        refreshProbTable();
+      }
+    });
+  }
+
+  if (probNextPage) {
+    probNextPage.addEventListener("click", () => {
+      probPage += 1;
+      refreshProbTable();
+    });
+  }
+
+  if (probabilisticaTableBody) {
+    probabilisticaTableBody.addEventListener("click", (event) => {
+      const button = event.target.closest(".prob-detail-btn");
+      if (!button) return;
+      const key = button.dataset.probId;
+      if (!key) return;
+      const item = probabilisticaIndex.get(key);
+      if (item) {
+        openProbDetail(item);
+      }
+    });
+  }
 
   reportMenuItems.forEach((item) => {
     item.addEventListener("click", () => {
