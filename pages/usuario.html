@@ -51,13 +51,46 @@
       </p>
     </section>
 
-    <div class="row g-4">
-      <div class="col-lg-8">
-        <div class="profile-card">
-          <form id="perfil-form">
+    <div class="profile-layout">
+      <div class="row g-4">
+        <div class="col-12">
+          <div class="profile-tags">
+          <div class="profile-tags-header">
+            <span class="profile-tags-title">Estado del perfil</span>
+            <span class="profile-progress-text" id="profileProgressText">0% completo</span>
+          </div>
+          <div class="profile-progress profile-progress--compact">
+            <div class="profile-progress-bar" id="profileProgressBar"></div>
+          </div>
+          <div class="profile-tags-list">
+            <span class="profile-check-item profile-tag" data-section="personal">
+              <span>Datos personales</span>
+              <span class="profile-check-status">Pendiente</span>
+            </span>
+            <span class="profile-check-item profile-tag" data-section="direccion">
+              <span>Dirección</span>
+              <span class="profile-check-status">Pendiente</span>
+            </span>
+            <span class="profile-check-item profile-tag" data-section="hogar">
+              <span>Hogar y experiencia</span>
+              <span class="profile-check-status">Pendiente</span>
+            </span>
+            <span class="profile-check-item profile-tag" data-section="personalidad">
+              <span>Personalidad</span>
+              <span class="profile-check-status">Pendiente</span>
+            </span>
+          </div>
+          <div class="profile-side-tip profile-tags-tip">
+            <i class="bi bi-lightbulb"></i>
+            Completá los campos clave para recibir mejores recomendaciones.
+          </div>
+        </div>
+
+          <div class="profile-card">
+            <form id="perfil-form">
             <div class="profile-photo-block">
               <img src="../img/fotoJW.jpg?v=2" data-default-src="../img/fotoJW.jpg?v=2" alt="Foto de perfil"
-                id="perfilfoto" class="profile-photo" title="Haz clic para cambiar tu foto">
+                id="perfilfoto" class="profile-photo is-loading" title="Haz clic para cambiar tu foto">
               <input type="file" id="foto-input" name="foto_perfil" accept="image/*" hidden>
               <span class="profile-photo-hint">Tocá la foto para actualizarla.</span>
             </div>
@@ -248,44 +281,9 @@
               <button type="submit" class="btn btn-profile-primary">Actualizar</button>
               <a href="catalogo.html" class="btn btn-outline-secondary">Cancelar</a>
             </div>
-          </form>
-        </div>
-      </div>
-
-      <div class="col-lg-4">
-        <aside class="profile-sidebar">
-          <div class="profile-side-card">
-            <div class="profile-side-header">
-              <h5>Estado del perfil</h5>
-              <span class="profile-progress-text" id="profileProgressText">0% completo</span>
-            </div>
-            <div class="profile-progress">
-              <div class="profile-progress-bar" id="profileProgressBar"></div>
-            </div>
-            <ul class="profile-checklist">
-              <li class="profile-check-item" data-section="personal">
-                <span>Datos personales</span>
-                <span class="profile-check-status">Pendiente</span>
-              </li>
-              <li class="profile-check-item" data-section="direccion">
-                <span>Dirección</span>
-                <span class="profile-check-status">Pendiente</span>
-              </li>
-              <li class="profile-check-item" data-section="hogar">
-                <span>Hogar y experiencia</span>
-                <span class="profile-check-status">Pendiente</span>
-              </li>
-              <li class="profile-check-item" data-section="personalidad">
-                <span>Personalidad</span>
-                <span class="profile-check-status">Pendiente</span>
-              </li>
-            </ul>
-            <div class="profile-side-tip">
-              <i class="bi bi-lightbulb"></i>
-              Completá los campos clave para recibir mejores recomendaciones.
-            </div>
+            </form>
           </div>
-        </aside>
+        </div>
       </div>
     </div>
   </main>

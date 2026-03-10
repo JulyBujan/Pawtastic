@@ -15,7 +15,49 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const isReadonly = urlParams.has('id');
     const defaultPhoto = perfilFoto?.dataset.defaultSrc || '../img/fotoJW.jpg?v=2';
+    const defaultPhotoResolved = new URL(defaultPhoto, window.location.href).href;
+    const cachedPhotoKey = 'perfil_foto_url';
+    let cachedPhotoUrl = localStorage.getItem(cachedPhotoKey);
     let currentStep = 0;
+
+    const resolveUrl = (url) => new URL(url, window.location.href).href;
+
+    const setProfilePhoto = (url, { cache = true, cacheUrl = null } = {}) => {
+        if (!perfilFoto || !url) return;
+
+        const targetResolved = resolveUrl(url);
+        const currentResolved = perfilFoto.currentSrc || perfilFoto.src;
+
+        perfilFoto.classList.add('is-loading');
+
+        const finalize = () => {
+            perfilFoto.classList.remove('is-loading');
+        };
+
+        perfilFoto.onload = finalize;
+        perfilFoto.onerror = () => {
+            finalize();
+            if (targetResolved !== defaultPhotoResolved) {
+                perfilFoto.src = defaultPhoto;
+            }
+        };
+
+        if (currentResolved && targetResolved === currentResolved && perfilFoto.complete && perfilFoto.naturalWidth > 0) {
+            finalize();
+        } else {
+            perfilFoto.src = url;
+        }
+
+        if (cache) {
+            const valueToCache = cacheUrl || url;
+            localStorage.setItem(cachedPhotoKey, valueToCache);
+            cachedPhotoUrl = valueToCache;
+        }
+    };
+
+    if (!isReadonly && cachedPhotoUrl) {
+        setProfilePhoto(cachedPhotoUrl, { cache: false });
+    }
 
     steps.forEach((step, index) => {
         if (!step.dataset.step) {
@@ -199,11 +241,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Actualizar la foto de perfil
             if (usuario.foto_perfil_url && usuario.foto_perfil_url.startsWith('/img/profile/')) {
-                // Añadimos un timestamp para evitar problemas de caché si se sube una foto con el mismo nombre
-                perfilFoto.src = usuario.foto_perfil_url + '?t=' + new Date().getTime();
+                const shouldCachePhoto = !userId;
+                const nextPhotoUrl = usuario.foto_perfil_url;
+
+                if (!cachedPhotoUrl || resolveUrl(nextPhotoUrl) !== resolveUrl(cachedPhotoUrl)) {
+                    setProfilePhoto(nextPhotoUrl, { cache: shouldCachePhoto });
+                } else if (perfilFoto.classList.contains('is-loading')) {
+                    perfilFoto.classList.remove('is-loading');
+                }
             } else {
+                if (!userId) {
+                    localStorage.removeItem(cachedPhotoKey);
+                    cachedPhotoUrl = null;
+                }
                 // Si no hay foto, usamos la imagen por defecto. La ruta es relativa a la página.
-                perfilFoto.src = defaultPhoto;
+                setProfilePhoto(defaultPhoto, { cache: false });
             }
 
             // Si estamos viendo el perfil de otro usuario (como ONG), deshabilitamos el formulario.
@@ -227,6 +279,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Error al cargar el perfil:', error);
             showToast(error.message, 'danger');
+            if (isReadonly || !cachedPhotoUrl) {
+                setProfilePhoto(defaultPhoto, { cache: false });
+            }
         }
     };
 
@@ -258,7 +313,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast('Foto de perfil actualizada.', 'success');
                 // Actualizamos la imagen en la página con la nueva URL devuelta por la API
                 if (result.foto_perfil_url) {
-                    perfilFoto.src = result.foto_perfil_url + '?t=' + new Date().getTime();
+                    const bustUrl = `${result.foto_perfil_url}?t=${Date.now()}`;
+                    setProfilePhoto(bustUrl, { cache: true, cacheUrl: result.foto_perfil_url });
                 }
             } else {
                 throw new Error(result.message || 'No se pudo subir la imagen.');

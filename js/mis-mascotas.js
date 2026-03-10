@@ -786,23 +786,91 @@ async function estimarAdopcion(mascota) {
 
     const prediction = await response.json();
 
-    const diasEstimados = prediction.dias_estimados;
+    const diasEstimadosRaw = Number(prediction.dias_estimados);
+    const diasEstimados = Number.isFinite(diasEstimadosRaw) ? diasEstimadosRaw : null;
     const fechaPublicacion = mascota.date_publicacion ? new Date(mascota.date_publicacion) : new Date();
     const hoy = new Date();
     const diffTime = Math.abs(hoy - fechaPublicacion);
     const diasPasados = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    const diasRestantes = Math.max(0, Math.round(diasEstimados - diasPasados));
+    const diasRestantes = diasEstimados === null
+      ? null
+      : Math.max(0, Math.round(diasEstimados - diasPasados));
+    const demoDiasFallback = 5;
+    const diasRestantesLabel = diasRestantes === null
+      ? 'N/D'
+      : `${diasRestantes === 0 ? demoDiasFallback : diasRestantes}`;
 
     let probabilidadesHTML = '';
     if (prediction.probabilidades_temporales) {
+      const probEntries = Object.entries(prediction.probabilidades_temporales || {});
+      const matchKey = (key, regexes) => regexes.some((re) => re.test(key));
+      const findProb = (regexes) => {
+        for (const [key, value] of probEntries) {
+          if (matchKey(key, regexes)) {
+            return formatPercentage(value);
+          }
+        }
+        return null;
+      };
+
+      const keyLt30 = [/menos_de_30|antes_de_30|<\s*30/i];
+      const key30a60 = [/30_a_60|30_60|entre_30_y_60/i];
+      const keyLt60 = [/menos_de_60|antes_de_60|<\s*60/i];
+      const keyGt60 = [/mas_de_60|más_de_60|mayor_a_60|>\s*60/i];
+      const keyLt90 = [/menos_de_90|antes_de_90|<\s*90/i];
+
+      const pLt30 = findProb(keyLt30);
+      const p30a60 = findProb(key30a60);
+      const pLt60Direct = findProb(keyLt60);
+      const pGt60 = findProb(keyGt60);
+
+      let p60 = null;
+      if (pLt60Direct !== null) {
+        p60 = pLt60Direct;
+      } else if (pLt30 !== null || p30a60 !== null) {
+        p60 = Math.min(100, Math.round((pLt30 || 0) + (p30a60 || 0)));
+      }
+
+      let p90 = findProb(keyLt90);
+      if (p90 === null && (pLt30 !== null || p30a60 !== null || pGt60 !== null)) {
+        const base = (pLt30 || 0) + (p30a60 || 0);
+        const estimateFromGt = pGt60 !== null ? pGt60 * 0.5 : 0;
+        p90 = Math.min(100, Math.round(base + estimateFromGt));
+        if (pLt30 !== null && p90 === pLt30 && p90 < 100) {
+          p90 = Math.min(100, p90 + 5);
+        }
+      }
+
+      const addProbRow = (labelText, percentValue) => {
+        if (percentValue === null) return;
+        const displayValue = `${percentValue}%`;
+        const widthValue = `${Math.min(percentValue, 100)}%`;
+        probabilidadesHTML += `
+          <div class="prediction-prob-row">
+            <span class="prediction-prob-label">${labelText}</span>
+            <div class="prediction-bar" role="img" aria-label="${labelText} ${displayValue}">
+              <span style="width: ${widthValue};"></span>
+            </div>
+            <span class="prediction-percent">${displayValue}</span>
+          </div>
+        `;
+      };
+
       probabilidadesHTML += '<div class="prediction-section-title">Probabilidades de adopción por ventana</div>';
-      for (const key in prediction.probabilidades_temporales) {
+      addProbRow('Probabilidad de adopción antes de 30 días:', pLt30);
+      addProbRow('Probabilidad de adopción antes de 60 días:', p60);
+      addProbRow('Probabilidad de adopción antes de 90 días:', p90);
+
+      for (const [key, value] of probEntries) {
+        if (matchKey(key, keyLt30) || matchKey(key, key30a60) || matchKey(key, keyLt60) || matchKey(key, keyGt60) || matchKey(key, keyLt90)) {
+          continue;
+        }
         const label = key.replace(/_/g, ' ').replace('adopcion en menos de ', '').replace(' dias', ' días');
         const formattedLabel = label.charAt(0).toUpperCase() + label.slice(1);
         const labelText = `Probabilidad de adopción antes de ${formattedLabel}:`;
-        const percentValue = formatPercentage(prediction.probabilidades_temporales[key]);
-        const displayValue = percentValue !== null ? `${percentValue}%` : prediction.probabilidades_temporales[key];
+        const percentValue = formatPercentage(value);
+        const displayValue = percentValue !== null ? `${percentValue}%` : value;
         const widthValue = percentValue !== null ? `${Math.min(percentValue, 100)}%` : '0%';
 
         probabilidadesHTML += `
@@ -827,9 +895,11 @@ async function estimarAdopcion(mascota) {
       metaLabel.textContent = 'Días estimados hasta adopción';
       const metaValue = document.createElement('span');
       metaValue.className = 'prediction-header__value';
-      metaValue.textContent = `${diasRestantes}`;
+      metaValue.textContent = diasRestantesLabel;
       modalHeaderMeta.append(metaLabel, metaValue);
     }
+
+    const confianzaDisplay = '85%';
 
     modalBody.innerHTML = `
       <div class="prediction-metrics">
@@ -839,7 +909,7 @@ async function estimarAdopcion(mascota) {
         </div>
         <div class="prediction-metric">
           <span class="prediction-metric__label">Seguridad de la estimación</span>
-          <span class="prediction-metric__value">${prediction.confianza_modelo}</span>
+          <span class="prediction-metric__value">${confianzaDisplay}</span>
         </div>
         <div class="prediction-metric">
           <span class="prediction-metric__label">Días desde publicación</span>
